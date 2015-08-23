@@ -18,7 +18,7 @@
 #
 #-------------------------------------------------------------------------------
 
-"""Utility functions for Anharmonic ORCA, including execution automation.
+"""Utility functions for OpenAnharmonic, including execution automation.
 
 Functions implemented here are not available as of NumPy v1.8.1 and
     SciPy v0.4.9.
@@ -29,13 +29,14 @@ delta_fxn        -- Generalized Kronecker delta function
 pack_tups        -- Pack an arbitrary combination of iterables and non-
                         iterables into a list of tuples
 execute_orca     -- Execute an ORCA computation from a substitutable template
-#!DOC: Complete entries for point_xxxxx functions
+#!DOC: Complete entries for Vector class (class itself is incomplete for
+  symmetry functions)
 
 
 """
 
 # Imports
-from orca_const import DEF, E_DispDirection
+from .const import DEF, E_DispDirection
 
 
 def pack_tups(*args):
@@ -312,7 +313,7 @@ def check_geom(c1, a1, c2, a2, tol=DEF.XYZ_Coord_Match_Tol):
         Vector of second set of atom symbols or atomic numbers
     tol    : float, optional
         Tolerance for acceptable deviation of each geometry coordinate
-        from that in the ORCA_ENGRAD instance to still be considered
+        from that in the reference instance to still be considered
         matching
 
     Returns
@@ -340,7 +341,7 @@ def check_geom(c1, a1, c2, a2, tol=DEF.XYZ_Coord_Match_Tol):
     """
 
     # Import(s)
-    from orca_const import atomNum
+    from .const import atomNum
     import numpy as np
 
     # Initialize return value to success condition
@@ -549,10 +550,10 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     # Imports
     import os, subprocess as sp
-    from orca_output import ORCA_OUTPUT
-    from orca_xyz import ORCA_XYZ
-    from orca_engrad import ORCA_ENGRAD
-    from orca_hess import ORCA_HESS
+    from .output import ORCA_OUTPUT
+    from .xyz import OPAN_XYZ
+    from .grad import ORCA_ENGRAD
+    from .hess import ORCA_HESS
 
     # Switch to dir; default exception fine for handling case of invalid dir.
     os.chdir(work_dir)
@@ -604,13 +605,13 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         #  things other than the output not existing
         o_out = ORCA_OUTPUT(out_fname,'file')
         try:
-            o_xyz = ORCA_XYZ(path=os.path.join(work_dir, sim_name + ".xyz"), \
+            o_xyz = OPAN_XYZ(path=os.path.join(work_dir, sim_name + ".xyz"), \
                                                                 bohrs=bohrs)
         except IOError:
             o_xyz = None
         ## end try
         try:
-            o_trj = ORCA_XYZ(path=os.path.join(work_dir, sim_name + ".trj"), \
+            o_trj = OPAN_XYZ(path=os.path.join(work_dir, sim_name + ".trj"), \
                                                                 bohrs=bohrs)
         except IOError:
             o_trj = None
@@ -694,7 +695,7 @@ class Vector(object):
     """
 
     # Imports (those required for defaults for method parameters
-    from orca_const import DEF
+    from .const import DEF
     import numpy as np
 
     # Debug var
@@ -702,7 +703,7 @@ class Vector(object):
 
     # Reduced 3-D Levi-Civita matrix
     ##levi_civita = np.array([[0,1,-1],[-1,0,1],[1,-1,0]], dtype=np.float64)
-
+    #RESUME OPAN/package conversion
     @staticmethod
     def ortho_basis(norm_vec, ref_vec=None):
         """Generates an orthonormal basis in the plane perpendicular to norm_vec
