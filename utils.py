@@ -703,7 +703,7 @@ class Vector(object):
 
     # Reduced 3-D Levi-Civita matrix
     ##levi_civita = np.array([[0,1,-1],[-1,0,1],[1,-1,0]], dtype=np.float64)
-    #RESUME OPAN/package conversion
+
     @staticmethod
     def ortho_basis(norm_vec, ref_vec=None):
         """Generates an orthonormal basis in the plane perpendicular to norm_vec
@@ -742,12 +742,13 @@ class Vector(object):
         XYZError   : If ref_vec is specified and it is insufficiently non-
             parallel with respect to norm_vec
         """
+
         # Imports for library functions
         import numpy as np
         from numpy.random import rand
         from scipy.linalg import norm
         from scipy import arccos
-        from orca_const import PRM
+        from .const import PRM
 
         # Internal parameters
         # Magnitude of the perturbation from vec in constructing a random rv
@@ -775,8 +776,6 @@ class Vector(object):
             #  vector suitably non-parallel to norm_vec
             # Generate suitable randomizer, looping as needed
             rv = np.float64(1.0 - RAND_MAG + 2 * RAND_MAG * rand(3))
-        ##        while 180 - np.degrees(arccos(np.dot(nv, rv) / norm(rv))) < \
-        ##                                                 PRM.Non_Parallel_Tol:
             while np.degrees(arccos(abs(np.dot(nv, rv) / norm(rv)))) < \
                                                     PRM.Non_Parallel_Tol:
                 rv = np.float64(1.0 - RAND_MAG + 2 * RAND_MAG * rand(3))
@@ -803,8 +802,6 @@ class Vector(object):
             rv = rv / norm(rv)
 
             # Check for collinearity of nv and rv
-    ##        if 180 - np.abs(np.degrees(arccos(np.dot(nv, rv)))) < \
-    ##                                            PRM.Non_Parallel_Tol:
             # Have to put in an extra check for a dot product greater than unity
             #  due to calculation precision problems if nv == rv or nv == -rv
             if abs(np.dot(nv, rv)) > 1:
@@ -852,7 +849,7 @@ class Vector(object):
             enforced, as orthonormality is only possible with <= N vectors in
             N-space.
         tol : float, optional
-            Default: specified by DEF.Orthonorm_Tol of module orca_const
+            Default: specified by DEF.Orthonorm_Tol of module .const
             Tolerance for deviation of dot products from one or zero.
         report : bool, optional
             Default: False
@@ -876,7 +873,6 @@ class Vector(object):
         Raises
         ------
         ValueError : If an object with any non-numeric elements is provided
-
         ValueError : If any object is passed that is parsed as having more than
             two dimensions when converted to a matrix
         """
@@ -1291,10 +1287,10 @@ class Vector(object):
         # Imports
         import numpy as np, itertools as itt
         from scipy import linalg as spla
-        from orca_const import PRM, E_TopType as ETT
+        from .const import PRM, E_TopType as ETT
         from itertools import combinations as nCr
         from collections import namedtuple
-        from orca_error import SYMMError
+        from .error import SYMMError
 
         # Define the Axis class
         Axis = namedtuple('Axis', 'vector order refl')
@@ -1658,7 +1654,7 @@ class Vector(object):
         # Imports
         import numpy as np
         from scipy import linalg as spla
-        from orca_const import PRM
+        from .const import PRM
 
         # Ensure |nv| is large enough for confident directionality
         if spla.norm(nv) < PRM.Zero_Vec_Tol:
@@ -1713,7 +1709,7 @@ class Vector(object):
         # Imports
         import numpy as np
         from scipy import linalg as spla
-        from orca_const import PRM
+        from .const import PRM
 
         # Ensure |ax| is large enough for confident directionality
         if spla.norm(ax) < PRM.Zero_Vec_Tol:
