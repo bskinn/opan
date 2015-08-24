@@ -18,6 +18,11 @@
 #
 #-------------------------------------------------------------------------------
 
-from . import anharm, const, engrad, error, hess, output, repo, tests
-from . import utils, xyz
+from __future__ import absolute_import
+
+__all__ = ['const', 'error', 'utils', 'xyz', 'repo', 'grad', 'hess', \
+        'output', 'anharm', 'tests']
+
+from . import *
+
 
