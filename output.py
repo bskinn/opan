@@ -375,9 +375,9 @@ class ORCA_OUTPUT(object):
         # type of run should be expected?
 
         # Imports
-        from orca_utils import pack_tups
-        from orca_utils import safe_cast as scast
-        from orca_error import OUTPUTError
+        from .utils import pack_tups
+        from .utils import safe_cast as scast
+        from .error import OUTPUTError
         import numpy as np
 
         # Confirm src_type is valid
