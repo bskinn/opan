@@ -170,7 +170,18 @@ class OPAN_XYZ(object):
 
 
     def __init__(self, **kwargs):
-        """ #DOC: new __init__ docstring
+        """ Initialize XYZ data from file or existing geometry.
+
+        Initializer can be called in one of two forms:
+
+        OPAN_XYZ(path='path/to/file')
+        OPAN_XYZ(atom_syms={array of atoms}, coords={array of coordinates})
+
+        In both forms, the optional keyword argument 'bohrs' can be specified,
+        to indicate the units of the coordinates as Bohrs (True) or
+        Angstroms (False). Angstrom and Bohr units are the default for the
+        first and second forms, respectively. The units of all coordinates
+        stored in the instance are *Bohrs*, regardless of this setting.
         """
 
         # Two situations. One should have 'path' and, optionally, 'bohrs'
