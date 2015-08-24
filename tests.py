@@ -127,7 +127,7 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
             self.assertEqual(self.oe.atom_syms[i,0], self.atoms[i,0])
 
     def test_ENGRAD_KnownGoodGradient(self):
-        # Confirm the known-goodgradient matches what's expected.
+        # Confirm the known-good gradient matches what's expected.
 
         # Confirm the gradient vector is good
         self.longMessage = True
@@ -135,7 +135,7 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
             self.assertAlmostEqual(self.oe.gradient[i,0], \
                         self.gradient[i,0], delta=1e-10, \
                         msg="Gradient index " + str(i))
-    #RESUME
+    #RESUME by adding tests for the other data retrieved by the ENGRAD import
 
 
 
