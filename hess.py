@@ -1,4 +1,3 @@
-<<<<<<< .mine
 #-------------------------------------------------------------------------------
 # Name:        hess
 # Purpose:     Encapsulation of parsing/handling of data from Hessian files.
@@ -417,7 +416,5 @@ class ORCA_HESS(object):
 
 if __name__ == '__main__':
     print("Module not executable.")
-||||||| .r0
-=======
-# Blank thing
->>>>>>> .r2
+
+
