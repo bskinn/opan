@@ -20,7 +20,6 @@
 
 # Module-level imports
 import unittest
-import orca_error
 
 
 # ============================  ORCA_ENGRAD ================================= #
@@ -114,7 +113,7 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         # Load the object
 
         # Imports
-        from orca_engrad import ORCA_ENGRAD as OE
+        from .grad import ORCA_ENGRAD as OE
 
         # Create the object
         self.oe = OE(self.file_name)
@@ -142,20 +141,27 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
 
 # ============================  ORCA_ERROR ================================== #
 
-class TestORCAErrorInitErrors(unittest.TestCase):
+class TestOPANErrorInitErrors(unittest.TestCase):
     # Testing errors that should be thrown on initialization
 
     def test_ORCAError_init_NotImplemented(self):
-        # Confirm ORCAError parent class as abstract
-        self.assertRaises(NotImplementedError, orca_error.ORCAError, \
+        # Must import
+        from .error import OPANError
+
+        # Confirm OPANError parent class as abstract
+        self.assertRaises(NotImplementedError, OPANError, \
                     "tc", "msg", "src")
+
     def test_XYZError_init_BadTypecode(self):
+        # Must import
+        from .error import XYZError
+
         # Confirm KeyError raised when invalid typecode passed
-        self.assertRaises(KeyError, orca_error.XYZError, \
+        self.assertRaises(KeyError, XYZError, \
                     "INVALID TYPECODE", "msg", "src")
 
 class TestXYZErrorInitConfig(unittest.TestCase):
-    # XYZError used as a representative ORCAError subclass
+    # XYZError used as a representative OPANError subclass
 
     # Class-level constants
     tc = 'nonprl'
@@ -165,23 +171,23 @@ class TestXYZErrorInitConfig(unittest.TestCase):
 
     def test_XYZError_init_SubclassName(self):
         # Confirm subclass name is retrieved correctly
-        from orca_error import XYZError as XE
+        from .error import XYZError as XE
         self.assertEqual(XE(self.tc, self.msg, self.src).subclass_name, \
                                                 self.subclass_name)
 
     def test_XYZError_init_TypecodeStored(self):
         # Confirm typecode name stored correctly
-        from orca_error import XYZError as XE
+        from .error import XYZError as XE
         self.assertEqual(XE(self.tc, self.msg, self.src).tc, self.tc)
 
     def test_XYZError_init_MessageStrStored(self):
         # Confirm message string stored correctly
-        from orca_error import XYZError as XE
+        from .error import XYZError as XE
         self.assertEqual(XE(self.tc, self.msg, self.src).msg, self.msg)
 
     def test_XYZError_init_SourceStrStored(self):
         # Confirm source string stored correctly
-        from orca_error import XYZError as XE
+        from .error import XYZError as XE
         self.assertEqual(XE(self.tc, self.msg, self.src).src, self.src)
 
 
