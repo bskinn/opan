@@ -35,8 +35,8 @@ class OPAN_REPO(object):
 
     Instantiation
     -------------
-    __init__(HESS_path, disp_mode, disp_dir, disp_mag)
-        Constructor for an ORCA_REPO to interact with an HDF5 file on disk.
+    __init__(...)
+        --- to be completed ---
 
     Class Variables
     ---------------
@@ -57,7 +57,7 @@ class OPAN_REPO(object):
     """
 
     # Imports
-    from orca_const import E_DispDirection as E_DispDir
+    from .const import E_DispDirection as E_DispDir
 
 
     # Class variables
@@ -113,7 +113,7 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5
-        from orca_error import REPOError
+        from .error import REPOError
 
         # Close the repo if it's bound, and wipe link; else complain
         if self._repo != None:
@@ -135,7 +135,7 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5
-        from orca_error import REPOError
+        from .error import REPOError
 
         # If repo not None, complain
         if not self._repo == None:
@@ -179,9 +179,9 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5, numpy as np
-        from orca_error import REPOError as RErr
-        from orca_const import E_DispDirection as E_DispDir
-        from orca_const import ER_Data
+        from .error import REPOError as RErr
+        from .const import E_DispDirection as E_DispDir
+        from .const import ER_Data
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -247,9 +247,9 @@ class OPAN_REPO(object):
 
         # Imports
         import os, numpy as np
-        from orca_const import E_DispDirection as E_DispDir
-        from orca_const import ER_Data
-        from orca_error import REPOError as RErr
+        from .const import E_DispDirection as E_DispDir
+        from .const import ER_Data
+        from .error import REPOError as RErr
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -312,7 +312,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from orca_error import REPOError
+        from .error import REPOError
 
         # Just try to get the data. Simply pass up all exceptions except for
         #  those if the group or data doesn't exist. DO re-raise a non-bound
@@ -338,8 +338,8 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from orca_const import ER_Param
-        from orca_error import REPOError as RErr
+        from .const import ER_Param
+        from .error import REPOError as RErr
 
         # Must be a valid parameter name
         if not param in ER_Param.E:
@@ -392,8 +392,8 @@ class OPAN_REPO(object):
 
         # Imports
         import os, numpy as np
-        from orca_const import ER_Param
-        from orca_error import REPOError as RErr
+        from .const import ER_Param
+        from .error import REPOError as RErr
 
         # Must be a valid parameter name
         if not param in ER_Param.E:
@@ -436,7 +436,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from orca_error import REPOError
+        from .error import REPOError
 
         # Try to get the param; pass along all errors, except 'data' error
         #  from REPOError
@@ -460,7 +460,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from orca_error import REPOError as RErr
+        from .error import REPOError as RErr
 
         # Get the return value from the dataset, complaining if repo not
         #  bound. Using 'require_dataset' since any repo w/o a defined
@@ -510,8 +510,8 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from orca_xyz import ORCA_XYZ as XYZ
-        from orca_const import ER_Param, ER_Data
+        from .xyz import OPAN_XYZ as XYZ
+        from .const import ER_Param, ER_Data
 
         # Generate XYZ and return
         out_XYZ = XYZ(atom_syms=self.get_param(ER_Param.atoms), \
