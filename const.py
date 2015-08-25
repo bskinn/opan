@@ -175,6 +175,37 @@ class E_TopType(object):
 ## end class E_TopType
 
 
+class E_Software(object):
+    """ #DOC: Docstring for E_Software
+
+    """
+
+    ORCA = 'ORCA'
+
+    E = frozenset([
+        ORCA
+        ])
+
+## end class E_Software
+
+
+class E_FileType(object):
+    """ #DOC: Docstring for E_FileType
+    """
+
+    xyz = 'xyz'
+    grad = 'grad'
+    hess = 'hess'
+
+    E = frozenset([
+        xyz,
+        grad,
+        hess
+        ])
+
+## end class E_FileType
+
+
 class ER_Data(object):
     """ Enumeration class for datatypes in HDF5 repository.
 
@@ -288,7 +319,7 @@ class EU_RotConst(object):
         WaveNumCM
         ])
 
-## end class
+## end class EU_RotConst
 
 
 class CIC(object):
@@ -303,6 +334,8 @@ class CIC(object):
     Unsupported_Atomic_Number = "INVALID"
     Max_Atomic_Num = 103
     Min_Atomic_Num = 1
+
+## end class CIC
 
 
 class PHYS(object):
@@ -343,7 +376,12 @@ class DEF(object):
     Symm_Match_nMax = 10 (initial order of symmetry rotation to test for)
     Symm_Avg_Max = 2 (maximum order of atom averaging when looking for
                         possible axes of rotational symmetry)
+    File_Extensions (dictionary of dictionaries of file extensions for
+                geom, gradient, and hessian files from the various softwares;
+                access as F_E[E_Software][E_FileType])
     """
+
+    from .const import E_Software as E_SW, E_FileType as E_FT
 
     Mass_Perturbation_Magnitude = 1e-4
     Moment_Tol = 1e-4
@@ -356,6 +394,16 @@ class DEF(object):
     Symm_AtWt_Round_Digits = 4
     Symm_Match_nMax = 10
     Symm_Avg_Max = 2
+
+    File_Extensions = {
+            E_SW.ORCA :
+                { E_FT.grad : 'engrad',
+                    E_FT.hess : 'hess',
+                    E_FT.xyz : 'xyz'
+                    }
+            }
+
+## end class DEF
 
 
 class PRM(object):

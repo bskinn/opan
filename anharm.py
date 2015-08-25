@@ -25,14 +25,16 @@ class ORCA_ANHARM(object):
     """ #DOC: ORCA_ANHARM class-level docstring
     """
 
+    # Imports
+    from .const import E_Software
 
     def __init__(self):
         """ #DOC: ORCA_ANHARM.__init__ docstring (if needed)?
         """
 
-        # Declare the holding variables for the XYZ, ENGRAD, HESS
+        # Declare the holding variables for the XYZ, GRAD, HESS
         self.w_xyz = None
-        self.w_engrad = None
+        self.w_grad = None
         self.w_hess = None
 
         # Declare the holding variable for the repo
@@ -43,23 +45,26 @@ class ORCA_ANHARM(object):
 
     def new_from_files(self, basepath, basename, repo, \
                     bohrs=False, \
-                    xyz_ext='xyz', \
-                    engrad_ext='engrad', \
-                    hess_ext='hess',\
-                    repo_clobber=False):
+                    software=E_Software.ORCA, \
+                    repo_clobber=False, **kwargs):
         """ #DOC: new_from_files docstring
-
+                    xyz_ext='xyz', \
+                    grad_ext='engrad', \
+                    hess_ext='hess', \
+                    kwargs
         """
 
         # Imports
         import os
         from os import path as osp
-        from orca_xyz import ORCA_XYZ as OX
-        from orca_engrad import ORCA_ENGRAD as OE
-        from orca_hess import ORCA_HESS as OH
-        from orca_repo import ORCA_REPO as OR
-        from orca_const import E_DispDirection as E_DDir
-        from orca_error import ANHARMError as ANHErr
+        from .xyz import OPAN_XYZ as OX
+        from .grad import ORCA_ENGRAD as OE
+        from .hess import ORCA_HESS as OH
+        from .repo import OPAN_REPO as OR
+        from .const import E_DispDirection as E_DDir, E_FileType as E_FT
+        from .const import E_Software as E_SW
+        from .const import DEF
+        from .error import ANHARMError as ANHErr
 
 ##        # Store working directory for restore?
 ##        prev_dir = os.getcwd()
@@ -70,9 +75,9 @@ class ORCA_ANHARM(object):
                     "XYZ object is already bound", \
                     ""))
         ## end if
-        if not self.w_engrad == None:
+        if not self.w_grad == None:
             raise(ANHErr(ANHErr.status, \
-                    "ENGRAD object is already bound", \
+                    "GRAD object is already bound", \
                     ""))
         ## end if
         if not self.w_hess == None:
@@ -89,7 +94,7 @@ class ORCA_ANHARM(object):
         # Load the three data files
         self.w_xyz = OX( osp.join(basepath, \
                 basename + osp.extsep + xyz_ext) )
-        self.w_engrad = OE( osp.join(basepath, \
+        self.w_grad = OE( osp.join(basepath, \
                 basename + osp.extsep + engrad_ext), \
                 0, E_DDir.NoDisp, 0.0 )
         self.w_hess = OH( osp.join(basepath, \
