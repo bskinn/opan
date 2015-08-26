@@ -21,7 +21,7 @@
 from __future__ import absolute_import
 
 __all__ = ['const', 'error', 'utils', 'xyz', 'repo', 'grad', 'hess', \
-        'output', 'anharm', 'tests']
+        'output', 'anharm']
 
 from . import *
 
