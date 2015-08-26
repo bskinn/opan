@@ -91,6 +91,8 @@ class ORCA_ANHARM(object):
                     ""))
         ## end if
 
+        # RESUME: anharm--factor for loading from different software pkgs
+
         # Load the three data files
         self.w_xyz = OX( osp.join(basepath, \
                 basename + osp.extsep + xyz_ext) )
@@ -136,8 +138,9 @@ class ORCA_ANHARM(object):
         # Should be good to create the repo
         self.repo = OR(repo)
 
-        # Store the geometry
+        # Store the geometry info, grad, and Hessian to the repo
 
+        # Think that's all here?
 
     ## end def new_from_files
 
