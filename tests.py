@@ -31,7 +31,7 @@ class SuperORCAEngrad(unittest.TestCase):
     from textwrap import dedent
     import numpy as np
 
-    # Class variables
+    # Superclass constants
     testdir = 'orca_test_dir'
     file_name = 'test.engrad'
     file_text_good = dedent("""\
@@ -74,11 +74,16 @@ class SuperORCAEngrad(unittest.TestCase):
         E = frozenset([numats, energy, grad, geom])
 
     bad_block_substs = {
-            'numats': ('umber of', 'asdlkjf'),
-            'energy': ('urrent total en', 'alksdjfdsflkj'),
-            'grad': ('urrent gradient', 'asdlkjsdf'),
-            'geom': ('atomic numbers and current', 'asldkjfas;ldkfj')
+            blocknames.numats: ('umber of', 'asdlkjf'),
+            blocknames.energy: ('urrent total en', 'alksdjfdsflkj'),
+            blocknames.grad: ('Eh/bohr', 'asdlkjsdf'),
+            blocknames.geom: ('inates in Bohr', 'asldkjfas;ldkfj')
                         }
+
+    trunc_block_substs = {
+            blocknames.grad: ('-0.000007912155', '#-0.000007912155'),
+            blocknames.geom: ('1     2.6798241', '#1     2.6798241')
+                            }
 
     atoms = np.array([['CU'],['O'],['H'],['H']])
     gradient = np.matrix([0.000004637000, 0.000001922807, 0.000002366827, \
@@ -90,6 +95,8 @@ class SuperORCAEngrad(unittest.TestCase):
                             1.8640436, 0.3660366, 0.3660223, \
                             2.6798241, 1.9892213, -0.1622520, \
                             2.6798521, -0.1622023, 1.9892043]).transpose()
+
+## end class SuperORCAEngrad
 
 
 class TestORCAEngradKnownGood(SuperORCAEngrad):
@@ -191,11 +198,10 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         os.chdir(self.testdir)
 
         # Write the files
-        for bname in self.blocknames.E:
+        for bname in self.bad_block_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good.replace \
-                                            (*self.bad_block_substs[bname]))
-
+                f.write(self.file_text_good \
+                                    .replace(*self.bad_block_substs[bname]))
 
     @classmethod
     def tearDownClass(self):
@@ -204,7 +210,8 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in self.blocknames.E]
+        [os.remove(self.file_name + bname) for bname in \
+                                            self.bad_block_substs.keys()]
 
         # Switch to parent directory
         os.chdir(os.path.pardir)
@@ -217,19 +224,95 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        # Munged number-of-atoms block
-        self.assertRaises(GRADError, ORCA_ENGRAD, \
-                                    self.file_name + self.blocknames.numats)
-        # Ensure correct typecode; suppress repeated error
-        try:
-            oe = ORCA_ENGRAD(self.file_name + self.blocknames.numats)
-        except GRADError as ge:
-            self.assertEqual(ge.tc, GRADError.numats)
-        except:
-            pass
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.numats, self.file_name + self.blocknames.numats)
+
+    def test_ENGRAD_MissingBlockEnergy(self):
+
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.en, self.file_name + self.blocknames.energy)
+
+    def test_ENGRAD_MissingBlockGrad(self):
+
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.gradblock, self.file_name + self.blocknames.grad)
+
+    def test_ENGRAD_MissingBlockGeom(self):
+
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.geomblock, self.file_name + self.blocknames.geom)
+
+## end def TestORCAEngradMissingBlocks
 
 
-## end def TestORCAEngradMungeGrad
+class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
+    # Ensuring importing a file with incomplete grad or geom block throws
+    #  the right errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        import os
+
+        # Check if test directory already exists (or file of same name);
+        #  error if so
+        if os.path.isdir(self.testdir) or os.path.isfile(self.testdir):
+            raise(IOError("Cannot create new test directory!"))
+
+        # Create and change to test directory
+        os.mkdir(self.testdir)
+        os.chdir(self.testdir)
+
+        # Write the files
+        for bname in self.trunc_block_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.trunc_block_substs[bname]))
+
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + bname) for bname in \
+                                        self.trunc_block_substs.keys()]
+
+        # Switch to parent directory
+        os.chdir(os.path.pardir)
+
+        # Try to remove the temp directory
+        os.rmdir(self.testdir)
+
+    def test_ENGRAD_TruncatedBlockGrad(self):
+
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.gradblock, self.file_name + self.blocknames.grad)
+
+    def test_ENGRAD_TruncatedBlockGeom(self):
+
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.geomblock, self.file_name + self.blocknames.geom)
+
+## end class TestORCAEngradTruncatedBlocks
 
 
 # ============================  ORCA_ERROR ================================== #
@@ -237,7 +320,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
 class TestOPANErrorInitErrors(unittest.TestCase):
     # Testing errors that should be thrown on initialization
 
-    def test_ORCAError_init_NotImplemented(self):
+    def test_OPANError_init_NotImplemented(self):
         # Must import
         from opan.error import OPANError
 
@@ -252,6 +335,9 @@ class TestOPANErrorInitErrors(unittest.TestCase):
         # Confirm KeyError raised when invalid typecode passed
         self.assertRaises(KeyError, XYZError, \
                     "INVALID TYPECODE", "msg", "src")
+
+## end class TestOPANErrorInitErrors
+
 
 class TestXYZErrorInitConfig(unittest.TestCase):
     # XYZError used as a representative OPANError subclass
@@ -283,7 +369,53 @@ class TestXYZErrorInitConfig(unittest.TestCase):
         from opan.error import XYZError as XE
         self.assertEqual(XE(self.tc, self.msg, self.src).src, self.src)
 
+## end class TestXYZErrorInitConfig
+
+
+def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
+    """ Wrapper for asserting correct OPANErrors and proper typecodes.
+
+    Function tests (using testclass.assertX methods) whether 'cobj' raises
+    'errtype' with typecode 'tc' when instantiated/called with *args and
+    **kwargs.
+
+    Parameters
+    ----------
+    testclass   : object reference
+        Subclass of unittest.TestCase (or related), from which the .assertX
+        methods should be called
+    errtype     : object reference
+        Subclass of OPANError expected to be raised
+    cobj        : object reference
+        Callable object to be instantiated or called
+    tc          : str / typecode "enum"
+        Typecode to check for
+    *args and **kwargs are passed to the instantiation of 'cobj'
+
+    Returns
+    -------
+    (none)
+
+    """
+
+    # Assert the proper error
+    testclass.assertRaises(errtype, cobj, *args, **kwargs)
+
+    # Ensure correct typecode; suppress repeated error
+    try:
+        out = cobj(*args, **kwargs)
+    except errtype as err:
+        testclass.assertEqual(err.tc, tc)
+    except:
+        pass
+
+## end def assertErrorAndTypecode
 
 
 if __name__ == '__main__':
+
+    # Run test package, default verbose. Can override with '-q' at
+    #  commandline
     unittest.main(verbosity=2)
+
+## end main block
