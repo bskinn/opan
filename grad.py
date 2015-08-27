@@ -114,7 +114,7 @@ class ORCA_ENGRAD(object):
     Number\\ of\\ atoms     # Find the key text
     .*\\n                   # All else from key text line, to newline
     \\#.*\\n                # Another comment line w/pound
-    [^\\d]*                 # Series of possible non-digit characters
+    [ ]*                    # Series of possible spaces
     (?P<num>\\d+)           # Actual number of atoms
     .*\\n                   # All else to newline
     \\#                     # Pound to start the next line
@@ -128,7 +128,7 @@ class ORCA_ENGRAD(object):
     current\\ total\\ energy\\ in\\ Eh  # Key text
     .*\\n                               # Clear to newline
     \\#.*\\n                            # Blank comment line
-    [^0-9-]*                            # Series of non-value chars
+    [ ]*                                # Series of spaces
     (?P<en>[-]?[0-9]+\\.[0-9]+)         # Energy value
     .*\\n                               # Clear to newline
     \\#                                 # Pound to start the next line
@@ -141,7 +141,7 @@ class ORCA_ENGRAD(object):
     .*\\n                               # Clear to newline
     \\#.*\\n                            # Blank comment line
     (?P<block>                          # Retrieving the whole grad block here
-        ([^0-9.-]*[0-9.-]+.*\\n)+       # Grad block entries
+        ([ ]*[0-9.-]+[ ]*\\n)+          # Grad block entries
     )                                   # Close the whole grad block
     \\#                                 # Pound to signify end of block
     """, re.I | re.X)
