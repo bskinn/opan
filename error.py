@@ -101,6 +101,7 @@ class OPANError(Exception):
         if not (
                     isinstance(self, XYZError) or \
                     isinstance(self, GRADError) or \
+                    isinstance(self, HESSError) or \
                     isinstance(self, OUTPUTError) or \
                     isinstance(self, SYMMError) or \
                     isinstance(self, REPOError) or \
