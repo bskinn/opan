@@ -73,6 +73,10 @@ class SuperORCAEngrad(unittest.TestCase):
         geom = 'geom'
         E = frozenset([numats, energy, grad, geom])
 
+    class datanames(object):
+        atomicnum = 'atomicnum'
+        E = frozenset([atomicnum])
+
     bad_block_substs = {
             blocknames.numats: ('umber of', 'asdlkjf'),
             blocknames.energy: ('urrent total en', 'alksdjfdsflkj'),
@@ -85,7 +89,9 @@ class SuperORCAEngrad(unittest.TestCase):
             blocknames.geom: ('1     2.6798241', '#1     2.6798241')
                             }
 
-    bad_atom_subst = (' 29    -1.5545432', '229    -1.5545432')
+    bad_data_substs = {
+            datanames.atomicnum: (' 29    -1.5545432', '229    -1.5545432')
+                        }
 
     atoms = np.array([['CU'],['O'],['H'],['H']])
     gradient = np.matrix([0.000004637000, 0.000001922807, 0.000002366827, \
@@ -106,16 +112,9 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
 
     @classmethod
     def setUpClass(self):
-        import os
 
-        # Check if test directory already exists (or file of same name);
-        #  error if so
-        if os.path.isdir(self.testdir) or os.path.isfile(self.testdir):
-            raise(IOError("Cannot create new test directory!"))
-
-        # Create and change to test directory
-        os.mkdir(self.testdir)
-        os.chdir(self.testdir)
+        # Set up the directory
+        setUpTestDir(self.testdir)
 
         # Write the file
         with open(self.file_name, 'w') as f:
@@ -129,11 +128,8 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         # Delete the engrad file
         os.remove(self.file_name)
 
-        # Switch to parent directory
-        os.chdir(os.path.pardir)
-
-        # Try to remove the temp directory
-        os.rmdir(self.testdir)
+        # Remove the working directory
+        tearDownTestDir(self.testdir)
 
     def setUp(self):
         # Load the object
@@ -188,16 +184,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
     def setUpClass(self):
         # Set up the directory and add munged files
 
-        import os
-
-        # Check if test directory already exists (or file of same name);
-        #  error if so
-        if os.path.isdir(self.testdir) or os.path.isfile(self.testdir):
-            raise(IOError("Cannot create new test directory!"))
-
-        # Create and change to test directory
-        os.mkdir(self.testdir)
-        os.chdir(self.testdir)
+        setUpTestDir(self.testdir)
 
         # Write the files
         for bname in self.bad_block_substs.keys():
@@ -215,11 +202,8 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         [os.remove(self.file_name + bname) for bname in \
                                             self.bad_block_substs.keys()]
 
-        # Switch to parent directory
-        os.chdir(os.path.pardir)
-
-        # Try to remove the temp directory
-        os.rmdir(self.testdir)
+        # Remove the directory
+        tearDownTestDir(self.testdir)
 
     def test_ENGRAD_MissingBlockNumAts(self):
 
@@ -264,16 +248,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
     def setUpClass(self):
         # Set up the directory and add munged files
 
-        import os
-
-        # Check if test directory already exists (or file of same name);
-        #  error if so
-        if os.path.isdir(self.testdir) or os.path.isfile(self.testdir):
-            raise(IOError("Cannot create new test directory!"))
-
-        # Create and change to test directory
-        os.mkdir(self.testdir)
-        os.chdir(self.testdir)
+        setUpTestDir(self.testdir)
 
         # Write the files
         for bname in self.trunc_block_substs.keys():
@@ -292,11 +267,8 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         [os.remove(self.file_name + bname) for bname in \
                                         self.trunc_block_substs.keys()]
 
-        # Switch to parent directory
-        os.chdir(os.path.pardir)
-
-        # Try to remove the temp directory
-        os.rmdir(self.testdir)
+        # Try to remove the directory
+        tearDownTestDir(self.testdir)
 
     def test_ENGRAD_TruncatedBlockGrad(self):
 
@@ -316,7 +288,48 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
 
 ## end class TestORCAEngradTruncatedBlocks
 
-#TODO: Test for invalid atomic number in geom block
+
+class TestORCAEngradBadData(SuperORCAEngrad):
+    # Ensuring files with valid formatting but invalid data raise errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        # Create the test directory
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for dname in self.bad_data_substs.keys():
+            with open(self.file_name + dname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.bad_data_substs[dname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Tear down test directory and remove files
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + dname) for dname in \
+                                            self.bad_data_substs.keys()]
+
+        # Remove the test directory
+        tearDownTestDir(self.testdir)
+
+
+    def test_ENGRAD_BadDataAtomicNum(self):
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.geomblock, self.file_name \
+                                        + self.datanames.atomicnum)
+
+## end class TestORCAEngradBadData
+
+
 
 # ============================  ORCA_ERROR ================================== #
 
@@ -559,6 +572,27 @@ class SuperORCAHess(unittest.TestCase):
                             2.6798521, -0.1622023, 1.9892043]).transpose()
     masses = np.matrix([63.55, 15.999, 1.008, 1.008]).transpose()
 
+    class names(object):
+        hess = 'hess'
+        hessdim = 'hessdim'
+        geom = 'geom'
+        E = frozenset([hess, hessdim, geom])
+
+    bad_block_substs = {
+            names.hess : ('$hessian', '$harshman'),
+            names.geom : ('$atoms', '$martians')
+                        }
+
+    trunc_block_substs = {
+            names.hess: ('1      -0.008875   0.003677', 'gabrab'),
+            names.geom: ('O     15.9990      1.864044', 'gaffraf')
+                            }
+
+    bad_data_substs = {
+            names.hessdim : ('$hessian\n12', '$hessian\n30')
+                        }
+
+
 ## end class SuperORCAHess
 
 
@@ -567,16 +601,8 @@ class TestORCAHessKnownGood(SuperORCAHess):
 
     @classmethod
     def setUpClass(self):
-        import os
 
-        # Check if test directory already exists (or file of same name);
-        #  error if so
-        if os.path.isdir(self.testdir) or os.path.isfile(self.testdir):
-            raise(IOError("Cannot create new test directory!"))
-
-        # Create and change to test directory
-        os.mkdir(self.testdir)
-        os.chdir(self.testdir)
+        setUpTestDir(self.testdir)
 
         # Write the file
         with open(self.file_name, 'w') as f:
@@ -590,11 +616,8 @@ class TestORCAHessKnownGood(SuperORCAHess):
         # Delete the hess file
         os.remove(self.file_name)
 
-        # Switch to parent directory
-        os.chdir(os.path.pardir)
-
-        # Try to remove the temp directory
-        os.rmdir(self.testdir)
+        # Remove the test directory
+        tearDownTestDir(self.testdir)
 
     def setUp(self):
         # Load the object
@@ -650,7 +673,96 @@ class TestORCAHessKnownGood(SuperORCAHess):
 
 ## end class TestORCAEngradKnownGood
 
-#RESUME: MissingBlock, TruncBlock, invalid atom tests
+
+class TestORCAHessMissingBlocks(SuperORCAHess):
+    # Ensuring importing a non-HESS file throws the right errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for bname in self.bad_block_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.bad_block_substs[bname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + bname) for bname in \
+                                            self.bad_block_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_HESS_MissingBlockHess(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.hess_block, self.file_name + \
+                    self.names.hess)
+
+    def test_HESS_MissingBlockGeom(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.at_block, self.file_name + \
+                    self.names.geom)
+
+
+## end class TestORCAHessMissingBlocks
+
+
+class TestORCAHessTruncatedBlocks(SuperORCAHess):
+    # Ensuring importing a HESS file with an incomplete block throws the
+    #       right errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for bname in self.trunc_block_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.trunc_block_substs[bname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + bname) for bname in \
+                                            self.trunc_block_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_HESS_TruncatedBlocksHess(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.hess_block, self.file_name + self.names.hess)
+
+#RESUME: Complete TruncatedBlock tests; do BadData (invalid atom, block
+# size spec mismatch, etc.)
 
 # ==========================  Helper Functions  ============================= #
 
@@ -692,6 +804,45 @@ def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
         pass
 
 ## end def assertErrorAndTypecode
+
+
+def setUpTestDir(dirname):
+    """ Create and change working directory to test directory.
+
+    Parameters
+    ----------
+    dirname : str
+        Name of desired working directory
+    """
+
+    import os
+
+    # Check if test directory already exists (or file of same name);
+    #  error if so
+    if os.path.isdir(dirname) or os.path.isfile(dirname):
+        raise(IOError("Cannot create new test directory!"))
+
+    # Create and change to test directory
+    os.mkdir(dirname)
+    os.chdir(dirname)
+
+
+def tearDownTestDir(dirname):
+    """ Exit and attempt removal of test directory
+
+    Parameters
+    ----------
+    dirname: str
+        Name of working directory
+    """
+
+    import os
+
+    # Switch to parent directory
+    os.chdir(os.path.pardir)
+
+    # Try to remove the temp directory
+    os.rmdir(dirname)
 
 
 if __name__ == '__main__':
