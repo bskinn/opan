@@ -311,6 +311,9 @@ class ORCA_HESS(object):
         # Initialize the column offset for populating the Hessian
         col_offset = 0
 
+        # Initialize the counter for the number of row sections imported
+        rows_counter = 0
+
         # Loop through the subsections of the Hessian
         for m_hess_sec in ORCA_HESS.p_hess_sec \
                                     .finditer(m_hess_block.group("block")):
@@ -333,10 +336,16 @@ class ORCA_HESS(object):
                     ## end if
                 ## next i
 
+                # Increment the row-read counter
+                rows_counter += 1
+
+            ## next m_hess_line
+
             # Last thing is to increment the offset by six. Don't have to
             #  worry about offsetting for a section only three columns wide
             #  because that SHOULD only ever occur at the last section
             col_offset += 6
+
         ## next m_hess_sec
 
         # Check to ensure that the column offset is high enough to have
@@ -347,6 +356,14 @@ class ORCA_HESS(object):
             raise(HESSError(HESSError.hess_block, "Insufficient number of " + \
                     "HESS sections found", \
                     "HESS File: " + HESS_path))
+        ## end if
+
+        # Additional cross-check on number of rows imported
+        if (rows_counter % (3*self.num_ats)) != 0:
+            # Not the right number of rows; complain
+            raise(HESSError(HESSError.hess_block, \
+                        "Hessian row count mismatch", \
+                        "HESS File: " + HESS_path))
         ## end if
 
         # Set initialization flag; probably unnecessary?
