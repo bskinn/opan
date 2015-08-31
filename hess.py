@@ -191,8 +191,7 @@ class ORCA_HESS(object):
         Raises
         ------
         HESSError   : If indicated Hessian file is malformed in some fashion
-        ValueError  : If displacement mode, direction or magnitude are invalid
-        TypeError   : If any displacement flag is of an incorrect type
+        KeyError    : If invalid atomic symbol appears in .hess file
         IOError     : If the indicated file does not exist or cannot be read
         """
 
