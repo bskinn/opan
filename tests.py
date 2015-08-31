@@ -66,31 +66,29 @@ class SuperORCAEngrad(unittest.TestCase):
            1     2.6798241    1.9892213   -0.1622520
            1     2.6798521   -0.1622023    1.9892043
         """)
-    class blocknames(object):
+    class names(object):
         numats = 'numats'
         energy = 'energy'
         grad = 'grad'
         geom = 'geom'
-        E = frozenset([numats, energy, grad, geom])
-
-    class datanames(object):
         atomicnum = 'atomicnum'
-        E = frozenset([atomicnum])
+        E = frozenset([numats, energy, grad, geom, atomicnum])
 
     bad_block_substs = {
-            blocknames.numats: ('umber of', 'asdlkjf'),
-            blocknames.energy: ('urrent total en', 'alksdjfdsflkj'),
-            blocknames.grad: ('Eh/bohr', 'asdlkjsdf'),
-            blocknames.geom: ('inates in Bohr', 'asldkjfas;ldkfj')
+            names.numats: ('umber of', 'asdlkjf'),
+            names.energy: ('urrent total en', 'alksdjfdsflkj'),
+            names.grad: ('Eh/bohr', 'asdlkjsdf'),
+            names.geom: ('inates in Bohr', 'asldkjfas;ldkfj')
                         }
 
     trunc_block_substs = {
-            blocknames.grad: ('-0.000007912155', '#-0.000007912155'),
-            blocknames.geom: ('1     2.6798241', '#1     2.6798241')
+            names.grad: ('-0.000007912155', '#-0.000007912155'),
+            names.geom: ('1     2.6798241', '#1     2.6798241')
                             }
 
     bad_data_substs = {
-            datanames.atomicnum: (' 29    -1.5545432', '229    -1.5545432')
+            names.numats: ('of atoms\n#\n 4', 'of atoms\n#\n 8'),
+            names.atomicnum: (' 29    -1.5545432', '229    -1.5545432')
                         }
 
     atoms = np.array([['CU'],['O'],['H'],['H']])
@@ -211,7 +209,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.numats, self.file_name + self.blocknames.numats)
+                    GRADError.numats, self.file_name + self.names.numats)
 
     def test_ENGRAD_MissingBlockEnergy(self):
 
@@ -219,7 +217,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.en, self.file_name + self.blocknames.energy)
+                    GRADError.en, self.file_name + self.names.energy)
 
     def test_ENGRAD_MissingBlockGrad(self):
 
@@ -227,7 +225,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.gradblock, self.file_name + self.blocknames.grad)
+                    GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_MissingBlockGeom(self):
 
@@ -235,7 +233,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.geomblock, self.file_name + self.blocknames.geom)
+                    GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end def TestORCAEngradMissingBlocks
 
@@ -276,7 +274,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.gradblock, self.file_name + self.blocknames.grad)
+                    GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_TruncatedBlockGeom(self):
 
@@ -284,7 +282,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.grad import ORCA_ENGRAD
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.geomblock, self.file_name + self.blocknames.geom)
+                    GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end class TestORCAEngradTruncatedBlocks
 
@@ -325,7 +323,15 @@ class TestORCAEngradBadData(SuperORCAEngrad):
 
         assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
                     GRADError.geomblock, self.file_name \
-                                        + self.datanames.atomicnum)
+                                        + self.names.atomicnum)
+
+    def test_ENGRAD_BadDataNumAtoms(self):
+        from opan.error import GRADError
+        from opan.grad import ORCA_ENGRAD
+
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+                    GRADError.gradblock, self.file_name \
+                                        + self.names.numats)
 
 ## end class TestORCAEngradBadData
 
@@ -576,7 +582,8 @@ class SuperORCAHess(unittest.TestCase):
         hess = 'hess'
         hessdim = 'hessdim'
         geom = 'geom'
-        E = frozenset([hess, hessdim, geom])
+        atsym = 'atsym'
+        E = frozenset([hess, hessdim, geom, atsym])
 
     bad_block_substs = {
             names.hess : ('$hessian', '$harshman'),
@@ -589,9 +596,10 @@ class SuperORCAHess(unittest.TestCase):
                             }
 
     bad_data_substs = {
-            names.hessdim : ('$hessian\n12', '$hessian\n30')
+            names.hessdim : ('$hessian\n12', '$hessian\n30'),
+            names.atsym : ('Cu    63.5500     -1.554543', \
+                                    'Cx    63.5500     -1.554543')
                         }
-
 
 ## end class SuperORCAHess
 
@@ -761,8 +769,64 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.hess_block, self.file_name + self.names.hess)
 
-#RESUME: Complete TruncatedBlock tests; do BadData (invalid atom, block
-# size spec mismatch, etc.)
+    def test_HESS_TruncatedBlocksGeom(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.at_block, self.file_name + self.names.geom)
+
+## end class TestORCAHessTruncatedBlocks
+
+
+class TestORCAHessBadData(SuperORCAHess):
+    # Ensuring importing a HESS file with data of valid formatting but
+    #  invalid content raises the appropriate errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for dname in self.bad_data_substs.keys():
+            with open(self.file_name + dname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.bad_data_substs[dname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + dname) for dname in \
+                                            self.bad_data_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_HESS_BadDataHessDim(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.hess_block, self.file_name + self.names.hessdim)
+
+    def test_HESS_BadDataAtomSym(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        self.assertRaises(KeyError, ORCA_HESS, \
+                                    self.file_name + self.names.atsym)
+
+## end class TestORCAHessBadData
+
 
 # ==========================  Helper Functions  ============================= #
 
