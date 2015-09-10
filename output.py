@@ -67,6 +67,10 @@ class ORCA_OUTPUT(object):
             THERMO.TS_VIB   : Vibrational T*S contribution (Eh)
             THERMO.TS_TRANS : Translational T*S contribution (Eh)
             THERMO.QROT     : Rotational partition function (unitless)
+        p_spincont  : Spin contamination block values. Keys:
+            SPINCONT.ACTUAL : Calculated <S**2> expectation value
+            SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
+            SPINCONT.DEV    : Deviation (calc - ideal)
 
     str constants for keys of above 'dict struct' variables are also defined,
         as class variables.  For example, to retrieve the Regex pattern for
@@ -98,6 +102,10 @@ class ORCA_OUTPUT(object):
         are those of p_thermo, above.
         #TODO: ORCA_OUTPUT.thermo: Test on single-atom case, update above
         #       documentation to reflect outcome
+    spincont    : dict of np.float64
+        Lists of the various Values from the spin contamination calculations
+        in the output, if present. Empty lists if absent. Dict keys are those
+        of p_spincont, above.
     thermo_block : str
         Full text of the thermochemistry block, if found.
 
@@ -372,6 +380,8 @@ class ORCA_OUTPUT(object):
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
 
+    #RESUME: Make patterns and constants for the virial block; update docstrings
+
     ## end class variables
 
     def __init__(self, output_src, src_type="file"):
@@ -385,6 +395,7 @@ class ORCA_OUTPUT(object):
         Available data includes:
             SCF energies (incl D3, gCP, COSMO outlying charge corrections)
             Thermochemistry
+            Spin expectation values (actual, ideal, and deviation)
 
         Success indicators include:
             completed : Checks for the 'ORCA TERMINATED NORMALLY' report at the
@@ -467,23 +478,23 @@ class ORCA_OUTPUT(object):
 
         # Calculate just the outlying charge correction, if COSMO enabled,
         #  and then calculate the SCFFINAL result including the OCC.
-        if not self.en[self.EN_SCFOCC] == []:
-            self.en.update({ self.EN_OCC :
+        if not self.en[self.EN.SCFOCC] == []:
+            self.en.update({ self.EN.OCC :
                     [t[0] - (t[1] - t[2] - t[3]) for t in
                     pack_tups(
-                        self.en[self.EN_SCFOCC],
-                        self.en[self.EN_SCFFINAL],
-                        self.en[self.EN_D3] if self.en[self.EN_D3] <> []
+                        self.en[self.EN.SCFOCC],
+                        self.en[self.EN.SCFFINAL],
+                        self.en[self.EN.D3] if self.en[self.EN.D3] != []
                                                                 else 0,
-                        self.en[self.EN_GCP] if self.en[self.EN_GCP] <> []
+                        self.en[self.EN.GCP] if self.en[self.EN.GCP] != []
                                                                 else 0
                               )
                     ]       })
-            self.en.update({ self.EN_SCFFINALOCC :
+            self.en.update({ self.EN.SCFFINALOCC :
                     [t[0] + t[1] for t in
                     pack_tups( # Could use zip() here, probably
-                        self.en[self.EN_SCFFINAL],
-                        self.en[self.EN_OCC]
+                        self.en[self.EN.SCFFINAL],
+                        self.en[self.EN.OCC]
                               )
                     ]       })
         ##end if
@@ -492,7 +503,7 @@ class ORCA_OUTPUT(object):
         # Just store the whole thermo block
         try:
             self.thermo_block = \
-                    self.p_thermo[self.THERMO_BLOCK].search(datastr).group()
+                    self.p_thermo[self.THERMO.BLOCK].search(datastr).group()
         except AttributeError:
             # Block not found; store as None
             self.thermo_block = None
@@ -504,7 +515,7 @@ class ORCA_OUTPUT(object):
 
             # Iterate to pull the individual values
             for (k,p) in self.p_thermo.iteritems():
-                if k <> self.THERMO_BLOCK:
+                if k != self.THERMO.BLOCK:
                     try:
                         self.thermo.update({ k : \
                                     scast(p.search(datastr) \
@@ -532,7 +543,20 @@ class ORCA_OUTPUT(object):
             self.dipmoms.append(scast(m.group(ORCA_OUTPUT.P_GROUP), np.float_))
         ## next m
 
-        #RESUME: Pull the spin contamination info (may be absent)
+        # Initialize the spin contamination dict as empty
+        self.spincont = dict()
+
+        # Populate with the Regex-retrieved values.
+        #  If any are not found, this will store as an empty list.
+        for (k,p) in self.p_spincont.iteritems():
+            self.spincont.update({ k :
+                    [scast(m.group(self.P_GROUP), np.float_) for m in
+                        p.finditer(datastr)] })
+        ##next (k,p)
+
+        #RESUME: Pull the virial block info (may be absent)
+
+    ## end def __init__
 
 
     def en_last(self):
@@ -565,11 +589,13 @@ class ORCA_OUTPUT(object):
 
         # Iterate and store
         for (k,l) in self.en.items():
-            last_ens.update({ k : l[-1] if l <> [] else None })
+            last_ens.update({ k : l[-1] if l != [] else None })
         ##next (k,l)
 
         # Should be ready to return?
         return last_ens
+
+    ## end def en_last
 
 
 if __name__ == '__main__':
