@@ -301,15 +301,18 @@ class HESSError(OPANError):
         typecodes: dict
             at_block    : Malformed or missing atom specification block.
             hess_block  : Malformed or missing Hessian block
+            freq_block  : Malformed or missing frequencies block
 
     """
 
     # Typecodes as class-level variables, collected into frozenset
     at_block = "at_block"
     hess_block = "hess_block"
+    freq_block = "freq_block"
     typecodes = frozenset([
             at_block,
-            hess_block
+            hess_block,
+            freq_block
             ])
 
 ## end class HESSError

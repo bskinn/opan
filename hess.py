@@ -57,6 +57,12 @@ class ORCA_HESS(object):
         RegEx for the entire block of atom ID & weight, and geom data.
     p_at_line       : re.compile() pattern
         RegEx for individual lines within the atom specification block
+    p_energy        : re.compile() pattern
+        RegEx for the energy reported in the .hess file
+    p_freq_block    : re.compile() pattern
+        RegEx for the entire vibrational frequencies block (cm**-1 units)
+    p_freq_line     : re.compile() pattern
+        RegEx for each line of the frequencies block
     p_hess_block    : re.compile() pattern
         RegEx for entire Hessian block
     p_hess_sec      : re.compile() pattern
@@ -70,6 +76,10 @@ class ORCA_HESS(object):
         Column vector of atom masses as reported in HESS
     atom_syms       : N x 1 np.str
         Column vector of uppercase atomic symbols
+    energy          : float
+        Energy reported in the Hessian file
+    freqs           : 3N x 1 np.float_
+        Vibrational frequencies (cm**-1) as reported in the Hessian file
     geom            : 3N x 1 np.float_
         Column vector of geometry [x1, y1, z1, x2, y2, ...]
     hess            : 3N x 3N np.float_
@@ -171,6 +181,28 @@ class ORCA_HESS(object):
     .*$                             # Whatever to end of line
     """, re.I | re.M | re.X)
 
+    # Reported energy
+    p_energy = re.compile("""
+    \\$act_energy[ ]*\\n                    # Label for the block
+    [ ]+(?P<en>[0-9.-]+)[ ]*\\n             # Energy value
+    """, re.I | re.X)
+
+    # Frequencies block
+    p_freq_block = re.compile("""
+    \\$vibrational_frequencies[ ]*\\n       # Block label
+    [ ]*(?P<num>[0-9]+)[ ]*\\n              #--> Number of frequencies
+    (?P<block>                              # Open capture group for block
+        ([ ]+[0-9]+[ ]+[0-9.-]+[ ]*\\n)+    #--> Block contents
+    )                                       # Close capture group
+    """, re.I | re.X)
+
+    p_freq_line = re.compile("""
+    ^[ ]+(?P<id>[0-9]+)                     #--> ID for the frequency
+    [ ]+(?P<freq>[0-9.-]+)                  #--> Freq value in cm**-1
+    [ ]*$                                   # To EOL
+    """, re.I | re.M | re.X)
+
+
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
 
@@ -225,6 +257,11 @@ class ORCA_HESS(object):
         if not ORCA_HESS.p_hess_block.search(self.in_str):
             raise(HESSError(HESSError.hess_block,
                     "Hessian block not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+        if not ORCA_HESS.p_freq_block.search(self.in_str):
+            raise(HESSError(HESSError.freq_block,
+                    "Frequencies block (cm**-1 units) not found",
                     "HESS File: " + HESS_path))
         ## end if
 
@@ -284,10 +321,10 @@ class ORCA_HESS(object):
         ## end if
 
         # Convert instance variables to numpy storage forms
-        self.atom_syms = np.vstack(self.atom_syms)
-        self.atom_masses = np.vstack(np.array(self.atom_masses, \
-                                dtype=np.float_))
-        self.geom = np.vstack(np.array(self.geom, dtype=np.float_))
+        self.atom_syms = np.matrix(np.vstack(self.atom_syms))
+        self.atom_masses = np.matrix(np.vstack(np.array(self.atom_masses, \
+                                dtype=np.float_)))
+        self.geom = np.matrix(np.vstack(np.array(self.geom, dtype=np.float_)))
 
         # Now to import the Hessian matrix; error if not found
         m_hess_block = ORCA_HESS.p_hess_block.search(self.in_str)
@@ -364,6 +401,38 @@ class ORCA_HESS(object):
                         "Hessian row count mismatch", \
                         "HESS File: " + HESS_path))
         ## end if
+
+        # Convert the Hessian to a matrix
+        self.hess = np.matrix(self.hess)
+
+        # Store the reported energy
+        self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
+                                                                    np.float_)
+
+        # Check that number of frequencies indicated in the block matches
+        #  that expected from the number of atoms
+        if 3*self.num_ats != \
+                np.int_(self.p_freq_block.search(self.in_str).group("num")):
+            raise(HESSError(HESSError.freq_block, \
+                    "Count in frequencies block != 3 * number of atoms", \
+                    "HESS File: " + self.HESS_path))
+        ## end if
+
+        # Retrieve the frequencies
+        self.freqs = np.matrix( \
+                [np.float_(m.group("freq")) for m in \
+                self.p_freq_line.finditer( \
+                self.p_freq_block.search(self.in_str).group("block"))])
+
+        # Proofread for proper size
+        if not self.freqs.shape[1] == 3*self.num_ats:
+            raise(HESSError(HESSError.freq_block, \
+                    "Number of frequencies != 3 * number of atoms", \
+                    "HESS File: " + self.HESS_path))
+        ## end if
+
+        # Transpose for column vector storage
+        self.freqs = self.freqs.transpose()
 
         # Set initialization flag; probably unnecessary?
         self.initialized = True
