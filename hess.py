@@ -44,6 +44,7 @@ class ORCA_HESS(object):
     necessary.
 
     Units of the Hessian are Hartrees per Bohr^2 (Eh/B^2)
+    Frequencies are in cyc/cm (standard wavenumbers)
 
 
     Instantiation
@@ -69,6 +70,12 @@ class ORCA_HESS(object):
         RegEx for a full-height, 3- or 6-column section of the Hessian
     p_hess_line     : re.compile() pattern
         RegEx for a single line within a Hessian section
+    p_modes_block   : re.compile() pattern
+        RegEx for entire modes block
+    p_modes_sec     : re.compile() pattern
+        RegEx for a full-height, 3- or 6-column section of the modes block
+    p_modes_line    : re.compile() pattern
+        RegEx for a single line within a modes block section
 
     Instance Variables
     ------------------
@@ -90,6 +97,9 @@ class ORCA_HESS(object):
         Flag for whether self has been initialized--possibly obsolete
     in_str          : str
         Complete contents of the imported HESS file
+    modes           : 3N x 3N np.float_
+        Rotation- and translation-purified vibrational normal modes,
+        with each mode (column vector) individually normalized by ORCA.
     num_ats         : int
         Number of atoms in the system
 
@@ -146,7 +156,7 @@ class ORCA_HESS(object):
     # Entire Hessian data block
     p_hess_block = re.compile("""
     \\$hessian.*\\n                 # Marker for Hessian block
-    (?P<dim>[0-9]+).*\\n            # Dimensionality of Hessian (N x N)
+    (?P<dim>[0-9]+).*\\n            # Dimensionality of Hessian (3N x 3N)
     (?P<block>                      # Group for the subsequent block of lines
         (                           # Group for single line definition
             ([ \\t]+[0-9.-]+)+      # Some number of whitespace-separated nums
@@ -203,6 +213,46 @@ class ORCA_HESS(object):
     """, re.I | re.M | re.X)
 
 
+    # Entire modes data block
+    p_modes_block = re.compile("""
+    \\$normal_modes.*\\n            # Marker for modes block
+    (?P<dim>[0-9]+)[ ]+            # Dimensionality of modes block (3N x 3N)
+    (?P<dim2>[0-9]+).*\\n           #  (Second dimension value)
+    (?P<block>                      # Group for the subsequent block of lines
+        (                           # Group for single line definition
+            ([ \\t]+[0-9.-]+)+      # Some number of whitespace-separated nums
+            .*\\n                   # Plus whatever to end of line
+        )+                          # Whatever number of single lines
+    )                               # Enclose the whole batch of lines
+    """, re.I | re.X)
+
+    # Sections of the modes data block
+    p_modes_sec = re.compile("""
+    ([ ]+[0-9]+)+[ ]*\\n            # Column header line
+    (                               # Open the group for the sub-block lines
+        [ ]+[0-9]+                  # Row header
+        (                           # Open the group defining a single element
+            [ ]+[-]?                # Whitespace and optional hyphen
+            [0-9]+\\.[0-9]+         # One or more digits, decimal, more digits
+        )+                          # Some number of sub-columns
+        [ ]*\\n                     # Whitespace to EOL
+    )+                              # Some number of suitable lines
+    """, re.I | re.X)
+
+    # Pulling modes lines from the sections, with elements in groups
+    p_modes_line = re.compile("""
+    ^[ ]*                           # Optional whitespace to start each line
+    (?P<row>[0-9]+)                         # Row header
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    ([ ]+(?P<e3>[0-9-]+\\.[0-9-]+))?        # 4th element (possibly absent)
+    ([ ]+(?P<e4>[0-9-]+\\.[0-9-]+))?        # 5th element (possibly absent)
+    ([ ]+(?P<e5>[0-9-]+\\.[0-9-]+))?        # 6th element (possibly absent)
+    .*$                             # Whatever to end of line
+    """, re.I | re.M | re.X)
+
+
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
 
@@ -225,7 +275,96 @@ class ORCA_HESS(object):
         HESSError   : If indicated Hessian file is malformed in some fashion
         KeyError    : If invalid atomic symbol appears in .hess file
         IOError     : If the indicated file does not exist or cannot be read
+
+        Local Methods
+        -------------
+        parse_multiblock #DOC:Complete parse_multiblock docstring entry
         """
+
+        # Local method(s)
+        def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats, \
+                        blockname, tc):
+            """ #DOC: parse_multiblock docstring
+            """
+
+            # Imports
+            import numpy as np
+            from .utils import safe_cast as scast
+
+            # Pull the block
+            m_block = p_block.search(hesstext)
+
+            # Confirm the anticipated matrix size matches 3*num_ats
+            if not int(m_block.group("dim")) == 3*num_ats:
+                raise(HESSError(tc, blockname + " dimension " + \
+                        "specification mismatched with geometry", \
+                        "HESS File: " + HESS_path))
+            ## end if
+
+            # Initialize the working matrix
+            workmtx = np.zeros((3*num_ats, 3*num_ats), dtype=np.float_)
+
+            # Initialize the column offset for populating the matrix
+            col_offset = 0
+
+            # Initialize the counter for the number of row sections imported
+            rows_counter = 0
+
+            # Loop through the subsections of the matrix
+            for m_sec in p_sec.finditer(m_block.group("block")):
+                # Loop through each entry
+                for m_line in p_line.finditer(m_sec.group(0)):
+                    # Store the row; expect base zero so no adjustment needed.
+                    rowval = scast(m_line.group("row"), np.int_)
+
+                    # Loop to fill the row
+                    for i in range(6):
+                        # Store the element
+                        val = scast(m_line.group('e' + str(i)), np.float_)
+
+                        # Only store to matrix if a value actually retrieved.
+                        #  This protects against the final three-column section
+                        #  in blocks for systems with an odd number of atoms.
+                        if not np.isnan(val):
+                            workmtx[rowval, col_offset + i] = val
+                        ## end if
+                    ## next i
+
+                    # Increment the row-read counter
+                    rows_counter += 1
+
+                ## next m_hess_line
+
+                # Last thing is to increment the offset by six. Don't have to
+                #  worry about offsetting for a section only three columns wide
+                #  because that SHOULD only ever occur at the last section
+                col_offset += 6
+
+            ## next m_hess_sec
+
+            # Check to ensure that the column offset is high enough to have
+            #  fully populated the matrix based on the number of atoms. This is
+            #  a check against malformation of the HESS file, resulting in a
+            #  reduced number of sections being retrieved.
+            if not col_offset >= (3 * num_ats):
+                raise(HESSError(tc, "Insufficient number of " + blockname + \
+                        " sections found", \
+                        "HESS File: " + HESS_path))
+            ## end if
+
+            # Additional cross-check on number of rows imported
+            if (rows_counter % (3*num_ats)) != 0:
+                # Not the right number of rows; complain
+                raise(HESSError(tc, \
+                            blockname + " row count mismatch", \
+                            "HESS File: " + HESS_path))
+            ## end if
+
+            # Return the working matrix as a matrix
+            workmtx = np.matrix(workmtx)
+            return workmtx
+
+        ## end def parse_multiblock
 
         # Imports
         import numpy as np
@@ -262,6 +401,11 @@ class ORCA_HESS(object):
         if not ORCA_HESS.p_freq_block.search(self.in_str):
             raise(HESSError(HESSError.freq_block,
                     "Frequencies block (cm**-1 units) not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+        if not ORCA_HESS.p_modes_block.search(self.in_str):
+            raise(HESSError(HESSError.modes_block,
+                    "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
 
@@ -326,84 +470,25 @@ class ORCA_HESS(object):
                                 dtype=np.float_)))
         self.geom = np.matrix(np.vstack(np.array(self.geom, dtype=np.float_)))
 
-        # Now to import the Hessian matrix; error if not found
-        m_hess_block = ORCA_HESS.p_hess_block.search(self.in_str)
-        if m_hess_block == None:
-            raise(HESSError(HESSError.hess_block, "No match for Hessian " + \
-                    "block found", \
-                    "HESS File: " + HESS_path))
+        # Pull the Hessian
+        self.hess = parse_multiblock(self.in_str, self.p_hess_block, \
+                self.p_hess_sec, self.p_hess_line, self.num_ats, \
+                "Hessian", HESSError.hess_block)
+
+        # Pull the modes
+        self.modes = parse_multiblock(self.in_str, self.p_modes_block, \
+                self.p_modes_sec, self.p_modes_line, self.num_ats, \
+                "modes", HESSError.modes_block)
+
+        # Extra check of 'dim' vs 'dim2' on modes
+        if scast(self.p_modes_block.search(self.in_str) \
+                                    .group("dim"), np.int_) != \
+                scast(self.p_modes_block.search(self.in_str) \
+                                    .group("dim2"), np.int_):
+            raise(HESSError(HESSError.modes_block, \
+                    "Normal mode block dimension specification mismatch",
+                    "HESS File: " + self.HESS_path))
         ## end if
-
-        # Confirm the anticipated Hessian size matches 3*num_ats
-        if not int(m_hess_block.group("dim")) == 3*self.num_ats:
-            raise(HESSError(HESSError.hess_block, "Hessian dimension " + \
-                    "mismatch with geometry", \
-                    "HESS File: " + HESS_path))
-        ## end if
-
-        # Initialize the Hessian matrix
-        self.hess = np.zeros((3*self.num_ats, 3*self.num_ats), dtype=np.float_)
-
-        # Initialize the column offset for populating the Hessian
-        col_offset = 0
-
-        # Initialize the counter for the number of row sections imported
-        rows_counter = 0
-
-        # Loop through the subsections of the Hessian
-        for m_hess_sec in ORCA_HESS.p_hess_sec \
-                                    .finditer(m_hess_block.group("block")):
-            # Loop through each entry
-            for m_hess_line in ORCA_HESS.p_hess_line \
-                                    .finditer(m_hess_sec.group(0)):
-                # Store the row; base zero in .HESS so no adjustment needed.
-                rowval = scast(m_hess_line.group("row"), np.int_)
-
-                # Loop to fill the row
-                for i in range(6):
-                    # Store the element
-                    val = scast(m_hess_line.group('e' + str(i)), np.float_)
-
-                    # Only store to Hessian if a value actually retrieved.
-                    #  This protects against the final three-column section in
-                    #  Hessians for systems with an odd number of atoms.
-                    if not np.isnan(val):
-                        self.hess[rowval, col_offset + i] = val
-                    ## end if
-                ## next i
-
-                # Increment the row-read counter
-                rows_counter += 1
-
-            ## next m_hess_line
-
-            # Last thing is to increment the offset by six. Don't have to
-            #  worry about offsetting for a section only three columns wide
-            #  because that SHOULD only ever occur at the last section
-            col_offset += 6
-
-        ## next m_hess_sec
-
-        # Check to ensure that the column offset is high enough to have
-        #  fully populated the Hessian based on the number of atoms. This is a
-        #  check against malformation of the HESS file, resulting in a reduced
-        #  number of sections being retrieved.
-        if not col_offset >= (3 * self.num_ats):
-            raise(HESSError(HESSError.hess_block, "Insufficient number of " + \
-                    "HESS sections found", \
-                    "HESS File: " + HESS_path))
-        ## end if
-
-        # Additional cross-check on number of rows imported
-        if (rows_counter % (3*self.num_ats)) != 0:
-            # Not the right number of rows; complain
-            raise(HESSError(HESSError.hess_block, \
-                        "Hessian row count mismatch", \
-                        "HESS File: " + HESS_path))
-        ## end if
-
-        # Convert the Hessian to a matrix
-        self.hess = np.matrix(self.hess)
 
         # Store the reported energy
         self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
