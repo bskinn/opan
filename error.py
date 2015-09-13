@@ -302,6 +302,7 @@ class HESSError(OPANError):
             at_block    : Malformed or missing atom specification block.
             hess_block  : Malformed or missing Hessian block
             freq_block  : Malformed or missing frequencies block
+            modes_block : Malformed or missing normal modes block
 
     """
 
@@ -309,10 +310,12 @@ class HESSError(OPANError):
     at_block = "at_block"
     hess_block = "hess_block"
     freq_block = "freq_block"
+    modes_block = "modes_block"
     typecodes = frozenset([
             at_block,
             hess_block,
-            freq_block
+            freq_block,
+            modes_block
             ])
 
 ## end class HESSError
