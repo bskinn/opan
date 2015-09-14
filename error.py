@@ -303,6 +303,7 @@ class HESSError(OPANError):
             hess_block  : Malformed or missing Hessian block
             freq_block  : Malformed or missing frequencies block
             modes_block : Malformed or missing normal modes block
+            dipder_block: Malformed or missing dipole derivatives block
 
     """
 
@@ -311,11 +312,13 @@ class HESSError(OPANError):
     hess_block = "hess_block"
     freq_block = "freq_block"
     modes_block = "modes_block"
+    dipder_block = "dipder_block"
     typecodes = frozenset([
             at_block,
             hess_block,
             freq_block,
-            modes_block
+            modes_block,
+            dipder_block
             ])
 
 ## end class HESSError
