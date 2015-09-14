@@ -304,6 +304,10 @@ class HESSError(OPANError):
             freq_block  : Malformed or missing frequencies block
             modes_block : Malformed or missing normal modes block
             dipder_block: Malformed or missing dipole derivatives block
+            ir_block    : Malformed or missing IR spectrum block
+            job_block   : Malformed or missing job list block
+            eigval_block: Malformed or missing mass-wt Hessin eigenvalues block
+            eigvec_block: Malformed or missing mass-wt Hessin eigenvectors block
 
     """
 
@@ -313,12 +317,20 @@ class HESSError(OPANError):
     freq_block = "freq_block"
     modes_block = "modes_block"
     dipder_block = "dipder_block"
+    ir_block = "ir_block"
+    job_block = "job_block"
+    eigval_block = "eigval_block"
+    eigvec_block = "eigvec_block"
     typecodes = frozenset([
             at_block,
             hess_block,
             freq_block,
             modes_block,
-            dipder_block
+            dipder_block,
+            ir_block,
+            job_block,
+            eigval_block,
+            eigvec_block
             ])
 
 ## end class HESSError
