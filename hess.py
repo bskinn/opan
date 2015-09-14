@@ -55,27 +55,33 @@ class ORCA_HESS(object):
     Class Variables
     ---------------
     p_at_block      : re.compile() pattern
-        RegEx for the entire block of atom ID & weight, and geom data.
+        Regex for the entire block of atom ID & weight, and geom data.
     p_at_line       : re.compile() pattern
-        RegEx for individual lines within the atom specification block
+        Regex for individual lines within the atom specification block
     p_energy        : re.compile() pattern
-        RegEx for the energy reported in the .hess file
+        Regex for the energy reported in the .hess file
     p_freq_block    : re.compile() pattern
-        RegEx for the entire vibrational frequencies block (cm**-1 units)
+        Regex for the entire vibrational frequencies block (cm**-1 units)
     p_freq_line     : re.compile() pattern
-        RegEx for each line of the frequencies block
+        Regex for each line of the frequencies block
     p_hess_block    : re.compile() pattern
-        RegEx for entire Hessian block
+        Regex for entire Hessian block
     p_hess_sec      : re.compile() pattern
-        RegEx for a full-height, 3- or 6-column section of the Hessian
+        Regex for a full-height, 3- or 6-column section of the Hessian
     p_hess_line     : re.compile() pattern
-        RegEx for a single line within a Hessian section
+        Regex for a single line within a Hessian section
     p_modes_block   : re.compile() pattern
-        RegEx for entire modes block
+        Regex for entire modes block
     p_modes_sec     : re.compile() pattern
-        RegEx for a full-height, 3- or 6-column section of the modes block
+        Regex for a full-height, 3- or 6-column section of the modes block
     p_modes_line    : re.compile() pattern
-        RegEx for a single line within a modes block section
+        Regex for a single line within a modes block section
+    p_dipder_block  : re.compile() pattern
+        Regex for the dipole derivatives block
+    p_dipder_line   : re.compile() pattern
+        Regex for individual lines in the dipole derivatives block
+    p_temp          : re.compile() pattern
+        Regex for the 'actual temperature' field (may be meaningless?)
 
     Instance Variables
     ------------------
@@ -83,6 +89,8 @@ class ORCA_HESS(object):
         Column vector of atom masses as reported in HESS
     atom_syms       : N x 1 np.str
         Column vector of uppercase atomic symbols
+    dipders         : 3N x 3 np.float_
+        Matrix of dipole derivatives
     energy          : float
         Energy reported in the Hessian file
     freqs           : 3N x 1 np.float_
@@ -102,6 +110,8 @@ class ORCA_HESS(object):
         with each mode (column vector) individually normalized by ORCA.
     num_ats         : int
         Number of atoms in the system
+    temp            : float
+        "Actual temperature" reported in the .hess file. May be meaningless.
 
     Methods
     -------
@@ -120,7 +130,7 @@ class ORCA_HESS(object):
     from .const import DEF
 
 
-    # Various class-level RegEx patterns.  Currently only retrieves the
+    # Various class-level Regex patterns.  Currently only retrieves the
     #  atom list and the Hessian itself. No other information in the .hess file
     #  is actually explicitly needed at present (will be recomputed internally)
     #  and so there's little point to spending time coding imports for it.
@@ -216,11 +226,11 @@ class ORCA_HESS(object):
     # Entire modes data block
     p_modes_block = re.compile("""
     \\$normal_modes.*\\n            # Marker for modes block
-    (?P<dim>[0-9]+)[ ]+            # Dimensionality of modes block (3N x 3N)
+    (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
     (?P<dim2>[0-9]+).*\\n           #  (Second dimension value)
     (?P<block>                      # Group for the subsequent block of lines
         (                           # Group for single line definition
-            ([ \\t]+[0-9.-]+)+      # Some number of whitespace-separated nums
+            ([ ]+[0-9.-]+)+         # Some number of whitespace-separated nums
             .*\\n                   # Plus whatever to end of line
         )+                          # Whatever number of single lines
     )                               # Enclose the whole batch of lines
@@ -240,6 +250,10 @@ class ORCA_HESS(object):
     """, re.I | re.X)
 
     # Pulling modes lines from the sections, with elements in groups
+    #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
+    #  above/below, guarantees a floating-point value is found. Otherwise, the
+    #  Regex retrieves on into subsequent sections because the header rows
+    #  parse just fine for a '[ ]+[0-9.-]' pattern.
     p_modes_line = re.compile("""
     ^[ ]*                           # Optional whitespace to start each line
     (?P<row>[0-9]+)                         # Row header
@@ -250,6 +264,28 @@ class ORCA_HESS(object):
     ([ ]+(?P<e4>[0-9-]+\\.[0-9-]+))?        # 5th element (possibly absent)
     ([ ]+(?P<e5>[0-9-]+\\.[0-9-]+))?        # 6th element (possibly absent)
     .*$                             # Whatever to end of line
+    """, re.I | re.M | re.X)
+
+    # "Actual temperature"
+    p_temp = re.compile("""
+    \\$actual_temperature[ ]*\\n            # Marker for value
+    [ ]*(?P<temp>[0-9.]+)[ ]*\\n            # Value
+    """, re.I | re.X)
+
+    # Dipole derivatives block
+    p_dipder_block = re.compile("""
+    \\$dipole_derivatives[ ]*\\n            # Marker for block
+    (?P<dim>[0-9]+)[ ]*\\n                  # Dimension of block (rows)
+    (([ ]+[0-9.-]+)+[ ]*\\n)+               # Rows of data
+    """, re.I | re.X)
+
+    # Dipole derivatives individual line
+    p_dipder_line = re.compile("""
+    ^                                       # Line start
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    [ ]*$
     """, re.I | re.M | re.X)
 
 
@@ -283,7 +319,7 @@ class ORCA_HESS(object):
 
         # Local method(s)
         def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats, \
-                        blockname, tc):
+                                                            blockname, tc):
             """ #DOC: parse_multiblock docstring
             """
 
@@ -408,6 +444,11 @@ class ORCA_HESS(object):
                     "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
+        if not ORCA_HESS.p_dipder_block.search(self.in_str):
+            raise(HESSError(HESSError.dipder_block,
+                    "Dipole derivatives block not found",
+                    "HESS File: " + HESS_path))
+        ## end if
 
         # Bring in the number of atoms
         self.num_ats = np.int_( \
@@ -490,10 +531,6 @@ class ORCA_HESS(object):
                     "HESS File: " + self.HESS_path))
         ## end if
 
-        # Store the reported energy
-        self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
-                                                                    np.float_)
-
         # Check that number of frequencies indicated in the block matches
         #  that expected from the number of atoms
         if 3*self.num_ats != \
@@ -518,6 +555,17 @@ class ORCA_HESS(object):
 
         # Transpose for column vector storage
         self.freqs = self.freqs.transpose()
+
+
+        # Pull the single values
+        # Store the reported energy
+        self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
+                                                                    np.float_)
+
+        # Store the reported 'actual temperature'
+        self.temp = scast(self.p_temp.search(self.in_str).group("temp"), \
+                                                                    np.float_)
+
 
         # Set initialization flag; probably unnecessary?
         self.initialized = True
