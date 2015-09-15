@@ -299,15 +299,17 @@ class HESSError(OPANError):
         tc, msg, src, subclass_name are inherited from OPANError
 
         typecodes: dict
-            at_block    : Malformed or missing atom specification block.
+            at_block    : Malformed or missing atom specification block
             hess_block  : Malformed or missing Hessian block
             freq_block  : Malformed or missing frequencies block
             modes_block : Malformed or missing normal modes block
-            dipder_block: Malformed or missing dipole derivatives block
-            ir_block    : Malformed or missing IR spectrum block
-            job_block   : Malformed or missing job list block
-            eigval_block: Malformed or missing mass-wt Hessin eigenvalues block
-            eigvec_block: Malformed or missing mass-wt Hessin eigenvectors block
+            dipder_block: Malformed dipole derivatives block
+            ir_block    : Malformed IR spectrum block
+            polder_block: Malformed polarizability derivatives block
+            raman_block : Malformed Raman spectrum block
+            job_block   : Malformed job list block
+            eigval_block: Malformed mass-wt Hessin eigenvalues block
+            eigvec_block: Malformed mass-wt Hessin eigenvectors block
 
     """
 
@@ -318,6 +320,8 @@ class HESSError(OPANError):
     modes_block = "modes_block"
     dipder_block = "dipder_block"
     ir_block = "ir_block"
+    polder_block = "polder_block"
+    raman_block = "raman_block"
     job_block = "job_block"
     eigval_block = "eigval_block"
     eigvec_block = "eigvec_block"
@@ -328,6 +332,8 @@ class HESSError(OPANError):
             modes_block,
             dipder_block,
             ir_block,
+            polder_block,
+            raman_block,
             job_block,
             eigval_block,
             eigvec_block
