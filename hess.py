@@ -70,6 +70,10 @@ class ORCA_HESS(object):
         Regex for a full-height, 3- or 6-column section of the Hessian
     p_hess_line     : re.compile() pattern
         Regex for a single line within a Hessian section
+    p_ir_block      : re.compile() pattern
+        Regex for the full IR spectrum block
+    p_ir_line       : re.compile() pattern
+        Regex for individual IR spectrum lines
     p_modes_block   : re.compile() pattern
         Regex for entire modes block
     p_modes_sec     : re.compile() pattern
@@ -408,7 +412,7 @@ class ORCA_HESS(object):
         import numpy as np
         from .error import HESSError
         from .utils import safe_cast as scast
-        from .const import atomNum, atomSym
+        from .const import atomNum, atomSym, PRM
 
         # Set the initialization flag (possibly unnecessary...)
         self.initialized = False
@@ -425,7 +429,7 @@ class ORCA_HESS(object):
         # Store the path used to retrieve the data
         self.HESS_path = HESS_path
 
-        # Check to ensure all relevant data blocks are found
+        # Check to ensure all required data blocks are found
         if not ORCA_HESS.p_at_block.search(self.in_str):
             raise(HESSError(HESSError.at_block,
                     "Atom specification block not found",
@@ -446,11 +450,7 @@ class ORCA_HESS(object):
                     "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
-        if not ORCA_HESS.p_dipder_block.search(self.in_str):
-            raise(HESSError(HESSError.dipder_block,
-                    "Dipole derivatives block not found",
-                    "HESS File: " + HESS_path))
-        ## end if
+
 
         #=== Geometry spec block ===#
         # Bring in the number of atoms
@@ -561,34 +561,8 @@ class ORCA_HESS(object):
         # Transpose for column vector storage
         self.freqs = self.freqs.transpose()
 
-        #=== Dipole derivatives ===#
-        # Check that number of derivatives rows indicated in the block matches
-        #  that expected from the number of atoms
-        if 3*self.num_ats != \
-                np.int_(self.p_dipder_block.search(self.in_str).group("dim")):
-            raise(HESSError(HESSError.dipder_block, \
-                    "Count in dipole derivatives block != 3 * # of atoms", \
-                    "HESS File: " + self.HESS_path))
-        ## end if
 
-        # Retrieve the derivatives
-        self.dipders = np.matrix( \
-                [[np.float_(m.group("e" + str(i))) for i in range(3)] \
-                    for m in self.p_dipder_line.finditer( \
-                        self.p_dipder_block.search(self.in_str).group("block") \
-                                                        )])
-
-        # Proofread for proper size. Don't have to proofread the width of
-        #  three, since any row not containing three numerical values will
-        #  result in the block getting truncated.
-        if not self.dipders.shape[0] == 3*self.num_ats:
-            raise(HESSError(HESSError.dipder_block, \
-                    "Number of dipole derivative rows != 3 * number of atoms", \
-                    "HESS File: " + self.HESS_path))
-        ## end if
-
-
-        #=== Pull the single values ===#
+        #=== Pull the single values that should always be present ===#
         # Store the reported energy
         self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
                                                                     np.float_)
@@ -596,6 +570,44 @@ class ORCA_HESS(object):
         # Store the reported 'actual temperature'
         self.temp = scast(self.p_temp.search(self.in_str).group("temp"), \
                                                                     np.float_)
+
+        #=== Dipole derivatives ===#
+        # Check if block found. Store None if not; otherwise import
+        if not ORCA_HESS.p_dipder_block.search(self.in_str):
+            self.dipders = None
+        else:
+            # Check that number of derivatives rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(self.p_dipder_block \
+                                        .search(self.in_str).group("dim")):
+                raise(HESSError(HESSError.dipder_block, \
+                        "Count in dipole derivatives block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the derivatives
+            self.dipders = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_dipder_line.finditer( \
+                            self.p_dipder_block.search(self.in_str) \
+                                                            .group("block") \
+                                                            )])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  three, since any row not containing three numerical values will
+            #  result in the block getting truncated.
+            if not self.dipders.shape[0] == 3*self.num_ats:
+                raise(HESSError(HESSError.dipder_block, \
+                        "Number of dipole derivative rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # If max-absolute element is too big, overwrite with None
+            if np.max(np.abs(self.dipders)) > PRM.Max_Sane_DipDer:
+                self.dipders = None
+            ## end if
+        ## end if
 
 
         # Set initialization flag; probably unnecessary?
