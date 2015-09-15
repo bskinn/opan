@@ -412,11 +412,15 @@ class PRM(object):
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
     Symm_Min_Origin_Dist = 0.5
+    Max_Sane_DipDer = 100
     """
 
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
     Symm_Min_Origin_Dist = 0.5
+    Max_Sane_DipDer = 100
+
+## end class PRM
 
 
 class SYMM(object):
