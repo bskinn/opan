@@ -109,6 +109,10 @@ class ORCA_HESS(object):
         Flag for whether self has been initialized--possibly obsolete
     in_str          : str
         Complete contents of the imported HESS file
+    ir_comps        : 3N x 3 np.float_
+        (Tx, Ty, Tz) components of the transition dipole for each normal mode
+    ir_mags         : 3N x 1 np.float_
+        T**2 values (squared-magnitudes) of the transition dipole for each mode
     modes           : 3N x 3N np.float_
         Rotation- and translation-purified vibrational normal modes,
         with each mode (column vector) individually normalized by ORCA.
@@ -294,6 +298,24 @@ class ORCA_HESS(object):
     [ ]*$
     """, re.I | re.M | re.X)
 
+    # IR spectrum block
+    p_ir_block = re.compile("""
+    \\$ir_spectrum[ ]*\\n                   # Marker for block
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_ir_line = re.compile("""
+    ^                                       # Line start
+    [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency
+    [ ]+(?P<mag>[0-9]+\\.[0-9]+)            #--> Transition dipole sq. mag
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            #--> 1st element (TX)
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            #--> 2nd element (TY)
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            #--> 3rd element (TZ)
+    """, re.I | re.M | re.X)
+
 
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
@@ -412,7 +434,7 @@ class ORCA_HESS(object):
         import numpy as np
         from .error import HESSError
         from .utils import safe_cast as scast
-        from .const import atomNum, atomSym, PRM
+        from .const import atomNum, atomSym, PRM, DEF
 
         # Set the initialization flag (possibly unnecessary...)
         self.initialized = False
@@ -453,9 +475,11 @@ class ORCA_HESS(object):
 
 
         #=== Geometry spec block ===#
+        # Store the block
+        m_work = self.p_at_block.search(self.in_str)
+
         # Bring in the number of atoms
-        self.num_ats = np.int_( \
-                ORCA_HESS.p_at_block.search(self.in_str).group("num"))
+        self.num_ats = np.int_(m_work.group("num"))
 
         # Initialize the vectors of atomic symbols, masses, and the
         #  geometry
@@ -464,8 +488,7 @@ class ORCA_HESS(object):
         self.geom = []
 
         # Parse the list of atoms
-        for m in ORCA_HESS.p_at_line.finditer( \
-                ORCA_HESS.p_at_block.search(self.in_str).group("block")):
+        for m in ORCA_HESS.p_at_line.finditer(m_work.group("block")):
             # Parse the element symbol or atomic number
             try:
                 # See if it casts as an int
@@ -526,20 +549,21 @@ class ORCA_HESS(object):
                 "modes", HESSError.modes_block)
 
         # Extra check of 'dim' vs 'dim2' on modes
-        if scast(self.p_modes_block.search(self.in_str) \
-                                    .group("dim"), np.int_) != \
-                scast(self.p_modes_block.search(self.in_str) \
-                                    .group("dim2"), np.int_):
+        m_work = self.p_modes_block.search(self.in_str)
+        if scast(m_work.group("dim"), np.int_) != \
+                            scast(m_work.group("dim2"), np.int_):
             raise(HESSError(HESSError.modes_block, \
                     "Normal mode block dimension specification mismatch",
                     "HESS File: " + self.HESS_path))
         ## end if
 
         #=== Frequencies ===#
+        # Pull the block
+        m_work = self.p_freq_block.search(self.in_str)
+
         # Check that number of frequencies indicated in the block matches
         #  that expected from the number of atoms
-        if 3*self.num_ats != \
-                np.int_(self.p_freq_block.search(self.in_str).group("num")):
+        if 3*self.num_ats != np.int_(m_work.group("num")):
             raise(HESSError(HESSError.freq_block, \
                     "Count in frequencies block != 3 * number of atoms", \
                     "HESS File: " + self.HESS_path))
@@ -548,8 +572,7 @@ class ORCA_HESS(object):
         # Retrieve the frequencies (this generates a row vector)
         self.freqs = np.matrix( \
                 [np.float_(m.group("freq")) for m in \
-                self.p_freq_line.finditer( \
-                self.p_freq_block.search(self.in_str).group("block"))])
+                self.p_freq_line.finditer(m_work.group("block"))])
 
         # Proofread for proper size (still a row vector)
         if not self.freqs.shape[1] == 3*self.num_ats:
@@ -573,13 +596,13 @@ class ORCA_HESS(object):
 
         #=== Dipole derivatives ===#
         # Check if block found. Store None if not; otherwise import
-        if not ORCA_HESS.p_dipder_block.search(self.in_str):
+        m_work = self.p_dipder_block.search(self.in_str)
+        if m_work == None:
             self.dipders = None
         else:
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
-            if 3*self.num_ats != np.int_(self.p_dipder_block \
-                                        .search(self.in_str).group("dim")):
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HESSError(HESSError.dipder_block, \
                         "Count in dipole derivatives block != 3 * # of atoms", \
                         "HESS File: " + self.HESS_path))
@@ -589,9 +612,7 @@ class ORCA_HESS(object):
             self.dipders = np.matrix( \
                     [[np.float_(m.group("e" + str(i))) for i in range(3)] \
                         for m in self.p_dipder_line.finditer( \
-                            self.p_dipder_block.search(self.in_str) \
-                                                            .group("block") \
-                                                            )])
+                                                    m_work.group("block")) ])
 
             # Proofread for proper size. Don't have to proofread the width of
             #  three, since any row not containing three numerical values will
@@ -606,6 +627,54 @@ class ORCA_HESS(object):
             # If max-absolute element is too big, overwrite with None
             if np.max(np.abs(self.dipders)) > PRM.Max_Sane_DipDer:
                 self.dipders = None
+            ## end if
+        ## end if
+
+
+        #=== IR Spectrum ===#
+        # If dipole derivs absent or munged, or if block missing, then skip
+        m_work = self.p_ir_block.search(self.in_str)
+        if self.dipders == None or m_work == None:
+            self.ir_comps = None
+            self.ir_mags = None
+        else:
+            # Complain if number of stated modes mismatches expectation
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.ir_block, \
+                        "Count in IR spectrum block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Pull the blocks
+            self.ir_comps = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_ir_line.finditer( \
+                                                    m_work.group("block")) ])
+            self.ir_mags = np.matrix( \
+                    [[np.float_(m.group("mag"))] \
+                        for m in self.p_ir_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Confirm match of all frequencies with those reported separately
+            if not np.allclose( \
+                    self.freqs, \
+                    np.matrix([[np.float_(m.group('freq'))] \
+                                for m in self.p_ir_line.finditer( \
+                                m_work.group("block")) ]), \
+                    rtol=0, \
+                    atol=DEF.HESS_IR_Match_Tol):
+                raise(HESSError(HESSError.ir_block, \
+                        "Frequency mismatch between freq and IR blocks", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Confirm length of ir_mags conforms. Shouldn't need to check both,
+            #  since they both rely equally on p_ir_line.finditer.
+            if 3*self.num_ats != self.ir_mags.shape[0]:
+                raise(HESSError(HESSError.ir_block, \
+                        "Number of IR spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
             ## end if
         ## end if
 
