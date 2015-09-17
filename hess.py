@@ -58,6 +58,10 @@ class ORCA_HESS(object):
         Regex for the entire block of atom ID & weight, and geom data.
     p_at_line       : re.compile() pattern
         Regex for individual lines within the atom specification block
+    p_dipder_block  : re.compile() pattern
+        Regex for the dipole derivatives block
+    p_dipder_line   : re.compile() pattern
+        Regex for individual lines in the dipole derivatives block
     p_energy        : re.compile() pattern
         Regex for the energy reported in the .hess file
     p_freq_block    : re.compile() pattern
@@ -80,10 +84,10 @@ class ORCA_HESS(object):
         Regex for a full-height, 3- or 6-column section of the modes block
     p_modes_line    : re.compile() pattern
         Regex for a single line within a modes block section
-    p_dipder_block  : re.compile() pattern
-        Regex for the dipole derivatives block
-    p_dipder_line   : re.compile() pattern
-        Regex for individual lines in the dipole derivatives block
+    p_polder_block  : re.compile() pattern
+        Regex for the polarizability derivatives block
+    p_polder_line   : re.compile() pattern
+        Regex for individual lines in the polarizability derivatives block
     p_temp          : re.compile() pattern
         Regex for the 'actual temperature' field (may be meaningless?)
 
@@ -118,6 +122,8 @@ class ORCA_HESS(object):
         with each mode (column vector) individually normalized by ORCA.
     num_ats         : int
         Number of atoms in the system
+    polders         : 3N x 6 np.float_
+        Matrix of Cartesian polarizability derivatives
     temp            : float
         "Actual temperature" reported in the .hess file. May be meaningless.
 
@@ -203,9 +209,9 @@ class ORCA_HESS(object):
     [ \\t]+(?P<e0>[0-9-]+\\.[0-9]+)         # 1st element
     [ \\t]+(?P<e1>[0-9-]+\\.[0-9]+)         # 2nd element
     [ \\t]+(?P<e2>[0-9-]+\\.[0-9]+)         # 3rd element
-    ([ \\t]+(?P<e3>[0-9-]+\\.[0-9-]+))?     # 4th element (possibly absent)
-    ([ \\t]+(?P<e4>[0-9-]+\\.[0-9-]+))?     # 5th element (possibly absent)
-    ([ \\t]+(?P<e5>[0-9-]+\\.[0-9-]+))?     # 6th element (possibly absent)
+    ([ \\t]+(?P<e3>[0-9-]+\\.[0-9]+))?      # 4th element (possibly absent)
+    ([ \\t]+(?P<e4>[0-9-]+\\.[0-9]+))?      # 5th element (possibly absent)
+    ([ \\t]+(?P<e5>[0-9-]+\\.[0-9]+))?      # 6th element (possibly absent)
     .*$                             # Whatever to end of line
     """, re.I | re.M | re.X)
 
@@ -268,9 +274,9 @@ class ORCA_HESS(object):
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
     [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
     [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
-    ([ ]+(?P<e3>[0-9-]+\\.[0-9-]+))?        # 4th element (possibly absent)
-    ([ ]+(?P<e4>[0-9-]+\\.[0-9-]+))?        # 5th element (possibly absent)
-    ([ ]+(?P<e5>[0-9-]+\\.[0-9-]+))?        # 6th element (possibly absent)
+    ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
+    ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
+    ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
     .*$                             # Whatever to end of line
     """, re.I | re.M | re.X)
 
@@ -314,6 +320,25 @@ class ORCA_HESS(object):
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            #--> 1st element (TX)
     [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            #--> 2nd element (TY)
     [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            #--> 3rd element (TZ)
+    """, re.I | re.M | re.X)
+
+    # Polarizability derivatives block
+    p_polder_block = re.compile("""
+    \\$polarizability_derivatives[ ]*\\n    # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_polder_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    [ ]+(?P<e3>[0-9-]+\\.[0-9]+)            # 4th element
+    [ ]+(?P<e4>[0-9-]+\\.[0-9]+)            # 5th element
+    [ ]+(?P<e5>[0-9-]+\\.[0-9]+)            # 6th element
     """, re.I | re.M | re.X)
 
 
@@ -431,7 +456,7 @@ class ORCA_HESS(object):
         ## end def parse_multiblock
 
         # Imports
-        import numpy as np
+        import re, numpy as np
         from .error import HESSError
         from .utils import safe_cast as scast
         from .const import atomNum, atomSym, PRM, DEF
@@ -678,6 +703,38 @@ class ORCA_HESS(object):
             ## end if
         ## end if
 
+
+        #=== Polarizability Derivatives ===#
+        # If block is missing, skip it
+        m_work = self.p_polder_block.search(self.in_str)
+        if m_work == None:
+            self.polders = None
+        else:
+            # Check that number of derivatives rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.polder_block, \
+                        "Count in polarizability derivatives block " + \
+                                                    "!= 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the derivatives
+            self.polders = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(6)] \
+                        for m in self.p_polder_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  six, since any row not containing six numerical values will
+            #  result in the block getting truncated.
+            if not self.polders.shape[0] == 3*self.num_ats:
+                raise(HESSError(HESSError.polder_block, \
+                        "Number of polarizability derivative rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
 
         # Set initialization flag; probably unnecessary?
         self.initialized = True
