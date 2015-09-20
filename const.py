@@ -366,6 +366,7 @@ class DEF(object):
     Orthonorm_Tol = 1e-8  (Acceptable deviation from Kronecker delta for
                             orthonormality testing)
     HESS_Coord_Match_Tol = 1e-6 (Max precision of HESS geometries)
+    HESS_IR_Match_Tol = 1e-2 (Max precision of freqs in IR spectrum block)
     GRAD_Coord_Match_Tol = 1e-7 (Max precision of GRAD geometries)
     XYZ_Coord_Match_Tol = 1e-12 (Max tolerable deviation between XYZ geoms)
     Symm_Match_Tol = 1e-3 (for quality of fit in symmetry matching)
@@ -387,6 +388,7 @@ class DEF(object):
     Moment_Tol = 1e-4
     Orthonorm_Tol = 1e-8
     HESS_Coord_Match_Tol = 1e-6
+    HESS_IR_Match_Tol = 1e-2
     GRAD_Coord_Match_Tol = 1e-7
     XYZ_Coord_Match_Tol = 1e-12
     Symm_Match_Tol = 1e-3
@@ -412,11 +414,15 @@ class PRM(object):
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
     Symm_Min_Origin_Dist = 0.5
+    Max_Sane_DipDer = 100
     """
 
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
     Symm_Min_Origin_Dist = 0.5
+    Max_Sane_DipDer = 100
+
+## end class PRM
 
 
 class SYMM(object):

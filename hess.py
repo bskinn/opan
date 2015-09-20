@@ -30,20 +30,25 @@ class ORCA_HESS(object):
 
     Information contained includes the Hessian matrix, the number of atoms,
     the atomic symbols, the atomic weights, and the geometry, as reported in
-    the .hess file.  The precision of the geometry is less than that reported
-    in an .xyz file, and thus should NOT be used for generation of subsequent
-    computations.
+    the .hess file.  See 'Instance Variables' below for a full list.  The
+    precision of the geometry is less than that reported in an .xyz file,
+    and thus should NOT be used for generation of subsequent computations.
 
     'N' in the below documentation refers to the number of atoms present in the
-    geometry contained within the ENGRAD.
+    geometry contained within the HESS.
 
-    Constructor may need to be adapted at some point in the future to handle
-    construction from a custom storage container. For now, the file-based
-    retrieval is the only implemented mode. If h5py turns out to be well
-    suited for use as a repository format, such modification may not be
-    necessary.
+    Zero frequencies corresponding to translation/rotation are **NOT**
+    excised from the frequencies list, normal modes, IR spectrum, Raman
+    spectrum, etc.
 
     Units of the Hessian are Hartrees per Bohr^2 (Eh/B^2)
+    Frequencies are in cyc/cm (standard wavenumbers)
+    IR Intensities (T**2 values) are in km/mol
+    Raman activities are in Angstrom^4/amu
+    Dipole derivatives are in ???
+    Polarizability derivatives are in ???
+    Eigenvalues of the mass-weighted Hessian are in Eh/B^2/amu
+    Eigenvectors of the mass-weighted Hessian are unitless
 
 
     Instantiation
@@ -53,16 +58,47 @@ class ORCA_HESS(object):
 
     Class Variables
     ---------------
-    p_at_block      : re.compile() pattern
-        RegEx for the entire block of atom ID & weight, and geom data.
-    p_at_line       : re.compile() pattern
-        RegEx for individual lines within the atom specification block
-    p_hess_block    : re.compile() pattern
-        RegEx for entire Hessian block
-    p_hess_sec      : re.compile() pattern
-        RegEx for a full-height, 3- or 6-column section of the Hessian
-    p_hess_line     : re.compile() pattern
-        RegEx for a single line within a Hessian section
+    re.compile() patterns:
+
+    p_at_block: Entire block of atom ID & weight, and geom data.
+    p_at_line: Individual lines within the atom specification block
+
+    p_dipder_block: Dipole derivatives block
+    p_dipder_line: Individual lines in the dipole derivatives block
+
+    p_eigvals_block: Mass-weighted Hessian eigenvalues block
+    p_eigvals_line: Individual lines of the eigenvalues block
+
+    p_eigvecs_block: Mass-weighted Hessian eigenvectors block
+    p_eigvecs_sec: Sections of the eigenvectors block
+    p_eigvecs_line: Individual lines of a section of the eigenvectors block
+
+    p_energy: The energy reported in the .hess file
+
+    p_freq_block: Entire vibrational frequencies block (cm**-1 units)
+    p_freq_line: Individual lines of the frequencies block
+
+    p_jobs_block: Entire job list block
+    p_jobs_line: Individual lines of the job list block
+
+    p_hess_block: Entire Hessian block
+    p_hess_sec: Full-height, 3- or 6-column section of the Hessian
+    p_hess_line: Single line within a Hessian section
+
+    p_ir_block: Full IR spectrum block
+    p_ir_line: Individual IR spectrum lines
+
+    p_modes_block: Entire modes block
+    p_modes_sec: Full-height, 3- or 6-column section of the modes block
+    p_modes_line: Single line within a modes block section
+
+    p_polder_block: Polarizability derivatives block
+    p_polder_line: Individual lines in the polarizability derivatives block
+
+    p_raman_block: Entire Raman spectrum block
+    p_raman_line: Individual lines in the Raman block
+
+    p_temp: The 'actual temperature' field (may be meaningless?)
 
     Instance Variables
     ------------------
@@ -70,18 +106,46 @@ class ORCA_HESS(object):
         Column vector of atom masses as reported in HESS
     atom_syms       : N x 1 np.str
         Column vector of uppercase atomic symbols
+    dipders         : 3N x 3 np.float_
+        Matrix of dipole derivatives
+    energy          : float
+        Energy reported in the Hessian file
+    freqs           : 3N x 1 np.float_
+        Vibrational frequencies (cm**-1) as reported in the Hessian file
     geom            : 3N x 1 np.float_
         Column vector of geometry [x1, y1, z1, x2, y2, ...]
     hess            : 3N x 3N np.float_
         Cartesian Hessian matrix
     HESS_path       : str
         Complete path/filename from which the Hessian data was retrieved
+    joblist         : N x 3 bool
+        Completion status for each displacement in calculation of the Hessian
     initialized     : bool
         Flag for whether self has been initialized--possibly obsolete
     in_str          : str
         Complete contents of the imported HESS file
+    ir_comps        : 3N x 3 np.float_
+        (Tx, Ty, Tz) components of the transition dipole for each normal mode
+    ir_mags         : 3N x 1 np.float_
+        T**2 values (squared-magnitudes) of the transition dipole for each mode
+    modes           : 3N x 3N np.float_
+        Rotation- and translation-purified vibrational normal modes,
+        with each mode (column vector) individually normalized by ORCA.
+    mwh_eigvals     : 3N x 1 np.float_
+        Eigenvalues of the mass-weighted Hessian
+    mwh_eigvecs     : 3N x 3N np.float_
+        Eigenvectors of the mass-weighted Hessian (as column vectors: the
+        eigenvector of eigenvalue 'i' would be 'mwh_eigvecs[:,i]')
     num_ats         : int
         Number of atoms in the system
+    polders         : 3N x 6 np.float_
+        Matrix of Cartesian polarizability derivatives
+    raman_acts      : 3N x 1 np.float_
+        Vector of Raman activities
+    raman_depols    : 3N x 1 np.float_
+        Vector of Raman depolarization factors
+    temp            : float
+        "Actual temperature" reported in the .hess file. May be meaningless.
 
     Methods
     -------
@@ -100,7 +164,7 @@ class ORCA_HESS(object):
     from .const import DEF
 
 
-    # Various class-level RegEx patterns.  Currently only retrieves the
+    # Various class-level Regex patterns.  Currently only retrieves the
     #  atom list and the Hessian itself. No other information in the .hess file
     #  is actually explicitly needed at present (will be recomputed internally)
     #  and so there's little point to spending time coding imports for it.
@@ -136,7 +200,7 @@ class ORCA_HESS(object):
     # Entire Hessian data block
     p_hess_block = re.compile("""
     \\$hessian.*\\n                 # Marker for Hessian block
-    (?P<dim>[0-9]+).*\\n            # Dimensionality of Hessian (N x N)
+    (?P<dim>[0-9]+).*\\n            # Dimensionality of Hessian (3N x 3N)
     (?P<block>                      # Group for the subsequent block of lines
         (                           # Group for single line definition
             ([ \\t]+[0-9.-]+)+      # Some number of whitespace-separated nums
@@ -165,22 +229,244 @@ class ORCA_HESS(object):
     [ \\t]+(?P<e0>[0-9-]+\\.[0-9]+)         # 1st element
     [ \\t]+(?P<e1>[0-9-]+\\.[0-9]+)         # 2nd element
     [ \\t]+(?P<e2>[0-9-]+\\.[0-9]+)         # 3rd element
-    ([ \\t]+(?P<e3>[0-9-]+\\.[0-9-]+))?     # 4th element (possibly absent)
-    ([ \\t]+(?P<e4>[0-9-]+\\.[0-9-]+))?     # 5th element (possibly absent)
-    ([ \\t]+(?P<e5>[0-9-]+\\.[0-9-]+))?     # 6th element (possibly absent)
+    ([ \\t]+(?P<e3>[0-9-]+\\.[0-9]+))?      # 4th element (possibly absent)
+    ([ \\t]+(?P<e4>[0-9-]+\\.[0-9]+))?      # 5th element (possibly absent)
+    ([ \\t]+(?P<e5>[0-9-]+\\.[0-9]+))?      # 6th element (possibly absent)
     .*$                             # Whatever to end of line
     """, re.I | re.M | re.X)
+
+    # Reported energy
+    p_energy = re.compile("""
+    \\$act_energy[ ]*\\n                    # Label for the block
+    [ ]+(?P<en>[0-9.-]+)[ ]*\\n             # Energy value
+    """, re.I | re.X)
+
+    # Frequencies block
+    p_freq_block = re.compile("""
+    \\$vibrational_frequencies[ ]*\\n       # Block label
+    [ ]*(?P<num>[0-9]+)[ ]*\\n              #--> Number of frequencies
+    (?P<block>                              # Open capture group for block
+        ([ ]+[0-9]+[ ]+[0-9.-]+[ ]*\\n)+    #--> Block contents
+    )                                       # Close capture group
+    """, re.I | re.X)
+
+    p_freq_line = re.compile("""
+    ^[ ]+(?P<id>[0-9]+)                     #--> ID for the frequency
+    [ ]+(?P<freq>[0-9.-]+)                  #--> Freq value in cm**-1
+    [ ]*$                                   # To EOL
+    """, re.I | re.M | re.X)
+
+
+    # Entire modes data block
+    p_modes_block = re.compile("""
+    \\$normal_modes.*\\n            # Marker for modes block
+    (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
+    (?P<dim2>[0-9]+).*\\n           #  (Second dimension value)
+    (?P<block>                      # Group for the subsequent block of lines
+        (                           # Group for single line definition
+            ([ ]+[0-9.-]+)+         # Some number of whitespace-separated nums
+            .*\\n                   # Plus whatever to end of line
+        )+                          # Whatever number of single lines
+    )                               # Enclose the whole batch of lines
+    """, re.I | re.X)
+
+    # Sections of the modes data block
+    p_modes_sec = re.compile("""
+    ([ ]+[0-9]+)+[ ]*\\n            # Column header line
+    (                               # Open the group for the sub-block lines
+        [ ]+[0-9]+                  # Row header
+        (                           # Open the group defining a single element
+            [ ]+[-]?                # Whitespace and optional hyphen
+            [0-9]+\\.[0-9]+         # One or more digits, decimal, more digits
+        )+                          # Some number of sub-columns
+        [ ]*\\n                     # Whitespace to EOL
+    )+                              # Some number of suitable lines
+    """, re.I | re.X)
+
+    # Pulling modes lines from the sections, with elements in groups
+    #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
+    #  above/below, guarantees a floating-point value is found. Otherwise, the
+    #  Regex retrieves on into subsequent sections because the header rows
+    #  parse just fine for a '[ ]+[0-9.-]' pattern.
+    p_modes_line = re.compile("""
+    ^[ ]*                           # Optional whitespace to start each line
+    (?P<row>[0-9]+)                         # Row header
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
+    ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
+    ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
+    .*$                             # Whatever to end of line
+    """, re.I | re.M | re.X)
+
+    # "Actual temperature"
+    p_temp = re.compile("""
+    \\$actual_temperature[ ]*\\n            # Marker for value
+    [ ]*(?P<temp>[0-9.]+)[ ]*\\n            # Value
+    """, re.I | re.X)
+
+    # Dipole derivatives block
+    p_dipder_block = re.compile("""
+    \\$dipole_derivatives[ ]*\\n            # Marker for block
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catches entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block capture
+    """, re.I | re.X)
+
+    # Dipole derivatives individual line
+    p_dipder_line = re.compile("""
+    ^                                       # Line start
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    [ ]*$
+    """, re.I | re.M | re.X)
+
+    # IR spectrum block
+    p_ir_block = re.compile("""
+    \\$ir_spectrum[ ]*\\n                   # Marker for block
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_ir_line = re.compile("""
+    ^                                       # Line start
+    [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency
+    [ ]+(?P<mag>[0-9]+\\.[0-9]+)            #--> Transition dipole sq. mag
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            #--> 1st element (TX)
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            #--> 2nd element (TY)
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            #--> 3rd element (TZ)
+    """, re.I | re.M | re.X)
+
+    # Polarizability derivatives block
+    p_polder_block = re.compile("""
+    \\$polarizability_derivatives[ ]*\\n    # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_polder_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    [ ]+(?P<e3>[0-9-]+\\.[0-9]+)            # 4th element
+    [ ]+(?P<e4>[0-9-]+\\.[0-9]+)            # 5th element
+    [ ]+(?P<e5>[0-9-]+\\.[0-9]+)            # 6th element
+    """, re.I | re.M | re.X)
+
+
+    # Raman spectrum block
+    p_raman_block = re.compile("""
+    \\$raman_spectrum[ ]*\\n                # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_raman_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency of mode
+    [ ]+(?P<act>[0-9]+\\.[0-9]+)            #--> Raman activity
+    [ ]+(?P<depol>[0-9]+\\.[0-9]+)          #--> Depolarization factor
+    """, re.I | re.M | re.X)
+
+
+    # Job list block
+    p_jobs_block = re.compile("""
+    \\$job_list[ ]*\\n                      # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9]+)+[ ]*\\n)+             # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_jobs_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<at>[0-9]+)                      #--> Atom index
+    [ ]+(?P<e0>[01])                        # 1st element
+    [ ]+(?P<e1>[01])                        # 2nd element
+    [ ]+(?P<e2>[01])                        # 3rd element
+    """, re.I | re.M | re.X)
+
+    # Eigenvalues of mass-weighted Hessian
+    p_eigvals_block = re.compile("""
+    \\$eigenvalues_mass_weighted_hessian[ ]*\\n         # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_eigvals_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<mode>[0-9]+)                    #--> Mode index
+    [ ]+(?P<eig>[0-9.-]+)                   #--> Eigenvalue
+    """, re.I | re.M | re.X)
+
+
+    #=== Mass-weighted Hessian eigenvectors ===#
+    # Entire eigenvectors data block
+    p_eigvecs_block = re.compile("""
+    \\$eigenvectors_mass_weighted_hessian.*\\n      # Marker for modes block
+    (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
+    (?P<dim2>[0-9]+)[ ]*\\n         #  (Second dimension value)
+    (?P<block>                      # Group for the subsequent block of lines
+        (                           # Group for single line definition
+            ([ ]+[0-9.-]+)+         # Some number of whitespace-separated nums
+            .*\\n                   # Plus whatever to end of line
+        )+                          # Whatever number of single lines
+    )                               # Enclose the whole batch of lines
+    """, re.I | re.X)
+
+    # Sections of the eigenvectors data block
+    p_eigvecs_sec = re.compile("""
+    ([ ]+[0-9]+)+[ ]*\\n            # Column header line
+    (                               # Open the group for the sub-block lines
+        [ ]+[0-9]+                  # Row header
+        (                           # Open the group defining a single element
+            [ ]+[-]?                # Whitespace and optional hyphen
+            [0-9]+\\.[0-9]+         # One or more digits, decimal, more digits
+        )+                          # Some number of sub-columns
+        [ ]*\\n                     # Whitespace to EOL
+    )+                              # Some number of suitable lines
+    """, re.I | re.X)
+
+    # Pulling modes lines from the sections, with elements in groups
+    #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
+    #  above/below, guarantees a floating-point value is found. Otherwise, the
+    #  Regex retrieves on into subsequent sections because the header rows
+    #  parse just fine for a '[ ]+[0-9.-]' pattern.
+    p_eigvecs_line = re.compile("""
+    ^[ ]*                           # Optional whitespace to start each line
+    (?P<row>[0-9]+)                         # Row header
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
+    ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
+    ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
+    .*$                             # Whatever to end of line
+    """, re.I | re.M | re.X)
+
+    ## End Regex definitions
+
 
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
 
-        Searches indicated file for geometry and Hessian block. Currently
-        does *not* retrieve any of the other information stored in a .hess
-        file.
-
-        In future, will likely require extension to handle import from some
-        manner of custom object, in order to implement saving/loading of
-        anharmonic computations.
+        Searches indicated file for data blocks within the .hess file.  The
+        geometry, Hessian block, frequencies, and normal modes must be present
+        and will be retrieved; other blocks will be imported if present, or
+        ignored if absent.  If malformed/inaccurate data is found in any
+        block that is present, some flavor of HESSError will be raised.
 
 
         Parameters
@@ -193,13 +479,138 @@ class ORCA_HESS(object):
         HESSError   : If indicated Hessian file is malformed in some fashion
         KeyError    : If invalid atomic symbol appears in .hess file
         IOError     : If the indicated file does not exist or cannot be read
+
+        Local Methods
+        -------------
+        parse_multiblock :  Helper function for importing blocks with multiple
+            sections
         """
 
+        # Local method(s)
+        def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats, \
+                                                            blockname, tc):
+            """ Helper function for importing blocks with multiple sections.
+
+            Parsing of data spanning multiple sections of columns is somewhat
+            involved. This function encapsulates the process for cleaner
+            function.  The structure depends critically on several formatting
+            features of ORCA .hess files.
+
+            Note the search groups that must be present in the 'p_block' and
+            'p_line' Regex patterns.
+
+            Parameters
+            ----------
+            hesstest    : str
+                Complete text of the .hess file
+            p_block     : re.compile() pattern
+                Retrieves the **entirety** of the relevant block
+                Required groups:
+                    dim     : overall dimension of the data block
+                    block   : contents of the block, including column headers
+            p_sec       : re.compile() pattern
+                Retrieves each section of data columns
+            p_line      : re.compile() pattern
+                Retrieves individual lines of a section
+                Required groups:
+                    row     : Row index into the final data block
+                    e#      : Column index into the data section (# in range(6))
+            num_ats     : int
+                Number of atoms in the geometry
+            blockname   : str
+                Brief text description of the block being imported, if needed
+                for error reporting purposes
+            tc          : HESSError typecode
+                Type of error to be thrown, if required
+
+            Returns
+            -------
+            workmtx     : np.matrix of np.float_
+                Data block returned as np.matrix(dtype=np.float_). Dimensions
+                will be 3*num_ats x 3*num_ats
+
+            """
+
+            # Pull the block
+            m_block = p_block.search(hesstext)
+
+            # Confirm the anticipated matrix size matches 3*num_ats
+            if not int(m_block.group("dim")) == 3*num_ats:
+                raise(HESSError(tc, blockname + " dimension " + \
+                        "specification mismatched with geometry", \
+                        "HESS File: " + HESS_path))
+            ## end if
+
+            # Initialize the working matrix
+            workmtx = np.zeros((3*num_ats, 3*num_ats), dtype=np.float_)
+
+            # Initialize the column offset for populating the matrix
+            col_offset = 0
+
+            # Initialize the counter for the number of row sections imported
+            rows_counter = 0
+
+            # Loop through the subsections of the matrix
+            for m_sec in p_sec.finditer(m_block.group("block")):
+                # Loop through each entry
+                for m_line in p_line.finditer(m_sec.group(0)):
+                    # Store the row; expect base zero so no adjustment needed.
+                    rowval = scast(m_line.group("row"), np.int_)
+
+                    # Loop to fill the row
+                    for i in range(6):
+                        # Store the element
+                        val = scast(m_line.group('e' + str(i)), np.float_)
+
+                        # Only store to matrix if a value actually retrieved.
+                        #  This protects against the final three-column section
+                        #  in blocks for systems with an odd number of atoms.
+                        if not np.isnan(val):
+                            workmtx[rowval, col_offset + i] = val
+                        ## end if
+                    ## next i
+
+                    # Increment the row-read counter
+                    rows_counter += 1
+
+                ## next m_hess_line
+
+                # Last thing is to increment the offset by six. Don't have to
+                #  worry about offsetting for a section only three columns wide
+                #  because that SHOULD only ever occur at the last section
+                col_offset += 6
+
+            ## next m_hess_sec
+
+            # Check to ensure that the column offset is high enough to have
+            #  fully populated the matrix based on the number of atoms. This is
+            #  a check against malformation of the HESS file, resulting in a
+            #  reduced number of sections being retrieved.
+            if not col_offset >= (3 * num_ats):
+                raise(HESSError(tc, "Insufficient number of " + blockname + \
+                        " sections found", \
+                        "HESS File: " + HESS_path))
+            ## end if
+
+            # Additional cross-check on number of rows imported
+            if (rows_counter % (3*num_ats)) != 0:
+                # Not the right number of rows; complain
+                raise(HESSError(tc, \
+                            blockname + " row count mismatch", \
+                            "HESS File: " + HESS_path))
+            ## end if
+
+            # Return the working matrix as a matrix
+            workmtx = np.matrix(workmtx)
+            return workmtx
+
+        ## end def parse_multiblock
+
         # Imports
-        import numpy as np
+        import re, numpy as np
         from .error import HESSError
         from .utils import safe_cast as scast
-        from .const import atomNum, atomSym
+        from .const import atomNum, atomSym, PRM, DEF
 
         # Set the initialization flag (possibly unnecessary...)
         self.initialized = False
@@ -216,7 +627,7 @@ class ORCA_HESS(object):
         # Store the path used to retrieve the data
         self.HESS_path = HESS_path
 
-        # Check to ensure all relevant data blocks are found
+        # Check to ensure all required data blocks are found
         if not ORCA_HESS.p_at_block.search(self.in_str):
             raise(HESSError(HESSError.at_block,
                     "Atom specification block not found",
@@ -227,10 +638,24 @@ class ORCA_HESS(object):
                     "Hessian block not found",
                     "HESS File: " + HESS_path))
         ## end if
+        if not ORCA_HESS.p_freq_block.search(self.in_str):
+            raise(HESSError(HESSError.freq_block,
+                    "Frequencies block (cm**-1 units) not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+        if not ORCA_HESS.p_modes_block.search(self.in_str):
+            raise(HESSError(HESSError.modes_block,
+                    "Normal modes block not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+
+
+        #=== Geometry spec block ===#
+        # Store the block
+        m_work = self.p_at_block.search(self.in_str)
 
         # Bring in the number of atoms
-        self.num_ats = np.int_( \
-                ORCA_HESS.p_at_block.search(self.in_str).group("num"))
+        self.num_ats = np.int_(m_work.group("num"))
 
         # Initialize the vectors of atomic symbols, masses, and the
         #  geometry
@@ -239,8 +664,7 @@ class ORCA_HESS(object):
         self.geom = []
 
         # Parse the list of atoms
-        for m in ORCA_HESS.p_at_line.finditer( \
-                ORCA_HESS.p_at_block.search(self.in_str).group("block")):
+        for m in ORCA_HESS.p_at_line.finditer(m_work.group("block")):
             # Parse the element symbol or atomic number
             try:
                 # See if it casts as an int
@@ -284,86 +708,323 @@ class ORCA_HESS(object):
         ## end if
 
         # Convert instance variables to numpy storage forms
-        self.atom_syms = np.vstack(self.atom_syms)
-        self.atom_masses = np.vstack(np.array(self.atom_masses, \
-                                dtype=np.float_))
-        self.geom = np.vstack(np.array(self.geom, dtype=np.float_))
+        self.atom_syms = np.matrix(np.vstack(self.atom_syms))
+        self.atom_masses = np.matrix(np.vstack(np.array(self.atom_masses, \
+                                dtype=np.float_)))
+        self.geom = np.matrix(np.vstack(np.array(self.geom, dtype=np.float_)))
 
-        # Now to import the Hessian matrix; error if not found
-        m_hess_block = ORCA_HESS.p_hess_block.search(self.in_str)
-        if m_hess_block == None:
-            raise(HESSError(HESSError.hess_block, "No match for Hessian " + \
-                    "block found", \
-                    "HESS File: " + HESS_path))
+        #=== Hessian and modes ===#
+        # Pull the Hessian
+        self.hess = parse_multiblock(self.in_str, self.p_hess_block, \
+                self.p_hess_sec, self.p_hess_line, self.num_ats, \
+                "Hessian", HESSError.hess_block)
+
+        # Pull the modes
+        self.modes = parse_multiblock(self.in_str, self.p_modes_block, \
+                self.p_modes_sec, self.p_modes_line, self.num_ats, \
+                "modes", HESSError.modes_block)
+
+        # Extra check of 'dim' vs 'dim2' on modes
+        m_work = self.p_modes_block.search(self.in_str)
+        if scast(m_work.group("dim"), np.int_) != \
+                            scast(m_work.group("dim2"), np.int_):
+            raise(HESSError(HESSError.modes_block, \
+                    "Normal mode block dimension specification mismatch",
+                    "HESS File: " + self.HESS_path))
         ## end if
 
-        # Confirm the anticipated Hessian size matches 3*num_ats
-        if not int(m_hess_block.group("dim")) == 3*self.num_ats:
-            raise(HESSError(HESSError.hess_block, "Hessian dimension " + \
-                    "mismatch with geometry", \
-                    "HESS File: " + HESS_path))
+        #=== Frequencies ===#
+        # Pull the block
+        m_work = self.p_freq_block.search(self.in_str)
+
+        # Check that number of frequencies indicated in the block matches
+        #  that expected from the number of atoms
+        if 3*self.num_ats != np.int_(m_work.group("num")):
+            raise(HESSError(HESSError.freq_block, \
+                    "Count in frequencies block != 3 * number of atoms", \
+                    "HESS File: " + self.HESS_path))
         ## end if
 
-        # Initialize the Hessian matrix
-        self.hess = np.zeros((3*self.num_ats, 3*self.num_ats), dtype=np.float_)
+        # Retrieve the frequencies (this generates a row vector)
+        self.freqs = np.matrix( \
+                [np.float_(m.group("freq")) for m in \
+                self.p_freq_line.finditer(m_work.group("block"))])
 
-        # Initialize the column offset for populating the Hessian
-        col_offset = 0
-
-        # Initialize the counter for the number of row sections imported
-        rows_counter = 0
-
-        # Loop through the subsections of the Hessian
-        for m_hess_sec in ORCA_HESS.p_hess_sec \
-                                    .finditer(m_hess_block.group("block")):
-            # Loop through each entry
-            for m_hess_line in ORCA_HESS.p_hess_line \
-                                    .finditer(m_hess_sec.group(0)):
-                # Store the row; base zero in .HESS so no adjustment needed.
-                rowval = scast(m_hess_line.group("row"), np.int_)
-
-                # Loop to fill the row
-                for i in range(6):
-                    # Store the element
-                    val = scast(m_hess_line.group('e' + str(i)), np.float_)
-
-                    # Only store to Hessian if a value actually retrieved.
-                    #  This protects against the final three-column section in
-                    #  Hessians for systems with an odd number of atoms.
-                    if not np.isnan(val):
-                        self.hess[rowval, col_offset + i] = val
-                    ## end if
-                ## next i
-
-                # Increment the row-read counter
-                rows_counter += 1
-
-            ## next m_hess_line
-
-            # Last thing is to increment the offset by six. Don't have to
-            #  worry about offsetting for a section only three columns wide
-            #  because that SHOULD only ever occur at the last section
-            col_offset += 6
-
-        ## next m_hess_sec
-
-        # Check to ensure that the column offset is high enough to have
-        #  fully populated the Hessian based on the number of atoms. This is a
-        #  check against malformation of the HESS file, resulting in a reduced
-        #  number of sections being retrieved.
-        if not col_offset >= (3 * self.num_ats):
-            raise(HESSError(HESSError.hess_block, "Insufficient number of " + \
-                    "HESS sections found", \
-                    "HESS File: " + HESS_path))
+        # Proofread for proper size (still a row vector)
+        if not self.freqs.shape[1] == 3*self.num_ats:
+            raise(HESSError(HESSError.freq_block, \
+                    "Number of frequencies != 3 * number of atoms", \
+                    "HESS File: " + self.HESS_path))
         ## end if
 
-        # Additional cross-check on number of rows imported
-        if (rows_counter % (3*self.num_ats)) != 0:
-            # Not the right number of rows; complain
-            raise(HESSError(HESSError.hess_block, \
-                        "Hessian row count mismatch", \
-                        "HESS File: " + HESS_path))
+        # Transpose for column vector storage
+        self.freqs = self.freqs.transpose()
+
+
+        #=== Pull the single values that should always be present ===#
+        # Store the reported energy
+        self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
+                                                                    np.float_)
+
+        # Store the reported 'actual temperature'
+        self.temp = scast(self.p_temp.search(self.in_str).group("temp"), \
+                                                                    np.float_)
+
+        #=== Dipole derivatives ===#
+        # Check if block found. Store None if not; otherwise import
+        m_work = self.p_dipder_block.search(self.in_str)
+        if m_work == None:
+            self.dipders = None
+        else:
+            # Check that number of derivatives rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.dipder_block, \
+                        "Count in dipole derivatives block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the derivatives
+            self.dipders = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_dipder_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  three, since any row not containing three numerical values will
+            #  result in the block getting truncated.
+            if not self.dipders.shape[0] == 3*self.num_ats:
+                raise(HESSError(HESSError.dipder_block, \
+                        "Number of dipole derivative rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # If max-absolute element is too big, overwrite with None
+            if np.max(np.abs(self.dipders)) > PRM.Max_Sane_DipDer:
+                self.dipders = None
+            ## end if
         ## end if
+
+
+        #=== IR Spectrum ===#
+        # If dipole derivs absent or munged, or if block missing, then skip
+        m_work = self.p_ir_block.search(self.in_str)
+        if self.dipders == None or m_work == None:
+            self.ir_comps = None
+            self.ir_mags = None
+        else:
+            # Complain if number of stated modes mismatches expectation
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.ir_block, \
+                        "Count in IR spectrum block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Pull the blocks
+            self.ir_comps = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_ir_line.finditer( \
+                                                    m_work.group("block")) ])
+            self.ir_mags = np.matrix( \
+                    [[np.float_(m.group("mag"))] \
+                        for m in self.p_ir_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Confirm match of all frequencies with those reported separately
+            if not np.allclose( \
+                    self.freqs, \
+                    np.matrix([[np.float_(m.group('freq'))] \
+                                for m in self.p_ir_line.finditer( \
+                                m_work.group("block")) ]), \
+                    rtol=0, \
+                    atol=DEF.HESS_IR_Match_Tol):
+                raise(HESSError(HESSError.ir_block, \
+                        "Frequency mismatch between freq and IR blocks", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Confirm length of ir_mags conforms. Shouldn't need to check both,
+            #  since they both rely equally on p_ir_line.finditer.
+            if 3*self.num_ats != self.ir_mags.shape[0]:
+                raise(HESSError(HESSError.ir_block, \
+                        "Number of IR spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
+
+
+        #=== Polarizability Derivatives ===#
+        # If block is missing, skip it
+        m_work = self.p_polder_block.search(self.in_str)
+        if m_work == None:
+            self.polders = None
+        else:
+            # Check that number of derivatives rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.polder_block, \
+                        "Count in polarizability derivatives block " + \
+                                                    "!= 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the derivatives
+            self.polders = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(6)] \
+                        for m in self.p_polder_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  six, since any row not containing six numerical values will
+            #  result in the block getting truncated.
+            if not self.polders.shape[0] == 3*self.num_ats:
+                raise(HESSError(HESSError.polder_block, \
+                        "Number of polarizability derivative rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
+
+
+        #=== Raman Spectrum ===#
+        # If polarizability derivs absent or munged, or if block missing,
+        #  then skip
+        m_work = self.p_raman_block.search(self.in_str)
+        if self.polders == None or m_work == None:
+            self.raman_acts = None
+            self.raman_depols = None
+        else:
+            # Complain if number of stated modes mismatches expectation
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.raman_block, \
+                        "Count in Raman spectrum block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Pull the blocks
+            self.raman_acts = np.matrix( \
+                    [[np.float_(m.group("act"))] \
+                        for m in self.p_raman_line.finditer( \
+                                                    m_work.group("block")) ])
+            self.raman_depols = np.matrix( \
+                    [[np.float_(m.group("depol"))] \
+                        for m in self.p_raman_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Confirm match of all frequencies with those reported separately
+            if not np.allclose( \
+                    self.freqs, \
+                    np.matrix([[np.float_(m.group('freq'))] \
+                                for m in self.p_raman_line.finditer( \
+                                m_work.group("block")) ]), \
+                    rtol=0, \
+                    atol=DEF.HESS_IR_Match_Tol):
+                raise(HESSError(HESSError.raman_block, \
+                        "Frequency mismatch between freq and Raman blocks", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Confirm length of raman_acts conforms. Shouldn't need to check
+            #  both, since they both rely equally on p_raman_line.finditer.
+            if 3*self.num_ats != self.raman_acts.shape[0]:
+                raise(HESSError(HESSError.raman_block, \
+                        "Number of Raman spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
+
+
+        #=== Job list ===#
+        # Check if block found. Store None if not; otherwise import
+        m_work = self.p_jobs_block.search(self.in_str)
+        if m_work == None:
+            self.joblist = None
+        else:
+            # Check that number of joblist rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.job_block, \
+                        "Count in job list block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the job list
+            self.joblist = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_jobs_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  three, since any row not containing three numerical values will
+            #  result in the block getting truncated.
+            if not self.joblist.shape[0] == self.num_ats:
+                raise(HESSError(HESSError.job_block, \
+                        "Number of job list rows != number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Convert to boolean
+            self.joblist = np.equal(self.joblist, np.ones(self.joblist.shape))
+
+        ## end if
+
+
+        #=== Mass-weighted Hessian -- Eigenvalues ===#
+        # Pull the block; continue only if block is present
+        m_work = self.p_eigvals_block.search(self.in_str)
+        if m_work == None:
+            self.mwh_eigvals = None
+        else:
+            # Check that number of eigenvalues indicated in the block matches
+            #  that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.eigval_block, \
+                        "Count in MWH eigenvalues block != 3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the eigenvalues (this generates a row vector)
+            self.mwh_eigvals = np.matrix( \
+                    [np.float_(m.group("eig")) for m in \
+                    self.p_eigvals_line.finditer(m_work.group("block"))])
+
+            # Proofread for proper size (still a row vector)
+            if not self.mwh_eigvals.shape[1] == 3*self.num_ats:
+                raise(HESSError(HESSError.eigval_block, \
+                        "Number of MWH eigenvalues != 3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Transpose for column vector storage
+            self.mwh_eigvals = self.mwh_eigvals.transpose()
+
+        ## end if
+
+
+        #=== Mass-weighted Hessian -- Eigenvalues ===#
+        # See if the block is there; import if so
+        m_work = self.p_eigvecs_block.search(self.in_str)
+        if m_work == None:
+            self.mwh_eigvecs = None
+        else:
+            # Pull the eigenvectors
+            self.mwh_eigvecs = \
+                    parse_multiblock(self.in_str, self.p_eigvecs_block, \
+                    self.p_eigvecs_sec, self.p_eigvecs_line, self.num_ats, \
+                    "MWH eigenvectors", HESSError.eigvec_block)
+
+            # Extra check of 'dim' vs 'dim2' on modes
+            if scast(m_work.group("dim"), np.int_) != \
+                                scast(m_work.group("dim2"), np.int_):
+                raise(HESSError(HESSError.eigvec_block, \
+                        "MWH eigenvectors dimension specification mismatch",
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
+
 
         # Set initialization flag; probably unnecessary?
         self.initialized = True
