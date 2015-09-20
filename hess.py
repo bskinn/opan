@@ -30,21 +30,25 @@ class ORCA_HESS(object):
 
     Information contained includes the Hessian matrix, the number of atoms,
     the atomic symbols, the atomic weights, and the geometry, as reported in
-    the .hess file.  The precision of the geometry is less than that reported
-    in an .xyz file, and thus should NOT be used for generation of subsequent
-    computations.
+    the .hess file.  See 'Instance Variables' below for a full list.  The
+    precision of the geometry is less than that reported in an .xyz file,
+    and thus should NOT be used for generation of subsequent computations.
 
     'N' in the below documentation refers to the number of atoms present in the
-    geometry contained within the ENGRAD.
+    geometry contained within the HESS.
 
-    Constructor may need to be adapted at some point in the future to handle
-    construction from a custom storage container. For now, the file-based
-    retrieval is the only implemented mode. If h5py turns out to be well
-    suited for use as a repository format, such modification may not be
-    necessary.
+    Zero frequencies corresponding to translation/rotation are **NOT**
+    excised from the frequencies list, normal modes, IR spectrum, Raman
+    spectrum, etc.
 
     Units of the Hessian are Hartrees per Bohr^2 (Eh/B^2)
     Frequencies are in cyc/cm (standard wavenumbers)
+    IR Intensities (T**2 values) are in km/mol
+    Raman activities are in Angstrom^4/amu
+    Dipole derivatives are in ???
+    Polarizability derivatives are in ???
+    Eigenvalues of the mass-weighted Hessian are in Eh/B^2/amu
+    Eigenvectors of the mass-weighted Hessian are unitless
 
 
     Instantiation
@@ -54,42 +58,40 @@ class ORCA_HESS(object):
 
     Class Variables
     ---------------
-    p_at_block      : re.compile() pattern
-        Regex for the entire block of atom ID & weight, and geom data.
-    p_at_line       : re.compile() pattern
-        Regex for individual lines within the atom specification block
-    p_dipder_block  : re.compile() pattern
-        Regex for the dipole derivatives block
-    p_dipder_line   : re.compile() pattern
-        Regex for individual lines in the dipole derivatives block
-    p_energy        : re.compile() pattern
-        Regex for the energy reported in the .hess file
-    p_freq_block    : re.compile() pattern
-        Regex for the entire vibrational frequencies block (cm**-1 units)
-    p_freq_line     : re.compile() pattern
-        Regex for each line of the frequencies block
-    p_hess_block    : re.compile() pattern
-        Regex for entire Hessian block
-    p_hess_sec      : re.compile() pattern
-        Regex for a full-height, 3- or 6-column section of the Hessian
-    p_hess_line     : re.compile() pattern
-        Regex for a single line within a Hessian section
-    p_ir_block      : re.compile() pattern
-        Regex for the full IR spectrum block
-    p_ir_line       : re.compile() pattern
-        Regex for individual IR spectrum lines
-    p_modes_block   : re.compile() pattern
-        Regex for entire modes block
-    p_modes_sec     : re.compile() pattern
-        Regex for a full-height, 3- or 6-column section of the modes block
-    p_modes_line    : re.compile() pattern
-        Regex for a single line within a modes block section
-    p_polder_block  : re.compile() pattern
-        Regex for the polarizability derivatives block
-    p_polder_line   : re.compile() pattern
-        Regex for individual lines in the polarizability derivatives block
-    p_temp          : re.compile() pattern
-        Regex for the 'actual temperature' field (may be meaningless?)
+    re.compile() patterns:
+
+    p_at_block: Entire block of atom ID & weight, and geom data.
+    p_at_line: Individual lines within the atom specification block
+
+    p_dipder_block: Dipole derivatives block
+    p_dipder_line: Individual lines in the dipole derivatives block
+
+    p_energy: The energy reported in the .hess file
+
+    p_freq_block: Entire vibrational frequencies block (cm**-1 units)
+    p_freq_line: Individual lines of the frequencies block
+
+    p_jobs_block: Entire job list block
+    p_jobs_line: Individual lines of the job list block
+
+    p_hess_block: Entire Hessian block
+    p_hess_sec: Full-height, 3- or 6-column section of the Hessian
+    p_hess_line: Single line within a Hessian section
+
+    p_ir_block: Full IR spectrum block
+    p_ir_line: Individual IR spectrum lines
+
+    p_modes_block: Entire modes block
+    p_modes_sec: Full-height, 3- or 6-column section of the modes block
+    p_modes_line: Single line within a modes block section
+
+    p_polder_block: Polarizability derivatives block
+    p_polder_line: Individual lines in the polarizability derivatives block
+
+    p_raman_block: Entire Raman spectrum block
+    p_raman_line: Individual lines in the Raman block
+
+    p_temp: The 'actual temperature' field (may be meaningless?)
 
     Instance Variables
     ------------------
@@ -109,6 +111,8 @@ class ORCA_HESS(object):
         Cartesian Hessian matrix
     HESS_path       : str
         Complete path/filename from which the Hessian data was retrieved
+    joblist         : N x 3 bool
+        Completion status for each displacement in calculation of the Hessian
     initialized     : bool
         Flag for whether self has been initialized--possibly obsolete
     in_str          : str
@@ -124,6 +128,10 @@ class ORCA_HESS(object):
         Number of atoms in the system
     polders         : 3N x 6 np.float_
         Matrix of Cartesian polarizability derivatives
+    raman_acts      : 3N x 1 np.float_
+        Vector of Raman activities
+    raman_depols    : 3N x 1 np.float_
+        Vector of Raman depolarization factors
     temp            : float
         "Actual temperature" reported in the .hess file. May be meaningless.
 
@@ -342,16 +350,49 @@ class ORCA_HESS(object):
     """, re.I | re.M | re.X)
 
 
+    # Raman spectrum block
+    p_raman_block = re.compile("""
+    \\$raman_spectrum[ ]*\\n                # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_raman_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency of mode
+    [ ]+(?P<act>[0-9]+\\.[0-9]+)            #--> Raman activity
+    [ ]+(?P<depol>[0-9]+\\.[0-9]+)          #--> Depolarization factor
+    """, re.I | re.M | re.X)
+
+
+    # Job list block
+    p_jobs_block = re.compile("""
+    \\$job_list[ ]*\\n                      # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9]+)+[ ]*\\n)+             # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_jobs_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<at>[0-9]+)                      #--> Atom index
+    [ ]+(?P<e0>[01])                        # 1st element
+    [ ]+(?P<e1>[01])                        # 2nd element
+    [ ]+(?P<e2>[01])                        # 3rd element
+    """, re.I | re.M | re.X)
+
+
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
 
-        Searches indicated file for geometry and Hessian block. Currently
-        does *not* retrieve any of the other information stored in a .hess
-        file.
-
-        In future, will likely require extension to handle import from some
-        manner of custom object, in order to implement saving/loading of
-        anharmonic computations.
+        Searches indicated file for data blocks within the .hess file.  The
+        geometry, Hessian block, frequencies, and normal modes must be present
+        and will be retrieved; other blocks will be imported if present, or
+        ignored if absent.  If malformed/inaccurate data is found in any
+        block that is present, some flavor of HESSError will be raised.
 
 
         Parameters
@@ -735,6 +776,91 @@ class ORCA_HESS(object):
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
+
+
+        #=== Raman Spectrum ===#
+        # If polarizability derivs absent or munged, or if block missing,
+        #  then skip
+        m_work = self.p_raman_block.search(self.in_str)
+        if self.polders == None or m_work == None:
+            self.raman_acts = None
+            self.raman_depols = None
+        else:
+            # Complain if number of stated modes mismatches expectation
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.raman_block, \
+                        "Count in Raman spectrum block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Pull the blocks
+            self.raman_acts = np.matrix( \
+                    [[np.float_(m.group("act"))] \
+                        for m in self.p_raman_line.finditer( \
+                                                    m_work.group("block")) ])
+            self.raman_depols = np.matrix( \
+                    [[np.float_(m.group("depol"))] \
+                        for m in self.p_raman_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Confirm match of all frequencies with those reported separately
+            if not np.allclose( \
+                    self.freqs, \
+                    np.matrix([[np.float_(m.group('freq'))] \
+                                for m in self.p_raman_line.finditer( \
+                                m_work.group("block")) ]), \
+                    rtol=0, \
+                    atol=DEF.HESS_IR_Match_Tol):
+                raise(HESSError(HESSError.raman_block, \
+                        "Frequency mismatch between freq and Raman blocks", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Confirm length of raman_acts conforms. Shouldn't need to check
+            #  both, since they both rely equally on p_raman_line.finditer.
+            if 3*self.num_ats != self.raman_acts.shape[0]:
+                raise(HESSError(HESSError.raman_block, \
+                        "Number of Raman spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+        ## end if
+
+
+        #=== Job list ===#
+        # Check if block found. Store None if not; otherwise import
+        m_work = self.p_jobs_block.search(self.in_str)
+        if m_work == None:
+            self.joblist = None
+        else:
+            # Check that number of joblist rows indicated in the block
+            #  matches that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.job_block, \
+                        "Count in job list block != 3 * # of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the job list
+            self.joblist = np.matrix( \
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
+                        for m in self.p_jobs_line.finditer( \
+                                                    m_work.group("block")) ])
+
+            # Proofread for proper size. Don't have to proofread the width of
+            #  three, since any row not containing three numerical values will
+            #  result in the block getting truncated.
+            if not self.joblist.shape[0] == self.num_ats:
+                raise(HESSError(HESSError.job_block, \
+                        "Number of job list rows != number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Convert to boolean
+            self.joblist = np.equal(self.joblist, np.ones(self.joblist.shape))
+
+        ## end if
+
 
         # Set initialization flag; probably unnecessary?
         self.initialized = True
