@@ -66,6 +66,13 @@ class ORCA_HESS(object):
     p_dipder_block: Dipole derivatives block
     p_dipder_line: Individual lines in the dipole derivatives block
 
+    p_eigvals_block: Mass-weighted Hessian eigenvalues block
+    p_eigvals_line: Individual lines of the eigenvalues block
+
+    p_eigvecs_block: Mass-weighted Hessian eigenvectors block
+    p_eigvecs_sec: Sections of the eigenvectors block
+    p_eigvecs_line: Individual lines of a section of the eigenvectors block
+
     p_energy: The energy reported in the .hess file
 
     p_freq_block: Entire vibrational frequencies block (cm**-1 units)
@@ -124,6 +131,11 @@ class ORCA_HESS(object):
     modes           : 3N x 3N np.float_
         Rotation- and translation-purified vibrational normal modes,
         with each mode (column vector) individually normalized by ORCA.
+    mwh_eigvals     : 3N x 1 np.float_
+        Eigenvalues of the mass-weighted Hessian
+    mwh_eigvecs     : 3N x 3N np.float_
+        Eigenvectors of the mass-weighted Hessian (as column vectors: the
+        eigenvector of eigenvalue 'i' would be 'mwh_eigvecs[:,i]')
     num_ats         : int
         Number of atoms in the system
     polders         : 3N x 6 np.float_
@@ -384,6 +396,68 @@ class ORCA_HESS(object):
     [ ]+(?P<e2>[01])                        # 3rd element
     """, re.I | re.M | re.X)
 
+    # Eigenvalues of mass-weighted Hessian
+    p_eigvals_block = re.compile("""
+    \\$eigenvalues_mass_weighted_hessian[ ]*\\n         # Block marker
+    (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
+    (?P<block>                              #--> Catch entire block
+        (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+    )                                       # End block catch
+    """, re.I | re.X)
+
+    p_eigvals_line = re.compile("""
+    ^                                       # Start of line
+    [ ]+(?P<mode>[0-9]+)                    #--> Mode index
+    [ ]+(?P<eig>[0-9.-]+)                   #--> Eigenvalue
+    """, re.I | re.M | re.X)
+
+
+    #=== Mass-weighted Hessian eigenvectors ===#
+    # Entire eigenvectors data block
+    p_eigvecs_block = re.compile("""
+    \\$eigenvectors_mass_weighted_hessian.*\\n      # Marker for modes block
+    (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
+    (?P<dim2>[0-9]+)[ ]*\\n         #  (Second dimension value)
+    (?P<block>                      # Group for the subsequent block of lines
+        (                           # Group for single line definition
+            ([ ]+[0-9.-]+)+         # Some number of whitespace-separated nums
+            .*\\n                   # Plus whatever to end of line
+        )+                          # Whatever number of single lines
+    )                               # Enclose the whole batch of lines
+    """, re.I | re.X)
+
+    # Sections of the eigenvectors data block
+    p_eigvecs_sec = re.compile("""
+    ([ ]+[0-9]+)+[ ]*\\n            # Column header line
+    (                               # Open the group for the sub-block lines
+        [ ]+[0-9]+                  # Row header
+        (                           # Open the group defining a single element
+            [ ]+[-]?                # Whitespace and optional hyphen
+            [0-9]+\\.[0-9]+         # One or more digits, decimal, more digits
+        )+                          # Some number of sub-columns
+        [ ]*\\n                     # Whitespace to EOL
+    )+                              # Some number of suitable lines
+    """, re.I | re.X)
+
+    # Pulling modes lines from the sections, with elements in groups
+    #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
+    #  above/below, guarantees a floating-point value is found. Otherwise, the
+    #  Regex retrieves on into subsequent sections because the header rows
+    #  parse just fine for a '[ ]+[0-9.-]' pattern.
+    p_eigvecs_line = re.compile("""
+    ^[ ]*                           # Optional whitespace to start each line
+    (?P<row>[0-9]+)                         # Row header
+    [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
+    [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
+    [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+    ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
+    ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
+    ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
+    .*$                             # Whatever to end of line
+    """, re.I | re.M | re.X)
+
+    ## End Regex definitions
+
 
     def __init__(self, HESS_path):
         """ Initialize ORCA_HESS Hessian object from .hess file
@@ -408,18 +482,54 @@ class ORCA_HESS(object):
 
         Local Methods
         -------------
-        parse_multiblock #DOC:Complete parse_multiblock docstring entry
+        parse_multiblock :  Helper function for importing blocks with multiple
+            sections
         """
 
         # Local method(s)
         def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats, \
                                                             blockname, tc):
-            """ #DOC: parse_multiblock docstring
-            """
+            """ Helper function for importing blocks with multiple sections.
 
-            # Imports
-            import numpy as np
-            from .utils import safe_cast as scast
+            Parsing of data spanning multiple sections of columns is somewhat
+            involved. This function encapsulates the process for cleaner
+            function.  The structure depends critically on several formatting
+            features of ORCA .hess files.
+
+            Note the search groups that must be present in the 'p_block' and
+            'p_line' Regex patterns.
+
+            Parameters
+            ----------
+            hesstest    : str
+                Complete text of the .hess file
+            p_block     : re.compile() pattern
+                Retrieves the **entirety** of the relevant block
+                Required groups:
+                    dim     : overall dimension of the data block
+                    block   : contents of the block, including column headers
+            p_sec       : re.compile() pattern
+                Retrieves each section of data columns
+            p_line      : re.compile() pattern
+                Retrieves individual lines of a section
+                Required groups:
+                    row     : Row index into the final data block
+                    e#      : Column index into the data section (# in range(6))
+            num_ats     : int
+                Number of atoms in the geometry
+            blockname   : str
+                Brief text description of the block being imported, if needed
+                for error reporting purposes
+            tc          : HESSError typecode
+                Type of error to be thrown, if required
+
+            Returns
+            -------
+            workmtx     : np.matrix of np.float_
+                Data block returned as np.matrix(dtype=np.float_). Dimensions
+                will be 3*num_ats x 3*num_ats
+
+            """
 
             # Pull the block
             m_block = p_block.search(hesstext)
@@ -859,6 +969,60 @@ class ORCA_HESS(object):
             # Convert to boolean
             self.joblist = np.equal(self.joblist, np.ones(self.joblist.shape))
 
+        ## end if
+
+
+        #=== Mass-weighted Hessian -- Eigenvalues ===#
+        # Pull the block; continue only if block is present
+        m_work = self.p_eigvals_block.search(self.in_str)
+        if m_work == None:
+            self.mwh_eigvals = None
+        else:
+            # Check that number of eigenvalues indicated in the block matches
+            #  that expected from the number of atoms
+            if 3*self.num_ats != np.int_(m_work.group("dim")):
+                raise(HESSError(HESSError.eigval_block, \
+                        "Count in MWH eigenvalues block != 3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Retrieve the eigenvalues (this generates a row vector)
+            self.mwh_eigvals = np.matrix( \
+                    [np.float_(m.group("eig")) for m in \
+                    self.p_eigvals_line.finditer(m_work.group("block"))])
+
+            # Proofread for proper size (still a row vector)
+            if not self.mwh_eigvals.shape[1] == 3*self.num_ats:
+                raise(HESSError(HESSError.eigval_block, \
+                        "Number of MWH eigenvalues != 3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
+            # Transpose for column vector storage
+            self.mwh_eigvals = self.mwh_eigvals.transpose()
+
+        ## end if
+
+
+        #=== Mass-weighted Hessian -- Eigenvalues ===#
+        # See if the block is there; import if so
+        m_work = self.p_eigvecs_block.search(self.in_str)
+        if m_work == None:
+            self.mwh_eigvecs = None
+        else:
+            # Pull the eigenvectors
+            self.mwh_eigvecs = \
+                    parse_multiblock(self.in_str, self.p_eigvecs_block, \
+                    self.p_eigvecs_sec, self.p_eigvecs_line, self.num_ats, \
+                    "MWH eigenvectors", HESSError.eigvec_block)
+
+            # Extra check of 'dim' vs 'dim2' on modes
+            if scast(m_work.group("dim"), np.int_) != \
+                                scast(m_work.group("dim2"), np.int_):
+                raise(HESSError(HESSError.eigvec_block, \
+                        "MWH eigenvectors dimension specification mismatch",
+                        "HESS File: " + self.HESS_path))
+            ## end if
         ## end if
 
 
