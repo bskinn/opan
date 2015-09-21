@@ -45,33 +45,39 @@ class ORCA_OUTPUT(object):
     ---------------
     dict() lookups of re.compile() RegEx patterns:
         p_en    : Energies reported at the end of SCF cycles. Keys:
-            EN_SCFFINAL : SCF energy including gCP, D3, etc. corrections
-            EN_GCP      : gCP correction
-            EN_D3       : D3 correction (D3BJ, at least; unconfirmed with
+            EN.SCFFINAL : SCF energy including gCP, D3, etc. corrections
+            EN.GCP      : gCP correction
+            EN.D3       : D3 correction (D3BJ, at least; unconfirmed with
                             D3ZERO. Likely nonfunctional with DFT-NL)
-            EN_SCFOCC   : SCF energy with only COSMO outlying q correction
+            EN.SCFOCC   : SCF energy with only COSMO outlying q correction
+            EN.OCC      : COSMO outlying q correction
+            EN.SCFFINALOCC  : Final SCF energy with COSMO q correction added
         p_thermo    : Quantities extracted from THERMOCHEMISTRY block. Keys:
-            THERMO_BLOCK    : Entire THERMOCHEMISTRY block
-            THERMO_TEMP     : Simulated temperature (K)
-            THERMO_PRESS    : Simulated pressure (atm)
-            THERMO_E_EL     : Electronic energy from thermo (Eh; often slightly
+            THERMO.BLOCK    : Entire THERMOCHEMISTRY block
+            THERMO.TEMP     : Simulated temperature (K)
+            THERMO.PRESS    : Simulated pressure (atm)
+            THERMO.E_EL     : Electronic energy from thermo (Eh; often slightly
                                 different than the last EN_SCFFINAL value)
-            THERMO_E_ZPE    : Zero-point energy in thermo (Eh)
-            THERMO_E_VIB    : Thermal vibrational U correction (Eh)
-            THERMO_E_ROT    : Thermal rotational U correction (Eh)
-            THERMO_E_TRANS  : Thermal translational U correction (Eh)
-            THERMO_H_IG     : Ideal-gas (kB*T) enthalpy contribution (Eh)
-            THERMO_TS_EL    : Electronic T*S contribution (Eh)
-            THERMO_TS_VIB   : Vibrational T*S contribution (Eh)
-            THERMO_TS_TRANS : Translational T*S contribution (Eh)
-            THERMO_QROT     : Rotational partition function (unitless)
+            THERMO.E_ZPE    : Zero-point energy in thermo (Eh)
+            THERMO.E_VIB    : Thermal vibrational U correction (Eh)
+            THERMO.E_ROT    : Thermal rotational U correction (Eh)
+            THERMO.E_TRANS  : Thermal translational U correction (Eh)
+            THERMO.H_IG     : Ideal-gas (kB*T) enthalpy contribution (Eh)
+            THERMO.TS_EL    : Electronic T*S contribution (Eh)
+            THERMO.TS_VIB   : Vibrational T*S contribution (Eh)
+            THERMO.TS_TRANS : Translational T*S contribution (Eh)
+            THERMO.QROT     : Rotational partition function (unitless)
+        p_spincont  : Spin contamination block values. Keys:
+            SPINCONT.ACTUAL : Calculated <S**2> expectation value
+            SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
+            SPINCONT.DEV    : Deviation (calc - ideal)
 
     str constants for keys of above 'dict struct' variables are also defined,
         as class variables.  For example, to retrieve the Regex pattern for
         locating the vibrational entropy contribution, the following syntax
         can be used:
 
-            ORCA_OUTPUT.p_thermo[THERMO_TS_VIB]
+            ORCA_OUTPUT.p_thermo[THERMO.TS_VIB]
 
     Instance Variables
     ------------------
@@ -96,6 +102,10 @@ class ORCA_OUTPUT(object):
         are those of p_thermo, above.
         #TODO: ORCA_OUTPUT.thermo: Test on single-atom case, update above
         #       documentation to reflect outcome
+    spincont    : dict of np.float64
+        Lists of the various Values from the spin contamination calculations
+        in the output, if present. Empty lists if absent. Dict keys are those
+        of p_spincont, above.
     thermo_block : str
         Full text of the thermochemistry block, if found.
 
@@ -131,20 +141,22 @@ class ORCA_OUTPUT(object):
     #  settings.
 
     # String constants for retrieving energy quantities.
-    # Prefix is the uppercase of the dictionary name
-    EN_SCFFINAL = "scffinal"
-    EN_GCP = "gcp"
-    EN_D3  = "d3"
-    EN_SCFOCC = "scfocc"
-    EN_OCC = "occ"
-    EN_SCFFINALOCC = "scffinalocc"
+    # Prefix is the uppercase of the Regex dictionary name
+    class EN(object):
+        SCFFINAL = "scffinal"
+        GCP = "gcp"
+        D3  = "d3"
+        SCFOCC = "scfocc"
+        OCC = "occ"
+        SCFFINALOCC = "scffinalocc"
+    ## end class EN
 
     # Initialize dictionary
     p_en = dict()
 
     # Final SCF energy, with gCP, D3, corrections included... but NOT COSMO
     #  outlying charge correction.
-    p_en.update({ EN_SCFFINAL :
+    p_en.update({ EN.SCFFINAL :
         re.compile("""
         -\\n                         # Hyphen on preceding line
         FINAL\\ SINGLE\\             # Key text 1
@@ -155,7 +167,7 @@ class ORCA_OUTPUT(object):
         })
 
     # gCP corrections entering into reported FINAL ENERGY values.
-    p_en.update({ EN_GCP :
+    p_en.update({ EN.GCP :
         re.compile("""
         -\\n                        # Hyphen on preceding line
         gCP\\ correction            # Key text
@@ -165,7 +177,7 @@ class ORCA_OUTPUT(object):
         })
 
     # D3 corrections entering into reported FINAL ENERGY values.
-    p_en.update({ EN_D3 :
+    p_en.update({ EN.D3 :
         re.compile("""
         -\\n                        # Hyphen on preceding line
         Dispersion\\ correction     # Key text
@@ -176,7 +188,7 @@ class ORCA_OUTPUT(object):
 
     # COSMO SCF energies after the COSMO outlying charge correction BUT BEFORE
     #  any other augmentations to the energy (no D3, gCP, etc.)
-    p_en.update({ EN_SCFOCC :
+    p_en.update({ EN.SCFOCC :
         re.compile("""
         Total\\ Energy\\ after\\    # Key text 1
         outlying\\ charge\\         # Key text 2
@@ -190,27 +202,29 @@ class ORCA_OUTPUT(object):
     #  data elements therein.
 
     # String constants for retrieving energy quantities.
-    # Prefix is the uppercase of the dictionary name
-    THERMO_BLOCK = "block"
-    THERMO_TEMP = "temp"
-    THERMO_PRESS = "press"
-    THERMO_E_EL = "e_el"
-    THERMO_E_ZPE = "e_zpe"
-    THERMO_E_VIB = "e_vib"
-    THERMO_E_ROT = "e_rot"
-    THERMO_E_TRANS = "e_trans"
-    THERMO_H_IG = "h_ig"
-    THERMO_TS_EL = "ts_el"
-    THERMO_TS_VIB = "ts_vib"
-    THERMO_TS_TRANS = "ts_trans"
-    THERMO_QROT = "qrot"
+    # Prefix is the uppercase of the Regex dictionary name
+    class THERMO(object):
+        BLOCK = "block"
+        TEMP = "temp"
+        PRESS = "press"
+        E_EL = "e_el"
+        E_ZPE = "e_zpe"
+        E_VIB = "e_vib"
+        E_ROT = "e_rot"
+        E_TRANS = "e_trans"
+        H_IG = "h_ig"
+        TS_EL = "ts_el"
+        TS_VIB = "ts_vib"
+        TS_TRANS = "ts_trans"
+        QROT = "qrot"
+    ## end class THERMO
 
     # Initialize dictionary
     p_thermo = dict()
 
     # Whole thermo block just in case; probably not needed for automated
     #  computation, but potentially handy for manual fiddling.
-    p_thermo.update({ THERMO_BLOCK :
+    p_thermo.update({ THERMO.BLOCK :
         re.compile("""
         (?P<>-+\\n              # Hyphen line
         THERMOCHEMISTRY\\       # Header text
@@ -223,21 +237,21 @@ class ORCA_OUTPUT(object):
         })
 
     # Individual quantities. Descriptions in pattern definition comments.
-    p_thermo.update({ THERMO_TEMP :
+    p_thermo.update({ THERMO.TEMP :
         re.compile("""
         temperature[\\ .]+      # Key text
         (?P<>[0-9.]+)           # Temperature value
         [\\ ]+K                 # in Kelvin
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_PRESS :
+    p_thermo.update({ THERMO.PRESS :
         re.compile("""
         pressure[\\ .]+         # Key text
         (?P<>[0-9.]+)           # Pressure value
         [\\ ]+atm               # in atm
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_E_EL :
+    p_thermo.update({ THERMO.E_EL :
         re.compile("""
         electronic\\ energy     # Key text 1
         [\\ .]+                 # Key text 2
@@ -245,7 +259,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_E_ZPE :
+    p_thermo.update({ THERMO.E_ZPE :
         re.compile("""
         zero\\ point\\ energy   # Key text 1
         [\\ .]+                 # Key text 2
@@ -253,7 +267,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_E_VIB :
+    p_thermo.update({ THERMO.E_VIB :
         re.compile("""
         thermal\\ vibrational\\ # Key text 1
         correction[\\ .]+       # Key text 2
@@ -261,7 +275,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_E_ROT :
+    p_thermo.update({ THERMO.E_ROT :
         re.compile("""
         thermal\\ rotational\\  # Key text 1
         correction[\\ .]+       # Key text 2
@@ -269,7 +283,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_E_TRANS :
+    p_thermo.update({ THERMO.E_TRANS :
         re.compile("""
         thermal\\               # Key text 1
         translational\\         # Key text 2
@@ -278,7 +292,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_H_IG :
+    p_thermo.update({ THERMO.H_IG :
         re.compile("""
         thermal\\ enthalpy\\    # Key text 1
         correction[\\ .]+       # Key text 2
@@ -286,7 +300,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_TS_EL :
+    p_thermo.update({ THERMO.TS_EL :
         re.compile("""
         electronic\\ entropy\\  # Key text
         [\\ .]+                 # Spacer
@@ -294,7 +308,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_TS_VIB :
+    p_thermo.update({ THERMO.TS_VIB :
         re.compile("""
         vibrational\\ entropy\\ # Key text
         [\\ .]+                 # Spacer
@@ -302,7 +316,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_TS_TRANS :
+    p_thermo.update({ THERMO.TS_TRANS :
         re.compile("""
         translational\\         # Key text 1
         entropy\\               # Key text 2
@@ -311,7 +325,7 @@ class ORCA_OUTPUT(object):
         [\\ ]+Eh                # in Hartrees
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
         })
-    p_thermo.update({ THERMO_QROT :
+    p_thermo.update({ THERMO.QROT :
         re.compile("""
         qrot\\ +=\\ +           # Key text
         (?P<>[0-9.]+)           # Rotational partition function
@@ -330,6 +344,46 @@ class ORCA_OUTPUT(object):
         """.replace("P<", "P<" + P_GROUP), re.I | re.X)
 
 
+    # Patterns for the spin contamination information
+    # String constants for retrieving energy quantities.
+    # Prefix is the uppercase of the Regex dictionary name
+    class SPINCONT(object):
+        ACTUAL = "actual"
+        IDEAL = "ideal"
+        DEV = "dev"
+    ## end class SPINCONTAM
+
+    # Initialize dictionary
+    p_spincont = dict()
+
+    # Patterns for the spin contamination information
+    p_spincont.update({ SPINCONT.ACTUAL :
+        re.compile("""
+        expectation[ ]value[ ]of[ ]<S\*\*2>         # Key text
+        [ ]+:[ ]+                                   # Space and separator
+        (?P<>[0-9.]+)                               # Grab the value
+        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        })
+    p_spincont.update({ SPINCONT.IDEAL :
+        re.compile("""
+        ideal[ ]value[ ]s\\*\\(s\\+1\\)[ ]          # Key text 1
+        for[ ]s=[0-9.]+                             # Key text 2
+        [ ]+:[ ]+                                   # Space and separator
+        (?P<>[0-9.]+)                               # Grab the value
+        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        })
+    p_spincont.update({ SPINCONT.DEV :
+        re.compile("""
+        deviation                                   # Key text
+        [ ]+:[ ]+                                   # Space and separator
+        (?P<>[0-9.]+)                               # Grab the value
+        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        })
+
+    #RESUME: Make patterns and constants for the virial block; update docstrings
+
+    ## end class variables
+
     def __init__(self, output_src, src_type="file"):
         """ Initialize ORCA_OUTPUT object.
 
@@ -341,6 +395,7 @@ class ORCA_OUTPUT(object):
         Available data includes:
             SCF energies (incl D3, gCP, COSMO outlying charge corrections)
             Thermochemistry
+            Spin expectation values (actual, ideal, and deviation)
 
         Success indicators include:
             completed : Checks for the 'ORCA TERMINATED NORMALLY' report at the
@@ -423,23 +478,23 @@ class ORCA_OUTPUT(object):
 
         # Calculate just the outlying charge correction, if COSMO enabled,
         #  and then calculate the SCFFINAL result including the OCC.
-        if not self.en[self.EN_SCFOCC] == []:
-            self.en.update({ self.EN_OCC :
+        if not self.en[self.EN.SCFOCC] == []:
+            self.en.update({ self.EN.OCC :
                     [t[0] - (t[1] - t[2] - t[3]) for t in
                     pack_tups(
-                        self.en[self.EN_SCFOCC],
-                        self.en[self.EN_SCFFINAL],
-                        self.en[self.EN_D3] if self.en[self.EN_D3] <> []
+                        self.en[self.EN.SCFOCC],
+                        self.en[self.EN.SCFFINAL],
+                        self.en[self.EN.D3] if self.en[self.EN.D3] != []
                                                                 else 0,
-                        self.en[self.EN_GCP] if self.en[self.EN_GCP] <> []
+                        self.en[self.EN.GCP] if self.en[self.EN.GCP] != []
                                                                 else 0
                               )
                     ]       })
-            self.en.update({ self.EN_SCFFINALOCC :
+            self.en.update({ self.EN.SCFFINALOCC :
                     [t[0] + t[1] for t in
                     pack_tups( # Could use zip() here, probably
-                        self.en[self.EN_SCFFINAL],
-                        self.en[self.EN_OCC]
+                        self.en[self.EN.SCFFINAL],
+                        self.en[self.EN.OCC]
                               )
                     ]       })
         ##end if
@@ -448,7 +503,7 @@ class ORCA_OUTPUT(object):
         # Just store the whole thermo block
         try:
             self.thermo_block = \
-                    self.p_thermo[self.THERMO_BLOCK].search(datastr).group()
+                    self.p_thermo[self.THERMO.BLOCK].search(datastr).group()
         except AttributeError:
             # Block not found; store as None
             self.thermo_block = None
@@ -460,7 +515,7 @@ class ORCA_OUTPUT(object):
 
             # Iterate to pull the individual values
             for (k,p) in self.p_thermo.iteritems():
-                if k <> self.THERMO_BLOCK:
+                if k != self.THERMO.BLOCK:
                     try:
                         self.thermo.update({ k : \
                                     scast(p.search(datastr) \
@@ -487,6 +542,21 @@ class ORCA_OUTPUT(object):
         for m in ORCA_OUTPUT.p_dipmom.finditer(datastr):
             self.dipmoms.append(scast(m.group(ORCA_OUTPUT.P_GROUP), np.float_))
         ## next m
+
+        # Initialize the spin contamination dict as empty
+        self.spincont = dict()
+
+        # Populate with the Regex-retrieved values.
+        #  If any are not found, this will store as an empty list.
+        for (k,p) in self.p_spincont.iteritems():
+            self.spincont.update({ k :
+                    [scast(m.group(self.P_GROUP), np.float_) for m in
+                        p.finditer(datastr)] })
+        ##next (k,p)
+
+        #RESUME: Pull the virial block info (may be absent)
+
+    ## end def __init__
 
 
     def en_last(self):
@@ -519,11 +589,13 @@ class ORCA_OUTPUT(object):
 
         # Iterate and store
         for (k,l) in self.en.items():
-            last_ens.update({ k : l[-1] if l <> [] else None })
+            last_ens.update({ k : l[-1] if l != [] else None })
         ##next (k,l)
 
         # Should be ready to return?
         return last_ens
+
+    ## end def en_last
 
 
 if __name__ == '__main__':
