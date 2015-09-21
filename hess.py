@@ -648,6 +648,16 @@ class ORCA_HESS(object):
                     "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
+        if not ORCA_HESS.p_energy.search(self.in_str):
+            raise(HESSError(HESSError.energy,
+                    "Energy value not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+        if not ORCA_HESS.p_temp.search(self.in_str):
+            raise(HESSError(HESSError.temp,
+                    "'Actual temperature' value not found",
+                    "HESS File: " + HESS_path))
+        ## end if
 
 
         #=== Geometry spec block ===#
