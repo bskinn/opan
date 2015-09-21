@@ -300,16 +300,20 @@ class HESSError(OPANError):
 
         typecodes: dict
             at_block    : Malformed or missing atom specification block
-            hess_block  : Malformed or missing Hessian block
+            energy      : Malformed or missing energy value
             freq_block  : Malformed or missing frequencies block
+            hess_block  : Malformed or missing Hessian block
             modes_block : Malformed or missing normal modes block
+            temp        : Malformed or missing 'actual temperature' value
+
             dipder_block: Malformed dipole derivatives block
+            eigval_block: Malformed mass-wt Hessian eigenvalues block
+            eigvec_block: Malformed mass-wt Hessian eigenvectors block
             ir_block    : Malformed IR spectrum block
+            job_block   : Malformed job list block
             polder_block: Malformed polarizability derivatives block
             raman_block : Malformed Raman spectrum block
-            job_block   : Malformed job list block
-            eigval_block: Malformed mass-wt Hessin eigenvalues block
-            eigvec_block: Malformed mass-wt Hessin eigenvectors block
+
 
     """
 
@@ -325,6 +329,8 @@ class HESSError(OPANError):
     job_block = "job_block"
     eigval_block = "eigval_block"
     eigvec_block = "eigvec_block"
+    energy = "energy"
+    temp = "temp"
     typecodes = frozenset([
             at_block,
             hess_block,
@@ -336,7 +342,9 @@ class HESSError(OPANError):
             raman_block,
             job_block,
             eigval_block,
-            eigvec_block
+            eigvec_block,
+            energy,
+            temp
             ])
 
 ## end class HESSError
