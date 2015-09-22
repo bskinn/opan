@@ -97,7 +97,7 @@ class SuperORCAEngrad(unittest.TestCase):
                 0.000011997130, -0.000008391237, -0.000007912155, \
                 0.000011493781, -0.000008177479, -0.000008233658]).transpose()
     energy = -1715.759691151236
-    coords = np.matrix([-1.5545432, -0.4923021, -0.4922193, \
+    geom = np.matrix([-1.5545432, -0.4923021, -0.4922193, \
                             1.8640436, 0.3660366, 0.3660223, \
                             2.6798241, 1.9892213, -0.1622520, \
                             2.6798521, -0.1622023, 1.9892043]).transpose()
@@ -164,7 +164,7 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         self.longMessage = True
         for i in range(self.oe.geom_vec.shape[0]):
             self.assertAlmostEqual(self.oe.geom_vec[i,0], \
-                        self.coords[i,0], delta=1e-7, \
+                        self.geom[i,0], delta=1e-7, \
                         msg="Coordinate index " + str(i))
 
     def test_ENGRAD_KnownGoodInitFlagDefined(self):
@@ -795,7 +795,7 @@ class SuperORCAHess(unittest.TestCase):
           -8.78910000e-02,  -1.24307000e-01,   2.56265000e-01]])
 
     atoms = np.array([['C'],['H'],['H'],['H'],['H']])
-    coords = np.matrix([-0.000000, 0.000000, 0.000000, \
+    geom = np.matrix([-0.000000, 0.000000, 0.000000, \
                             2.059801,  0.,  0., \
                             -0.6866  ,  1.942   ,  0., \
                             -0.6866  , -0.971   , -1.681821, \
@@ -809,6 +809,82 @@ class SuperORCAHess(unittest.TestCase):
           1292.939274,  1524.411513,  1524.709386,  3100.659679,
           3239.096249,  3240.029637,  3241.018763]]).transpose()
 
+    modes = np.matrix([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -1.23657000e-01,  -1.05760000e-02,   7.10000000e-05,
+          -3.00000000e-06,   1.00000000e-06,  -1.65000000e-04,
+           2.30000000e-05,   4.58120000e-02,   8.09550000e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -1.05630000e-02,   1.23653000e-01,   1.44000000e-04,
+          -1.53000000e-04,  -0.00000000e+00,  -1.86000000e-04,
+           7.60000000e-05,   8.09690000e-02,  -4.58020000e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -8.30000000e-05,   1.38000000e-04,  -1.24103000e-01,
+          -0.00000000e+00,  -6.00000000e-06,   0.00000000e+00,
+          -9.30260000e-02,   7.80000000e-05,  -1.80000000e-05],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -9.78140000e-02,  -8.36900000e-03,   5.60000000e-05,
+           5.20000000e-05,   1.00000000e-06,  -4.98497000e-01,
+          -2.13000000e-04,  -4.25825000e-01,  -7.50570000e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           5.13820000e-02,  -6.00708000e-01,  -7.02000000e-04,
+           5.00780000e-01,   1.80000000e-04,  -1.00000000e-05,
+           1.30000000e-05,   1.33140000e-02,  -7.50600000e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           4.01000000e-04,  -6.72000000e-04,   6.03679000e-01,
+           1.79000000e-04,  -4.99975000e-01,   0.00000000e+00,
+          -1.53150000e-02,   1.30000000e-05,  -3.00000000e-06],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           5.42535000e-01,  -1.74270000e-01,  -5.57000000e-04,
+           4.71703000e-01,   1.66000000e-04,   1.66288000e-01,
+           2.07000000e-04,   1.99937000e-01,  -2.07069000e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           2.17937000e-01,   3.91970000e-02,  -1.02000000e-04,
+           1.66582000e-01,   5.80000000e-05,  -4.70357000e-01,
+          -5.62000000e-04,  -5.31035000e-01,   6.16152000e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           4.07000000e-04,  -6.69000000e-04,   6.03630000e-01,
+          -1.78000000e-04,   5.00025000e-01,   0.00000000e+00,
+          -1.53280000e-02,   1.30000000e-05,  -3.00000000e-06],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           5.14246000e-01,   1.54544000e-01,  -1.91222000e-01,
+          -2.36006000e-01,   4.08156000e-01,   1.67087000e-01,
+           2.38637000e-01,  -1.60199000e-01,  -3.45300000e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -7.19070000e-02,  -4.55650000e-01,  -2.70601000e-01,
+          -3.32665000e-01,  -2.88800000e-01,   2.36293000e-01,
+           3.37503000e-01,  -2.23822000e-01,  -3.13790000e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -2.13339000e-01,   2.53181000e-01,   1.36154000e-01,
+           2.88303000e-01,   1.16000000e-04,   4.09333000e-01,
+           5.69223000e-01,  -4.10798000e-01,  -4.12090000e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           5.14496000e-01,   1.54117000e-01,   1.90877000e-01,
+          -2.35715000e-01,  -4.08330000e-01,   1.67087000e-01,
+          -2.38904000e-01,  -1.59800000e-01,  -3.54400000e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -7.15420000e-02,  -4.56249000e-01,   2.69684000e-01,
+          -3.32870000e-01,   2.88565000e-01,   2.36294000e-01,
+          -3.37865000e-01,  -2.23257000e-01,  -3.15080000e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           2.13521000e-01,  -2.53482000e-01,   1.35307000e-01,
+          -2.88303000e-01,  -9.10000000e-05,  -4.09334000e-01,
+           5.69893000e-01,   4.09845000e-01,   4.14270000e-02]])
+
 
     #=== Defining ways to break the .hess ===#
     class names(object):
@@ -817,28 +893,35 @@ class SuperORCAHess(unittest.TestCase):
         atsym = 'atsym'
         energy = 'energy'
         temp = 'temp'
-        freq = 'freq'
-        E = frozenset([hess, geom, atsym, energy, temp, freq])
+        freqs = 'freq'
+        modes = 'modes'
+        suffix_dim2 = '_dim2'
+        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes])
 
     bad_block_substs = {
             names.hess : ('$hessian', '$harshman'),
             names.geom : ('$atoms', '$martians'),
             names.energy : ('$act_energy', '$fact_harbaly'),
             names.temp  : ('$actual_temp', '$schmactuish'),
-            names.freq : ('$vibrational_freq', '$varbifishing_sweg')
+            names.freqs : ('$vibrational_freq', '$varbifishing_sweg'),
+            names.modes : ('$normal_modes', '$formal_toads')
                         }
 
     trunc_block_substs = {
             names.hess: ('7       0.094130  -0.308688', 'gabrab'),
             names.geom: ('H      1.0080      2.059801', 'gaffraf'),
-            names.freq: ('10     1524.709386', 'fobbardgik')
+            names.freqs: ('10     1524.709386', 'fobbardgik'),
+            names.modes: ('1      -0.010563   0.123653', 'gommerbik')
                             }
 
     bad_data_substs = {
             names.hess : ('$hessian\n15', '$hessian\n30'),
-            names.freq: ('al_frequencies\n15', 'al_frequencies\n30'),
-            names.atsym : ('C     12.0110     -0.000000', \
-                                    'Cx    12.0110     -0.000000')
+            names.freqs: ('al_frequencies\n15', 'al_frequencies\n30'),
+            names.atsym : ('C     12.0110     -0.000000',
+                                    'Cx    12.0110     -0.000000'),
+            names.modes : ('l_modes\n15', 'l_modes\n19'),
+            names.modes + names.suffix_dim2 :
+                            ('l_modes\n15 15', 'l_modes\n15 19')
                         }
 
 ## end class SuperORCAHess
@@ -877,29 +960,21 @@ class TestORCAHessKnownGood(SuperORCAHess):
         self.oh = ORCA_HESS(self.file_name)
 
     def test_HESS_KnownGoodAtomVec(self):
-        # Confirm the values coming out of the HESS match the known-good
-        #  example file.
-
-        # Confirm the atom list is good
+        self.assertEqual(self.oh.atom_syms.shape, self.atoms.shape)
         for i in range(self.oh.atom_syms.shape[0]):
             self.assertEqual(self.oh.atom_syms[i,0], self.atoms[i,0])
 
     def test_HESS_KnownGoodAtomMasses(self):
-        # Confirm the values coming out of the HESS match the known-good
-        #  example file.
-
-        # Confirm the atom masses are good
         self.longMessage = True
+        self.assertEqual(self.oh.atom_masses.shape, self.masses.shape)
         for i in range(self.oh.atom_masses.shape[0]):
             self.assertAlmostEqual(self.oh.atom_masses[i,0], \
                         self.masses[i,0], delta=1e-4, \
                         msg="Atom index " + str(i))
 
     def test_HESS_KnownGoodHess(self):
-        # Confirm the known-good Hessian matches what's expected.
-
-        # Confirm the Hessian matrix is good
         self.longMessage = True
+        self.assertEqual(self.oh.hess.shape, self.hess.shape)
         for i in range(self.oh.hess.shape[0]):
             for j in range(self.oh.hess.shape[1]):
                 self.assertAlmostEqual(self.oh.hess[i,j], \
@@ -909,9 +984,10 @@ class TestORCAHessKnownGood(SuperORCAHess):
 
     def test_HESS_KnownGoodGeom(self):
         self.longMessage = True
+        self.assertEqual(self.oh.geom.shape, self.geom.shape)
         for i in range(self.oh.geom.shape[0]):
             self.assertAlmostEqual(self.oh.geom[i,0], \
-                        self.coords[i,0], delta=1e-6, \
+                        self.geom[i,0], delta=1e-6, \
                         msg="Coordinate index " + str(i))
 
     def test_HESS_KnownGoodEnergy(self):
@@ -922,6 +998,7 @@ class TestORCAHessKnownGood(SuperORCAHess):
 
     def test_HESS_KnownGoodFreqs(self):
         self.longMessage = True
+        self.assertEqual(self.oh.freqs.shape, self.freqs.shape)
         for i in range(self.oh.freqs.shape[0]):
             self.assertAlmostEqual(self.oh.freqs[i,0], \
                         self.freqs[i,0], delta=1e-6, \
@@ -931,6 +1008,15 @@ class TestORCAHessKnownGood(SuperORCAHess):
         self.assertTrue('initialized' in self.oh.__dict__)
         if 'initialized' in self.oh.__dict__:
             self.assertTrue(self.oh.initialized)
+
+    def test_HESS_KnownGoodModes(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.modes.shape, self.modes.shape)
+        for i in range(self.oh.modes.shape[0]):
+            for j in range(self.oh.modes.shape[1]):
+                self.assertAlmostEqual(self.oh.modes[i,j], \
+                            self.modes[i,j], delta=1e-6, \
+                            msg="Mode " + str(j) + ", element " + str(i))
 
 ## end class TestORCAEngradKnownGood
 
@@ -953,7 +1039,7 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
     @classmethod
     def tearDownClass(self):
-        # Remove any engrad files and try to remove the temp directory
+        # Remove any .hess files and try to remove the temp directory
 
         import os
 
@@ -1007,7 +1093,16 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.freq_block, self.file_name + \
-                    self.names.freq)
+                    self.names.freqs)
+
+    def test_HESS_MissingBlockModes(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.modes_block, self.file_name + \
+                    self.names.modes)
 
 
 ## end class TestORCAHessMissingBlocks
@@ -1064,7 +1159,15 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.freq_block, self.file_name + self.names.freq)
+                    HESSError.freq_block, self.file_name + self.names.freqs)
+
+    def test_HESS_TruncatedBlocksModes(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.modes_block, self.file_name + self.names.modes)
 
 ## end class TestORCAHessTruncatedBlocks
 
@@ -1112,7 +1215,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.freq_block, self.file_name + self.names.freq)
+                    HESSError.freq_block, self.file_name + self.names.freqs)
 
     def test_HESS_BadDataAtomSym(self):
 
@@ -1121,6 +1224,17 @@ class TestORCAHessBadData(SuperORCAHess):
 
         self.assertRaises(KeyError, ORCA_HESS, \
                                     self.file_name + self.names.atsym)
+
+    def test_HESS_BadDataModeDims(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.modes_block, self.file_name + self.names.modes)
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.modes_block, \
+                    self.file_name + self.names.modes + self.names.suffix_dim2)
 
 ## end class TestORCAHessBadData
 
