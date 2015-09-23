@@ -885,6 +885,22 @@ class SuperORCAHess(unittest.TestCase):
           -2.88303000e-01,  -9.10000000e-05,  -4.09334000e-01,
            5.69893000e-01,   4.09845000e-01,   4.14270000e-02]])
 
+    dipders = np.matrix([[ -3.01190000e-02,  -2.50000000e-05,   0.00000000e+00],
+        [  1.00000000e-05,  -3.01190000e-02,  -0.00000000e+00],
+        [ -0.00000000e+00,   0.00000000e+00,  -3.01590000e-02],
+        [ -1.18178000e-01,   1.90000000e-05,   0.00000000e+00],
+        [ -2.90000000e-05,   7.21660000e-02,   0.00000000e+00],
+        [ -0.00000000e+00,   0.00000000e+00,   7.21740000e-02],
+        [  5.00740000e-02,   5.59740000e-02,  -0.00000000e+00],
+        [  5.92260000e-02,  -9.72410000e-02,   0.00000000e+00],
+        [  0.00000000e+00,  -0.00000000e+00,   7.21830000e-02],
+        [  5.00940000e-02,  -2.79850000e-02,  -4.84610000e-02],
+        [ -2.80840000e-02,   3.01860000e-02,  -6.87890000e-02],
+        [ -4.87540000e-02,  -6.89430000e-02,  -4.94920000e-02],
+        [  5.00940000e-02,  -2.79850000e-02,   4.84610000e-02],
+        [ -2.80840000e-02,   3.01860000e-02,   6.87890000e-02],
+        [  4.87530000e-02,   6.89440000e-02,  -4.94920000e-02]])
+
 
     #=== Defining ways to break the .hess ===#
     class names(object):
@@ -895,8 +911,10 @@ class SuperORCAHess(unittest.TestCase):
         temp = 'temp'
         freqs = 'freq'
         modes = 'modes'
+        dipders = 'dipders'
         suffix_dim2 = '_dim2'
-        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes])
+        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
+                    dipders])
 
     bad_block_substs = {
             names.hess : ('$hessian', '$harshman'),
@@ -904,14 +922,16 @@ class SuperORCAHess(unittest.TestCase):
             names.energy : ('$act_energy', '$fact_harbaly'),
             names.temp  : ('$actual_temp', '$schmactuish'),
             names.freqs : ('$vibrational_freq', '$varbifishing_sweg'),
-            names.modes : ('$normal_modes', '$formal_toads')
+            names.modes : ('$normal_modes', '$formal_toads'),
+            names.dipders : ('$dipole_deriv', '$tadpole_gurriv')
                         }
 
     trunc_block_substs = {
             names.hess: ('7       0.094130  -0.308688', 'gabrab'),
             names.geom: ('H      1.0080      2.059801', 'gaffraf'),
             names.freqs: ('10     1524.709386', 'fobbardgik'),
-            names.modes: ('1      -0.010563   0.123653', 'gommerbik')
+            names.modes: ('1      -0.010563   0.123653', 'gommerbik'),
+            names.dipders: ('0.050074     0.055974', 'cheezenugget')
                             }
 
     bad_data_substs = {
@@ -921,7 +941,8 @@ class SuperORCAHess(unittest.TestCase):
                                     'Cx    12.0110     -0.000000'),
             names.modes : ('l_modes\n15', 'l_modes\n19'),
             names.modes + names.suffix_dim2 :
-                            ('l_modes\n15 15', 'l_modes\n15 19')
+                            ('l_modes\n15 15', 'l_modes\n15 19'),
+            names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25')
                         }
 
 ## end class SuperORCAHess
@@ -1018,6 +1039,16 @@ class TestORCAHessKnownGood(SuperORCAHess):
                             self.modes[i,j], delta=1e-6, \
                             msg="Mode " + str(j) + ", element " + str(i))
 
+    def test_HESS_KnownGoodDipDers(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.dipders.shape, self.dipders.shape)
+        for i in range(self.oh.dipders.shape[0]):
+            for j in range(self.oh.dipders.shape[1]):
+                self.assertAlmostEqual(self.oh.dipders[i,j], \
+                            self.dipders[i,j], delta=1e-6, \
+                            msg="Dipole derivative element (" + str(i) + ',' + \
+                                                        str(j) + ')')
+
 ## end class TestORCAEngradKnownGood
 
 
@@ -1104,6 +1135,14 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
                     HESSError.modes_block, self.file_name + \
                     self.names.modes)
 
+    def test_HESS_MissingBlockDipders(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                            self.names.dipders).dipders)
+
 
 ## end class TestORCAHessMissingBlocks
 
@@ -1169,6 +1208,14 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.modes_block, self.file_name + self.names.modes)
 
+    def test_HESS_TruncatedBlocksDipders(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.dipder_block, self.file_name + self.names.dipders)
+
 ## end class TestORCAHessTruncatedBlocks
 
 
@@ -1183,10 +1230,10 @@ class TestORCAHessBadData(SuperORCAHess):
         setUpTestDir(self.testdir)
 
         # Write the files
-        for dname in self.bad_data_substs.keys():
-            with open(self.file_name + dname, 'w') as f:
+        for bname in self.bad_data_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
                 f.write(self.file_text_good \
-                                    .replace(*self.bad_data_substs[dname]))
+                                    .replace(*self.bad_data_substs[bname]))
 
     @classmethod
     def tearDownClass(self):
@@ -1235,6 +1282,14 @@ class TestORCAHessBadData(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.modes_block, \
                     self.file_name + self.names.modes + self.names.suffix_dim2)
+
+    def test_HESS_BadDataDipdersDim(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.dipder_block, self.file_name + self.names.dipders)
 
 ## end class TestORCAHessBadData
 
