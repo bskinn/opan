@@ -901,6 +901,38 @@ class SuperORCAHess(unittest.TestCase):
         [ -2.80840000e-02,   3.01860000e-02,   6.87890000e-02],
         [  4.87530000e-02,   6.89440000e-02,  -4.94920000e-02]])
 
+    ir_comps = np.matrix([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+        [  3.79040000e+00,   2.73700000e-01,   2.60000000e-03],
+        [  3.24900000e-01,  -3.79060000e+00,  -4.30000000e-03],
+        [ -2.20000000e-03,  -4.40000000e-03,   3.83080000e+00],
+        [  1.29000000e-02,  -9.10000000e-03,   0.00000000e+00],
+        [ -0.00000000e+00,   0.00000000e+00,   4.80000000e-03],
+        [  9.15000000e-02,   1.09300000e-01,   0.00000000e+00],
+        [  9.00000000e-04,   3.20000000e-03,  -3.72720000e+00],
+        [  1.90370000e+00,   3.37040000e+00,   3.10000000e-03],
+        [  3.50280000e+00,  -1.98250000e+00,  -7.00000000e-04]])
+
+    ir_mags = np.matrix([[  0.00000000e+00],
+        [  0.00000000e+00],
+        [  0.00000000e+00],
+        [  0.00000000e+00],
+        [  0.00000000e+00],
+        [  0.00000000e+00],
+        [  1.44422000e+01],
+        [  1.44744000e+01],
+        [  1.46749000e+01],
+        [  2.00000000e-04],
+        [  0.00000000e+00],
+        [  2.03000000e-02],
+        [  1.38923000e+01],
+        [  1.49837000e+01],
+        [  1.61995000e+01]])
+
 
     #=== Defining ways to break the .hess ===#
     class names(object):
@@ -912,37 +944,48 @@ class SuperORCAHess(unittest.TestCase):
         freqs = 'freq'
         modes = 'modes'
         dipders = 'dipders'
+        ir = 'ir'
+
         suffix_dim2 = '_dim2'
+        suffix_badfreq = '_badfreq'
+
         E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
-                    dipders])
+                    dipders, ir])
+        suffixes = frozenset([suffix_dim2, suffix_badfreq])
+
 
     bad_block_substs = {
-            names.hess : ('$hessian', '$harshman'),
-            names.geom : ('$atoms', '$martians'),
+            names.hess  : ('$hessian', '$harshman'),
+            names.geom  : ('$atoms', '$martians'),
             names.energy : ('$act_energy', '$fact_harbaly'),
             names.temp  : ('$actual_temp', '$schmactuish'),
             names.freqs : ('$vibrational_freq', '$varbifishing_sweg'),
             names.modes : ('$normal_modes', '$formal_toads'),
-            names.dipders : ('$dipole_deriv', '$tadpole_gurriv')
+            names.dipders : ('$dipole_deriv', '$tadpole_gurriv'),
+            names.ir    : ('$ir_spectrum', '$lidar_fulcrum')
                         }
 
     trunc_block_substs = {
-            names.hess: ('7       0.094130  -0.308688', 'gabrab'),
-            names.geom: ('H      1.0080      2.059801', 'gaffraf'),
-            names.freqs: ('10     1524.709386', 'fobbardgik'),
-            names.modes: ('1      -0.010563   0.123653', 'gommerbik'),
-            names.dipders: ('0.050074     0.055974', 'cheezenugget')
+            names.hess  : ('7       0.094130  -0.308688', 'gabrab'),
+            names.geom  : ('H      1.0080      2.059801', 'gaffraf'),
+            names.freqs : ('10     1524.709386', 'fobbardgik'),
+            names.modes : ('1      -0.010563   0.123653', 'gommerbik'),
+            names.dipders: ('0.050074     0.055974', 'cheezenugget'),
+            names.ir    : ('1292.94      14.6749', 'spuffle')
                             }
 
     bad_data_substs = {
-            names.hess : ('$hessian\n15', '$hessian\n30'),
-            names.freqs: ('al_frequencies\n15', 'al_frequencies\n30'),
+            names.hess  : ('$hessian\n15', '$hessian\n30'),
+            names.freqs : ('al_frequencies\n15', 'al_frequencies\n30'),
             names.atsym : ('C     12.0110     -0.000000',
                                     'Cx    12.0110     -0.000000'),
             names.modes : ('l_modes\n15', 'l_modes\n19'),
             names.modes + names.suffix_dim2 :
                             ('l_modes\n15 15', 'l_modes\n15 19'),
-            names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25')
+            names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25'),
+            names.ir    : ('ir_spectrum\n15', 'ir_spectrum\n38'),
+            names.ir + names.suffix_badfreq :
+                            ('1292.94      14.6749', '3232.28      14.6749')
                         }
 
 ## end class SuperORCAHess
@@ -1049,6 +1092,19 @@ class TestORCAHessKnownGood(SuperORCAHess):
                             msg="Dipole derivative element (" + str(i) + ',' + \
                                                         str(j) + ')')
 
+    def test_HESS_KnownGoodIRSpectrum(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.ir_comps.shape, self.ir_comps.shape)
+        self.assertEqual(self.oh.ir_mags.shape, self.ir_mags.shape)
+        for i in range(self.oh.ir_comps.shape[0]):
+            self.assertAlmostEqual(self.oh.ir_mags[i,0], self.ir_mags[i,0], \
+                    delta=1e-4, msg="IR T**2 element (" + str(i) + ')')
+            for j in range(self.oh.ir_comps.shape[1]):
+                self.assertAlmostEqual(self.oh.ir_comps[i,j], \
+                            self.ir_comps[i,j], delta=1e-4, \
+                            msg="Dipole derivative element (" + str(i) + ',' + \
+                                                        str(j) + ')')
+
 ## end class TestORCAEngradKnownGood
 
 
@@ -1143,6 +1199,16 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         self.assertIsNone(ORCA_HESS(self.file_name + \
                                             self.names.dipders).dipders)
 
+    def test_HESS_MissingBlockIRSpectrum(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                            self.names.ir).ir_comps)
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                            self.names.ir).ir_mags)
+
 
 ## end class TestORCAHessMissingBlocks
 
@@ -1216,6 +1282,14 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
+    def test_HESS_TruncatedBlocksIRSpectrum(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.ir_block, self.file_name + self.names.ir)
+
 ## end class TestORCAHessTruncatedBlocks
 
 
@@ -1272,13 +1346,15 @@ class TestORCAHessBadData(SuperORCAHess):
         self.assertRaises(KeyError, ORCA_HESS, \
                                     self.file_name + self.names.atsym)
 
-    def test_HESS_BadDataModeDims(self):
+    def test_HESS_BadDataNormalModes(self):
 
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
+        # First dimension
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.modes_block, self.file_name + self.names.modes)
+        # Second dimension
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.modes_block, \
                     self.file_name + self.names.modes + self.names.suffix_dim2)
@@ -1290,6 +1366,19 @@ class TestORCAHessBadData(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.dipder_block, self.file_name + self.names.dipders)
+
+    def test_HESS_BadDataIRSpectrum(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        # Bad dimension
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.ir_block, self.file_name + self.names.ir)
+        # Mismatched frequency
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.ir_block, \
+                    self.file_name + self.names.ir + self.names.suffix_badfreq)
 
 ## end class TestORCAHessBadData
 

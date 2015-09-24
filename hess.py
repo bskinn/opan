@@ -842,26 +842,25 @@ class ORCA_HESS(object):
                                                     m_work.group("block")) ])
 
             # Confirm match of all frequencies with those reported separately
-            if not np.allclose( \
-                    self.freqs, \
-                    np.matrix([[np.float_(m.group('freq'))] \
-                                for m in self.p_ir_line.finditer( \
-                                m_work.group("block")) ]), \
-                    rtol=0, \
-                    atol=DEF.HESS_IR_Match_Tol):
+            try:
+                if not np.allclose( \
+                        self.freqs, \
+                        np.matrix([[np.float_(m.group('freq'))] \
+                                    for m in self.p_ir_line.finditer( \
+                                    m_work.group("block")) ]), \
+                        rtol=0, \
+                        atol=DEF.HESS_IR_Match_Tol):
+                    raise(HESSError(HESSError.ir_block, \
+                            "Frequency mismatch between freq and IR blocks", \
+                            "HESS File: " + self.HESS_path))
+                ## end if
+            except ValueError:
+                # Presume a block size mismatch
                 raise(HESSError(HESSError.ir_block, \
-                        "Frequency mismatch between freq and IR blocks", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
-
-            # Confirm length of ir_mags conforms. Shouldn't need to check both,
-            #  since they both rely equally on p_ir_line.finditer.
-            if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HESSError(HESSError.ir_block, \
-                        "Number of IR spectrum rows != " + \
+                            "Number of IR spectrum rows != " + \
                                                     "3 * number of atoms", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
+                            "HESS File: " + self.HESS_path))
+            ## end try
         ## end if
 
 
