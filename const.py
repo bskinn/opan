@@ -196,11 +196,15 @@ class E_FileType(object):
     xyz = 'xyz'
     grad = 'grad'
     hess = 'hess'
+    output = 'output'
+    inputfile = 'inputfile'
 
     E = frozenset([
         xyz,
         grad,
-        hess
+        hess,
+        output,
+        inputfile
         ])
 
 ## end class E_FileType
@@ -401,7 +405,9 @@ class DEF(object):
             E_SW.ORCA :
                 { E_FT.grad : 'engrad',
                     E_FT.hess : 'hess',
-                    E_FT.xyz : 'xyz'
+                    E_FT.xyz : 'xyz',
+                    E_FT.output : 'out',
+                    E_FT.inputfile : 'txt'
                     }
             }
 

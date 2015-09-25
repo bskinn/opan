@@ -36,7 +36,7 @@ execute_orca     -- Execute an ORCA computation from a substitutable template
 """
 
 # Imports
-from .const import DEF, E_DispDirection
+from .const import DEF, E_DispDirection, E_Software as E_SW, E_FileType as E_FT
 
 
 def pack_tups(*args):
@@ -446,7 +446,9 @@ def check_geom(c1, a1, c2, a2, tol=DEF.XYZ_Coord_Match_Tol):
 
 
 def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
-            sim_name="orcarun", inp_ext="txt", out_ext="out", \
+            sim_name="orcarun", \
+            inp_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.inputfile], \
+            out_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.output], \
             wait_to_complete=True, \
             disp_mode=0, \
             disp_dir=E_DispDirection.NoDisp, \
