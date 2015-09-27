@@ -159,6 +159,18 @@ class OPANError(Exception):
     ## end def __str__
 
 
+    class __metaclass__(type):
+        # Enable iteration over the typecodes
+        def __iter__(self):
+            for item in self.__dict__:
+                if item == self.__dict__[item]:
+                    yield item
+                ## end if
+            ## next item
+        ##end def __iter__
+    ## end class __metaclass__
+
+
     @classmethod
     def _typecode_str(self, tc):
         """Return string representation of provided typecode number.
