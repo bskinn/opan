@@ -532,17 +532,19 @@ class UNITS(object):
 
     #TODO: (as occurs) const.UNITS: Add dicts for other units-based enums
 
-    rotConst = dict(zip( EU_RotConst.E,
-                        [
-                        "1/(amu*B^2)",
-                        "1/Ta",
-                        "1/s",
-                        "cyc/Ta",
-                        "cyc/s",
-                        "MHz",
-                        "cyc/B",
-                        "cyc/cm"
-                        ]))
+    # Imports
+    from .const import EU_RotConst as EUrc
+
+    rotConst = {
+            EUrc.InvInertia :        "1/(amu*B^2)",
+            EUrc.AngFreqAtomic :     "1/Ta",
+            EUrc.AngFreqSeconds :    "1/s",
+            EUrc.CyclicFreqAtomic :  "cyc/Ta",
+            EUrc.CyclicFreqHz :      "cyc/s",
+            EUrc.CyclicFreqMHz :     "MHz",
+            EUrc.WaveNumAtomic :     "cyc/B",
+            EUrc.WaveNumCM :         "cyc/cm"
+                }
 
 
 #TODO:(?) const: do atomNum/Sym need to handle ghost atoms / charges?
