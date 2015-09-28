@@ -30,22 +30,29 @@ PHYS    -- Physical constants
 DEF     -- Default values for (theoretically) user-adjustable parameters
 PRM     -- Internal computation parameters, intended to be non-user-
              adjustable
+SYMM    -- Constants relating to the point-group implementation in
+            opan.utils.vector
 UNINIT  -- Constants representing un-initialized values
 UNITS   -- Functions returning text strings of units descriptions
 
 Enumeration Classes
 -------------------
+OPANEnum            -- Superclass for Enumerations
 E_DispDirection     -- Displacement direction along a particular mode
 E_MassPerturbation  -- Type of atomic mass perturbation being applied
 E_TopType           -- Molecular top classification
+E_Software          -- Implemented computational software packages
+E_FileType          -- Various file types relevant to the software packages
+
+Anharmonic (VPT2) HDF5 Repository Enumeration Classes
+-----------------------------------------------------
+ERA_Data            -- Displacement-specific values
+ERA_Param           -- Displacement-nonspecific values
 
 Units Enumeration Classes
 -------------------------
 EU_RotConst         -- Rotational constants
 
-Methods
--------
-keydef  -- Helper function for enumeration class variable definition
 
 Dictionaries
 ------------
@@ -65,14 +72,35 @@ infty    -- Infinity symbol as Unicode string
 infty = u"\u221E"
 
 
-class E_DispDirection(object):
+class OPANEnum(object):
+    """ Abstract superclass for enumeration objects.
+
+    Adds metaclass __iter__ to allow direct iteration and membership testing
+    of enumeration values on the subclass type:
+
+    >>> 'NoDisp' in E_DispDirection
+    True
+    """
+
+    class __metaclass__(type):
+        def __iter__(self):
+            for item in self.__dict__:
+                if item == self.__dict__[item]:
+                    yield item
+                ## end if
+            ## next item
+        ## end def __iter__
+    ## end class __metaclass__
+
+## end class OPANEnum
+
+
+class E_DispDirection(OPANEnum):
     """ Enumeration class for displacement directions.
 
     Contains enumeration parameters to indicate the displacement of the
     molecular geometry associated with a gradient, hess or other object
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
 
     Enum Values
     -----------
@@ -87,16 +115,10 @@ class E_DispDirection(object):
     NoDisp = 'NoDisp'
     Negative = 'Negative'
 
-    E = frozenset([
-        Positive,
-        NoDisp,
-        Negative
-        ])
-
 ## end class E_DispDirection
 
 
-class E_MassPertType(object):
+class E_MassPertType(OPANEnum):
     """ Enumeration class for atom mass perturbation types.
 
     Contains enumeration parameters to indicate the type of mass perturbation
@@ -106,8 +128,6 @@ class E_MassPertType(object):
     an artificial 'directional preference' to the masses of the atoms (ByCoord
     enum value) to break the intrinsic degeneracy of the bending modes.
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
 
     Enum Values
     -----------
@@ -124,23 +144,15 @@ class E_MassPertType(object):
     ByAtom = 'ByAtom'
     ByCoord = 'ByCoord'
 
-    E = frozenset([
-        NoPerturb,
-        ByAtom,
-        ByCoord
-        ])
-
 ## end class E_MassPertType
 
 
-class E_TopType(object):
+class E_TopType(OPANEnum):
     """ Enumeration class for classifying types of molecular tops.
 
     Contains enumeration parameters to indicate the type of molecular top
     associated with a particular geometry.
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
 
     Enum Values
     -----------
@@ -163,57 +175,38 @@ class E_TopType(object):
     SymmOblate = 'SymmOblate'
     Asymmetrical = 'Asymmetrical'
 
-    E = frozenset([
-        Atom,
-        Linear,
-        Spherical,
-        SymmProlate,
-        SymmOblate,
-        Asymmetrical
-        ])
-
 ## end class E_TopType
 
 
-class E_Software(object):
+class E_Software(OPANEnum):
     """ #DOC: Docstring for E_Software
 
     """
 
     ORCA = 'ORCA'
 
-    E = frozenset([
-        ORCA
-        ])
-
 ## end class E_Software
 
 
-class E_FileType(object):
+class E_FileType(OPANEnum):
     """ #DOC: Docstring for E_FileType
     """
 
     xyz = 'xyz'
     grad = 'grad'
     hess = 'hess'
-
-    E = frozenset([
-        xyz,
-        grad,
-        hess
-        ])
+    output = 'output'
+    inputfile = 'inputfile'
 
 ## end class E_FileType
 
 
-class ER_Data(object):
+class ERA_Data(OPANEnum):
     """ Enumeration class for datatypes in HDF5 repository.
 
     Contains enumeration parameters to indicate the type of data to be
     retrieved from the on-disk HDF5 repository.
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
 
     Enum Values
     -----------
@@ -228,24 +221,15 @@ class ER_Data(object):
     grad = 'grad'
     hess = 'hess'
 
-    E = frozenset([
-        en,
-        geom,
-        grad,
-        hess
-        ])
-
 ## end class ER_Data
 
 
-class ER_Param(object):
+class ERA_Param(OPANEnum):
     """ Enumeration class for parameters stored in the HDF5 repository.
 
     Contains enumeration parameters to indicate the parameter value to be
     retrieved from the on-disk HDF5 repository.
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
 
     Enum Values
     -----------
@@ -263,29 +247,19 @@ class ER_Param(object):
     ref_masses = 'ref_masses'
     pert_mode = 'pert_mode'
     pert_vec = 'pert_vec'
-    E = frozenset([
-        atoms,
-        increment,
-        ctr_mass,
-        ref_masses,
-        pert_mode,
-        pert_vec
-        ])
 
 ## end class ER_Param
 
 
-class EU_RotConst(object):
+class EU_RotConst(OPANEnum):
     """ Units Enumeration class for rotational constants.
 
     Contains enumeration parameters to indicate the associated/desired units
     of interpretation/display of a rotational constant.
 
-    Values are collected into the tuple 'E' for convenient Enum membership
-    testing.
-
     More detailed exposition of the form/nature of the various units is
     provided in const.UNITS.rotConst
+
 
     Enum Values
     -----------
@@ -307,17 +281,6 @@ class EU_RotConst(object):
     CyclicFreqMHz = 'CyclicFreqMHz'
     WaveNumAtomic = 'WaveNumAtomic'
     WaveNumCM = 'WaveNumCM'
-
-    E = frozenset([
-        InvInertia,
-        AngFreqAtomic,
-        AngFreqSeconds,
-        CyclicFreqAtomic,
-        CyclicFreqHz,
-        CyclicFreqMHz,
-        WaveNumAtomic,
-        WaveNumCM
-        ])
 
 ## end class EU_RotConst
 
@@ -401,7 +364,9 @@ class DEF(object):
             E_SW.ORCA :
                 { E_FT.grad : 'engrad',
                     E_FT.hess : 'hess',
-                    E_FT.xyz : 'xyz'
+                    E_FT.xyz : 'xyz',
+                    E_FT.output : 'out',
+                    E_FT.inputfile : 'txt'
                     }
             }
 
@@ -526,17 +491,19 @@ class UNITS(object):
 
     #TODO: (as occurs) const.UNITS: Add dicts for other units-based enums
 
-    rotConst = dict(zip( EU_RotConst.E,
-                        [
-                        "1/(amu*B^2)",
-                        "1/Ta",
-                        "1/s",
-                        "cyc/Ta",
-                        "cyc/s",
-                        "MHz",
-                        "cyc/B",
-                        "cyc/cm"
-                        ]))
+    # Imports
+    from .const import EU_RotConst as EUrc
+
+    rotConst = {
+            EUrc.InvInertia :        "1/(amu*B^2)",
+            EUrc.AngFreqAtomic :     "1/Ta",
+            EUrc.AngFreqSeconds :    "1/s",
+            EUrc.CyclicFreqAtomic :  "cyc/Ta",
+            EUrc.CyclicFreqHz :      "cyc/s",
+            EUrc.CyclicFreqMHz :     "MHz",
+            EUrc.WaveNumAtomic :     "cyc/B",
+            EUrc.WaveNumCM :         "cyc/cm"
+                }
 
 
 #TODO:(?) const: do atomNum/Sym need to handle ghost atoms / charges?

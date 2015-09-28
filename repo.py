@@ -181,7 +181,7 @@ class OPAN_REPO(object):
         import h5py as h5, numpy as np
         from .error import REPOError as RErr
         from .const import E_DispDirection as E_DispDir
-        from .const import ER_Data
+        from .const import ERA_Data
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -189,13 +189,13 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid disp direction
-        if not disp in E_DispDir.E:
+        if not disp in E_DispDir:
             raise(ValueError("'" + str(disp) + "' is not a valid " + \
                     "displacement enum value"))
         ## end if
 
         # Must be a valid repo data type
-        if not datatype in ER_Data.E:
+        if not datatype in ERA_Data:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "data type enum value"))
         ## end if
@@ -248,7 +248,7 @@ class OPAN_REPO(object):
         # Imports
         import os, numpy as np
         from .const import E_DispDirection as E_DispDir
-        from .const import ER_Data
+        from .const import ERA_Data
         from .error import REPOError as RErr
 
         # Must be valid mode
@@ -257,13 +257,13 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid disp direction
-        if not disp in E_DispDir.E:
+        if not disp in E_DispDir:
             raise(ValueError("'" + str(disp) + "' is not a valid " + \
                     "displacement enum value"))
         ## end if
 
         # Must be a valid data type
-        if not datatype in ER_Data.E:
+        if not datatype in ERA_Data:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "repository data type enum value"))
         ## end if
@@ -338,11 +338,11 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .const import ER_Param
+        from .const import ERA_Param
         from .error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ER_Param.E:
+        if not param in ERA_Param:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -392,11 +392,11 @@ class OPAN_REPO(object):
 
         # Imports
         import os, numpy as np
-        from .const import ER_Param
+        from .const import ERA_Param
         from .error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ER_Param.E:
+        if not param in ERA_Param:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -511,11 +511,11 @@ class OPAN_REPO(object):
 
         # Imports
         from .xyz import OPAN_XYZ as XYZ
-        from .const import ER_Param, ER_Data
+        from .const import ERA_Param, ERA_Data
 
         # Generate XYZ and return
-        out_XYZ = XYZ(atom_syms=self.get_param(ER_Param.atoms), \
-                        coords=self.get_data(ER_Data.geom, mode, disp))
+        out_XYZ = XYZ(atom_syms=self.get_param(ERA_Param.atoms), \
+                        coords=self.get_data(ERA_Data.geom, mode, disp))
         return out_XYZ
 
     ## end def get_XYZ
