@@ -994,7 +994,9 @@ class SuperORCAHess(unittest.TestCase):
             names.freqs : ('$vibrational_freq', '$varbifishing_sweg'),
             names.modes : ('$normal_modes', '$formal_toads'),
             names.dipders : ('$dipole_deriv', '$tadpole_gurriv'),
-            names.ir    : ('$ir_spectrum', '$lidar_fulcrum')
+            names.ir    : ('$ir_spectrum', '$lidar_fulcrum'),
+            names.polders : ('$polarizability_derivatives',
+                                            '$polarbear_skivs')
                         }
 
     trunc_block_substs = {
@@ -1003,7 +1005,8 @@ class SuperORCAHess(unittest.TestCase):
             names.freqs : ('10     1524.709386', 'fobbardgik'),
             names.modes : ('1      -0.010563   0.123653', 'gommerbik'),
             names.dipders: ('0.050074     0.055974', 'cheezenugget'),
-            names.ir    : ('1292.94      14.6749', 'spuffle')
+            names.ir    : ('1292.94      14.6749', 'spuffle'),
+            names.polders: ('9.078498     0.217638', 'frabbitz')
                             }
 
     bad_data_substs = {
@@ -1017,7 +1020,8 @@ class SuperORCAHess(unittest.TestCase):
             names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25'),
             names.ir    : ('ir_spectrum\n15', 'ir_spectrum\n38'),
             names.ir + names.suffix_badfreq :
-                            ('1292.94      14.6749', '3232.28      14.6749')
+                            ('1292.94      14.6749', '3232.28      14.6749'),
+            names.polders : ('ity_derivatives\n15', 'ity_derivatives\n38')
                         }
 
 ## end class SuperORCAHess
@@ -1134,8 +1138,18 @@ class TestORCAHessKnownGood(SuperORCAHess):
             for j in range(self.oh.ir_comps.shape[1]):
                 self.assertAlmostEqual(self.oh.ir_comps[i,j], \
                             self.ir_comps[i,j], delta=1e-4, \
-                            msg="Dipole derivative element (" + str(i) + ',' + \
+                            msg="IR T_i derivative element (" + str(i) + ',' + \
                                                         str(j) + ')')
+
+    def test_HESS_KnownGoodPolDers(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.polders.shape, self.polders.shape)
+        for i in range(self.oh.polders.shape[0]):
+            for j in range(self.oh.polders.shape[1]):
+                self.assertAlmostEqual(self.oh.polders[i,j], \
+                            self.polders[i,j], delta=1e-4, \
+                            msg="Polarizability derivative element (" + \
+                                        str(i) + ',' + str(j) + ')')
 
 ## end class TestORCAEngradKnownGood
 
@@ -1241,6 +1255,14 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         self.assertIsNone(ORCA_HESS(self.file_name + \
                                             self.names.ir).ir_mags)
 
+    def test_HESS_MissingBlockPolders(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                            self.names.polders).polders)
+
 
 ## end class TestORCAHessMissingBlocks
 
@@ -1321,6 +1343,14 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.ir_block, self.file_name + self.names.ir)
+
+    def test_HESS_TruncatedBlocksPolders(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.polder_block, self.file_name + self.names.polders)
 
 ## end class TestORCAHessTruncatedBlocks
 
@@ -1411,6 +1441,14 @@ class TestORCAHessBadData(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.ir_block, \
                     self.file_name + self.names.ir + self.names.suffix_badfreq)
+
+    def test_HESS_BadDataPoldersDim(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.polder_block, self.file_name + self.names.polders)
 
 ## end class TestORCAHessBadData
 
