@@ -964,6 +964,13 @@ class SuperORCAHess(unittest.TestCase):
         [  7.84977000e-01,   1.01696600e+00,   5.96557600e+00,
            3.30327000e-01,  -1.84401000e+00,  -2.60853100e+00]])
 
+    raman_acts = np.matrix([[ 0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,
+            1.5128,    1.5204,    1.5313,   26.2882,   26.2096,  140.8157,
+           60.6507,   60.7749,   60.8277]]).transpose()
+
+    raman_depols = np.matrix([[0., 0.,  0.,  0.,  0.,  0.,  0.75,  0.75,  0.75,
+          0.75,  0.75,  0.  ,  0.75,  0.75,  0.75]]).transpose()
+
 
     #=== Defining ways to break the .hess ===#
     class names(object):
@@ -977,12 +984,13 @@ class SuperORCAHess(unittest.TestCase):
         dipders = 'dipders'
         ir = 'ir'
         polders = 'polders'
+        raman = 'raman'
 
         suffix_dim2 = '_dim2'
         suffix_badfreq = '_badfreq'
 
         E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
-                    dipders, ir, polders])
+                    dipders, ir, polders, raman])
         suffixes = frozenset([suffix_dim2, suffix_badfreq])
 
 
@@ -996,7 +1004,8 @@ class SuperORCAHess(unittest.TestCase):
             names.dipders : ('$dipole_deriv', '$tadpole_gurriv'),
             names.ir    : ('$ir_spectrum', '$lidar_fulcrum'),
             names.polders : ('$polarizability_derivatives',
-                                            '$polarbear_skivs')
+                                            '$polarbear_skivs'),
+            names.raman : ('$raman_spectrum', '$jammin_sparkrum')
                         }
 
     trunc_block_substs = {
@@ -1006,7 +1015,8 @@ class SuperORCAHess(unittest.TestCase):
             names.modes : ('1      -0.010563   0.123653', 'gommerbik'),
             names.dipders: ('0.050074     0.055974', 'cheezenugget'),
             names.ir    : ('1292.94      14.6749', 'spuffle'),
-            names.polders: ('9.078498     0.217638', 'frabbitz')
+            names.polders: ('9.078498     0.217638', 'frabbitz'),
+            names.raman : ('1524.71      26.2096', 'zorbotz')
                             }
 
     bad_data_substs = {
@@ -1021,7 +1031,10 @@ class SuperORCAHess(unittest.TestCase):
             names.ir    : ('ir_spectrum\n15', 'ir_spectrum\n38'),
             names.ir + names.suffix_badfreq :
                             ('1292.94      14.6749', '3232.28      14.6749'),
-            names.polders : ('ity_derivatives\n15', 'ity_derivatives\n38')
+            names.polders : ('ity_derivatives\n15', 'ity_derivatives\n38'),
+            names.raman : ('man_spectrum\n15', 'man_spectrum\n27'),
+            names.raman + names.suffix_badfreq :
+                            ('1524.71      26.2096', '3184.71      26.2096')
                         }
 
 ## end class SuperORCAHess
@@ -1150,6 +1163,18 @@ class TestORCAHessKnownGood(SuperORCAHess):
                             self.polders[i,j], delta=1e-4, \
                             msg="Polarizability derivative element (" + \
                                         str(i) + ',' + str(j) + ')')
+
+    def test_HESS_KnownGoodRamanSpectrum(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.raman_acts.shape, self.raman_acts.shape)
+        self.assertEqual(self.oh.raman_depols.shape, self.raman_depols.shape)
+        for i in range(self.oh.raman_acts.shape[0]):
+            self.assertAlmostEqual(self.oh.raman_acts[i,0], \
+                    self.raman_acts[i,0], \
+                    delta=1e-4, msg="Raman activity element (" + str(i) + ')')
+            self.assertAlmostEqual(self.oh.raman_depols[i,0], \
+                        self.raman_depols[i,0], delta=1e-4, \
+                        msg="Raman depolarization element (" + str(i) + ')')
 
 ## end class TestORCAEngradKnownGood
 
