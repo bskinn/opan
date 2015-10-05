@@ -1264,7 +1264,6 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
     def test_HESS_MissingBlockDipders(self):
 
-        from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
         self.assertIsNone(ORCA_HESS(self.file_name + \
@@ -1272,22 +1271,28 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
     def test_HESS_MissingBlockIRSpectrum(self):
 
-        from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
-                                            self.names.ir).ir_comps)
-        self.assertIsNone(ORCA_HESS(self.file_name + \
-                                            self.names.ir).ir_mags)
+        h = ORCA_HESS(self.file_name + self.names.ir)
+
+        self.assertIsNone(h.ir_comps)
+        self.assertIsNone(h.ir_mags)
 
     def test_HESS_MissingBlockPolders(self):
 
-        from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
         self.assertIsNone(ORCA_HESS(self.file_name + \
                                             self.names.polders).polders)
 
+    def test_HESS_MissingBlockRamanSpectrum(self):
+
+        from opan.hess import ORCA_HESS
+
+        h = ORCA_HESS(self.file_name + self.names.raman)
+
+        self.assertIsNone(h.raman_acts)
+        self.assertIsNone(h.raman_depols)
 
 ## end class TestORCAHessMissingBlocks
 
@@ -1376,6 +1381,14 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.polder_block, self.file_name + self.names.polders)
+
+    def test_HESS_TruncatedBlocksRamanSpectrum(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.raman_block, self.file_name + self.names.raman)
 
 ## end class TestORCAHessTruncatedBlocks
 
@@ -1474,6 +1487,20 @@ class TestORCAHessBadData(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.polder_block, self.file_name + self.names.polders)
+
+    def test_HESS_BadDataIRSpectrum(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        # Bad dimension
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.raman_block, self.file_name + self.names.raman)
+        # Mismatched frequency
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.raman_block, \
+                    self.file_name + self.names.raman + \
+                                                self.names.suffix_badfreq)
 
 ## end class TestORCAHessBadData
 
