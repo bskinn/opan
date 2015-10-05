@@ -923,6 +923,15 @@ class ORCA_HESS(object):
                         for m in self.p_raman_line.finditer( \
                                                     m_work.group("block")) ])
 
+            # Confirm length of raman_acts conforms. Shouldn't need to check
+            #  both, since they both rely equally on p_raman_line.finditer.
+            if 3*self.num_ats != self.raman_acts.shape[0]:
+                raise(HESSError(HESSError.raman_block, \
+                        "Number of Raman spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
             # Confirm match of all frequencies with those reported separately
             if not np.allclose( \
                     self.freqs, \
@@ -933,15 +942,6 @@ class ORCA_HESS(object):
                     atol=DEF.HESS_IR_Match_Tol):
                 raise(HESSError(HESSError.raman_block, \
                         "Frequency mismatch between freq and Raman blocks", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
-
-            # Confirm length of raman_acts conforms. Shouldn't need to check
-            #  both, since they both rely equally on p_raman_line.finditer.
-            if 3*self.num_ats != self.raman_acts.shape[0]:
-                raise(HESSError(HESSError.raman_block, \
-                        "Number of Raman spectrum rows != " + \
-                                                    "3 * number of atoms", \
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
