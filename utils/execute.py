@@ -32,9 +32,6 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
             inp_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.inputfile], \
             out_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.output], \
             wait_to_complete=True, \
-            disp_mode=0, \
-            disp_dir=E_DispDirection.NoDisp, \
-            disp_mag=0.0, \
             bohrs=False):
     """Executes ORCA on a dynamically constructed input file.
 
