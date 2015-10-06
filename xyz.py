@@ -904,7 +904,7 @@ class OPAN_XYZ(object):
         import numpy as np
         from numpy import arccos, degrees, dot, sign, squeeze
         from scipy.linalg import norm
-        from .utils import Vector as Vec
+        from .utils.vector import ortho_basis
         from .error import XYZError
         from .const import PRM
 
@@ -965,7 +965,7 @@ class OPAN_XYZ(object):
         # Retrieve the orthonormal basis in the projection plane, with the
         #  first vector being the normalized projection of the at_1 --> at_2
         #  displacement onto that plane
-        on1, on2 = Vec.ortho_basis(plane_norm, \
+        on1, on2 = ortho_basis(plane_norm, \
                             self.Displ_single(g_num, at_1, at_2))
 
         # Convert on1 and on2 to squeezed np.arrays

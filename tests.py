@@ -337,7 +337,7 @@ class TestORCAEngradBadData(SuperORCAEngrad):
 
 
 
-# ============================  ORCA_ERROR ================================== #
+# ============================  OPAN_ERROR ================================== #
 
 class TestOPANErrorInitErrors(unittest.TestCase):
     # Testing errors that should be thrown on initialization
