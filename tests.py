@@ -971,6 +971,94 @@ class SuperORCAHess(unittest.TestCase):
     raman_depols = np.matrix([[0., 0.,  0.,  0.,  0.,  0.,  0.75,  0.75,  0.75,
           0.75,  0.75,  0.  ,  0.75,  0.75,  0.75]]).transpose()
 
+    joblist = np.matrix([[ True,  True,  True],
+        [ True,  True,  True],
+        [ True,  True,  True],
+        [ True,  True,  True],
+        [ True,  True,  True]], dtype=bool)
+
+    mwh_eigvals = np.matrix([[ 0.     ,  0.     ,  0.     ,  0.     ,  0.     ,
+          0.        ,  0.06319196,  0.06322774,  0.06326256,  0.08794171,
+          0.08797609,  0.36383015,  0.39704359,  0.39727245,  0.39751505]]) \
+                                                                .transpose()
+
+    mwh_eigvecs = np.matrix([[0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -3.94942498e-01,  -3.37783511e-02,   2.26733150e-04,
+          -1.01615700e-05,   2.38076000e-06,  -5.69347300e-04,
+           7.55487600e-05,   1.51161154e-01,   2.67121574e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -3.37381468e-02,   3.94929999e-01,   4.61315230e-04,
+          -5.29110350e-04,  -9.81910000e-07,  -6.43013690e-04,
+           2.52277620e-04,   2.67162589e-01,  -1.51128355e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -2.65229270e-04,   4.40318340e-04,  -3.96367433e-01,
+          -2.16370000e-07,  -2.18289900e-05,   4.37600000e-08,
+          -3.06948024e-01,   2.56769930e-04,  -5.85181800e-05],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -9.05015412e-02,  -7.74361372e-03,   5.19772600e-05,
+           5.23018800e-05,   5.71510000e-07,  -4.98496537e-01,
+          -2.03810570e-04,  -4.07032056e-01,  -7.17456917e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           4.75409737e-02,  -5.55800882e-01,  -6.49630810e-04,
+           5.00779591e-01,   1.79653180e-04,  -9.57941000e-06,
+           1.21494800e-05,   1.27263808e-02,  -7.17497870e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           3.70775910e-04,  -6.21831770e-04,   5.58550833e-01,
+           1.78587630e-04,  -4.99974958e-01,   1.33660000e-07,
+          -1.46393704e-02,   1.22860200e-05,  -2.88351000e-06],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           5.01974298e-01,  -1.61242446e-01,  -5.15354590e-04,
+           4.71703108e-01,   1.65649790e-04,   1.66288423e-01,
+           1.97720920e-04,   1.91113688e-01,  -1.97933423e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           2.01644306e-01,   3.62669730e-02,  -9.42581400e-05,
+           1.66581824e-01,   5.83765200e-05,  -4.70357315e-01,
+          -5.37587960e-04,  -5.07599157e-01,   5.88968439e-01],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           3.76458880e-04,  -6.19336180e-04,   5.58505671e-01,
+          -1.77989630e-04,   5.00025104e-01,   4.11280000e-07,
+          -1.46518096e-02,   1.22816900e-05,  -3.04691000e-06],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           4.75800519e-01,   1.42990392e-01,  -1.76927029e-01,
+          -2.36005830e-01,   4.08155849e-01,   1.67086585e-01,
+           2.28106479e-01,  -1.53129034e-01,  -3.30090441e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -6.65308974e-02,  -4.21587122e-01,  -2.50371783e-01,
+          -3.32664681e-01,  -2.88799673e-01,   2.36292821e-01,
+           3.22609804e-01,  -2.13944111e-01,  -2.99942945e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -1.97389599e-01,   2.34254086e-01,   1.25976062e-01,
+           2.88303412e-01,   1.15834320e-04,   4.09333053e-01,
+           5.44103597e-01,  -3.92668431e-01,  -3.93914218e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           4.76032223e-01,   1.42595457e-01,   1.76607744e-01,
+          -2.35714503e-01,  -4.08330289e-01,   1.67086865e-01,
+          -2.28361176e-01,  -1.52747122e-01,  -3.38807898e-03],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+          -6.61933754e-02,  -4.22141321e-01,   2.49523254e-01,
+          -3.32870292e-01,   2.88565032e-01,   2.36293698e-01,
+          -3.22955204e-01,  -2.13404013e-01,  -3.01178611e-02],
+        [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+           1.97557911e-01,  -2.34532857e-01,   1.25191679e-01,
+          -2.88303263e-01,  -9.06289600e-05,  -4.09333749e-01,
+           5.44744177e-01,   3.91757517e-01,   3.95993516e-02]])
+
+
 
     #=== Defining ways to break the .hess ===#
     class names(object):
@@ -985,12 +1073,15 @@ class SuperORCAHess(unittest.TestCase):
         ir = 'ir'
         polders = 'polders'
         raman = 'raman'
+        joblist = 'joblist'
+        mwh_eigvals = 'mwh_eigvals'
+        mwh_eigvecs = 'mwh_eigvecs'
 
         suffix_dim2 = '_dim2'
         suffix_badfreq = '_badfreq'
 
         E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
-                    dipders, ir, polders, raman])
+                    dipders, ir, polders, raman, mwh_eigvals, mwh_eigvecs])
         suffixes = frozenset([suffix_dim2, suffix_badfreq])
 
 
@@ -1005,7 +1096,12 @@ class SuperORCAHess(unittest.TestCase):
             names.ir    : ('$ir_spectrum', '$lidar_fulcrum'),
             names.polders : ('$polarizability_derivatives',
                                             '$polarbear_skivs'),
-            names.raman : ('$raman_spectrum', '$jammin_sparkrum')
+            names.raman : ('$raman_spectrum', '$jammin_sparkrum'),
+            names.joblist : ('$job_list', '$mob_gist'),
+            names.mwh_eigvals : ('$eigenvalues_mass_weighted_hessian',
+                                        '$goy_that_is_long'),
+            names.mwh_eigvecs : ('$eigenvectors_mass_weighted_hessian',
+                                        '$also_very_long')
                         }
 
     trunc_block_substs = {
@@ -1016,7 +1112,10 @@ class SuperORCAHess(unittest.TestCase):
             names.dipders: ('0.050074     0.055974', 'cheezenugget'),
             names.ir    : ('1292.94      14.6749', 'spuffle'),
             names.polders: ('9.078498     0.217638', 'frabbitz'),
-            names.raman : ('1524.71      26.2096', 'zorbotz')
+            names.raman : ('1524.71      26.2096', 'zorbotz'),
+            names.joblist : ('3    1    1    1', 'gorb'),
+            names.mwh_eigvals: ('8          0.06326255701', 'zabbert'),
+            names.mwh_eigvecs: ('9            0.47580051857', 'fobborj')
                             }
 
     bad_data_substs = {
@@ -1034,7 +1133,27 @@ class SuperORCAHess(unittest.TestCase):
             names.polders : ('ity_derivatives\n15', 'ity_derivatives\n38'),
             names.raman : ('man_spectrum\n15', 'man_spectrum\n27'),
             names.raman + names.suffix_badfreq :
-                            ('1524.71      26.2096', '3184.71      26.2096')
+                            ('1524.71      26.2096', '3184.71      26.2096'),
+            names.joblist : ('job_list\n15', 'job_list\n38'),
+            names.mwh_eigvals: ('values_mass_weighted_hessian\n15',
+                                        'values_mass_weighted_hessian\n7'),
+            names.mwh_eigvecs: ('ectors_mass_weighted_hessian\n15',
+                                        'ectors_mass_weighted_hessian\n39'),
+            names.mwh_eigvecs + names.suffix_dim2:
+                                ('ectors_mass_weighted_hessian\n15 15',
+                                        'ectors_mass_weighted_hessian\n15 19')
+                        }
+
+    alt_data_substs = {
+            names.joblist : ('2    1    1    1', '2    0    1    0')
+                        }
+
+    alt_data_values = {
+            names.joblist : np.matrix([[ True,  True,  True],
+                                        [ True,  True,  True],
+                                        [ False,  True,  False],
+                                        [ True,  True,  True],
+                                        [ True,  True,  True]], dtype=bool)
                         }
 
 ## end class SuperORCAHess
@@ -1176,6 +1295,33 @@ class TestORCAHessKnownGood(SuperORCAHess):
                         self.raman_depols[i,0], delta=1e-4, \
                         msg="Raman depolarization element (" + str(i) + ')')
 
+    def test_HESS_KnownGoodJobList(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.joblist.shape, self.joblist.shape)
+        for i in range(self.oh.joblist.shape[0]):
+            for j in range(3):
+                self.assertEqual(self.oh.joblist[i,j], self.joblist[i,j], \
+                        msg="Job list element (" + str(i) + ',' + str(j) + ')')
+
+    def test_HESS_KnownGoodMWHEigvals(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.mwh_eigvals.shape, self.mwh_eigvals.shape)
+        for i in range(self.oh.mwh_eigvals.shape[0]):
+            self.assertAlmostEqual(self.oh.mwh_eigvals[i,0], \
+                    self.mwh_eigvals[i,0], \
+                    delta=1e-8, msg="MWH eigenvector (" + str(i) + ')')
+
+    def test_HESS_KnownGoodMWHEigvecs(self):
+        self.longMessage = True
+        self.assertEqual(self.oh.mwh_eigvecs.shape, self.mwh_eigvecs.shape)
+        for i in range(self.oh.mwh_eigvecs.shape[0]):
+            for j in range(self.oh.mwh_eigvecs.shape[1]):
+                self.assertAlmostEqual(self.oh.mwh_eigvecs[i,j], \
+                        self.oh.mwh_eigvecs[i,j], \
+                        delta=1e-8, msg="MWH eigenvectors element (" + \
+                                                str(i) + ',' + str(j) + ')')
+
+
 ## end class TestORCAEngradKnownGood
 
 
@@ -1294,6 +1440,27 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         self.assertIsNone(h.raman_acts)
         self.assertIsNone(h.raman_depols)
 
+    def test_HESS_MissingBlockJobList(self):
+
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                            self.names.joblist).joblist)
+
+    def test_HESS_MissingBlockMWHEigvals(self):
+
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                        self.names.mwh_eigvals).mwh_eigvals)
+
+    def test_HESS_MissingBlockMWHEigvecs(self):
+
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + \
+                                        self.names.mwh_eigvecs).mwh_eigvecs)
+
 ## end class TestORCAHessMissingBlocks
 
 
@@ -1389,6 +1556,32 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
 
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.raman_block, self.file_name + self.names.raman)
+
+    def test_HESS_TruncatedBlocksJobList(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.job_block, self.file_name + self.names.joblist)
+
+    def test_HESS_TruncatedBlocksMWHEigvals(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.eigval_block, \
+                    self.file_name + self.names.mwh_eigvals)
+
+    def test_HESS_TruncatedBlocksMWHEigvecs(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.eigvec_block, \
+                    self.file_name + self.names.mwh_eigvecs)
 
 ## end class TestORCAHessTruncatedBlocks
 
@@ -1502,7 +1695,86 @@ class TestORCAHessBadData(SuperORCAHess):
                     self.file_name + self.names.raman + \
                                                 self.names.suffix_badfreq)
 
+    def test_HESS_BadDataJobListDim(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.job_block, self.file_name + self.names.joblist)
+
+    def test_HESS_BadDataMWHEigvalsDim(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.eigval_block, \
+                    self.file_name + self.names.mwh_eigvals)
+
+    def test_HESS_BadDataMWHEigvecs(self):
+
+        from opan.error import HESSError
+        from opan.hess import ORCA_HESS
+
+        # First dimension
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.eigvec_block, \
+                    self.file_name + self.names.mwh_eigvecs)
+        # Second dimension
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.eigvec_block, \
+                    self.file_name + self.names.mwh_eigvecs + \
+                            self.names.suffix_dim2)
+
 ## end class TestORCAHessBadData
+
+
+class TestORCAHessAltData(SuperORCAHess):
+    # Ensuring importing a HESS file with data of valid formatting but
+    #  invalid content raises the appropriate errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for bname in self.alt_data_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.alt_data_substs[bname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + dname) for dname in \
+                                            self.alt_data_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_HESS_AltDataJobList(self):
+
+        from opan.hess import ORCA_HESS
+
+        h = ORCA_HESS(self.file_name + self.names.joblist)
+
+        self.longMessage = True
+        self.assertEqual(h.joblist.shape, \
+                        self.alt_data_values[self.names.joblist].shape)
+        for i in range(h.joblist.shape[0]):
+            for j in range(3):
+                self.assertEqual(h.joblist[i,j], \
+                        self.alt_data_values[self.names.joblist][i,j], \
+                        msg="Job list element (" + str(i) + ',' + str(j) + ')')
+
+## end class TestORCAHessAltData
 
 
 # ==========================  Helper Functions  ============================= #
