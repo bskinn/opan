@@ -217,7 +217,7 @@ class XYZError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     xyzfile = 'xyzfile'
     overwrite = 'overwrite'
     dihed = 'dihed'
@@ -244,7 +244,7 @@ class GRADError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     numats = 'numats'
     en = 'en'
     gradblock = 'gradblock'
@@ -296,7 +296,7 @@ class HESSError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     at_block = "at_block"
     hess_block = "hess_block"
     freq_block = "freq_block"
@@ -327,7 +327,7 @@ class SYMMError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     notfound = 'notfound'
 
 ## end class SYMMError
@@ -348,7 +348,7 @@ class REPOError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     status = 'status'
     data = 'data'
     group = 'group'
@@ -373,7 +373,7 @@ class ANHARMError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     repo = 'repo'
     status = 'status'
 

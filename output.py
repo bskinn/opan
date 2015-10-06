@@ -123,7 +123,7 @@ class ORCA_OUTPUT(object):
     """
 
     # Imports
-    import re
+    import re as _re
 
 
     # Various class-level RegEx patterns, collected into dictionaries to
@@ -157,45 +157,45 @@ class ORCA_OUTPUT(object):
     # Final SCF energy, with gCP, D3, corrections included... but NOT COSMO
     #  outlying charge correction.
     p_en.update({ EN.SCFFINAL :
-        re.compile("""
+        _re.compile("""
         -\\n                         # Hyphen on preceding line
         FINAL\\ SINGLE\\             # Key text 1
         POINT\\ ENERGY\\             # Key text 2
         [\\ ]+(?P<>[0-9.-]+)         # Energy on same line as key text
         .*\\n-                       # Hyphen starting following line
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     # gCP corrections entering into reported FINAL ENERGY values.
     p_en.update({ EN.GCP :
-        re.compile("""
+        _re.compile("""
         -\\n                        # Hyphen on preceding line
         gCP\\ correction            # Key text
         [\\ ]+(?P<>[0-9.-]+)        # Energy on same line as key text
         .*\\n-                      # Hyphen starting following line.
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     # D3 corrections entering into reported FINAL ENERGY values.
     p_en.update({ EN.D3 :
-        re.compile("""
+        _re.compile("""
         -\\n                        # Hyphen on preceding line
         Dispersion\\ correction     # Key text
         [\\ ]+(?P<>[0-9.-]+)        # Energy on same line as key text
         .*\\n-                      # Hyphen starting following line.
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     # COSMO SCF energies after the COSMO outlying charge correction BUT BEFORE
     #  any other augmentations to the energy (no D3, gCP, etc.)
     p_en.update({ EN.SCFOCC :
-        re.compile("""
+        _re.compile("""
         Total\\ Energy\\ after\\    # Key text 1
         outlying\\ charge\\         # Key text 2
         correction[\\ ]*=           # Key text 3
         [\\ ]+(?P<>[0-9.-]+)        # Energy following key text
         [\\ ]+Eh.*\\n               # 'Eh' units, then newline
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     # Patterns for the entire thermochemistry block, as well as the individual
@@ -225,7 +225,7 @@ class ORCA_OUTPUT(object):
     # Whole thermo block just in case; probably not needed for automated
     #  computation, but potentially handy for manual fiddling.
     p_thermo.update({ THERMO.BLOCK :
-        re.compile("""
+        _re.compile("""
         (?P<>-+\\n              # Hyphen line
         THERMOCHEMISTRY\\       # Header text
         AT\\ [0-9.]+\\ *K\\n    # Temperature
@@ -233,115 +233,115 @@ class ORCA_OUTPUT(object):
         (.|\\n)*)               # Everything until the end
         Timings\\ for\\         # Closing blip 1
         individual\\ modules    # Closing blip 2
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     # Individual quantities. Descriptions in pattern definition comments.
     p_thermo.update({ THERMO.TEMP :
-        re.compile("""
+        _re.compile("""
         temperature[\\ .]+      # Key text
         (?P<>[0-9.]+)           # Temperature value
         [\\ ]+K                 # in Kelvin
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.PRESS :
-        re.compile("""
+        _re.compile("""
         pressure[\\ .]+         # Key text
         (?P<>[0-9.]+)           # Pressure value
         [\\ ]+atm               # in atm
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.E_EL :
-        re.compile("""
+        _re.compile("""
         electronic\\ energy     # Key text 1
         [\\ .]+                 # Key text 2
         (?P<>[0-9.-]+)          # Electronic energy value
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.E_ZPE :
-        re.compile("""
+        _re.compile("""
         zero\\ point\\ energy   # Key text 1
         [\\ .]+                 # Key text 2
         (?P<>[0-9.-]+)          # ZPE energy value
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.E_VIB :
-        re.compile("""
+        _re.compile("""
         thermal\\ vibrational\\ # Key text 1
         correction[\\ .]+       # Key text 2
         (?P<>[0-9.-]+)          # Vibration energy correction value
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.E_ROT :
-        re.compile("""
+        _re.compile("""
         thermal\\ rotational\\  # Key text 1
         correction[\\ .]+       # Key text 2
         (?P<>[0-9.-]+)          # Rotation energy correction value
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.E_TRANS :
-        re.compile("""
+        _re.compile("""
         thermal\\               # Key text 1
         translational\\         # Key text 2
         correction[\\ .]+       # Key text 3
         (?P<>[0-9.-]+)          # Translation energy correction value
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.H_IG :
-        re.compile("""
+        _re.compile("""
         thermal\\ enthalpy\\    # Key text 1
         correction[\\ .]+       # Key text 2
         (?P<>[0-9.-]+)          # Ideal gas enthalpy correction
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.TS_EL :
-        re.compile("""
+        _re.compile("""
         electronic\\ entropy\\  # Key text
         [\\ .]+                 # Spacer
         (?P<>[0-9.-]+)          # Electronic entropy contribution
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.TS_VIB :
-        re.compile("""
+        _re.compile("""
         vibrational\\ entropy\\ # Key text
         [\\ .]+                 # Spacer
         (?P<>[0-9.-]+)          # Vibrational entropy contribution
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.TS_TRANS :
-        re.compile("""
+        _re.compile("""
         translational\\         # Key text 1
         entropy\\               # Key text 2
         [\\ .]+                 # Spacer
         (?P<>[0-9.-]+)          # Translational entropy contribution
         [\\ ]+Eh                # in Hartrees
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_thermo.update({ THERMO.QROT :
-        re.compile("""
+        _re.compile("""
         qrot\\ +=\\ +           # Key text
         (?P<>[0-9.]+)           # Rotational partition function
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
 
     # Dipole moment pattern
-    p_dipmom = re.compile("""
+    p_dipmom = _re.compile("""
         -+\\n                             # Hyphen line
         dipole\\ moment.*\\n              # Block label
         -+\\n                             # Hyphen line
         (.*\\n)+?                         # Lazy grab of any lines
         Magnitude\ \(debye\)\ +:\ +       # Line leader
         (?P<>[0-9.]+).*\\n                # Grab the dipole moment
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
 
 
     # Patterns for the spin contamination information
@@ -358,26 +358,26 @@ class ORCA_OUTPUT(object):
 
     # Patterns for the spin contamination information
     p_spincont.update({ SPINCONT.ACTUAL :
-        re.compile("""
+        _re.compile("""
         expectation[ ]value[ ]of[ ]<S\*\*2>         # Key text
         [ ]+:[ ]+                                   # Space and separator
         (?P<>[0-9.]+)                               # Grab the value
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_spincont.update({ SPINCONT.IDEAL :
-        re.compile("""
+        _re.compile("""
         ideal[ ]value[ ]s\\*\\(s\\+1\\)[ ]          # Key text 1
         for[ ]s=[0-9.]+                             # Key text 2
         [ ]+:[ ]+                                   # Space and separator
         (?P<>[0-9.]+)                               # Grab the value
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
     p_spincont.update({ SPINCONT.DEV :
-        re.compile("""
+        _re.compile("""
         deviation                                   # Key text
         [ ]+:[ ]+                                   # Space and separator
         (?P<>[0-9.]+)                               # Grab the value
-        """.replace("P<", "P<" + P_GROUP), re.I | re.X)
+        """.replace("P<", "P<" + P_GROUP), _re.I | _re.X)
         })
 
     #RESUME: Make patterns and constants for the virial block; update docstrings

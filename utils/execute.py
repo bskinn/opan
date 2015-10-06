@@ -21,16 +21,15 @@
 
 
 # Module-level imports
-from ..const import DEF, E_Software as E_SW, E_FileType as E_FT
-from ..const import E_DispDirection
+from ..const import DEF as _DEF, E_Software as _E_SW, E_FileType as _E_FT
 
 
 # Functions
 
 def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
             sim_name="orcarun", \
-            inp_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.inputfile], \
-            out_ext=DEF.File_Extensions[E_SW.ORCA][E_FT.output], \
+            inp_ext=_DEF.File_Extensions[_E_SW.ORCA][_E_FT.inputfile], \
+            out_ext=_DEF.File_Extensions[_E_SW.ORCA][_E_FT.output], \
             wait_to_complete=True, \
             bohrs=False):
     """Executes ORCA on a dynamically constructed input file.
@@ -41,7 +40,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     XYZ, etc.) MUST already be present in 'work_dir'. No check for pre-existing
     files of the same base name is made; any such will be overwritten.
 
-    ORCA MUST be called using a wrapper script; this method does not
+    ORCA MUST be called using a wrapper script; this function does not
     implement the redirection necessary to send output from a direct ORCA call
     to a file on disk.
 

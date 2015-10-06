@@ -18,11 +18,9 @@
 #
 #-------------------------------------------------------------------------------
 
-"""Utility functions for OpenAnharmonic, including execution automation.
+"""General purpose utility functions for OpenAnharmonic.
 
 
-Functions
----------
 check_geom       -- Confirm two OpenBabel geometries (atom types and
                         coordinates) match to within a specified tolerance
 delta_fxn        -- Generalized Kronecker delta function
@@ -33,16 +31,11 @@ safe_cast        -- Robustified casting with a post-check to confirm the cast
                         actually resulted in the proper type
 template_subst   -- Perform a field-based substitution into a string template
 
-Sub-Modules
------------
-vector           -- Vector / symmetry utility functions
-execute          -- Functions for execution of external computational
-                        software packages
 
 """
 
 # Imports
-from ..const import DEF, E_DispDirection, E_Software as E_SW, E_FileType as E_FT
+from ..const import DEF as _DEF
 
 
 def pack_tups(*args):
@@ -300,12 +293,12 @@ def make_timestamp(el_time):
 ## end def make_timestamp
 
 
-def check_geom(c1, a1, c2, a2, tol=DEF.XYZ_Coord_Match_Tol):
+def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     """ Check for consistency of two geometries and atom symbol lists
 
     Cartesian coordinates are considered consistent with the input
         coords if each component matches to within 'tol' (default value
-        specified by orca_const.DEF.Coord_Match_Tol).  If coords or
+        specified by orca_const._DEF.Coord_Match_Tol).  If coords or
         atoms vectors are passed that are of mismatched lengths, a
         False value is returned.
 

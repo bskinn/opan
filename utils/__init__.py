@@ -18,6 +18,29 @@
 #
 #-------------------------------------------------------------------------------
 
+"""Utility functions for OpenAnharmonic, including execution automation.
+
+
+Functions
+---------
+check_geom       -- Confirm two OpenBabel geometries (atom types and
+                        coordinates) match to within a specified tolerance
+delta_fxn        -- Generalized Kronecker delta function
+make_timestamp   -- Construct a string time-elapsed timestamp in h/m/s format
+pack_tups        -- Pack an arbitrary combination of iterables and non-
+                        iterables into a list of tuples
+safe_cast        -- Robustified casting with a post-check to confirm the cast
+                        actually resulted in the proper type
+template_subst   -- Perform a field-based substitution into a string template
+
+Sub-Modules
+-----------
+vector           -- Vector / symmetry utility functions
+execute          -- Functions for execution of external computational
+                        software packages
+
+"""
+
 from __future__ import absolute_import
 
 __all__ = ['execute', 'vector']

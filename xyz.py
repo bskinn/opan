@@ -124,7 +124,7 @@ class OPAN_XYZ(object):
     """
 
     # Imports
-    import re
+    import re as _re
 
     # Class constants
     LOAD_DATA_FLAG = "DATA"
@@ -135,7 +135,7 @@ class OPAN_XYZ(object):
     # The "[^\\n\\w]" pattern is a weak equivalent of \\s, made necessary
     #  since \\s *includes* \\n.
     # Perhaps "[ \\t]" will suffice...
-    p_geom = re.compile("""
+    p_geom = _re.compile("""
     ^(?P<num>\\d+)      # Integer number of atoms
     [ \\t]*\\n          # Whitespace scrub to end of line
     (?P<desc>[^\\n]+)   # Geometry description
@@ -151,13 +151,13 @@ class OPAN_XYZ(object):
             [ \\t]*\\n          # Any whitespace to end of line
         )+                  # Close one coord line group; should be >= 1
     )                   # Close group for entire set of atom coords
-    """, re.I | re.X | re.M)
+    """, _re.I | _re.X | _re.M)
 
     # Define the RegEx to pull individual lines from the coordinate block
     #  retrieved by the p_geom RegEx.
     # As w/p_geom, re.M is required for "^" to match the start of each line of
     #  the coords block.
-    p_coords = re.compile("""
+    p_coords = _re.compile("""
     ^[ \\t]*?               # Any whitespace before element id
     (?P<el>([a-z]+|\\d+))   # Element ID, symbol or atomic number
     [ \\t]+?                # Whitespace before first coordinate
@@ -166,7 +166,7 @@ class OPAN_XYZ(object):
     (?P<c2>[0-9.-]+)        # Second coordinate
     [ \\t]+?                # Whitespace before third coordinate
     (?P<c3>[0-9.-]+)        # Third coordinate
-    """, re.I | re.X | re.M)
+    """, _re.I | _re.X | _re.M)
 
 
     def __init__(self, **kwargs):

@@ -1681,7 +1681,7 @@ class TestORCAHessBadData(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.polder_block, self.file_name + self.names.polders)
 
-    def test_HESS_BadDataIRSpectrum(self):
+    def test_HESS_BadDataRamanSpectrum(self):
 
         from opan.error import HESSError
         from opan.hess import ORCA_HESS

@@ -1,11 +1,11 @@
 #-------------------------------------------------------------------------------
 # Name:        anharm
-# Purpose:     Central module for VPT2 anharmonic wrapper.
+# Purpose:     Submodule implementing VPT2 anharmonic calculations/computations
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
 #
-# Created:     19 Jul 2015
+# Created:     6 Oct 2015
 # Copyright:   (c) Brian Skinn 2015
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
@@ -18,15 +18,15 @@
 #
 #-------------------------------------------------------------------------------
 
-# Imports
-
+""" #DOC: Docstring for anharm.base
+"""
 
 class ORCA_ANHARM(object):
     """ #DOC: ORCA_ANHARM class-level docstring
     """
 
     # Imports
-    from .const import E_Software
+    from ..const import E_Software as _E_SW
 
     def __init__(self):
         """ #DOC: ORCA_ANHARM.__init__ docstring (if needed)?
@@ -45,7 +45,7 @@ class ORCA_ANHARM(object):
 
     def new_from_files(self, basepath, basename, repo, \
                     bohrs=False, \
-                    software=E_Software.ORCA, \
+                    software=_E_SW.ORCA, \
                     repo_clobber=False, **kwargs):
         """ #DOC: new_from_files docstring
                     xyz_ext='xyz', \
@@ -57,14 +57,14 @@ class ORCA_ANHARM(object):
         # Imports
         import os
         from os import path as osp
-        from .xyz import OPAN_XYZ as OX
-        from .grad import ORCA_ENGRAD as OE
-        from .hess import ORCA_HESS as OH
+        from ..xyz import OPAN_XYZ as OX
+        from ..grad import ORCA_ENGRAD as OE
+        from ..hess import ORCA_HESS as OH
         from .repo import OPAN_REPO as OR
-        from .const import E_DispDirection as E_DDir, E_FileType as E_FT
-        from .const import E_Software as E_SW
-        from .const import DEF
-        from .error import ANHARMError as ANHErr
+        from ..const import E_DispDirection as E_DDir, E_FileType as E_FT
+        from ..const import _E_SW as E_SW
+        from ..const import DEF
+        from ..error import ANHARMError as ANHErr
 
 ##        # Store working directory for restore?
 ##        prev_dir = os.getcwd()
@@ -150,3 +150,5 @@ class ORCA_ANHARM(object):
 
 if __name__ == '__main__':
     print('Module not executable.')
+
+

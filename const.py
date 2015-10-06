@@ -345,7 +345,7 @@ class DEF(object):
                 access as F_E[E_Software][E_FileType])
     """
 
-    from .const import E_Software as E_SW, E_FileType as E_FT
+    from .const import E_Software as _E_SW, E_FileType as _E_FT
 
     Mass_Perturbation_Magnitude = 1e-4
     Moment_Tol = 1e-4
@@ -361,12 +361,12 @@ class DEF(object):
     Symm_Avg_Max = 2
 
     File_Extensions = {
-            E_SW.ORCA :
-                { E_FT.grad : 'engrad',
-                    E_FT.hess : 'hess',
-                    E_FT.xyz : 'xyz',
-                    E_FT.output : 'out',
-                    E_FT.inputfile : 'txt'
+            _E_SW.ORCA :
+                { _E_FT.grad : 'engrad',
+                    _E_FT.hess : 'hess',
+                    _E_FT.xyz : 'xyz',
+                    _E_FT.output : 'out',
+                    _E_FT.inputfile : 'txt'
                     }
             }
 
@@ -492,17 +492,17 @@ class UNITS(object):
     #TODO: (as occurs) const.UNITS: Add dicts for other units-based enums
 
     # Imports
-    from .const import EU_RotConst as EUrc
+    from .const import EU_RotConst as _EUrc
 
     rotConst = {
-            EUrc.InvInertia :        "1/(amu*B^2)",
-            EUrc.AngFreqAtomic :     "1/Ta",
-            EUrc.AngFreqSeconds :    "1/s",
-            EUrc.CyclicFreqAtomic :  "cyc/Ta",
-            EUrc.CyclicFreqHz :      "cyc/s",
-            EUrc.CyclicFreqMHz :     "MHz",
-            EUrc.WaveNumAtomic :     "cyc/B",
-            EUrc.WaveNumCM :         "cyc/cm"
+            _EUrc.InvInertia :        "1/(amu*B^2)",
+            _EUrc.AngFreqAtomic :     "1/Ta",
+            _EUrc.AngFreqSeconds :    "1/s",
+            _EUrc.CyclicFreqAtomic :  "cyc/Ta",
+            _EUrc.CyclicFreqHz :      "cyc/s",
+            _EUrc.CyclicFreqMHz :     "MHz",
+            _EUrc.WaveNumAtomic :     "cyc/B",
+            _EUrc.WaveNumCM :         "cyc/cm"
                 }
 
 

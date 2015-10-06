@@ -39,8 +39,8 @@ Includes symmetry operations
     """
 
 # Imports (those required for defaults for method parameters
-from ..const import DEF
-import numpy as np
+from ..const import DEF as _DEF
+
 
 # Debug var
 _SLOW = True
@@ -179,7 +179,7 @@ def ortho_basis(norm_vec, ref_vec=None):
 ## end def ortho_basis
 
 
-def orthonorm_check(a, tol=DEF.Orthonorm_Tol, report=False):
+def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
     """Checks orthonormality of the column vectors of a.
 
     #!DOC: [orthonorm_check: complete verbose docstring]
@@ -192,7 +192,7 @@ def orthonorm_check(a, tol=DEF.Orthonorm_Tol, report=False):
         enforced, as orthonormality is only possible with <= N vectors in
         N-space.
     tol : float, optional
-        Default: specified by DEF.Orthonorm_Tol of module .const
+        Default: specified by _DEF.Orthonorm_Tol of module .const
         Tolerance for deviation of dot products from one or zero.
     report : bool, optional
         Default: False
@@ -522,8 +522,8 @@ def geom_symm_match(g, atwts, ax, theta, do_refl):
 
 
 def geom_find_rotsymm(g, atwts, ax, improp, \
-        nmax=DEF.Symm_Match_nMax, \
-        tol=DEF.Symm_Match_Tol):
+        nmax=_DEF.Symm_Match_nMax, \
+        tol=_DEF.Symm_Match_Tol):
     """ Identify highest-order symmetry for a geometry on a given axis.
 
     Regular and improper axes possible.
@@ -567,8 +567,8 @@ def geom_find_rotsymm(g, atwts, ax, improp, \
 
 
 def geom_check_axis(g, atwts, ax, \
-        nmax=DEF.Symm_Match_nMax, \
-        tol=DEF.Symm_Match_Tol):
+        nmax=_DEF.Symm_Match_nMax, \
+        tol=_DEF.Symm_Match_Tol):
     """ [Get max proper order and reflection for an axis]
 
     #!DOC: Complete geom_parse_axis docstring
@@ -592,10 +592,10 @@ def geom_check_axis(g, atwts, ax, \
 
 
 def geom_find_group(g, atwts, pr_ax, mom, tt, \
-        nmax=DEF.Symm_Match_nMax, \
-        tol=DEF.Symm_Match_Tol, \
-        dig=DEF.Symm_AtWt_Round_Digits,
-        avmax=DEF.Symm_Avg_Max):
+        nmax=_DEF.Symm_Match_nMax, \
+        tol=_DEF.Symm_Match_Tol, \
+        dig=_DEF.Symm_AtWt_Round_Digits,
+        avmax=_DEF.Symm_Avg_Max):
     """ [Find all(?) proper rotation axes (n > 1) and reflection planes.]
 
     #!DOC: Complete geom_find_axes docstring INCLUDING NEW HEADER LINE
@@ -915,7 +915,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
 
 def g_subset(g, atwts, atwt, \
-            digits=DEF.Symm_AtWt_Round_Digits):
+            digits=_DEF.Symm_AtWt_Round_Digits):
     """ Extract a subset of a geometry matching a desired atom.
 
     #!DOC: Complete g_subset docstring
