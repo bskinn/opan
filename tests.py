@@ -1079,10 +1079,11 @@ class SuperORCAHess(unittest.TestCase):
 
         suffix_dim2 = '_dim2'
         suffix_badfreq = '_badfreq'
+        suffix_badval = '_badval'
 
         E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
                     dipders, ir, polders, raman, mwh_eigvals, mwh_eigvecs])
-        suffixes = frozenset([suffix_dim2, suffix_badfreq])
+        suffixes = frozenset([suffix_dim2, suffix_badfreq, suffix_badval])
 
 
     bad_block_substs = {
@@ -1106,6 +1107,8 @@ class SuperORCAHess(unittest.TestCase):
 
     trunc_block_substs = {
             names.hess  : ('7       0.094130  -0.308688', 'gabrab'),
+            names.hess + names.suffix_dim2 :
+                            ('10       0.007047   0.008159', 'farfrif'),
             names.geom  : ('H      1.0080      2.059801', 'gaffraf'),
             names.freqs : ('10     1524.709386', 'fobbardgik'),
             names.modes : ('1      -0.010563   0.123653', 'gommerbik'),
@@ -1127,6 +1130,8 @@ class SuperORCAHess(unittest.TestCase):
             names.modes + names.suffix_dim2 :
                             ('l_modes\n15 15', 'l_modes\n15 19'),
             names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25'),
+            names.dipders + names.suffix_badval :
+                            ('-0.118178     0.000019', '-11817.8     0.000019'),
             names.ir    : ('ir_spectrum\n15', 'ir_spectrum\n38'),
             names.ir + names.suffix_badfreq :
                             ('1292.94      14.6749', '3232.28      14.6749'),
@@ -1221,6 +1226,9 @@ class TestORCAHessKnownGood(SuperORCAHess):
             self.assertAlmostEqual(self.oh.geom[i,0], \
                         self.geom[i,0], delta=1e-6, \
                         msg="Coordinate index " + str(i))
+
+    def test_HESS_KnownGoodCheckGeomWorks(self):
+        self.assertTrue(self.oh.check_geom(self.geom, self.atoms))
 
     def test_HESS_KnownGoodEnergy(self):
         self.assertAlmostEqual(self.oh.energy, self.energy, delta=1e-6)
@@ -1498,8 +1506,13 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
+        # 'Early' (non-final section) truncation
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.hess_block, self.file_name + self.names.hess)
+        # 'Late' (final section) truncation
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+                    HESSError.hess_block, \
+                    self.file_name + self.names.hess + self.names.suffix_dim2)
 
     def test_HESS_TruncatedBlocksGeom(self):
 
@@ -1660,6 +1673,13 @@ class TestORCAHessBadData(SuperORCAHess):
         assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
+    def test_HESS_BadDataDipdersTooBig(self):
+
+        from opan.hess import ORCA_HESS
+
+        self.assertIsNone(ORCA_HESS(self.file_name + self.names.dipders + \
+                        self.names.suffix_badval).dipders)
+
     def test_HESS_BadDataIRSpectrum(self):
 
         from opan.error import HESSError
@@ -1808,12 +1828,14 @@ def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
     # Assert the proper error
     testclass.assertRaises(errtype, cobj, *args, **kwargs)
 
-    # Ensure correct typecode; suppress repeated error
+    # Ensure correct typecode; suppress repeated error, and ignore any
+    #  other error raised, as it will have been reported by the above
+    #  .assertRaises call
     try:
         out = cobj(*args, **kwargs)
     except errtype as err:
         testclass.assertEqual(err.tc, tc)
-    except:
+    except:  # pragma: no cover
         pass
 
 ## end def assertErrorAndTypecode
@@ -1832,7 +1854,7 @@ def setUpTestDir(dirname):
 
     # Check if test directory already exists (or file of same name);
     #  error if so
-    if os.path.isdir(dirname) or os.path.isfile(dirname):
+    if os.path.isdir(dirname) or os.path.isfile(dirname): # pragma: no cover
         raise(IOError("Cannot create new test directory!"))
 
     # Create and change to test directory

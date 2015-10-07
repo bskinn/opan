@@ -850,14 +850,6 @@ class ORCA_HESS(object):
                         "HESS File: " + self.HESS_path))
             ## end if
 
-            # Confirm length of ir_mags conforms. Shouldn't need to check both,
-            #  since they both rely equally on p_ir_line.finditer.
-            if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HESSError(HESSError.ir_block, \
-                        "Number of IR spectrum rows != " + \
-                                                    "3 * number of atoms", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
             # Confirm match of all frequencies with those reported separately
             if not np.allclose( \
                     self.freqs, \
@@ -1109,7 +1101,7 @@ class ORCA_HESS(object):
     ## end def check_geom
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")
 
 

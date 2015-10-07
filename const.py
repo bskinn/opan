@@ -82,7 +82,7 @@ class OPANEnum(object):
     True
     """
 
-    class __metaclass__(type):
+    class __metaclass__(type):  # pragma: no cover
         def __iter__(self):
             for item in self.__dict__:
                 if item == self.__dict__[item]:
@@ -541,5 +541,5 @@ atomSym = {1: 'H', 2: 'HE', 3: 'LI', 4: 'BE', 5: 'B', 6: 'C', 7: 'N',
     99: 'ES', 100: 'FM', 101: 'MD', 102: 'NO', 103: 'LR'}
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")

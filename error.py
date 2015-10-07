@@ -137,7 +137,7 @@ class OPANError(Exception):
     ## end def __init__
 
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover   (str rep has no code significance)
         """ String representation of an instance of an ORCAError subclass.
 
         Implemented primarily so that the error stack handling of the Python
@@ -380,5 +380,5 @@ class ANHARMError(OPANError):
 ## end class ANHARMError
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable")
