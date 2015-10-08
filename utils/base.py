@@ -57,9 +57,11 @@ def pack_tups(*args):
     ----------
     args : just about anything?
         Arbitrary number of arbitrary mix of iterable and non-iterable
-        objects to be packed into tuples.
-        DOES NOT WORK RELIABLY on bare strings passed in
-        #!TODO: pack_tups: Robustify to work properly on bare strings.
+        objects to be packed into tuples. The input arguments are parsed
+	such that bare strings are treated as **NON-ITERABLE**, through the
+	use of a local subclass of str that cripples the __iter__ method.
+	Any strings passed are returned in the packed tuples as as standard, 
+	**ITERABLE** instances of str, however.
 
     Returns
     -------
@@ -69,31 +71,48 @@ def pack_tups(*args):
 
     Raises
     ------
-    ValueError :  If all iterable objects are not the same length
+    ValueError :  If any iterable objects are of different lengths
     """
 
     # Imports
     import numpy as np
 
     # Debug flag
-    DEBUG = False
+    _DEBUG = False
 
     # Uninitialized test value
     UNINIT_VAL = -1
 
     # Print the input if in debug mode
-    if DEBUG:
+    if _DEBUG: # pragma: no cover
         print("args = " + str(args))
 
-    # Initialize the info variable for the iterable length and scan all
-    #  args members for iterability and length
-    iter_len = UNINIT_VAL
+    # Non-iterable subclass of str
+    class str_noiter(str):
+        def __iter__(self):
+            raise(NotImplementedError("Non-iterable string"))
+        ## end def __iter__
+    ## end class str_noiter
+
+    # Re-wrap input arguments with non-iterable strings if required
+    mod_args = range(len(args))
     for idx in range(len(args)):
-        if np.iterable(args[idx]):
+        if isinstance(args[idx], str):
+            mod_args[idx] = str_noiter(args[idx])
+        else:
+            mod_args[idx] = args[idx]
+        ## end if
+    ## next idx
+
+    # Initialize the info variable for the iterable length and scan all
+    #  of the modified args members for iterability and length
+    iter_len = UNINIT_VAL
+    for idx in range(len(mod_args)):
+        if np.iterable(mod_args[idx]):
             if iter_len == UNINIT_VAL:
-                iter_len = len(args[idx])
+                iter_len = len(mod_args[idx])
             else:
-                if not iter_len == len(args[idx]):
+                if not iter_len == len(mod_args[idx]):
                     raise(ValueError("All iterable items must be of " + \
                             "equal length."))
                 ## end if
@@ -115,10 +134,13 @@ def pack_tups(*args):
 
     # Append suitable blips as things are iterable. Iteration variables are
     #  of the form "a###", with ### as digit(s).  Variables being zipped are
-    #  the various elements of args.  The call string is built either by
-    #  iteration over iterables, or by repeated placement of non-iterables.
-    for idx in range(len(args)):
-        if np.iterable(args[idx]):
+    #  the various elements of ***args***, which if there are any strings
+    #  present will be instances of the **base str class**, rather than the
+    #  local non-iterable string class, which is the desired behavior.
+    # The call string is built either by iteration over iterables, or by
+    #  repeated placement of non-iterables.
+    for idx in range(len(mod_args)):
+        if np.iterable(mod_args[idx]):
             itstr = itstr + "a" + str(idx) + ", "
             zipstr = zipstr + "args[" + str(idx) + "], "
             callstr = callstr + "a" + str(idx) + ", "
@@ -146,7 +168,7 @@ def pack_tups(*args):
     evalstr = evalstr + (")]" if itstr.count(",") >= 1 else "]")
 
     # Dump the built strings if in debug mode
-    if DEBUG:
+    if _DEBUG:  # pragma: no cover
         print("evalstr = " + evalstr)
         print("itstr = " + itstr)
         print("zipstr = " + zipstr)
@@ -157,7 +179,7 @@ def pack_tups(*args):
     tups = eval(evalstr)
 
     # Dump the resulting tuples, if in debug mode
-    if DEBUG:
+    if _DEBUG:  # pragma: no cover
         print("tups = " + str(tups))
     ## end if
 
@@ -495,7 +517,7 @@ def template_subst(template, subs, subs_delims=['<', '>']):
 ## end def template_subst
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     print("Module not executable.")
 
 
