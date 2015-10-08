@@ -1797,6 +1797,626 @@ class TestORCAHessAltData(SuperORCAHess):
 ## end class TestORCAHessAltData
 
 
+# =============================  OPAN_XYZ  ================================== #
+
+class SuperOPANXYZ(unittest.TestCase):
+    # Superclass for all OPAN .xyz test cases
+
+    # Imports
+    from textwrap import dedent
+    import numpy as np
+
+    # Superclass constants
+
+    file_text_good = dedent("""\
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.753188968196
+      Cu     -0.698514     -0.206760     -0.206944
+      O       1.004955      0.146285      0.146415
+      H       1.346594      1.037721     -0.077335
+      H       1.346963     -0.077245      1.037865
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.755551440250
+      Cu     -0.718110     -0.216851     -0.216979
+      O       0.992982      0.155412      0.155540
+      H       1.362425      1.052057     -0.090702
+      H       1.362702     -0.090619      1.052142
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.757560388801
+      Cu     -0.749991     -0.233409     -0.233458
+      O       0.976820      0.174023      0.174112
+      H       1.386513      1.058149     -0.098827
+      H       1.386658     -0.098763      1.058173
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.758833365916
+      Cu     -0.782499     -0.250038     -0.250011
+      O       0.963852      0.194315      0.194346
+      H       1.409311      1.054489     -0.098804
+      H       1.409336     -0.098766      1.054470
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759333332418
+      Cu     -0.803394     -0.259878     -0.259811
+      O       0.960032      0.206083      0.206067
+      H       1.421697      1.047777     -0.094003
+      H       1.421665     -0.093982      1.047748
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759472543226
+      Cu     -0.812328     -0.262882     -0.262805
+      O       0.962913      0.207978      0.207941
+      H       1.424728      1.045012     -0.090123
+      H       1.424687     -0.090109      1.044988
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759565737953
+      Cu     -0.817928     -0.263432     -0.263355
+      O       0.969218      0.205351      0.205307
+      H       1.424373      1.045141     -0.087073
+      H       1.424337     -0.087060      1.045122
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759656625423
+      Cu     -0.822757     -0.262377     -0.262309
+      O       0.979838      0.198680      0.198643
+      H       1.421470      1.048067     -0.084385
+      H       1.421448     -0.084370      1.048052
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759687014064
+      Cu     -0.823630     -0.261011     -0.260952
+      O       0.985847      0.194139      0.194114
+      H       1.418895      1.051207     -0.084355
+      H       1.418887     -0.084335      1.051194
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691012126
+      Cu     -0.823025     -0.260523     -0.260468
+      O       0.986742      0.193258      0.193240
+      H       1.418142      1.052463     -0.085220
+      H       1.418140     -0.085197      1.052449
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691138943
+      Cu     -0.822700     -0.260487     -0.260435
+      O       0.986486      0.193462      0.193448
+      H       1.418106      1.052644     -0.085643
+      H       1.418108     -0.085620      1.052631
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691121397
+      Cu     -0.822625     -0.260504     -0.260454
+      O       0.986384      0.193616      0.193603
+      H       1.418117      1.052652     -0.085788
+      H       1.418122     -0.085764      1.052640
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691135231
+      Cu     -0.822616     -0.260519     -0.260472
+      O       0.986370      0.193707      0.193696
+      H       1.418117      1.052648     -0.085861
+      H       1.418127     -0.085836      1.052638
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691151054
+      Cu     -0.822627     -0.260520     -0.260475
+      O       0.986393      0.193712      0.193703
+      H       1.418111      1.052648     -0.085866
+      H       1.418123     -0.085840      1.052639
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691154491
+      Cu     -0.822630     -0.260516     -0.260472
+      O       0.986410      0.193700      0.193692
+      H       1.418103      1.052651     -0.085861
+      H       1.418117     -0.085835      1.052642
+    4
+    Coordinates from ORCA-job CuII_1aq_128 E -1715.759691151236
+      Cu     -0.822629     -0.260515     -0.260471
+      O       0.986409      0.193698      0.193691
+      H       1.418102      1.052651     -0.085860
+      H       1.418117     -0.085834      1.052642
+    """)
+
+    testdir = 'orca_test_dir'
+    file_name = 'test.xyz'
+
+    class names(object):
+        num_atoms = 'num_atoms'
+        num_geoms = 'num_geoms'
+        file_start = 'file_start'
+        const_numats = 'const_numats'
+        atom_counts = 'atom_counts'
+
+        bad_lategeom_atomnum = 'bad_lategeom_atomnum'
+        diff_lategeom_atomnum = 'diff_lategeom_atomnum'
+        bad_1stgeom_atomnum = 'bad_1stgeom_atomnum'
+
+        bad_lategeom_atomsym = 'bad_lategeom_atomsym'
+        diff_lategeom_atomsym = 'diff_lategeom_atomsym'
+        bad_1stgeom_atomsym = 'bad_1stgeom_atomsym'
+
+        Cu_1st_as_atomnum = 'Cu_1st_as_atomnum'
+        Cu_late_as_atomnum = 'Cu_late_as_atomnum'
+    ## end class names
+
+    # Known-good data for this particular trajectory
+    num_atoms = 4
+    num_geoms = 16
+
+    atom_syms = np.array([['CU', 'O', 'H', 'H']], dtype='|S2').transpose()
+    geoms = np.array( \
+        [[[-1.32000015, -1.35703123, -1.41727759, -1.4787088, -1.51819463,
+         -1.53507744, -1.54565991, -1.5547854 , -1.55643513, -1.55529184,
+         -1.55467768, -1.55453595, -1.55451895, -1.55453973, -1.5545454 ,
+         -1.55454351],
+        [-0.39071977, -0.409789  , -0.44107909, -0.47250334, -0.49109825,
+         -0.49677498, -0.49781433, -0.49582067, -0.49323931, -0.49231712,
+         -0.49224909, -0.49228121, -0.49230956, -0.49231145, -0.49230389,
+         -0.492302  ],
+        [-0.39106748, -0.41003088, -0.44117168, -0.47245232, -0.49097163,
+         -0.49662947, -0.49766882, -0.49569217, -0.49312781, -0.49221318,
+         -0.49215082, -0.49218673, -0.49222074, -0.49222641, -0.49222074,
+         -0.49221885],
+        [ 1.89908972,  1.87646403,  1.84592227,  1.8214163 ,  1.81419755,
+          1.81964185,  1.83155657,  1.85162547,  1.86298083,  1.86467214,
+          1.86418837,  1.86399561,  1.86396916,  1.86401262,  1.86404475,
+          1.86404286],
+        [ 0.27643859,  0.29368612,  0.32885581,  0.36720213,  0.38944043,
+          0.39302146,  0.38805715,  0.37545079,  0.36686954,  0.36520469,
+          0.3655902 ,  0.36588121,  0.36605318,  0.36606263,  0.36603995,
+          0.36603617],
+        [ 0.27668425,  0.293928  ,  0.329024  ,  0.36726071,  0.38941019,
+          0.39295154,  0.387974  ,  0.37538087,  0.3668223 ,  0.36517068,
+          0.36556374,  0.36585665,  0.36603239,  0.36604562,  0.36602483,
+          0.36602294],
+        [ 2.54469386,  2.57461012,  2.62012984,  2.66321181,  2.68661796,
+          2.69234572,  2.69167487,  2.68618899,  2.68132295,  2.67989999,
+          2.67983196,  2.67985274,  2.67985274,  2.6798414 ,  2.67982629,
+          2.6798244 ],
+        [ 1.96100848,  1.9880996 ,  1.99961181,  1.99269541,  1.98001157,
+          1.97478648,  1.97503025,  1.98055959,  1.98649333,  1.98886683,
+          1.98920887,  1.98922398,  1.98921643,  1.98921643,  1.98922209,
+          1.98922209],
+        [-0.14614197, -0.17140194, -0.18675596, -0.1867125 , -0.17763992,
+         -0.17030779, -0.16454412, -0.15946454, -0.15940785, -0.16104246,
+         -0.16184181, -0.16211582, -0.16225377, -0.16226322, -0.16225377,
+         -0.16225189],
+        [ 2.54539117,  2.57513357,  2.62040385,  2.66325906,  2.68655749,
+          2.69226824,  2.69160684,  2.68614742,  2.68130783,  2.67989621,
+          2.67983574,  2.67986219,  2.67987164,  2.67986408,  2.67985274,
+          2.67985274],
+        [-0.14597189, -0.17124509, -0.18663502, -0.18664069, -0.17760024,
+         -0.17028133, -0.16451956, -0.15943619, -0.15937005, -0.160999  ,
+         -0.16179835, -0.16207047, -0.16220653, -0.16221409, -0.16220464,
+         -0.16220275],
+        [ 1.9612806 ,  1.98826022,  1.99965716,  1.99265951,  1.97995677,
+          1.97474112,  1.97499435,  1.98053124,  1.98646876,  1.98884037,
+          1.9891843 ,  1.98920131,  1.98919753,  1.98919942,  1.98920509,
+          1.98920509]]]).transpose()
+
+
+    good_direct_geom = np.array([[-1.32000015, -0.39071977, -0.39106748,
+         1.89908972,  0.27643859, 0.27668425,  2.54469386,  1.96100848,
+         -0.14614197,  2.54539117, -0.14597189,  1.9612806 ]]).transpose()
+    good_direct_atoms = np.array([['CU', 'O', 'H', 'H']]).transpose()
+
+    bad_file_data_substs = {
+                names.file_start : ('4\nCoordin', '\n4\nCoordin'),
+                names.atom_counts : \
+                            ('H       1.421470      1.048067', 'shmarb'),
+                names.const_numats : \
+                            ('1.052449\n4', '1.052449\n6'),
+                names.bad_lategeom_atomnum : \
+                            ('Cu     -0.822629', '300    -0.822629'),
+                names.diff_lategeom_atomnum : \
+                            ('Cu     -0.822629', '45     -0.822629'),
+                names.bad_1stgeom_atomnum : \
+                            ('Cu     -0.698514', '300     -0.698514'),
+                names.bad_lategeom_atomsym : \
+                            ('Cu     -0.822629', 'Xd     -0.822629'),
+                names.diff_lategeom_atomsym : \
+                            ('Cu     -0.822629', 'Se     -0.822629'),
+                names.bad_1stgeom_atomsym : \
+                            ('Cu     -0.698514', 'Xd      -0.698514')
+                            }
+
+    alt_file_data_substs = {
+                names.Cu_1st_as_atomnum : \
+                            ('Cu     -0.698514', '29     -0.822629'),
+                names.Cu_late_as_atomnum : \
+                            ('Cu     -0.822629', '29     -0.822629')
+                            }
+
+## end class SuperOPANXYZ
+
+
+class TestOPANXYZGoodFileData(SuperOPANXYZ):
+    # Ensuring importing a known OpenBabel xyz file with good data reports
+    #  the correct geometric parameters, etc.
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add the good file
+        setUpTestDir(self.testdir)
+
+        # Write the file
+        with open(self.file_name, 'w') as f:
+            f.write(self.file_text_good)
+
+    @classmethod
+    def tearDownClass(self):
+        import os
+
+        # Delete the hess file
+        os.remove(self.file_name)
+
+        # Remove the test directory
+        tearDownTestDir(self.testdir)
+
+    def setUp(self):
+        # Load the object
+
+        # Imports
+        from opan.xyz import OPAN_XYZ
+
+        # Create the object
+        self.xyz = OPAN_XYZ(path=self.file_name)
+
+    def test_XYZ_GoodFileDataNumAtoms(self):
+        self.assertEqual(self.xyz.num_atoms, self.num_atoms)
+
+    def test_XYZ_GoodFileDataNumGeoms(self):
+        self.assertEqual(self.xyz.num_geoms, self.num_geoms)
+
+    def test_XYZ_GoodFileDataAtomSyms(self):
+        self.longMessage = True
+        for i in range(self.xyz.atom_syms.shape[0]):
+            self.assertEqual(self.xyz.atom_syms[i,0], \
+                    self.atom_syms[i,0], \
+                    msg="Coordinates element (" + str(i) + ')')
+
+    def test_XYZ_GoodFileDataCoords(self):
+        self.longMessage = True
+        for g in range(self.geoms.shape[0]):
+            for i in range(self.geoms.shape[1]):
+                self.assertAlmostEqual(self.xyz.geoms[g][i,0], \
+                        self.geoms[g][i,0], \
+                        delta=1e-6, \
+                        msg="Geometry #" + str(g) + \
+                                ", coordinate element #" + str(i))
+
+## end class TestOPANXYZGoodData
+
+
+class TestOPANXYZAltFileData(SuperOPANXYZ):
+    # Ensuring importing an XYZ file with data of generally valid formatting but
+    #  invalid content raises the appropriate errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for bname in self.alt_file_data_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.alt_file_data_substs[bname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + bname) for bname in \
+                                            self.alt_file_data_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_XYZ_AltFileDataFirstCuAtomnum(self):
+
+        from opan.xyz import OPAN_XYZ
+        from opan.error import XYZError
+
+        try:
+            xyz = OPAN_XYZ(path=(self.file_name + self.names.Cu_1st_as_atomnum))
+        except XYZError:
+            self.fail("XYZ import failed when success was expected.")
+
+        self.assertEqual(xyz.atom_syms[0,0].upper(), \
+                                        self.good_direct_atoms[0,0])
+
+    def test_XYZ_AltFileDataLateCuAtomnum(self):
+
+        from opan.xyz import OPAN_XYZ
+        from opan.error import XYZError
+
+        try:
+            xyz = OPAN_XYZ(path=(self.file_name + \
+                                            self.names.Cu_late_as_atomnum))
+        except XYZError:
+            self.fail("XYZ import failed when success was expected.")
+
+        self.assertEqual(xyz.atom_syms[0,0].upper(), \
+                                        self.good_direct_atoms[0,0])
+
+## end class TestOPANXYZAltFileData
+
+
+class TestOPANXYZGoodDirectData(SuperOPANXYZ):
+    # Confirming sanity of an OPAN_XYZ generated directly from data.
+
+    def setUp(self):
+        # Load the object
+
+        # Imports
+        from opan.xyz import OPAN_XYZ
+
+        # Create the object
+        self.xyz = OPAN_XYZ(atom_syms=self.good_direct_atoms, \
+                            coords=self.good_direct_geom)
+
+    def test_XYZ_GoodDirectDataNumAtoms(self):
+        self.assertEqual(self.xyz.num_atoms, self.good_direct_atoms.shape[0])
+
+    def test_XYZ_GoodDirectDataNumGeoms(self):
+        self.assertEqual(self.xyz.num_geoms, 1)
+
+    def test_XYZ_GoodDirectDataNumCoords(self):
+        self.assertEqual(self.xyz.geoms[0].shape[0], self.xyz.num_atoms * 3)
+
+    def test_XYZ_GoodDirectDataCoords(self):
+        self.longMessage = True
+        for i in range(self.good_direct_geom.shape[0]):
+            self.assertAlmostEqual(self.xyz.geoms[0][i,0], \
+                    self.good_direct_geom[i,0], \
+                    delta=1e-8, \
+                    msg="Coordinates element (" + str(i) + ')')
+
+## end class TestOPANXYZGoodDirectData
+
+
+class TestOPANXYZBadFileData(SuperOPANXYZ):
+    # Ensuring importing an XYZ file with data of generally valid formatting but
+    #  invalid content raises the appropriate errors
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add munged files
+
+        setUpTestDir(self.testdir)
+
+        # Write the files
+        for bname in self.bad_file_data_substs.keys():
+            with open(self.file_name + bname, 'w') as f:
+                f.write(self.file_text_good \
+                                    .replace(*self.bad_file_data_substs[bname]))
+
+    @classmethod
+    def tearDownClass(self):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+
+        # Try to remove the files
+        [os.remove(self.file_name + bname) for bname in \
+                                            self.bad_file_data_substs.keys()]
+
+        # Remove the directory
+        tearDownTestDir(self.testdir)
+
+    def test_XYZ_BadFileDataFileStart(self):
+        # File without a number-of-atoms spec at the very start should throw
+        #  an XYZError
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.file_start))
+
+    def test_XYZ_BadFileDataAtomCounts(self):
+        # Multiple-geometry file without a consistent number of atoms
+        #  throughout should throw an XYZError, regardless of the 'numats'
+        #  spec at the top of each geometry block
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.atom_counts))
+
+    def test_XYZ_BadFileDataConstNumats(self):
+        # Multiple-geometry file should have identical num_ats specs at the
+        #  head of each geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.const_numats))
+
+    def test_XYZ_BadFileDataBadLateGeomAtomNum(self):
+        # Invalid atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.bad_lategeom_atomnum))
+
+    def test_XYZ_BadFileDataDifferentLateGeomAtomNum(self):
+        # Discrepant atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                    XYZError.xyzfile, \
+                    path=(self.file_name + self.names.diff_lategeom_atomnum))
+
+    def test_XYZ_BadFileDataBadFirstGeomAtomNum(self):
+        # Invalid atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.bad_1stgeom_atomnum))
+
+    def test_XYZ_BadFileDataBadLateGeomAtomSym(self):
+        # Invalid atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.bad_lategeom_atomsym))
+
+    def test_XYZ_BadFileDataDifferentLateGeomAtomSym(self):
+        # Discrepant atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                    XYZError.xyzfile, \
+                    path=(self.file_name + self.names.diff_lategeom_atomsym))
+
+    def test_XYZ_BadFileDataBadFirstGeomAtomSym(self):
+        # Invalid atomic number in a non-initial geometry block.
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                        XYZError.xyzfile, \
+                        path=(self.file_name + self.names.bad_1stgeom_atomsym))
+
+## end class TestOPANXYZBadFileData
+
+
+class TestOPANXYZBadDirectData(SuperOPANXYZ):
+    # Ensuring invalid data passed directly to construct an OPAN_XYZ instance
+    #  throws the appropriate errors or otherwise exhibits the correct problems.
+
+    def test_XYZ_BadDirectDataTruncCoords(self):
+        from opan.xyz import OPAN_XYZ
+        self.assertRaises(ValueError, OPAN_XYZ, \
+                    coords=self.good_direct_geom[:-2,0], \
+                    atom_syms=self.good_direct_atoms)
+
+    def test_XYZ_BadDirectDataBadElement(self):
+        from opan.xyz import OPAN_XYZ
+
+        # Copy symbols, munge, and pass into assert
+        munge_atoms = self.good_direct_atoms.copy()
+        munge_atoms.put((0), 'CX')
+        self.assertRaises(ValueError, OPAN_XYZ, \
+                    coords=self.good_direct_geom, \
+                    atom_syms=munge_atoms)
+
+    def test_XYZ_BadDirectDataNonRealCoords(self):
+        from opan.xyz import OPAN_XYZ
+        import numpy as np
+
+        # Copy coords, munge, and pass to assert
+        munge_coords = self.good_direct_geom.copy() * 1.j
+        self.assertRaises(ValueError, OPAN_XYZ, \
+                    coords=munge_coords, \
+                    atom_syms=self.good_direct_atoms)
+
+## end class TestOPANXYZBadDirectData
+
+
+class TestOPANXYZBadUsage(SuperOPANXYZ):
+    # Ensuring bad use cases of OPAN_XYZ throw the appropriate errors or
+    #  otherwise exhibit the correct problems.
+
+    @classmethod
+    def setUpClass(self):
+        # Set up the directory and add the good file
+        setUpTestDir(self.testdir)
+
+        # Write the file
+        with open(self.file_name, 'w') as f:
+            f.write(self.file_text_good)
+
+    @classmethod
+    def tearDownClass(self):
+        import os
+
+        # Delete the hess file
+        os.remove(self.file_name)
+
+        # Remove the test directory
+        tearDownTestDir(self.testdir)
+
+    def test_XYZ_BadUsageBadInitParams(self):
+        # Calling without 'path' or both 'atom_syms' and 'coords'
+
+        from opan.xyz import OPAN_XYZ
+
+        self.assertRaises(NameError, OPAN_XYZ)
+        self.assertRaises(NameError, OPAN_XYZ, atom_syms=['CU', 'O'])
+        self.assertRaises(NameError, OPAN_XYZ, coords=[1,2,3])
+
+    def test_XYZ_BadUsageReInitDirectData(self):
+        # Should pitch a fit if someone uses the private data method to try to
+        #  reinit an OPAN_XYZ instance
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        # Should work fine
+        xyz = OPAN_XYZ(coords=self.good_direct_geom, \
+                                atom_syms=self.good_direct_atoms)
+
+        # Should raise error to re-init with same contents.
+        assertErrorAndTypecode(self, XYZError, xyz._load_data, \
+                        XYZError.overwrite, \
+                        coords=self.good_direct_geom, \
+                        atom_syms=self.good_direct_atoms)
+
+    def test_XYZ_BadUsageReInitFileData(self):
+        # Should pitch a fit if someone uses the private file method to try to
+        #  reinit an OPAN_XYZ instance
+
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        # Should work fine
+        xyz = OPAN_XYZ(path=self.file_name)
+
+        # Should raise error to re-init with same contents.
+        assertErrorAndTypecode(self, XYZError, xyz._load_file, \
+                        XYZError.overwrite, \
+                        XYZ_path=self.file_name)
+
+    def test_XYZ_BadUsageNotXYZFile(self):
+
+        import os
+        from opan.error import XYZError
+        from opan.xyz import OPAN_XYZ
+
+        badfilename = 'bad.file'
+
+        try:
+            with open(badfilename, 'w') as f:
+                f.write("This is not an OpenBabel file.\n\n")
+                f.write("(In case you were wondering...)\n\n")
+
+            assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+                            XYZError.xyzfile, \
+                            path=badfilename)
+
+        finally:
+            os.remove(badfilename)
+
+
+## end class TestOPANXYZBadUsage
+
+
 # ==========================  Helper Functions  ============================= #
 
 def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):

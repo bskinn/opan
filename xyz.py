@@ -702,7 +702,7 @@ class OPAN_XYZ(object):
         from .utils import pack_tups
 
         # Print the function inputs if debug mode is on
-        if _DEBUG:
+        if _DEBUG:  # pragma: no cover
             print("g_nums = " + str(g_nums))
             print("ats_1 = " + str(ats_1))
             print("ats_2 = " + str(ats_2))
@@ -712,7 +712,7 @@ class OPAN_XYZ(object):
         tups = pack_tups(g_nums, ats_1, ats_2)
 
         # Dump the results if debug mode is on
-        if _DEBUG:
+        if _DEBUG:  # pragma: no cover
             print(tups)
         ## end if
 
@@ -845,7 +845,7 @@ class OPAN_XYZ(object):
         from .utils import pack_tups
 
         # Print the function inputs if debug mode is on
-        if _DEBUG:
+        if _DEBUG:   # pragma: no cover
             print("g_nums = " + str(g_nums))
             print("ats_1 = " + str(ats_1))
             print("ats_2 = " + str(ats_2))
@@ -856,7 +856,7 @@ class OPAN_XYZ(object):
         tups = pack_tups(g_nums, ats_1, ats_2, ats_3)
 
         # Dump the results if debug mode is on
-        if _DEBUG:
+        if _DEBUG:  # pragma: no cover
             print(tups)
         ## end if
 
@@ -1067,7 +1067,7 @@ class OPAN_XYZ(object):
         from .utils import pack_tups
 
         # Print the function inputs if debug mode is on
-        if _DEBUG:
+        if _DEBUG:   # pragma: no cover
             print("g_nums = " + str(g_nums))
             print("ats_1 = " + str(ats_1))
             print("ats_2 = " + str(ats_2))
@@ -1079,7 +1079,7 @@ class OPAN_XYZ(object):
         tups = pack_tups(g_nums, ats_1, ats_2, ats_3, ats_4)
 
         # Dump the results if debug mode is on
-        if _DEBUG:
+        if _DEBUG:   # pragma: no cover
             print(tups)
         ## end if
 
@@ -1189,7 +1189,7 @@ class OPAN_XYZ(object):
         from .utils import pack_tups
 
         # Print the function inputs if debug mode is on
-        if _DEBUG:
+        if _DEBUG:  # pragma: no cover
             print("g_nums = " + str(g_nums))
             print("ats_1 = " + str(ats_1))
             print("ats_2 = " + str(ats_2))
@@ -1199,7 +1199,7 @@ class OPAN_XYZ(object):
         tups = pack_tups(g_nums, ats_1, ats_2)
 
         # Dump the results if debug mode is on
-        if _DEBUG:
+        if _DEBUG:  # pragma: no cover
             print(tups)
         ## end if
 
@@ -1209,5 +1209,5 @@ class OPAN_XYZ(object):
         ## next tup
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable")
