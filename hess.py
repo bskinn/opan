@@ -700,19 +700,10 @@ class ORCA_HESS(object):
             ## next gp
 
         # Double-check that the number of atoms retrieved matches the
-        #  number indicated in the HESS file; geometry size also.
+        #  number indicated in the HESS file. Checks of atomic masses
+        #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
             raise(HESSError(HESSError.at_block, "Atomic symbol dimension " + \
-                    "mismatch with HESS atom specification", \
-                    "HESS File: " + HESS_path))
-        ## end if
-        if not len(self.atom_masses) == self.num_ats:
-            raise(HESSError(HESSError.at_block, "Atomic mass dimension " + \
-                    "mismatch with HESS atom specification", \
-                    "HESS File: " + HESS_path))
-        ## end if
-        if not len(self.geom) == 3 * self.num_ats:
-            raise(HESSError(HESSError.at_block, "Geometry dimension " + \
                     "mismatch with HESS atom specification", \
                     "HESS File: " + HESS_path))
         ## end if
