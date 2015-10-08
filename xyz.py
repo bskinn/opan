@@ -311,7 +311,7 @@ class OPAN_XYZ(object):
 
         # Imports
         import numpy as np
-        from .const import CIC, PHYS, atomNum
+        from .const import CIC, PHYS, atomNum, atomSym
         from .error import XYZError
         from .utils import safe_cast as scast
 
@@ -434,17 +434,6 @@ class OPAN_XYZ(object):
                                      "XYZ file: " + XYZ_path))
                         ## end try
 
-                        # Now check whether the successfully converted atomic
-                        #  number is in the valid range.
-                        if not (at_num >= CIC.Min_Atomic_Num and
-                                    at_num <= CIC.Max_Atomic_Num):
-                            raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is an unsupported element",
-                                     "XYZ file: " + XYZ_path))
-                        ## end if
-
                         # Tag on the new symbol
                         self.atom_syms = np.concatenate((self.atom_syms,
                                     np.array([[
@@ -457,7 +446,17 @@ class OPAN_XYZ(object):
                     #  line matches that of the first geometry of the file
                     # Have to check whether it's an atomic number or symbol.
                     if str.isdigit(line_mch.group("el")):
-                        # Atomic number; don't need safe cast
+                        # Atomic number; don't need safe cast; must trap for
+                        #  a bad atomic number
+                        at_num = scast(line_mch.group("el"), np.int_)
+                        if not (at_num >= CIC.Min_Atomic_Num and
+                                    at_num <= CIC.Max_Atomic_Num):
+                            raise(XYZError(XYZError.xyzfile,
+                                    "Geometry #" + str(self.num_geoms) +
+                                    ", atom #" + str(atom_count) +
+                                    " is an unsupported element",
+                                     "XYZ file: " + XYZ_path))
+                        ## end if
                         if not atomSym[int(line_mch.group("el"))] == \
                                 self.atom_syms[atom_count,0]:
                             raise(XYZError(XYZError.xyzfile,
@@ -466,8 +465,21 @@ class OPAN_XYZ(object):
                                     " is inconsistent with geometry #0",
                                      "XYZ file: " + XYZ_path))
                         ## end if
+
                     else:
                         # Element symbol
+                        # Check for valid element, first by catching if the
+                        #  specified element string is even valid
+                        try:
+                            at_num = atomNum[str.upper(line_mch.group("el"))]
+                        except KeyError:
+                            raise(XYZError(XYZError.xyzfile,
+                                    "Geometry #" + str(self.num_geoms) +
+                                    ", atom #" + str(atom_count) +
+                                    " is an unrecognized element",
+                                     "XYZ file: " + XYZ_path))
+                        ## end try
+                        # Confirm symbol matches the initial geometry
                         if not str.upper(line_mch.group("el")) == \
                                 self.atom_syms[atom_count,0]:
                             raise(XYZError(XYZError.xyzfile,
