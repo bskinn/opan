@@ -640,7 +640,6 @@ class OPAN_XYZ(object):
         """
         # Import used math library function(s)
         import numpy as np
-        from numpy import floor
         from scipy.linalg import norm
         from .utils import safe_cast as scast
 
@@ -659,11 +658,17 @@ class OPAN_XYZ(object):
         #  but coerce at_1 and at_2 to their floor() values.  This is again
         #  needed since they are multiplied by three in the index expresssions
         #  below, and can cause funny behavior when truncated by the indexing
-        at_1 = int(floor(at_1))
-        at_2 = int(floor(at_2))
+        at_1 = scast(np.floor(at_1), np.int_)
+        at_2 = scast(np.floor(at_2), np.int_)
 
-        # Calculate the interatomic distance and return
-        dist = scast(norm(self.Displ_single(g_num, at_1, at_2)), np.float_)
+        # Calculate the interatomic distance and return. Return identically
+        #  zero if the indices are equal
+        if at_1 == at_2:
+            dist = 0.0
+        else:
+            dist = scast(norm(self.Displ_single(g_num, at_1, at_2)), np.float_)
+        ## end if
+
         return dist
 
 
@@ -674,7 +679,10 @@ class OPAN_XYZ(object):
             ats_2 from geometries g_nums in Bohrs.
 
         Any of ats_1, ats_2 and g_nums can be either a single index or an
-            iterable.
+            iterable; any iterables must all be the same length.
+            Alternatively, exactly one parameter can be None and all other
+            parameters single indices, in which case the full valid range of
+            the `None` parameter is used.
 
         Parameters
         ----------
@@ -693,13 +701,16 @@ class OPAN_XYZ(object):
 
         Raises
         ------
+        IndexError :  (via Dist_single) If any parameter value is out of range
         ValueError :  (via .utils.pack_tups) If all iterable objects are
             not the same length
+        ValueError :  If more than one parameter is None
 
         """
 
-        # Import the tuple-generating function
-        from .utils import pack_tups
+        # Imports
+        import numpy as np
+        from .utils import pack_tups, none_test
 
         # Print the function inputs if debug mode is on
         if _DEBUG:  # pragma: no cover
@@ -707,6 +718,9 @@ class OPAN_XYZ(object):
             print("ats_1 = " + str(ats_1))
             print("ats_2 = " + str(ats_2))
         ## end if
+
+        # Check for None values
+        none_vals = np.equal((g_nums, ats_1, ats_2), None)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(g_nums, ats_1, ats_2)
