@@ -686,11 +686,11 @@ class OPAN_XYZ(object):
 
         Parameters
         ----------
-        g_nums : int or iterable int
+        g_nums : int or iterable int or None
             Index/indices of the desired geometry/geometries (base 0)
-        ats_1 : int or iterable int
+        ats_1 : int or iterable int or None
             Index/indices of the first atom(s) (base 0)
-        ats_2 : int or iterable int
+        ats_2 : int or iterable int or None
             Index/indices of the second atom(s) (base 0)
 
         Returns
@@ -705,12 +705,12 @@ class OPAN_XYZ(object):
         ValueError :  (via .utils.pack_tups) If all iterable objects are
             not the same length
         ValueError :  If more than one parameter is None
-
+        ValueError :  If any iterables are passed along with a None parameter
         """
 
         # Imports
         import numpy as np
-        from .utils import pack_tups, none_test
+        from .utils import pack_tups
 
         # Print the function inputs if debug mode is on
         if _DEBUG:  # pragma: no cover
@@ -719,11 +719,35 @@ class OPAN_XYZ(object):
             print("ats_2 = " + str(ats_2))
         ## end if
 
+        # Store the args list and a string-test lambda for compact usage
+        arglist = [g_nums, ats_1, ats_2]
+
         # Check for None values
-        none_vals = np.equal((g_nums, ats_1, ats_2), None)
+        none_vals = np.equal(arglist, None)
+
+        # Error if more than one None; handle if exactly one; pass through if
+        #  none.
+        if np.count_nonzero(none_vals) > 1:
+            raise(ValueError("Multiple 'None' values [indices " + \
+                    str(tuple(np.nonzero(none_vals)[0])) + "] not supported"))
+        elif np.count_nonzero(none_vals) == 1:
+            # Must be no iterables that are not strings. Thus, an element-wise
+            #  test for iterability and an element-wise test for stringiness
+            #  must give matching arrays
+            if not all(np.equal(map(np.iterable, arglist), \
+                                map(lambda e: isinstance(e, str), arglist))):
+                raise(ValueError("'None' as parameter invalid with " + \
+                                                        "non-str iterables"))
+            ## end if
+
+            # Parameters okay; replace the None with the appropriate range()
+            none_loc = np.nonzero(none_vals)[0][0]
+            arglist[none_loc] = \
+                    range(self.num_geoms if none_loc == 0 else self.num_atoms)
+        ## end if
 
         # Expand/pack the tuples from the inputs
-        tups = pack_tups(g_nums, ats_1, ats_2)
+        tups = pack_tups(*arglist)
 
         # Dump the results if debug mode is on
         if _DEBUG:  # pragma: no cover
@@ -1221,6 +1245,8 @@ class OPAN_XYZ(object):
         for tup in tups:
             yield self.Displ_single(*tup)
         ## next tup
+
+## end def Displ_iter
 
 
 if __name__ == '__main__':  # pragma: no cover
