@@ -672,7 +672,7 @@ class OPAN_XYZ(object):
         return dist
 
 
-    def Dist_iter(self, g_nums, ats_1, ats_2):
+    def Dist_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over selected interatomic distances.
 
         Returns the interatomic distances between the two atom sets ats_1 and
@@ -692,6 +692,9 @@ class OPAN_XYZ(object):
             Index/indices of the first atom(s) (base 0)
         ats_2 : int or iterable int or None
             Index/indices of the second atom(s) (base 0)
+        invalid_error  : bool, default False
+            If False, 'None' values are returned for results corresponding to
+            invalid indices. If True, exceptions are raise like normal.
 
         Returns
         -------
@@ -704,8 +707,6 @@ class OPAN_XYZ(object):
         IndexError :  (via Dist_single) If any parameter value is out of range
         ValueError :  (via .utils.pack_tups) If all iterable objects are
             not the same length
-        ValueError :  If more than one parameter is None
-        ValueError :  If any iterables are passed along with a None parameter
         """
 
         # Imports
@@ -719,32 +720,8 @@ class OPAN_XYZ(object):
             print("ats_2 = " + str(ats_2))
         ## end if
 
-        # Store the args list and a string-test lambda for compact usage
-        arglist = [g_nums, ats_1, ats_2]
-
-        # Check for None values
-        none_vals = np.equal(arglist, None)
-
-        # Error if more than one None; handle if exactly one; pass through if
-        #  none.
-        if np.count_nonzero(none_vals) > 1:
-            raise(ValueError("Multiple 'None' values [indices " + \
-                    str(tuple(np.nonzero(none_vals)[0])) + "] not supported"))
-        elif np.count_nonzero(none_vals) == 1:
-            # Must be no iterables that are not strings. Thus, an element-wise
-            #  test for iterability and an element-wise test for stringiness
-            #  must give matching arrays
-            if not all(np.equal(map(np.iterable, arglist), \
-                                map(lambda e: isinstance(e, str), arglist))):
-                raise(ValueError("'None' as parameter invalid with " + \
-                                                        "non-str iterables"))
-            ## end if
-
-            # Parameters okay; replace the None with the appropriate range()
-            none_loc = np.nonzero(none_vals)[0][0]
-            arglist[none_loc] = \
-                    range(self.num_geoms if none_loc == 0 else self.num_atoms)
-        ## end if
+        # Perform the None substitution
+        arglist = self._None_subst(g_nums, ats_1, ats_2)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(*arglist)
@@ -754,9 +731,24 @@ class OPAN_XYZ(object):
             print(tups)
         ## end if
 
-        # Construct the generator using the packed tuples.
+        # Construct the generator using the packed tuples. If 'None' expansion
+        #  was used, return None for any invalid indices instead of raising
+        #  an exception.
         for tup in tups:
-            yield self.Dist_single(*tup)
+            try:
+                dist = self.Dist_single(*tup)
+            except IndexError, ValueError:
+                if invalid_error:
+                    # Raise the exception if none_error indicates
+                    raise
+                else:
+                    # Otherwise, just generate a 'None' value
+                    yield None
+                ## end if
+            else:
+                # Good value; just generate it
+                yield dist
+            ## end try
         ## next tup
 
 
@@ -1246,7 +1238,72 @@ class OPAN_XYZ(object):
             yield self.Displ_single(*tup)
         ## next tup
 
-## end def Displ_iter
+    ## end def Displ_iter
+
+
+    def _None_subst(self, *args):
+        """ Helper function to insert full ranges for 'None' for X_iter methods.
+
+        Custom method, specifically tailored, taking in the arguments from
+        an X_iter method and performing the replacement of 'None' after
+        error-checking the arguments for a max of one 'None' value, and ensuring
+        that if a 'None' is present, no other non-str iterables are present.
+
+        Parameters
+        ----------
+        args : 3-5 arguments of int or iterable-int type, or none
+            First argument is always the indices for the geometries; all
+            following are for the atoms in sequence as required for the
+            particular X_iter method
+
+        Returns
+        -------
+        arglist     : 3-5 arguments, matching input params
+            Argument list, with 'None' substituted if validly present
+
+        Raises
+        ------
+        ValueError  : If more than one 'None' argument is present
+        ValueError  : If an arg is non-str iterable when one 'None' is present
+        """
+
+        # Imports
+        import numpy as np
+
+        # Initialize argument list return value, and as None not found
+        arglist = [a for a in args]
+        none_found = False
+
+        # Check for None values
+        none_vals = map(lambda e: isinstance(e, type(None)), arglist)
+
+        # Error if more than one None; handle if exactly one; pass through if
+        #  none.
+        if np.count_nonzero(none_vals) > 1:
+            raise(ValueError("Multiple 'None' values [indices " + \
+                    str(tuple(np.nonzero(none_vals)[0])) + "] not supported"))
+        elif np.count_nonzero(none_vals) == 1:
+            # Must be no iterables that are not strings. Thus, an element-wise
+            #  test for iterability and an element-wise test for stringiness
+            #  must give matching arrays
+            if not all(np.equal(map(np.iterable, arglist), \
+                                map(lambda e: isinstance(e, str), arglist))):
+                raise(ValueError("'None' as parameter invalid with " + \
+                                                        "non-str iterables"))
+            ## end if
+
+            # Parameters okay; replace the None with the appropriate range()
+            none_found = True
+            none_loc = np.nonzero(none_vals)[0][0]
+            arglist[none_loc] = \
+                    range(self.num_geoms if none_loc == 0 else self.num_atoms)
+        ## end if
+
+        # Return the arguments list and the none-found value
+        return arglist
+
+    ## end def _None_subst
+
 
 
 if __name__ == '__main__':  # pragma: no cover
