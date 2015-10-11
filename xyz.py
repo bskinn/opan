@@ -285,7 +285,7 @@ class OPAN_XYZ(object):
 
         self.initialized = True
 
-    ## end def load_data
+    ## end def _load_data
 
 
     def _load_file(self, XYZ_path, bohrs=False):
@@ -538,7 +538,7 @@ class OPAN_XYZ(object):
         # Set the internal initialization flag
         self.initialized = True
 
-    ## end def load_file
+    ## end def _load_file
 
 
     def Geom_single(self, g_num):
@@ -573,9 +573,9 @@ class OPAN_XYZ(object):
                          )
         return geom
 
-    #TODO: Augment the _iter methods to accept a max of one 'None' in the
-    #  list of parameters, which translates to ALL relevant geoms/atoms; atoms
-    #  list will have to have invalid atoms excluded.
+    ## end def Geom_single
+
+
     def Geom_iter(self, g_nums):
         """Iterator over selected geometries from the OPAN_XYZ instance.
 
@@ -611,6 +611,8 @@ class OPAN_XYZ(object):
         for val in vals:
             yield self.Geom_single(val)
 
+    ## end def Geom_iter
+
 
     def Dist_single(self, g_num, at_1, at_2):
         """ Retrieve an interatomic distance from the OPAN_XYZ instance.
@@ -640,7 +642,7 @@ class OPAN_XYZ(object):
         """
         # Import used math library function(s)
         import numpy as np
-        from scipy.linalg import norm
+        from scipy import linalg as spla
         from .utils import safe_cast as scast
 
         # The below errors are explicitly thrown since they are multiplied by
@@ -666,10 +668,14 @@ class OPAN_XYZ(object):
         if at_1 == at_2:
             dist = 0.0
         else:
-            dist = scast(norm(self.Displ_single(g_num, at_1, at_2)), np.float_)
+            dist = scast( \
+                    spla.norm(self.Displ_single(g_num, at_1, at_2)), \
+                            np.float_)
         ## end if
 
         return dist
+
+    ## end def Dist_single
 
 
     def Dist_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
@@ -694,7 +700,7 @@ class OPAN_XYZ(object):
             Index/indices of the second atom(s) (base 0)
         invalid_error  : bool, default False
             If False, 'None' values are returned for results corresponding to
-            invalid indices. If True, exceptions are raise like normal.
+            invalid indices. If True, exceptions are raised per normal.
 
         Returns
         -------
@@ -735,21 +741,10 @@ class OPAN_XYZ(object):
         #  was used, return None for any invalid indices instead of raising
         #  an exception.
         for tup in tups:
-            try:
-                dist = self.Dist_single(*tup)
-            except IndexError, ValueError:
-                if invalid_error:
-                    # Raise the exception if none_error indicates
-                    raise
-                else:
-                    # Otherwise, just generate a 'None' value
-                    yield None
-                ## end if
-            else:
-                # Good value; just generate it
-                yield dist
-            ## end try
+            yield self._iter_return(tup, self.Dist_single, invalid_error)
         ## next tup
+
+    ## end def Dist_iter
 
 
     def Angle_single(self, g_num, at_1, at_2, at_3):
@@ -785,8 +780,7 @@ class OPAN_XYZ(object):
         """
         # Import library function(s)
         import numpy as np
-        from numpy import squeeze, arccos, floor
-        from scipy.linalg import norm
+        from scipy import linalg as spla
         from .utils import safe_cast as scast
 
         # The below errors are explicitly thrown since they are multiplied by
@@ -808,9 +802,9 @@ class OPAN_XYZ(object):
         #  but coerce at_1 and at_2 to their floor() values.  This is again
         #  needed since they are multiplied by three in the index expresssions
         #  below, and can cause funny behavior when truncated by the indexing
-        at_1 = int(floor(at_1))
-        at_2 = int(floor(at_2))
-        at_3 = int(floor(at_3))
+        at_1 = scast(np.floor(at_1), np.int_)
+        at_2 = scast(np.floor(at_2), np.int_)
+        at_3 = scast(np.floor(at_3), np.int_)
 
         # Complain if at_2 is equal to either at_1 or at_3.  Must factor in
         #  the possibility of negative indexing via modulo arithmetic.
@@ -819,20 +813,29 @@ class OPAN_XYZ(object):
         if (at_2 % self.num_atoms) == (at_3 % self.num_atoms):
             raise(ValueError("'at_2' and 'at_3' must be different"))
 
+        # Trivial return if at_1 and at_3 are the same
+        if (at_1 % self.num_atoms) == (at_3 % self.num_atoms):
+            # Angle is identically zero in this case
+            return 0.0
+        ## end if
+
         # Store the displacement vectors from at_2 to at_1 and to at_3
         # The np.float64 type should be retained through the Displ_single call.
-        vec_2_1 = squeeze(np.array(self.Displ_single(g_num, at_2, at_1)))
-        vec_2_3 = squeeze(np.array(self.Displ_single(g_num, at_2, at_3)))
+        vec_2_1 = np.squeeze(np.array(self.Displ_single(g_num, at_2, at_1)))
+        vec_2_3 = np.squeeze(np.array(self.Displ_single(g_num, at_2, at_3)))
 
         # Compute and return the calculated angle, in degrees
         # v1 {dot} v2 == |v1||v2| * cos(theta)
-        angle = np.degrees(arccos(
-                    np.dot(vec_2_1,vec_2_3) / (norm(vec_2_1) * norm(vec_2_3))
-                                ))
+        angle = np.degrees(np.arccos(
+                    np.dot(vec_2_1,vec_2_3) / \
+                    (spla.norm(vec_2_1) * spla.norm(vec_2_3))
+                                    ))
         return angle
 
+    ## end def Angle_single
 
-    def Angle_iter(self, g_nums, ats_1, ats_2, ats_3):
+
+    def Angle_iter(self, g_nums, ats_1, ats_2, ats_3, invalid_error=False):
         """ Iterator over selected atomic angles.
 
         Returns the atomic angles between three sets of atoms ats_1, ats_2
@@ -842,6 +845,9 @@ class OPAN_XYZ(object):
         The various index pairs in ats_1 and ats_3 can be the same (yielding
             trivial zero angles), but each ats_2 must be different from both
             of the corresponding ats_1 and ats_3 values.
+            Alternatively, exactly one parameter can be None and all other
+            parameters single indices, in which case the full valid range of
+            the `None` parameter is used.
 
         Parameters
         ----------
@@ -853,6 +859,9 @@ class OPAN_XYZ(object):
             Index of the second atom (base 0)
         ats_3  : int or iterable int
             Index of the third atom (base 0)
+        invalid_error  : bool, default False
+            If False, 'None' values are returned for results corresponding to
+            invalid indices. If True, exceptions are raised like normal.
 
         Returns
         -------
@@ -882,8 +891,11 @@ class OPAN_XYZ(object):
             print("ats_3 = " + str(ats_3))
         ## end if
 
+        # Perform the None substitution
+        arglist = self._None_subst(g_nums, ats_1, ats_2, ats_3)
+
         # Expand/pack the tuples from the inputs
-        tups = pack_tups(g_nums, ats_1, ats_2, ats_3)
+        tups = pack_tups(*arglist)
 
         # Dump the results if debug mode is on
         if _DEBUG:  # pragma: no cover
@@ -892,8 +904,14 @@ class OPAN_XYZ(object):
 
         # Construct the generator using the packed tuples.
         for tup in tups:
-            yield self.Angle_single(*tup)
+            if _DEBUG: # pragma: no cover
+                print(tup)
+            ## end if
+
+            yield self._iter_return(tup, self.Angle_single, invalid_error)
         ## next tup
+
+    ## end def Angle_iter
 
 
     def Dihed_single(self, g_num, at_1, at_2, at_3, at_4):
@@ -944,11 +962,20 @@ class OPAN_XYZ(object):
         """
         # library imports
         import numpy as np
-        from numpy import arccos, degrees, dot, sign, squeeze
-        from scipy.linalg import norm
+        from scipy import linalg as spla
         from .utils.vector import ortho_basis
+        from .utils import safe_cast as scast
         from .error import XYZError
         from .const import PRM
+
+        # Should never be necessary (save for badly erroneous calling code),
+        #  but coerce at_1 and at_2 to their floor() values.  This is again
+        #  needed since they are multiplied by three in the index expresssions
+        #  below, and can cause funny behavior when truncated by the indexing
+        at_1 = scast(np.floor(at_1), np.int_)
+        at_2 = scast(np.floor(at_2), np.int_)
+        at_3 = scast(np.floor(at_3), np.int_)
+        at_4 = scast(np.floor(at_4), np.int_)
 
         # Proofread the atom numbers. Performed by double-iterative scan of
         #  the atom numbers, converting the index equality test results to
@@ -1001,8 +1028,8 @@ class OPAN_XYZ(object):
 
         # Store normalized atomic displacement vector at_2 --> at_3 as that
         #  defining the projection plane
-        plane_norm = squeeze(np.array(self.Displ_single(g_num, at_2, at_3)))
-        plane_norm = plane_norm / norm(plane_norm)
+        plane_norm = np.squeeze(np.array(self.Displ_single(g_num, at_2, at_3)))
+        plane_norm = plane_norm / spla.norm(plane_norm)
 
         # Retrieve the orthonormal basis in the projection plane, with the
         #  first vector being the normalized projection of the at_1 --> at_2
@@ -1011,29 +1038,29 @@ class OPAN_XYZ(object):
                             self.Displ_single(g_num, at_1, at_2))
 
         # Convert on1 and on2 to squeezed np.arrays
-        on1 = squeeze(np.array(on1))
-        on2 = squeeze(np.array(on2))
+        on1 = np.squeeze(np.array(on1))
+        on2 = np.squeeze(np.array(on2))
 
         # Project the at_3 --> at_4 displacement onto the plane
         #
         # Retrieve the "back-side" displacement vector
-        back_vec = squeeze(np.array(self.Displ_single(g_num, at_3, at_4)))
+        back_vec = np.squeeze(np.array(self.Displ_single(g_num, at_3, at_4)))
 
         # Project onto the plane by subtracting out the plane_norm projection
         #  and normalize
-        back_vec = back_vec - (dot(back_vec, plane_norm) * plane_norm)
-        back_vec /= norm(back_vec)
+        back_vec = back_vec - (np.dot(back_vec, plane_norm) * plane_norm)
+        back_vec /= spla.norm(back_vec)
 
         # Calculate the absolute value of the departure of the dihedral/
         #  out-of-plane angle from 180 degrees as derived from the dot-product
         #  of on1 and back_vec. Both should be normalized at this point, so
         #  the calculation is straightforward
-        dihed = degrees(arccos(dot(back_vec, on1)))
+        dihed = np.degrees(np.arccos(np.dot(back_vec, on1)))
 
         # Given the handedness of the spanning vectors provided by ortho_basis,
         #  the sign of the dihed departure is that of the dot product
         #  of back_vec and on2.
-        dihed *= sign(dot(back_vec, on2))
+        dihed *= np.sign(np.dot(back_vec, on2))
 
         # Conversion to the stated typical definition of a dihehdral now
         #  requires addition of 180 degrees.
@@ -1042,8 +1069,11 @@ class OPAN_XYZ(object):
         # Should be set to return the value
         return dihed
 
+    ## end Dihed_single
 
-    def Dihed_iter(self, g_nums, ats_1, ats_2, ats_3, ats_4):
+
+    def Dihed_iter(self, g_nums, ats_1, ats_2, ats_3, ats_4, \
+                                                    invalid_error=False):
         """ Iterator over selected dihedral angles.
 
         Returns the out-of-plane angle among each group of four atoms ats_1,
@@ -1062,6 +1092,11 @@ class OPAN_XYZ(object):
             nonlinear, as diagnosed by a bend angle different from 0 or 180
             degrees by at least PRM.Non_Parallel_Tol.
 
+        Alternatively, exactly one parameter can be None and all other
+            parameters single indices, in which case the full valid range of
+            the `None` parameter is used.
+
+
         Parameters
         ----------
         g_nums   : int or iterable int
@@ -1074,6 +1109,9 @@ class OPAN_XYZ(object):
             Indices of the third atoms (base 0)
         ats_4    : int or iterable int
             Indices of the fourth atoms (base 0)
+        invalid_error  : bool, default False
+            If False, 'None' values are returned for results corresponding to
+            invalid indices. If True, exceptions are raised per normal.
 
         Returns
         -------
@@ -1105,8 +1143,11 @@ class OPAN_XYZ(object):
             print("ats_4 = " + str(ats_4))
         ## end if
 
+        # Perform the None substitution
+        arglist = self._None_subst(g_nums, ats_1, ats_2, ats_3, ats_4)
+
         # Expand/pack the tuples from the inputs
-        tups = pack_tups(g_nums, ats_1, ats_2, ats_3, ats_4)
+        tups = pack_tups(*arglist)
 
         # Dump the results if debug mode is on
         if _DEBUG:   # pragma: no cover
@@ -1115,8 +1156,10 @@ class OPAN_XYZ(object):
 
         # Construct the generator using the packed tuples.
         for tup in tups:
-            yield self.Dihed_single(*tup)
+            yield self._iter_return(tup, self.Dihed_single, invalid_error)
         ## next tup
+
+    ## end def Dihed_iter
 
 
     def Displ_single(self, g_num, at_1, at_2):
@@ -1151,7 +1194,7 @@ class OPAN_XYZ(object):
 
         # Library imports
         import numpy as np
-        from numpy import floor
+        from .utils import safe_cast as scast
 
         # The below errors are explicitly thrown since they are multiplied by
         #  three when they are used as an index and thus give non-intuitive
@@ -1168,8 +1211,13 @@ class OPAN_XYZ(object):
         #  but coerce at_1 and at_2 to their floor() values.  This is again
         #  needed since they are multiplied by three in the index expresssions
         #  below, and can cause funny behavior when truncated by the indexing
-        at_1 = int(floor(at_1))
-        at_2 = int(floor(at_2))
+        at_1 = scast(np.floor(at_1), np.int_)
+        at_2 = scast(np.floor(at_2), np.int_)
+
+        # If the atom indices are the same, return trivial zero vector
+        if (at_1 % self.num_atoms) == (at_2 % self.num_atoms):
+            return np.matrix([0.0,0.0,0.0]).reshape((3,1))
+        ## end if
 
         # Retrieve the geometry; np.float64 type should be retained
         g = self.Geom_single(g_num)
@@ -1181,8 +1229,10 @@ class OPAN_XYZ(object):
         # Return the displacement vector
         return displ
 
+    ## end def Displ_single
 
-    def Displ_iter(self, g_nums, ats_1, ats_2):
+
+    def Displ_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over indicated displacement vectors.
 
         Returns the respective displacement vectors pointing from ats_1 toward
@@ -1191,7 +1241,9 @@ class OPAN_XYZ(object):
         Raised errors are those of Displ_single. Displacements are in Bohrs.
 
         Any of ats_1, ats_2 and g_nums can be either a single index or an
-            iterable.
+            iterable. Alternatively, exactly one parameter can be None and
+            all other parameters single indices, in which case the full
+            valid range of the `None` parameter is used.
 
         Parameters
         ----------
@@ -1201,6 +1253,9 @@ class OPAN_XYZ(object):
             Index/indices of the first atom(s) (base 0)
         ats_2 : int or iterable int
             Index/indices of the second atom(s) (base 0)
+        invalid_error  : bool, default False
+            If False, 'None' values are returned for results corresponding to
+            invalid indices. If True, exceptions are raised per normal.
 
         Returns
         -------
@@ -1225,8 +1280,11 @@ class OPAN_XYZ(object):
             print("ats_2 = " + str(ats_2))
         ## end if
 
+        # Perform the None substitution
+        arglist = self._None_subst(g_nums, ats_1, ats_2)
+
         # Expand/pack the tuples from the inputs
-        tups = pack_tups(g_nums, ats_1, ats_2)
+        tups = pack_tups(*arglist)
 
         # Dump the results if debug mode is on
         if _DEBUG:  # pragma: no cover
@@ -1235,7 +1293,7 @@ class OPAN_XYZ(object):
 
         # Construct the generator using the packed tuples.
         for tup in tups:
-            yield self.Displ_single(*tup)
+            yield self._iter_return(tup, self.Displ_single, invalid_error)
         ## next tup
 
     ## end def Displ_iter
@@ -1304,6 +1362,52 @@ class OPAN_XYZ(object):
 
     ## end def _None_subst
 
+
+    @staticmethod
+    def _iter_return(tup, fxn, invalid_error):
+        """ Wrapper for error/None output handling of X_iter methods.
+
+        Attempts to pass 'tup' as arguments to 'fxn'.  If the call is
+        successful, returns the value produced. If IndexError or ValueError
+        is raised, indicating an invalid index value, re-raise if invalid_error
+        is True or return 'None' if False.  Other Exceptions are left uncaught.
+
+        Parameters
+        ----------
+        tup     : tuple
+            Input arguments to unpack as arguments to 'fxn'
+        fxn     : callable
+            Function/method to call to calculate the return value
+        invalid_error   : bool
+            Flag for whether to return None on IndexError/ValueError, or to
+            re-raise
+
+        Returns
+        -------
+        val     : np.float_ or None
+            Calculated value from fxn(*tup) call, or 'None' value indicating
+            IndexError / ValueError
+
+        """
+
+        try:
+            val = fxn(*tup)
+        except (IndexError, ValueError):
+            if invalid_error:
+                # Raise the exception if invalid_error indicates
+                raise
+            else:
+                # Otherwise, just return a 'None' value
+                return None
+            ## end if
+        else:
+            # Good value; just generate it
+            return val
+        ## end try
+
+    ## end def _iter_return
+
+## end class OPAN_XYZ
 
 
 if __name__ == '__main__':  # pragma: no cover

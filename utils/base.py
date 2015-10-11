@@ -60,7 +60,7 @@ def pack_tups(*args):
         objects to be packed into tuples. The input arguments are parsed
 	such that bare strings are treated as **NON-ITERABLE**, through the
 	use of a local subclass of str that cripples the __iter__ method.
-	Any strings passed are returned in the packed tuples as as standard, 
+	Any strings passed are returned in the packed tuples as standard,
 	**ITERABLE** instances of str, however.
 
     Returns
@@ -120,9 +120,10 @@ def pack_tups(*args):
         ## end if
     ## next idx
 
-    # If everything is non-iterable, just return the args tuple
+    # If everything is non-iterable, just return the args tuple wrapped in
+    #  a list
     if iter_len == UNINIT_VAL:
-        return args
+        return [args]
     ## end if
 
     # Some items are iterable, so must construct iteration strings
