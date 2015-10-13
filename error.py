@@ -28,25 +28,24 @@ class OPANError(Exception):
     OPANError is an abstract superclass of any custom errors built under the
     OpenAnharmonic umbrella. It defines all common methods shared among the
     various subtype error classes, such that the only contents that must be
-    declared by a subclass (as of this comment) is the 'typecodes' class-level
-    dictionary, which maps string typecode keys to *unique* typecode int values.
+    declared by a subclass are str class variables with contents identical to
+    their names.  These are recognized by the __iter__ defined in __metaclass__
+    as being the set of valid typecodes.
 
     Instantiation
     -------------
     tc  : str
         String representation of typecode to be associated with the OPANError
-        subclass instance. *Must* be a valid key of the 'typecodes' class
-        variable defined for the relevant subtype.
+        subclass instance. *Must* be a validly constructed class variable
+        defined for the relevant subclass.
     msg : str
         Explanation of the nature of the error being reported.
     src : str
-        Further detail of the code source of the error behavior.
+        Further detail of the code/file source of the error behavior.
 
     Class Variables
     ---------------
-    typecodes: dict
-        (Defined separately by each subclass of OPANError.) Dictionary of the
-        allowed typecodes for the relevant OPANError subclass.
+    (none)
 
     Instance Variables
     ------------------
@@ -63,8 +62,19 @@ class OPANError(Exception):
 
     Class Methods
     -------
-    _typecode_str -- Returns string representation of a numerical typecode
-        value. Meant primarily for introspection.
+    (none)
+
+    Class Generators
+    ----------------
+    __iter__() : Iterates over valid typecodes for the (sub)class
+        Technically, iterates over all class variables whose contents are
+        strings identical to their names. For a properly constructed
+        OPANError subclass, this should correspond exactly to the list of
+        valid typecodes.
+
+        Example:
+            >>> 'xyzfile' in opan.error.XYZError
+            True
 
     """
 
@@ -86,8 +96,6 @@ class OPANError(Exception):
         Raises
         ------
         KeyError : Invalid typecode provided in 'tc'
-        AttributeError : If ORCAError subclass has not defined the class
-                            variable 'typecodes'
         NotImplementedError : Upon attempt to instantiate abstract ORCAError
             base class.
 
@@ -116,7 +124,7 @@ class OPANError(Exception):
 
         # Check for valid typecode and throw a more descriptive error if
         #  invalid.
-        if not tc in self.typecodes:
+        if not tc in self.__class__:
             raise(KeyError("Invalid " + self.subclass_name + \
                                                 " typecode: " + str(tc)))
         ## end if
@@ -126,8 +134,10 @@ class OPANError(Exception):
         self.msg = msg
         self.src = src
 
+    ## end def __init__
 
-    def __str__(self):
+
+    def __str__(self):  # pragma: no cover   (str rep has no code significance)
         """ String representation of an instance of an ORCAError subclass.
 
         Implemented primarily so that the error stack handling of the Python
@@ -159,42 +169,30 @@ class OPANError(Exception):
     ## end def __str__
 
 
-    @classmethod
-    def _typecode_str(self, tc):
-        """Return string representation of provided typecode number.
+    class __metaclass__(type):
+        """ type metaclass provides ability to iterate over typecodes.
 
-        Helper function for introspection lookup of the typecode string of the
-        typecode number input as 'tc'.  Raises ValueError if the typecode value
-        is not found in the .typecodes dict of the appropriate subclass.
+        With this metaclass, iterating over the (sub)class yields the valid
+        typecodes for the (sub)class.  Technically, it iterates over all
+        class variables whose contents are the same as the variable name.
 
-        POTENTIALLY OBSOLETE!
-
-        Parameters
-        ----------
-        tc  : int
-            Typecode enumeration constant to be converted to its string
-            representation
-
-        Returns
-        -------
-        tc_str  : string
-            Representation of the indicated typecode for the class of which
-            'self' is a member.
-
-        Raises
-        ------
-        ValueError  : If an invalid typecode value is passed.
-
+        Provides
+        --------
+        __iter__() : Generator
+            Iterates over all class variables whose names match their contents.
+            For a properly constructed OPAN subclass, these are identical to
+            the typecodes.
         """
 
-        # List comprehension(?) lookup of the indicated typecode
-        try:
-            tc_str = str([k for (k,v) in self.typecodes.items() if v == tc][0])
-        except IndexError:
-            raise(ValueError("Invalid typecode value."))
-        ##end try
-
-        return tc_str
+        # Enable iteration over the typecodes
+        def __iter__(self):
+            for item in self.__dict__:
+                if item == self.__dict__[item]:
+                    yield item
+                ## end if
+            ## next item
+        ##end def __iter__
+    ## end class __metaclass__
 
 ## end class ORCAError
 
@@ -207,7 +205,7 @@ class XYZError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             xyzfile     :  inconsistent geometry in an OpenBabel XYZ
                             file (XYZ or TRJ from ORCA)
             overwrite   :  object already initialized (overwrite not supported)
@@ -219,18 +217,11 @@ class XYZError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     xyzfile = 'xyzfile'
     overwrite = 'overwrite'
     dihed = 'dihed'
     nonprl = 'nonprl'
-
-    typecodes = frozenset([
-            xyzfile,
-            overwrite,
-            dihed,
-            nonprl
-            ])
 
 ## end class XYZError
 
@@ -243,7 +234,7 @@ class GRADError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             numats     : Invalid number of atoms specification,
                             or specification not found
             en         : Energy specification not found
@@ -253,18 +244,11 @@ class GRADError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     numats = 'numats'
     en = 'en'
     gradblock = 'gradblock'
     geomblock = 'geomblock'
-
-    typecodes = frozenset([
-            numats,
-            en,
-            gradblock,
-            geomblock
-            ])
 
 ## end class ENGRADError
 
@@ -277,15 +261,10 @@ class OUTPUTError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
-            {add here}
+        typecodes:
+            {none yet}
 
     """
-
-    # Typecodes as class-level variables, collected into frozenset
-    typecodes = frozenset([
-
-            ])
 
 ## end class OUTPUTError
 
@@ -298,22 +277,26 @@ class HESSError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             at_block    : Malformed or missing atom specification block
-            hess_block  : Malformed or missing Hessian block
+            energy      : Malformed or missing energy value
             freq_block  : Malformed or missing frequencies block
+            hess_block  : Malformed or missing Hessian block
             modes_block : Malformed or missing normal modes block
+            temp        : Malformed or missing 'actual temperature' value
+
             dipder_block: Malformed dipole derivatives block
+            eigval_block: Malformed mass-wt Hessian eigenvalues block
+            eigvec_block: Malformed mass-wt Hessian eigenvectors block
             ir_block    : Malformed IR spectrum block
+            job_block   : Malformed job list block
             polder_block: Malformed polarizability derivatives block
             raman_block : Malformed Raman spectrum block
-            job_block   : Malformed job list block
-            eigval_block: Malformed mass-wt Hessin eigenvalues block
-            eigvec_block: Malformed mass-wt Hessin eigenvectors block
+
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     at_block = "at_block"
     hess_block = "hess_block"
     freq_block = "freq_block"
@@ -325,19 +308,8 @@ class HESSError(OPANError):
     job_block = "job_block"
     eigval_block = "eigval_block"
     eigvec_block = "eigvec_block"
-    typecodes = frozenset([
-            at_block,
-            hess_block,
-            freq_block,
-            modes_block,
-            dipder_block,
-            ir_block,
-            polder_block,
-            raman_block,
-            job_block,
-            eigval_block,
-            eigvec_block
-            ])
+    energy = "energy"
+    temp = "temp"
 
 ## end class HESSError
 
@@ -350,17 +322,13 @@ class SYMMError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             notfound    : Symmetry element expected but not found.
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     notfound = 'notfound'
-
-    typecodes = frozenset([
-            notfound
-            ])
 
 ## end class SYMMError
 
@@ -373,23 +341,17 @@ class REPOError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             status      : HDF5 repo in improper status for requested operation.
             group       : Problem with a group in linked HDF5 file
             data        : Problem with a dataset in linked HDF5 file
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     status = 'status'
     data = 'data'
     group = 'group'
-
-    typecodes = frozenset([
-            data,
-            status,
-            group
-            ])
 
 ## end class REPOError
 
@@ -402,7 +364,7 @@ class ANHARMError(OPANError):
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
 
-        typecodes: dict
+        typecodes:
             repo        : OPAN_REPO conflict -- no repo bound when assignment
                             attempted, or attempt made to bind new repo when
                             one already bound
@@ -411,17 +373,12 @@ class ANHARMError(OPANError):
 
     """
 
-    # Typecodes as class-level variables, collected into frozenset
+    # Typecodes as class-level variables
     repo = 'repo'
     status = 'status'
-
-    typecodes = frozenset([
-            repo,
-            status
-            ])
 
 ## end class ANHARMError
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable")

@@ -1,11 +1,11 @@
 #-------------------------------------------------------------------------------
 # Name:        __init__
-# Purpose:     Root opan.__init__ file
+# Purpose:     opan.utils.__init__ file
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
 #
-# Created:     19 Jul 2015
+# Created:     5 Oct 2015
 # Copyright:   (c) Brian Skinn 2015
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
@@ -20,10 +20,11 @@
 
 from __future__ import absolute_import
 
-__all__ = ['const', 'error', 'xyz', 'grad', 'hess', 'output']
+__all__ = ['repo']
 
 from . import *
-from .utils import *
-from .anharm import *
+from .base import ORCA_ANHARM
+
+
 
 

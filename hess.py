@@ -160,8 +160,8 @@ class ORCA_HESS(object):
     """
 
     # Imports
-    import re
-    from .const import DEF
+    import re as _re
+    from .const import DEF as _DEF
 
 
     # Various class-level Regex patterns.  Currently only retrieves the
@@ -171,7 +171,7 @@ class ORCA_HESS(object):
 
     # Atoms list, including atomic weights. Assumes no scientific notation
     #  will be used in the coordinates.
-    p_at_block = re.compile("""
+    p_at_block = _re.compile("""
     \\#.*\\n                        # Line prior to $atoms is a blank comment
     \\$atoms.*\\n                   # $atoms indicator for start of block
     (?P<num>[0-9]+).*               # Storing the number of atoms
@@ -185,20 +185,20 @@ class ORCA_HESS(object):
             .*\\n                   # Whatever to end of line
         )+                          # Some number of coordinate lines
     )                               # Close the "block" group
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # Pulling the individual atoms, weights, and coordinates from each atom line
-    p_at_line = re.compile("""
+    p_at_line = _re.compile("""
     ^[ \\t]+                        # Whitespace to start the line
     (?P<el>([a-z]+|[0-9]+))         # Atomic number or element symbol
     [ \\t]+(?P<mass>[0-9.]+)        # Whitespace and atomic mass
     [ \\t]+(?P<c1>[0-9.-]+)         # Whitespace and first coordinate
     [ \\t]+(?P<c2>[0-9.-]+)         # Whitespace and second coordinate
     [ \\t]+(?P<c3>[0-9.-]+)         # Whitespace and third coordinate
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # Entire Hessian data block
-    p_hess_block = re.compile("""
+    p_hess_block = _re.compile("""
     \\$hessian.*\\n                 # Marker for Hessian block
     (?P<dim>[0-9]+).*\\n            # Dimensionality of Hessian (3N x 3N)
     (?P<block>                      # Group for the subsequent block of lines
@@ -207,10 +207,10 @@ class ORCA_HESS(object):
             .*\\n                   # Plus whatever to end of line
         )+                          # Whatever number of single lines
     )                               # Enclose the whole batch of lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Sections of the Hessian data block
-    p_hess_sec = re.compile("""
+    p_hess_sec = _re.compile("""
     ([ \\t]+[0-9]+)+[ \\t]*\\n      # Column header line
     (                               # Open the group for the sub-block lines
         [ \\t]+[0-9]+               # Row header
@@ -220,10 +220,10 @@ class ORCA_HESS(object):
         )+                          # Some number of sub-columns
         [ \\t]*\\n                  # Whitespace to EOL
     )+                              # Some number of suitable lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Pulling Hessian lines from the sections, with elements in groups
-    p_hess_line = re.compile("""
+    p_hess_line = _re.compile("""
     ^[ \\t]*                        # Optional whitespace to start each line
     (?P<row>[0-9]+)                         # Row header
     [ \\t]+(?P<e0>[0-9-]+\\.[0-9]+)         # 1st element
@@ -233,32 +233,32 @@ class ORCA_HESS(object):
     ([ \\t]+(?P<e4>[0-9-]+\\.[0-9]+))?      # 5th element (possibly absent)
     ([ \\t]+(?P<e5>[0-9-]+\\.[0-9]+))?      # 6th element (possibly absent)
     .*$                             # Whatever to end of line
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # Reported energy
-    p_energy = re.compile("""
+    p_energy = _re.compile("""
     \\$act_energy[ ]*\\n                    # Label for the block
     [ ]+(?P<en>[0-9.-]+)[ ]*\\n             # Energy value
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Frequencies block
-    p_freq_block = re.compile("""
+    p_freq_block = _re.compile("""
     \\$vibrational_frequencies[ ]*\\n       # Block label
     [ ]*(?P<num>[0-9]+)[ ]*\\n              #--> Number of frequencies
     (?P<block>                              # Open capture group for block
         ([ ]+[0-9]+[ ]+[0-9.-]+[ ]*\\n)+    #--> Block contents
     )                                       # Close capture group
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_freq_line = re.compile("""
+    p_freq_line = _re.compile("""
     ^[ ]+(?P<id>[0-9]+)                     #--> ID for the frequency
     [ ]+(?P<freq>[0-9.-]+)                  #--> Freq value in cm**-1
     [ ]*$                                   # To EOL
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
 
     # Entire modes data block
-    p_modes_block = re.compile("""
+    p_modes_block = _re.compile("""
     \\$normal_modes.*\\n            # Marker for modes block
     (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
     (?P<dim2>[0-9]+).*\\n           #  (Second dimension value)
@@ -268,10 +268,10 @@ class ORCA_HESS(object):
             .*\\n                   # Plus whatever to end of line
         )+                          # Whatever number of single lines
     )                               # Enclose the whole batch of lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Sections of the modes data block
-    p_modes_sec = re.compile("""
+    p_modes_sec = _re.compile("""
     ([ ]+[0-9]+)+[ ]*\\n            # Column header line
     (                               # Open the group for the sub-block lines
         [ ]+[0-9]+                  # Row header
@@ -281,14 +281,14 @@ class ORCA_HESS(object):
         )+                          # Some number of sub-columns
         [ ]*\\n                     # Whitespace to EOL
     )+                              # Some number of suitable lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Pulling modes lines from the sections, with elements in groups
     #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
     #  above/below, guarantees a floating-point value is found. Otherwise, the
     #  Regex retrieves on into subsequent sections because the header rows
     #  parse just fine for a '[ ]+[0-9.-]' pattern.
-    p_modes_line = re.compile("""
+    p_modes_line = _re.compile("""
     ^[ ]*                           # Optional whitespace to start each line
     (?P<row>[0-9]+)                         # Row header
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
@@ -298,60 +298,60 @@ class ORCA_HESS(object):
     ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
     ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
     .*$                             # Whatever to end of line
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # "Actual temperature"
-    p_temp = re.compile("""
+    p_temp = _re.compile("""
     \\$actual_temperature[ ]*\\n            # Marker for value
     [ ]*(?P<temp>[0-9.]+)[ ]*\\n            # Value
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Dipole derivatives block
-    p_dipder_block = re.compile("""
+    p_dipder_block = _re.compile("""
     \\$dipole_derivatives[ ]*\\n            # Marker for block
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catches entire block
         (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
     )                                       # End block capture
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Dipole derivatives individual line
-    p_dipder_line = re.compile("""
+    p_dipder_line = _re.compile("""
     ^                                       # Line start
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
     [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
     [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
     [ ]*$
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # IR spectrum block
-    p_ir_block = re.compile("""
+    p_ir_block = _re.compile("""
     \\$ir_spectrum[ ]*\\n                   # Marker for block
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catch entire block
         (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
     )                                       # End block catch
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_ir_line = re.compile("""
+    p_ir_line = _re.compile("""
     ^                                       # Line start
     [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency
     [ ]+(?P<mag>[0-9]+\\.[0-9]+)            #--> Transition dipole sq. mag
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            #--> 1st element (TX)
     [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            #--> 2nd element (TY)
     [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            #--> 3rd element (TZ)
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # Polarizability derivatives block
-    p_polder_block = re.compile("""
+    p_polder_block = _re.compile("""
     \\$polarizability_derivatives[ ]*\\n    # Block marker
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catch entire block
         (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
     )                                       # End block catch
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_polder_line = re.compile("""
+    p_polder_line = _re.compile("""
     ^                                       # Start of line
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
     [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
@@ -359,62 +359,62 @@ class ORCA_HESS(object):
     [ ]+(?P<e3>[0-9-]+\\.[0-9]+)            # 4th element
     [ ]+(?P<e4>[0-9-]+\\.[0-9]+)            # 5th element
     [ ]+(?P<e5>[0-9-]+\\.[0-9]+)            # 6th element
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
 
     # Raman spectrum block
-    p_raman_block = re.compile("""
+    p_raman_block = _re.compile("""
     \\$raman_spectrum[ ]*\\n                # Block marker
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catch entire block
         (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
     )                                       # End block catch
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_raman_line = re.compile("""
+    p_raman_line = _re.compile("""
     ^                                       # Start of line
     [ ]+(?P<freq>[0-9-]+\\.[0-9]+)          #--> Frequency of mode
     [ ]+(?P<act>[0-9]+\\.[0-9]+)            #--> Raman activity
     [ ]+(?P<depol>[0-9]+\\.[0-9]+)          #--> Depolarization factor
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
 
     # Job list block
-    p_jobs_block = re.compile("""
+    p_jobs_block = _re.compile("""
     \\$job_list[ ]*\\n                      # Block marker
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catch entire block
         (([ ]+[0-9]+)+[ ]*\\n)+             # Rows of data
     )                                       # End block catch
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_jobs_line = re.compile("""
+    p_jobs_line = _re.compile("""
     ^                                       # Start of line
     [ ]+(?P<at>[0-9]+)                      #--> Atom index
     [ ]+(?P<e0>[01])                        # 1st element
     [ ]+(?P<e1>[01])                        # 2nd element
     [ ]+(?P<e2>[01])                        # 3rd element
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     # Eigenvalues of mass-weighted Hessian
-    p_eigvals_block = re.compile("""
+    p_eigvals_block = _re.compile("""
     \\$eigenvalues_mass_weighted_hessian[ ]*\\n         # Block marker
     (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
     (?P<block>                              #--> Catch entire block
         (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
     )                                       # End block catch
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
-    p_eigvals_line = re.compile("""
+    p_eigvals_line = _re.compile("""
     ^                                       # Start of line
     [ ]+(?P<mode>[0-9]+)                    #--> Mode index
     [ ]+(?P<eig>[0-9.-]+)                   #--> Eigenvalue
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
 
     #=== Mass-weighted Hessian eigenvectors ===#
     # Entire eigenvectors data block
-    p_eigvecs_block = re.compile("""
+    p_eigvecs_block = _re.compile("""
     \\$eigenvectors_mass_weighted_hessian.*\\n      # Marker for modes block
     (?P<dim>[0-9]+)[ ]+             # Dimensionality of modes block (3N x 3N)
     (?P<dim2>[0-9]+)[ ]*\\n         #  (Second dimension value)
@@ -424,10 +424,10 @@ class ORCA_HESS(object):
             .*\\n                   # Plus whatever to end of line
         )+                          # Whatever number of single lines
     )                               # Enclose the whole batch of lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Sections of the eigenvectors data block
-    p_eigvecs_sec = re.compile("""
+    p_eigvecs_sec = _re.compile("""
     ([ ]+[0-9]+)+[ ]*\\n            # Column header line
     (                               # Open the group for the sub-block lines
         [ ]+[0-9]+                  # Row header
@@ -437,14 +437,14 @@ class ORCA_HESS(object):
         )+                          # Some number of sub-columns
         [ ]*\\n                     # Whitespace to EOL
     )+                              # Some number of suitable lines
-    """, re.I | re.X)
+    """, _re.I | _re.X)
 
     # Pulling modes lines from the sections, with elements in groups
     #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
     #  above/below, guarantees a floating-point value is found. Otherwise, the
     #  Regex retrieves on into subsequent sections because the header rows
     #  parse just fine for a '[ ]+[0-9.-]' pattern.
-    p_eigvecs_line = re.compile("""
+    p_eigvecs_line = _re.compile("""
     ^[ ]*                           # Optional whitespace to start each line
     (?P<row>[0-9]+)                         # Row header
     [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
@@ -454,7 +454,7 @@ class ORCA_HESS(object):
     ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
     ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
     .*$                             # Whatever to end of line
-    """, re.I | re.M | re.X)
+    """, _re.I | _re.M | _re.X)
 
     ## End Regex definitions
 
@@ -648,6 +648,16 @@ class ORCA_HESS(object):
                     "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
+        if not ORCA_HESS.p_energy.search(self.in_str):
+            raise(HESSError(HESSError.energy,
+                    "Energy value not found",
+                    "HESS File: " + HESS_path))
+        ## end if
+        if not ORCA_HESS.p_temp.search(self.in_str):
+            raise(HESSError(HESSError.temp,
+                    "'Actual temperature' value not found",
+                    "HESS File: " + HESS_path))
+        ## end if
 
 
         #=== Geometry spec block ===#
@@ -690,19 +700,10 @@ class ORCA_HESS(object):
             ## next gp
 
         # Double-check that the number of atoms retrieved matches the
-        #  number indicated in the HESS file; geometry size also.
+        #  number indicated in the HESS file. Checks of atomic masses
+        #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
             raise(HESSError(HESSError.at_block, "Atomic symbol dimension " + \
-                    "mismatch with HESS atom specification", \
-                    "HESS File: " + HESS_path))
-        ## end if
-        if not len(self.atom_masses) == self.num_ats:
-            raise(HESSError(HESSError.at_block, "Atomic mass dimension " + \
-                    "mismatch with HESS atom specification", \
-                    "HESS File: " + HESS_path))
-        ## end if
-        if not len(self.geom) == 3 * self.num_ats:
-            raise(HESSError(HESSError.at_block, "Geometry dimension " + \
                     "mismatch with HESS atom specification", \
                     "HESS File: " + HESS_path))
         ## end if
@@ -831,6 +832,15 @@ class ORCA_HESS(object):
                         for m in self.p_ir_line.finditer( \
                                                     m_work.group("block")) ])
 
+            # Confirm length of ir_mags conforms. Shouldn't need to check both,
+            #  since they both rely equally on p_ir_line.finditer.
+            if 3*self.num_ats != self.ir_mags.shape[0]:
+                raise(HESSError(HESSError.ir_block, \
+                        "Number of IR spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
             # Confirm match of all frequencies with those reported separately
             if not np.allclose( \
                     self.freqs, \
@@ -841,15 +851,6 @@ class ORCA_HESS(object):
                     atol=DEF.HESS_IR_Match_Tol):
                 raise(HESSError(HESSError.ir_block, \
                         "Frequency mismatch between freq and IR blocks", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
-
-            # Confirm length of ir_mags conforms. Shouldn't need to check both,
-            #  since they both rely equally on p_ir_line.finditer.
-            if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HESSError(HESSError.ir_block, \
-                        "Number of IR spectrum rows != " + \
-                                                    "3 * number of atoms", \
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
@@ -913,6 +914,15 @@ class ORCA_HESS(object):
                         for m in self.p_raman_line.finditer( \
                                                     m_work.group("block")) ])
 
+            # Confirm length of raman_acts conforms. Shouldn't need to check
+            #  both, since they both rely equally on p_raman_line.finditer.
+            if 3*self.num_ats != self.raman_acts.shape[0]:
+                raise(HESSError(HESSError.raman_block, \
+                        "Number of Raman spectrum rows != " + \
+                                                    "3 * number of atoms", \
+                        "HESS File: " + self.HESS_path))
+            ## end if
+
             # Confirm match of all frequencies with those reported separately
             if not np.allclose( \
                     self.freqs, \
@@ -923,15 +933,6 @@ class ORCA_HESS(object):
                     atol=DEF.HESS_IR_Match_Tol):
                 raise(HESSError(HESSError.raman_block, \
                         "Frequency mismatch between freq and Raman blocks", \
-                        "HESS File: " + self.HESS_path))
-            ## end if
-
-            # Confirm length of raman_acts conforms. Shouldn't need to check
-            #  both, since they both rely equally on p_raman_line.finditer.
-            if 3*self.num_ats != self.raman_acts.shape[0]:
-                raise(HESSError(HESSError.raman_block, \
-                        "Number of Raman spectrum rows != " + \
-                                                    "3 * number of atoms", \
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
@@ -1032,7 +1033,7 @@ class ORCA_HESS(object):
     ## end def __init__
 
 
-    def check_geom(self, coords, atoms, tol=DEF.HESS_Coord_Match_Tol):
+    def check_geom(self, coords, atoms, tol=_DEF.HESS_Coord_Match_Tol):
         """ Check for consistency of HESS geometry with input coords/atoms.
 
         HESS cartesian coordinates are considered consistent with the input
@@ -1091,7 +1092,7 @@ class ORCA_HESS(object):
     ## end def check_geom
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")
 
 

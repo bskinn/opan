@@ -18,6 +18,9 @@
 #
 #-------------------------------------------------------------------------------
 
+""" #DOC: anharm.repo docstring
+"""
+
 # Imports
 
 
@@ -57,7 +60,7 @@ class OPAN_REPO(object):
     """
 
     # Imports
-    from .const import E_DispDirection as E_DispDir
+    from ..const import E_DispDirection as _E_DD
 
 
     # Class variables
@@ -77,9 +80,9 @@ class OPAN_REPO(object):
 
     # dict for translating DispDir enum to direction code
     dircode = {
-                E_DispDir.Negative: 'n',
-                E_DispDir.NoDisp: 'o',
-                E_DispDir.Positive: 'p'
+                _E_DD.Negative: 'n',
+                _E_DD.NoDisp: 'o',
+                _E_DD.Positive: 'p'
                 }
 
 
@@ -113,7 +116,7 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5
-        from .error import REPOError
+        from ..error import REPOError
 
         # Close the repo if it's bound, and wipe link; else complain
         if self._repo != None:
@@ -135,7 +138,7 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5
-        from .error import REPOError
+        from ..error import REPOError
 
         # If repo not None, complain
         if not self._repo == None:
@@ -179,9 +182,9 @@ class OPAN_REPO(object):
 
         # Imports
         import h5py as h5, numpy as np
-        from .error import REPOError as RErr
-        from .const import E_DispDirection as E_DispDir
-        from .const import ER_Data
+        from ..error import REPOError as RErr
+        from ..const import E_DispDirection as _E_DD
+        from ..const import ERA_Data
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -189,19 +192,19 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid disp direction
-        if not disp in E_DispDir.E:
+        if not disp in _E_DD:
             raise(ValueError("'" + str(disp) + "' is not a valid " + \
                     "displacement enum value"))
         ## end if
 
         # Must be a valid repo data type
-        if not datatype in ER_Data.E:
+        if not datatype in ERA_Data:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "data type enum value"))
         ## end if
 
         # Get the appropriate geom group name
-        if disp == E_DispDir.NoDisp:
+        if disp == _E_DD.NoDisp:
             grpname = self.G_geom_ref
         else:
             grpname = self.F_mode_fmt % \
@@ -247,9 +250,9 @@ class OPAN_REPO(object):
 
         # Imports
         import os, numpy as np
-        from .const import E_DispDirection as E_DispDir
-        from .const import ER_Data
-        from .error import REPOError as RErr
+        from ..const import E_DispDirection as _E_DD
+        from ..const import ERA_Data
+        from ..error import REPOError as RErr
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -257,19 +260,19 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid disp direction
-        if not disp in E_DispDir.E:
+        if not disp in _E_DD:
             raise(ValueError("'" + str(disp) + "' is not a valid " + \
                     "displacement enum value"))
         ## end if
 
         # Must be a valid data type
-        if not datatype in ER_Data.E:
+        if not datatype in ERA_Data:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "repository data type enum value"))
         ## end if
 
         # Get the appropriate geom group name
-        if disp == E_DispDir.NoDisp:
+        if disp == _E_DD.NoDisp:
             grpname = self.G_geom_ref
         else:
             grpname = self.F_mode_fmt % \
@@ -312,7 +315,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .error import REPOError
+        from ..error import REPOError
 
         # Just try to get the data. Simply pass up all exceptions except for
         #  those if the group or data doesn't exist. DO re-raise a non-bound
@@ -338,11 +341,11 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .const import ER_Param
-        from .error import REPOError as RErr
+        from ..const import ERA_Param
+        from ..error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ER_Param.E:
+        if not param in ERA_Param:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -392,11 +395,11 @@ class OPAN_REPO(object):
 
         # Imports
         import os, numpy as np
-        from .const import ER_Param
-        from .error import REPOError as RErr
+        from ..const import ERA_Param
+        from ..error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ER_Param.E:
+        if not param in ERA_Param:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -436,7 +439,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .error import REPOError
+        from ..error import REPOError
 
         # Try to get the param; pass along all errors, except 'data' error
         #  from REPOError
@@ -460,7 +463,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .error import REPOError as RErr
+        from ..error import REPOError as RErr
 
         # Get the return value from the dataset, complaining if repo not
         #  bound. Using 'require_dataset' since any repo w/o a defined
@@ -510,12 +513,12 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from .xyz import OPAN_XYZ as XYZ
-        from .const import ER_Param, ER_Data
+        from ..xyz import OPAN_XYZ as XYZ
+        from ..const import ERA_Param, ERA_Data
 
         # Generate XYZ and return
-        out_XYZ = XYZ(atom_syms=self.get_param(ER_Param.atoms), \
-                        coords=self.get_data(ER_Data.geom, mode, disp))
+        out_XYZ = XYZ(atom_syms=self.get_param(ERA_Param.atoms), \
+                        coords=self.get_data(ERA_Data.geom, mode, disp))
         return out_XYZ
 
     ## end def get_XYZ

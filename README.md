@@ -1,6 +1,8 @@
 # opan (OpenAnharmonic)
 
 
-Dreams one day to be an automated system for driving VPT2 (and possibly other)
- anharmonic computations on a variety of computational/quantum chemistry software
+Dreams one day to be an automated system for driving VPT2 anharmonic
+ (and possibly other) computations on a variety of computational/quantum chemistry software
  packages.
+ 
+This project strives to follow [Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html)
