@@ -202,8 +202,6 @@ class ORCA_ENGRAD(object):
         Raises
         ------
         GRADError : If indicated gradient file is malformed in some fashion
-        ValueError  : If displacement mode, direction or magnitude are invalid
-        TypeError   : If any displacement flag is of an incorrect type
         IOError     : If the indicated file does not exist or cannot be read
         """
 
