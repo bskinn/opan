@@ -22,9 +22,24 @@
 import unittest
 
 
+# =============================   ORCA   ==================================== #
+
+class SuperORCA(unittest.TestCase):
+    # Superclass for all ORCA test case superclasses
+
+    # Imports
+    import os
+
+    # Constants
+    testdir = 'orca_test_dir'
+    resourcedir = os.path.join('resource','tests')
+
+## end class SuperORCA
+
+
 # ============================  ORCA_ENGRAD ================================= #
 
-class SuperORCAEngrad(unittest.TestCase):
+class SuperORCAEngrad(SuperORCA):
     # Superclass for all ORCA engrad test cases
 
     # Imports
@@ -32,7 +47,6 @@ class SuperORCAEngrad(unittest.TestCase):
     import numpy as np
 
     # Superclass constants
-    testdir = 'orca_test_dir'
     file_name = 'test.engrad'
     file_text_good = dedent("""\
         #
@@ -336,6 +350,26 @@ class TestORCAEngradBadData(SuperORCAEngrad):
 ## end class TestORCAEngradBadData
 
 
+class TestORCAEngradLiveData(SuperORCAEngrad):
+
+    def test_ENGRAD_LiveData(self):
+
+        import os
+        from opan.grad import ORCA_ENGRAD
+        from opan.error import GRADError
+
+        for fname in os.listdir(self.resourcedir):
+            if fname[:9] == "test_orca" and fname[-6:] == "engrad":
+                print("\nTesting file '" + fname + "' ... ")
+                try:
+                    ORCA_ENGRAD(os.path.join(self.resourcedir, fname))
+                except (IOError, GRADError) as e: # pragma: no cover
+                    self.longMessage = True
+                    self.fail("Load of test file '" + str(fname) +
+                            "' failed:\n" + str(e))
+
+## end class TestORCAEngradLiveData
+
 
 # ============================  OPAN_ERROR ================================== #
 
@@ -396,7 +430,7 @@ class TestXYZErrorInitConfig(unittest.TestCase):
 
 # =============================  ORCA_HESS  ================================= #
 
-class SuperORCAHess(unittest.TestCase):
+class SuperORCAHess(SuperORCA):
     # Superclass for all ORCA .hess test cases
 
     # Imports
@@ -1797,6 +1831,27 @@ class TestORCAHessAltData(SuperORCAHess):
 ## end class TestORCAHessAltData
 
 
+class TestORCAHessLiveData(SuperORCAHess):
+
+    def test_HESS_LiveData(self):
+
+        import os
+        from opan.hess import ORCA_HESS
+        from opan.error import HESSError
+
+        for fname in os.listdir(self.resourcedir):
+            if fname[:9] == "test_orca" and fname[-4:] == "hess":
+                print("\nTesting file '" + fname + "' ....")
+                try:
+                    ORCA_HESS(os.path.join(self.resourcedir, fname))
+                except (IOError, HESSError) as e: # pragma: no cover
+                    self.longMessage = True
+                    self.fail("Load of test file '" + str(fname) +
+                            "' failed:\n" + str(e))
+
+## end class TestORCAHessLiveData
+
+
 # =============================  OPAN_XYZ  ================================== #
 
 class SuperOPANXYZ(unittest.TestCase):
@@ -1907,7 +1962,7 @@ class SuperOPANXYZ(unittest.TestCase):
       H       1.418117     -0.085834      1.052642
     """)
 
-    testdir = 'orca_test_dir'
+    testdir = 'opan_test_dir'
     file_name = 'test.xyz'
 
     class names(object):
@@ -2052,7 +2107,7 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
     def tearDownClass(self):
         import os
 
-        # Delete the hess file
+        # Delete the xyz file
         os.remove(self.file_name)
 
         # Remove the test directory
@@ -2125,12 +2180,13 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
 
 
 class TestOPANXYZAltFileData(SuperOPANXYZ):
-    # Ensuring importing an XYZ file with data of generally valid formatting but
-    #  invalid content raises the appropriate errors
+    # Ensuring successful import of an XYZ file with valid data of alternative
+    #  formatting to that contained in SuperOPANXYZ.file_text_good
+    #  (primarily if elements are specified by atomic number).
 
     @classmethod
     def setUpClass(self):
-        # Set up the directory and add munged files
+        # Set up the directory and add alternate-g files
 
         setUpTestDir(self.testdir)
 
@@ -2142,7 +2198,7 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
 
     @classmethod
     def tearDownClass(self):
-        # Remove any engrad files and try to remove the temp directory
+        # Remove any created files and try to remove the temp directory
 
         import os
 
@@ -2234,7 +2290,7 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
 
     @classmethod
     def tearDownClass(self):
-        # Remove any engrad files and try to remove the temp directory
+        # Remove any created files and try to remove the temp directory
 
         import os
 
@@ -2392,7 +2448,7 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
     def tearDownClass(self):
         import os
 
-        # Delete the hess file
+        # Delete the xyz file
         os.remove(self.file_name)
 
         # Remove the test directory
