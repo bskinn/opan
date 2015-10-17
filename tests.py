@@ -2059,6 +2059,8 @@ class SuperOPANXYZ(unittest.TestCase):
          1.89908972,  0.27643859, 0.27668425,  2.54469386,  1.96100848,
          -0.14614197,  2.54539117, -0.14597189,  1.9612806 ]]).transpose()
     good_direct_atoms = np.array([['CU', 'O', 'H', 'H']]).transpose()
+    good_direct_O1Dist = np.array([3.3546284826543507, 0.0,
+                                1.8529334749323307, 1.8531057866658869])
 
     bad_file_data_substs = {
                 names.file_start : ('4\nCoordin', '\n4\nCoordin'),
@@ -2252,6 +2254,9 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
         self.xyz = OPAN_XYZ(atom_syms=self.good_direct_atoms,
                                             coords=self.good_direct_geom)
 
+        # Long messages
+        self.longMessage = True
+
     def test_XYZ_GoodDirectDataNumAtoms(self):
         self.assertEqual(self.xyz.num_atoms, self.good_direct_atoms.shape[0])
 
@@ -2262,12 +2267,23 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
         self.assertEqual(self.xyz.geoms[0].shape[0], self.xyz.num_atoms * 3)
 
     def test_XYZ_GoodDirectDataCoords(self):
-        self.longMessage = True
         for i in range(self.good_direct_geom.shape[0]):
             self.assertAlmostEqual(self.xyz.geoms[0][i,0],
                     self.good_direct_geom[i,0],
                     delta=1e-8,
                     msg="Coordinates element (" + str(i) + ')')
+
+    def test_XYZ_GoodDirectDataIterO1Dist(self):
+        for tup in zip(
+                    self.good_direct_O1Dist,
+                    self.xyz.Dist_iter(0,1,None),
+                    range(self.good_direct_O1Dist.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=1e-5,
+                    msg="Distance between O1 and atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2],0].capitalize() +
+                            ")")
+
 
 ## end class TestOPANXYZGoodDirectData
 
