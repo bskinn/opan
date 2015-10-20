@@ -38,13 +38,14 @@ Sub-Modules
 execute          -- Functions for execution of external computational
                         software packages
 inertia          -- Inertia-related tools (c.o.m., rotational constants, etc.)
-vector           -- Vector / symmetry utility functions
+symm             -- Molecular symmetry utility functions
+vector           -- Vector utility functions
 
 """
 
 from __future__ import absolute_import
 
-__all__ = ['execute', 'inertia', 'vector']
+__all__ = ['execute', 'inertia', 'symm', 'vector']
 
 from . import *
 from .base import check_geom, delta_fxn, make_timestamp, pack_tups

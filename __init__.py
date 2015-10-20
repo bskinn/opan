@@ -20,10 +20,10 @@
 
 from __future__ import absolute_import
 
-__all__ = ['const', 'error', 'xyz', 'grad', 'hess', 'output']
+__all__ = ['const', 'error', 'xyz', 'grad', 'hess', 'output',
+                                            'utils', 'anharm']
 
 from . import *
-from .utils import *
-from .anharm import *
+
 
 
