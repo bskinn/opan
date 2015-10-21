@@ -204,6 +204,31 @@ def inertia_tensor(geom, masses):
 ## end def inertia_mtx
 
 
+def principals(geom, masses):
+    """Principal axes and moments of inertia for the indicated geometry.
+
+    Calculated by scipy.linalg.eigh, since the moment of inertia tensor
+    is symmetric (real-Hermitian) by construction.  More convenient to
+    compute both the axes and moments at the same time since eigh does not
+    guarantee ordering of the moments/axes.
+
+    For linear, symmetric, and spherical top cases, the degenerate axes are
+    always chosen in a systematic fashion:
+
+        Linear:
+            - The first axis is the normalized rejection of the x-axis onto
+            the nondegenerate axis.
+            - If the nondegenerate axis is on the x-axis, then the first
+            axis is the normalized rejection of the y-axis onto the
+
+        Symmetric: Iterate over the atoms
+
+    """
+    pass
+
+##end def principals
+
+
 def expand_masses(masses):
     """ Replicate an N x 1 vector of masses to a 3N x 1 vector.
 
@@ -214,7 +239,6 @@ def expand_masses(masses):
     ----------
     masses   : N x 1 np.float_
         Vector of masses to expand
-
 
     Returns
     -------
