@@ -320,6 +320,8 @@ class PHYS(object):
     Planck = 6.28318531
     Planck_bar = 1
 
+## end class PHYS
+
 
 class DEF(object):
     """Container for default parameter values (possibly user-adjustable)
@@ -376,16 +378,22 @@ class DEF(object):
 class PRM(object):
     """Container for internal computation parameters (not user-adjustable)
 
-    Non_Parallel_Tol = 1e-3
-    Zero_Vec_Tol = 1e-6
-    Symm_Min_Origin_Dist = 0.5
-    Max_Sane_DipDer = 100
+    Non_Parallel_Tol = 1e-3     (Minimum angle deviation (degrees) required
+                                 for two vectors to be considered non-parallel)
+    Zero_Vec_Tol = 1e-6         (Vector magnitude below which a vector is
+                                 considered equal to the zero vector)
+    Max_Sane_DipDer = 100       (Trap value for aberrantly large dipole
+                                 derivative values in ORCA if dipoles are not
+                                 calculated in a NUMFREQ run)
+    Equal_Moment_Tol = 1e-3     (minimum deviation-ratio from unity below which
+                                 two principal inertial moments are considered
+                                 equal)
     """
 
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
-    Symm_Min_Origin_Dist = 0.5
     Max_Sane_DipDer = 100
+    Equal_Moment_Tol = 1e-3
 
 ## end class PRM
 
@@ -456,6 +464,8 @@ class SYMM(object):
     Ih_C2_3C2 = 1.264759664
     Ih_C2_4C2 = 1.467100515
 
+## end class SYMM
+
 
 class UNINIT(object):
     """Container for numerical values indicating an un-initialized parent
@@ -473,6 +483,8 @@ class UNINIT(object):
     Unsigned_Double = -1
     Signed_Long = 1234567890
     Signed_Double = 1234567890.12345
+
+## end class UNINIT
 
 
 class UNITS(object):
@@ -504,6 +516,8 @@ class UNITS(object):
             _EUrc.WaveNumAtomic :     "cyc/B",
             _EUrc.WaveNumCM :         "cyc/cm"
                 }
+
+## end class UNITS
 
 
 #TODO:(?) const: do atomNum/Sym need to handle ghost atoms / charges?
