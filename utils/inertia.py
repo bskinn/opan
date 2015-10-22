@@ -142,9 +142,6 @@ def inertia_tensor(geom, masses):
     masses   : N x 1 OR 3N x 1 np.float_
         Atomic masses of the atoms. 3N x 1 option is to allow calculation of
         a per-coordinate perturbed value.
-    centered : bool
-        Indicates whether the geometry has already been shifted to the
-        center of mass (True --> already centered; skip pre-centering)
 
     Returns
     -------
@@ -209,22 +206,96 @@ def principals(geom, masses):
 
     Calculated by scipy.linalg.eigh, since the moment of inertia tensor
     is symmetric (real-Hermitian) by construction.  More convenient to
-    compute both the axes and moments at the same time since eigh does not
-    guarantee ordering of the moments/axes.
+    compute both the axes and moments at the same time since the eigenvectors
+    must be processed to ensure repeatable results.
 
-    For linear, symmetric, and spherical top cases, the degenerate axes are
-    always chosen in a systematic fashion:
+    The principal axes (inertia tensor eigenvectors) are processed in a
+    fashion to ensure repeatable, *identical* generation, including
+    orientation AND directionality.
+    #DOC: Add ref to exposition in webdocs once written up.
 
-        Linear:
-            - The first axis is the normalized rejection of the x-axis onto
-            the nondegenerate axis.
-            - If the nondegenerate axis is on the x-axis, then the first
-            axis is the normalized rejection of the y-axis onto the
+    Parameters
+    ----------
+    geom     : 3N x 1 np.float_
+        Coordinates of the atoms
+    masses   : N x 1 OR 3N x 1 np.float_
+        Atomic masses of the atoms. 3N x 1 option is to allow calculation of
+        a per-coordinate perturbed value.
 
-        Symmetric: Iterate over the atoms
+    Returns
+    -------
+    moments : dim-3 tuple of np.float_
+        Principal inertial moments, sorted in increasing order
+        (0 <= I_A <= I_B <= I_C)
+    axes    : dim-3 tuple of 3 x 1 np.float)
+        Principal axes, sorted with the principal moments and processed
+        for repeatability
+    top     : E_TopType
+        Detected molecular top type
 
     """
-    pass
+
+    # Imports
+    import numpy as np
+    from scipy import linalg as spla
+    from ..const import PRM, E_TopType as ETT
+    from ..error import INERTIAError
+
+    # Center the geometry. Takes care of any improper shapes of geom or
+    #  masses via the internal call to 'ctr_mass' within the call to
+    #  'ctr_geom'.  Will need the centered geometry eventually anyways.
+    geom = ctr_geom(geom, masses)
+
+    # Get the inertia tensor
+    tensor = inertia_tensor(geom, masses)
+
+    # Orthogonalize and store eigenvalues/-vectors. eigh documentation says it
+    #  will return ordered eigenvalues.... Store eigenvalues directly to
+    #  the return variable; since eigenvectors probably need work, store them
+    #  to a holding variable.
+    moments, vecs = spla.eigh(tensor)
+
+    # 'fail' init for 'top
+    top = None
+
+    # Detect top type; start with error check
+    if moments[0] < -PRM.Zero_Moment_Tol:
+        # Invalid moment; raise error
+        raise(INERTIAError(INERTIAError.neg_moment,
+                    "Negative principal inertial moment", ""))
+    elif moments[0] < PRM.Zero_Moment_Tol:
+        # Zero first moment. Check whether others are too
+        if all(moments < PRM.Zero_Moment_Tol):
+            top = ETT.Atom
+        else:
+            top = ETT.Linear
+        ## end if
+    else:
+        if abs(moments[0] - moments[1]) < PRM.Equal_Moment_Tol:
+            # Spherical or oblate symmetrical
+            if abs(moments[1] - moments[2]) < PRM.Equal_Moment_Tol:
+                top = ETT.Spherical
+            else:
+                top = ETT.SymmOblate
+            ## end if
+        else:
+            # Prolate symmetrical or Asymmetric
+            if abs(moments[1] - moments[2]) < PRM.Equal_Moment_Tol:
+                top = ETT.SymmProlate
+            else:
+                top = ETT.Asymmetrical
+            ## end if
+        ## end if
+    ## end if
+
+    # Check for nothing assigned
+    if top == None:
+        raise(INERTIAError(INERTIAError.top_type,
+                    "Unrecognized molecular top type",""))
+    ## end if
+
+    #RESUME: Processing eigenvectors
+
 
 ##end def principals
 
