@@ -326,6 +326,58 @@ def expand_masses(masses):
 ## end def expand_masses
 
 
+def _fadnpv(vec, geom):
+    """First non-zero Atomic Displacement that is Non-Parallel with Vec
+
+    Utility function to identify the first atomic displacement in a geometry
+    that is both (a) not the zero vector and (b) non-(anti-)parallel with a
+    reference vector.
+
+    Parameters
+    ----------
+    vec     : 3 x 1 np.float_
+        Reference vector. Does not need to be normalized
+    geom    : 3N x 1 np.float_
+        *CENTERED* molecular geometry
+
+    Returns
+    -------
+    out_vec : 3 x 1 np.float_
+        Normalized non-zero, non-atomic displacement not (anti-)parallel to vec
+
+    """
+
+    # Imports
+    import numpy as np
+    from scipy import linalg as spla
+    from ..const import PRM
+
+    # Geom and vec must both be the right shape
+    if not (len(geom.shape) == 2 and geom.shape[0] % 3 == 0 and
+                                                        geom.shape[1] == 1):
+        raise(ValueError("Geometry is not 3N x 1"))
+    ## end if
+    if not vec.shape == (3,1):
+        raise(ValueError("Reference vector is not 3 x 1"))
+    ## end if
+
+    # vec must not be the zero vector
+    if spla.norm(vec) < PRM.Zero_Vec_Tol:
+        raise(ValueError("Reference vector norm is too small"))
+    ## end if
+
+    # Array-ify and normalize the ref vec
+    vec = np.asarray(vec).squeeze() / spla.norm(vec)
+
+    # Iterate over reshaped geometry
+    for disp in np.asarray(geom).reshape((geom.shape[0]/3, 3)):
+        pass
+    ## next disp
+
+    # Return the resulting vector
+    return "Not implemented yet."
+
+## end def _fadnpv
 
 if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")
