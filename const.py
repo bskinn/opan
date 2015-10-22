@@ -381,19 +381,23 @@ class PRM(object):
     Non_Parallel_Tol = 1e-3     (Minimum angle deviation (degrees) required
                                  for two vectors to be considered non-parallel)
     Zero_Vec_Tol = 1e-6         (Vector magnitude below which a vector is
-                                 considered equal to the zero vector)
+                                 considered equal to the zero vector; Bohr
+                                 units or dimensionless)
     Max_Sane_DipDer = 100       (Trap value for aberrantly large dipole
                                  derivative values in ORCA if dipoles are not
                                  calculated in a NUMFREQ run)
-    Equal_Moment_Tol = 1e-3     (minimum deviation-ratio from unity below which
+    Equal_Moment_Tol = 1e-3     (Minimum deviation-ratio from unity below which
                                  two principal inertial moments are considered
                                  equal)
+    Zero_Moment_Tol = 1e-3      (Theshold value below which moments are
+                                 considered equal to zero; amu-Bohr^2 units)
     """
 
     Non_Parallel_Tol = 1e-3
     Zero_Vec_Tol = 1e-6
     Max_Sane_DipDer = 100
     Equal_Moment_Tol = 1e-3
+    Zero_Moment_Tol = 1e-3
 
 ## end class PRM
 
