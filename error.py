@@ -380,5 +380,26 @@ class ANHARMError(OPANError):
 ## end class ANHARMError
 
 
+class INERTIAError(OPANError):
+    """Error relating to utils.inertia submodule functions.
+
+    See OPANError.__doc__ for more information.
+
+    Attributes:
+        tc, msg, src, subclass_name are inherited from OPANError
+
+        typecodes:
+            neg_moment  : A negative principal inertial moment was computed
+            top_type    : No valid molecular top type was identified
+
+    """
+
+    # Typecodes as class-level variables
+    neg_moment = 'neg_moment'
+    top_type = 'top_type'
+
+## end class INERTIAError
+
+
 if __name__ == '__main__':  # pragma: no cover
     print("Module not executable")
