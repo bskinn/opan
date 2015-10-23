@@ -349,8 +349,10 @@ def _fadnpv(vec, geom):
 
     # Imports
     import numpy as np
+    import scipy as sp
     from scipy import linalg as spla
     from ..const import PRM
+    from ..error import INERTIAError
 
     # Geom and vec must both be the right shape
     if not (len(geom.shape) == 2 and geom.shape[0] % 3 == 0 and
@@ -371,13 +373,31 @@ def _fadnpv(vec, geom):
 
     # Iterate over reshaped geometry
     for disp in np.asarray(geom).reshape((geom.shape[0]/3, 3)):
-        pass
+        # See if the displacement is nonzero
+        if spla.norm(disp) >= PRM.Zero_Vec_Tol:
+            # See if it's nonparallel to the ref vec
+            calcval = sp.degrees(sp.arccos(sp.dot(disp, vec) / 
+                                                spla.norm(disp)))
+            if abs(calcval) >= PRM.Non_Parallel_Tol and \
+    	                abs(calcval - 180.0) >= PRM.Non_Parallel_Tol:
+                # This is the displacement you are looking for
+                out_vec = np.matrix(disp / spla.norm(disp)).reshape((3,1))
+                break
+            ## end if
+        ## end if
     ## next disp
+    else:
+        # Nothing fit the bill - must be a linear molecule?
+        raise(INERTIAError(INERTIAError.linear_mol, 
+                    "Linear molecule, no non-parallel displacement", ""))
+    ## end for disp
 
     # Return the resulting vector
-    return "Not implemented yet."
+    return out_vec
 
 ## end def _fadnpv
+
+
 
 if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")
