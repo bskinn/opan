@@ -391,12 +391,15 @@ class INERTIAError(OPANError):
         typecodes:
             neg_moment  : A negative principal inertial moment was computed
             top_type    : No valid molecular top type was identified
+            linear_mol  : A linear geometry was passed to a function 
+                            requiring a non-linear one
 
     """
 
     # Typecodes as class-level variables
     neg_moment = 'neg_moment'
     top_type = 'top_type'
+    linear_mol = 'linear_mol'
 
 ## end class INERTIAError
 
