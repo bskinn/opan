@@ -298,6 +298,8 @@ def parallel_check(vec1, vec2):
 def proj(vec, vec_onto):
     """ Vector projection
 
+    Calculated as vec_onto * dot(vec, vec_onto) / dot(vec_onto, vec_onto)
+
     Parameters
     ----------
     vec      : N x 1 np.float_
@@ -310,13 +312,33 @@ def proj(vec, vec_onto):
     proj_vec : N x 1 np.float_
         Projection of vec onto vec_onto
     """
-    pass
+
+    # Imports
+    import scipy as sp
+
+    # Ensure column vectors
+    if not is_col_vec(vec):
+        raise(ValueError("'vec' is not a column vector"))
+    ## end if
+    if not is_col_vec(vec_onto):
+        raise(ValueError("'vec_onto' is not a column vector"))
+    ## end if
+    if not vec.shape[0] == vec_onto.shape[0]:
+        raise(ValueError("Shape mismatch between vectors"))
+    ## end if
+
+    # Calculate the projection and return
+    proj_vec = sp.float_(sp.asscalar(sp.dot(vec.T, vec_onto))) / \
+                sp.float_(sp.asscalar(sp.dot(vec_onto.T, vec_onto))) * vec_onto
+    return proj_vec
 
 ## end def proj
 
 
 def rej(vec, vec_onto):
     """ Vector rejection
+
+    Calculated as vec - proj(vec, vec_onto).
 
     Parameters
     ----------
@@ -330,7 +352,10 @@ def rej(vec, vec_onto):
     rej_vec : N x 1 np.float_
         Rejection of vec onto vec_onto
     """
-    pass
+
+    # Calculate and return. Size &c checking handled by 'proj'
+    rej_vec = vec - proj(vec, vec_onto)
+    return rej_vec
 
 ## end def proj
 
@@ -351,6 +376,8 @@ def is_col_vec(vec):
     Raises
     ------
     TypeError : If 'vec' lacks a 'shape' attribute
+    TypeError : If 'len(vec.shape)' raises TypeError
+    TypeError : If 'vec.shape[1]' raises TypeError
     Other errors might occur if a non-Numpy type happens to have a shape
         attribute
     """
@@ -362,13 +389,17 @@ def is_col_vec(vec):
     try:
         s = vec.shape
     except AttributeError:
-        raise(TypeError("'vec' is not a Numpy array/matrix"))
+        raise(TypeError("'vec' is not a NumPy array/matrix"))
     ## end try
 
     # Check size
-    if len(s) == 2 and s[1] == 1:
-        is_col = True
-    ## end if
+    try:
+        if len(s) == 2 and s[1] == 1:
+            is_col = True
+        ## end if
+    except TypeError:
+        raise(TypeError("'vec' is not a NumPy array/matrix"))
+    ## end try
 
     # Return
     return is_col
