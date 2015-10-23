@@ -113,7 +113,8 @@ class OPANError(Exception):
                     isinstance(self, OUTPUTError) or \
                     isinstance(self, SYMMError) or \
                     isinstance(self, REPOError) or \
-                    isinstance(self, ANHARMError)
+                    isinstance(self, ANHARMError) or \
+                    isinstance(self, INERTIAError)
                 ):
             raise(NotImplementedError("OPANError base class is abstract."))
         ## end if
