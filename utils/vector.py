@@ -33,10 +33,6 @@
 from ..const import DEF as _DEF
 
 
-# Debug var
-_SLOW = True
-
-
 def ortho_basis(norm_vec, ref_vec=None):
     """Generates an orthonormal basis in the plane perpendicular to norm_vec
 
@@ -248,6 +244,136 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 
 ## end def orthonorm_check
 
+
+def parallel_check(vec1, vec2):
+    """Checks whether two N x 1 vectors are parallel OR anti-parallel
+
+    Vectors MUST be column vectors.
+
+    Parameters
+    ----------
+    vec1    : a x 1 np.float_
+        First vector to compare
+    vec2    : a x 1 np.float_
+        Second vector to compare
+
+    Returns
+    -------
+    par     : bool
+        True if (anti-)parallel to within 'PRM.Non_Parallel_Tol' degrees.
+        False otherwise.
+    """
+
+    # Imports
+    from ..const import PRM
+    from scipy import linalg as spla
+    import scipy as sp
+
+    # Initialize True
+    par = True
+
+    # Shape check
+    for v,n in zip([vec1, vec2], range(1,3)):
+        if not is_col_vec(v):
+            raise(ValueError("Bad shape for vector #" + str(n)))
+        ## end if
+    ## next v,n
+    if not vec1.shape[0] == vec2.shape[0]:
+        raise(ValueError("Vector length mismatch"))
+    ## end if
+
+    # Check for (anti-)parallel character and return
+    angle = sp.degrees(sp.arccos(sp.dot(vec1.T,vec2) / spla.norm(vec1) /
+                                                        spla.norm(vec2)))
+    if abs(angle) < PRM.Non_Parallel_Tol or \
+                            abs(angle - 180) < PRM.Non_Parallel_Tol:
+        par = False
+    ## end if
+
+    return par
+
+## end def parallel_check
+
+
+def proj(vec, vec_onto):
+    """ Vector projection
+
+    Parameters
+    ----------
+    vec      : N x 1 np.float_
+        Vector to project
+    vec_onto : N x 1 np.float_
+        Vector onto which vec is to be projected
+
+    Returns
+    -------
+    proj_vec : N x 1 np.float_
+        Projection of vec onto vec_onto
+    """
+    pass
+
+## end def proj
+
+
+def rej(vec, vec_onto):
+    """ Vector rejection
+
+    Parameters
+    ----------
+    vec      : N x 1 np.float_
+        Vector to reject
+    vec_onto : N x 1 np.float_
+        Vector onto which vec is to be rejected
+
+    Returns
+    -------
+    rej_vec : N x 1 np.float_
+        Rejection of vec onto vec_onto
+    """
+    pass
+
+## end def proj
+
+
+def is_col_vec(vec):
+    """ Tests for whether an object is a column vector.
+
+    Parameters
+    ----------
+    vec     : Arbitrary np.array or np.matrix
+        Object to be tested for 'vectorness'
+
+    Returns
+    -------
+    is_col  : bool
+        True if object is a column vector, False otherwise.
+
+    Raises
+    ------
+    TypeError : If 'vec' lacks a 'shape' attribute
+    Other errors might occur if a non-Numpy type happens to have a shape
+        attribute
+    """
+
+    # Initialize failure
+    is_col = False
+
+    # Check member
+    try:
+        s = vec.shape
+    except AttributeError:
+        raise(TypeError("'vec' is not a Numpy array/matrix"))
+    ## end try
+
+    # Check size
+    if len(s) == 2 and s[1] == 1:
+        is_col = True
+    ## end if
+
+    # Return
+    return is_col
+
+## end def is_col_vec
 
 
 
