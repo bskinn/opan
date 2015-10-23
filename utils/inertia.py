@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 # Name:        utils.inertia
-# Purpose:     Submodule containing utility functions relating to calculations
-#               of inertia-related properties
+# Purpose:     Submodule containing utility functions dealing with calculations
+#               of inertia tensor-related properties
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
@@ -18,6 +18,20 @@
 #       http://www.github.com/bskinn/opan
 #
 #-------------------------------------------------------------------------------
+
+"""Utilities for calculation of inertia tensor & principal axes/moments
+
+Some of these functions may have broader applicability but are housed here
+due to anticipated common usage within the context of VPT2 calculations.
+
+Functions
+---------
+ctr_geom        : Shift geometry relative to center of mass
+ctr_mass        : Calculate the center of mass
+expand_masses   : Utility for converting an N x 1 masses vector to 3N x 1
+inertia_tensor  : Calculate the inertia tensor for a system
+principals      : Calculate principal axes/moments and molecular top type
+"""
 
 
 # Module-level imports
@@ -54,10 +68,10 @@ def ctr_mass(geom, masses):
     import numpy as np
 
     # Shape check
-    if geom.shape[1] != 1:
+    if len(geom.shape) != 2 or geom.shape[1] != 1:
         raise(ValueError("Geometry is not a column vector"))
     ## end if
-    if masses.shape[1] != 1:
+    if len(masses.shape) != 2 or masses.shape[1] != 1:
         raise(ValueError("Masses are not a column vector"))
     ## end if
     if not geom.shape[0] % 3 == 0:
@@ -224,10 +238,10 @@ def principals(geom, masses):
 
     Returns
     -------
-    moments : dim-3 tuple of np.float_
+    moments : 1 x 3 np.float_
         Principal inertial moments, sorted in increasing order
         (0 <= I_A <= I_B <= I_C)
-    axes    : dim-3 tuple of 3 x 1 np.float)
+    axes    : 3 x 3 np.float)
         Principal axes, sorted with the principal moments and processed
         for repeatability
     top     : E_TopType
@@ -237,9 +251,11 @@ def principals(geom, masses):
 
     # Imports
     import numpy as np
+    import scipy as sp
     from scipy import linalg as spla
     from ..const import PRM, E_TopType as ETT
     from ..error import INERTIAError
+    from .vector import parallel_check as parchk
 
     # Center the geometry. Takes care of any improper shapes of geom or
     #  masses via the internal call to 'ctr_mass' within the call to
@@ -294,7 +310,46 @@ def principals(geom, masses):
                     "Unrecognized molecular top type",""))
     ## end if
 
-    #RESUME: Processing eigenvectors
+    # Initialize the axes
+    axes = sp.zeros((3,3))
+
+    # Define the axes depending on the top type
+    if top == ETT.Atom:
+        # Just use the coordinate axes
+        axes = sp.identity(3, dtype=np.float_)
+
+    elif top == ETT.Linear:
+        # Zero-moment (molecular) axis always pointed toward the first atom,
+        #  or the second if the first is at center-of-mass
+        if spla.norm(geom[0:3,0]) < PRM.Zero_Vec_Tol:
+            axes[:,0] = geom[0:3,0] / spla.norm(geom[0:3,0])
+        else:
+            axes[:,0] = geom[3:6,0] / spla.norm(geom[3:6,0])
+        ## end if
+
+        # Second axis is the normalized rejection of the x-axis on the first
+        #  axis, unless the molecule lies along the x-axis in which case it
+        #  is taken as the normalized rejection of the y-axis on the first vec.
+        if parchk(axes[:,0], np.array([[1,0,0]]).T):
+            pass  #RESUME
+
+    elif top == ETT.Asymmetrical:
+        pass
+
+    elif top == ETT.SymmOblate:
+        pass
+
+    elif top == ETT.SymmProlate:
+        pass
+
+    elif top == ETT.Spherical:
+        pass
+    ## end if
+
+    # Matrixify moments
+    moments = np.asmatrix(moments)
+
+
 
 
 ##end def principals
@@ -353,6 +408,7 @@ def _fadnpv(vec, geom):
     from scipy import linalg as spla
     from ..const import PRM
     from ..error import INERTIAError
+    from .vector import parallel_check as parchk
 
     # Geom and vec must both be the right shape
     if not (len(geom.shape) == 2 and geom.shape[0] % 3 == 0 and
@@ -376,10 +432,7 @@ def _fadnpv(vec, geom):
         # See if the displacement is nonzero
         if spla.norm(disp) >= PRM.Zero_Vec_Tol:
             # See if it's nonparallel to the ref vec
-            calcval = sp.degrees(sp.arccos(sp.dot(disp, vec) / 
-                                                spla.norm(disp)))
-            if abs(calcval) >= PRM.Non_Parallel_Tol and \
-    	                abs(calcval - 180.0) >= PRM.Non_Parallel_Tol:
+            if not parchk(disp.reshape((3,1)), vec):
                 # This is the displacement you are looking for
                 out_vec = np.matrix(disp / spla.norm(disp)).reshape((3,1))
                 break
@@ -388,7 +441,7 @@ def _fadnpv(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be a linear molecule?
-        raise(INERTIAError(INERTIAError.linear_mol, 
+        raise(INERTIAError(INERTIAError.linear_mol,
                     "Linear molecule, no non-parallel displacement", ""))
     ## end for disp
 
