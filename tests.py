@@ -2061,6 +2061,10 @@ class SuperOPANXYZ(unittest.TestCase):
     good_direct_atoms = np.array([['CU', 'O', 'H', 'H']]).transpose()
     good_direct_O1Dist = np.array([3.3546284826543507, 0.0,
                                 1.8529334749323307, 1.8531057866658869])
+    good_direct_CuO1Angle = np.array([0.0, None, 118.0167027446415,
+                                            118.05344488961961], dtype=object)
+    good_direct_Dihed = np.array([None, None, None, 131.28736349459098],
+                                                                dtype=object)
 
     bad_file_data_substs = {
                 names.file_start : ('4\nCoordin', '\n4\nCoordin'),
@@ -2124,6 +2128,9 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
         # Create the object
         self.xyz = OPAN_XYZ(path=self.file_name)
 
+        # Long messages
+        self.longMessage = True
+
     def test_XYZ_GoodFileDataNumAtoms(self):
         self.assertEqual(self.xyz.num_atoms, self.num_atoms)
 
@@ -2131,14 +2138,12 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
         self.assertEqual(self.xyz.num_geoms, self.num_geoms)
 
     def test_XYZ_GoodFileDataAtomSyms(self):
-        self.longMessage = True
         for i in range(self.xyz.atom_syms.shape[0]):
             self.assertEqual(self.xyz.atom_syms[i,0], \
                     self.atom_syms[i,0], \
                     msg="Coordinates element (" + str(i) + ')')
 
     def test_XYZ_GoodFileDataCoords(self):
-        self.longMessage = True
         for g in range(self.geoms.shape[0]):
             for i in range(self.geoms.shape[1]):
                 self.assertAlmostEqual(self.xyz.geoms[g][i,0], \
@@ -2148,7 +2153,6 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                                 ", coordinate element #" + str(i))
 
     def test_XYZ_GoodFileDataDistances(self):
-        self.longMessage = True
         for t in zip(self.dist_Cu_O, self.xyz.Dist_iter(None, 0, 1),
                                         range(self.dist_Cu_O.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-5,
@@ -2161,7 +2165,6 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                         ": " + str(t[0:2]))
 
     def test_XYZ_GoodFileDataAngles(self):
-        self.longMessage = True
         for t in zip(self.angle_Cu_O_H1, self.xyz.Angle_iter(None, 0, 1, 2),
                                         range(self.angle_Cu_O_H1.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-2,
@@ -2169,7 +2172,6 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                         ": " + str(t[0:2]))
 
     def test_XYZ_GoodFileDataDihedrals(self):
-        self.longMessage = True
         for t in zip(self.dihed_H2_O_Cu_H1,
                                     self.xyz.Dihed_iter(None, 3, 1, 0, 2),
                                     range(self.dihed_H2_O_Cu_H1.shape[0])):
@@ -2177,6 +2179,18 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                         msg="H2-Cu-O-H1 dihedral mismatch at geom #" +
                         str(t[2]) + ": " + str(t[0:2]))
 
+    def test_XYZ_GoodFileDataIterGeom(self):
+        idxs = [1,4,8]
+        for t in zip(self.geoms[idxs],
+                        self.xyz.Geom_iter(idxs),
+                        range(len(idxs))
+                    ):
+            for i in range(t[0].shape[0]):
+                self.assertAlmostEqual(t[0][i,0], t[1][i,0], delta=1e-6,
+                        msg="Geometry #" + str(t[2]) + \
+                                ", coordinate element #" + str(i))
+
+    #TEST: Displ_iter call (Dist_iter only calls Displ_single)
 
 ## end class TestOPANXYZGoodData
 
@@ -2284,6 +2298,27 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
                             " (" + self.xyz.atom_syms[tup[2],0].capitalize() +
                             ")")
 
+    def test_XYZ_GoodDirectDataIterCuO1Angle(self):
+        for tup in zip(
+                    self.good_direct_CuO1Angle,
+                    self.xyz.Angle_iter(0,0,1,None),
+                    range(self.good_direct_CuO1Angle.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
+                    msg="Angle Cu-O-X with atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2],0].capitalize() +
+                            ")")
+
+    def test_XYZ_GoodDirectDataIterDihed(self):
+        for tup in zip(
+                    self.good_direct_Dihed,
+                    self.xyz.Dihed_iter(0,None, 1,0,2),
+                    range(self.good_direct_Dihed.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
+                    msg="Dihedral with atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2],0].capitalize() +
+                            ")")
 
 ## end class TestOPANXYZGoodDirectData
 
@@ -2443,6 +2478,18 @@ class TestOPANXYZBadDirectData(SuperOPANXYZ):
         self.assertRaises(ValueError, OPAN_XYZ, \
                     coords=munge_coords, \
                     atom_syms=self.good_direct_atoms)
+
+    # TEST: ValueError for Angle at_1 == at_2 and at_3 == at_2 cases
+
+    # TEST: ValueError for Dihed any at_x equal
+
+    # TEST: IndexError for invalid (out-of-range) at_x for Dist, Angle, Dihed
+
+    # TEST: XYZError.dihed for too-nearly-linear atom trio(s)
+
+    # TEST: ValueError when multiple 'None' values passed to an X_iter method
+
+    # TEST: ValueError when 'None' passed to an X_iter with another iterable
 
 ## end class TestOPANXYZBadDirectData
 
