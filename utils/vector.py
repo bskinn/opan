@@ -407,6 +407,57 @@ def is_col_vec(vec):
 ## end def is_col_vec
 
 
+def vec_angle(vec1, vec2):
+    """ Angle between two N-dimensional vectors.
+
+    Angle calculated as arccos(dot(vec1, vec2) / norm(vec1) / norm(vec2)).
+    Should be valid for vectors in any dimension as long as they're equal.
+    Any dimension mismatch raises an error.
+
+    Parameters
+    ----------
+    vec1    : length-N np.array of np.float_
+        First vector
+    vec2    : length-N np.array of np.float_
+        Second vector
+
+    Returns
+    -------
+    angle   : np.float_
+        Angle between the two vectors in degrees
+
+    """
+
+    # Imports
+    import scipy as sp
+    from ..const import PRM
+
+    # Check shape and equal length
+    if len(vec1.shape) != 1:
+        raise(ValueError("'vec1' is not a vector"))
+    ## end if
+    if len(vec2.shape) != 1:
+        raise(ValueError("'vec2' is not a vector"))
+    ## end if
+    if vec1.shape[0] != vec2.shape[0]:
+        raise(ValueError("Vector lengths are not equal"))
+    ## end if
+
+    # Check magnitudes
+    if sp.linalg.norm(vec1) < PRM.Zero_Vec_Tol:
+        raise(ValueError("'vec1' norm is too small"))
+    ## end if
+    if sp.linalg.norm(vec2) < PRM.Zero_Vec_Tol:
+        raise(ValueError("'vec2' norm is too small"))
+    ## end if
+
+    # Calculate the angle and return
+    angle = sp.degrees(sp.arccos(sp.dot(vec1, vec2) /
+                        sp.linalg.norm(vec1) / sp.linalg.norm(vec2)))
+    return angle
+
+## end def vec_angle
+
 
 if __name__ == '__main__':
     print("Module not executable.")
