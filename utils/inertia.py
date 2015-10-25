@@ -255,7 +255,7 @@ def principals(geom, masses):
     from scipy import linalg as spla
     from ..const import PRM, E_TopType as ETT
     from ..error import INERTIAError
-    from .vector import parallel_check as parchk
+    from .vector import rej, parallel_check as prlchk
 
     # Center the geometry. Takes care of any improper shapes of geom or
     #  masses via the internal call to 'ctr_mass' within the call to
@@ -321,17 +321,29 @@ def principals(geom, masses):
     elif top == ETT.Linear:
         # Zero-moment (molecular) axis always pointed toward the first atom,
         #  or the second if the first is at center-of-mass
-        if spla.norm(geom[0:3,0]) < PRM.Zero_Vec_Tol:
-            axes[:,0] = geom[0:3,0] / spla.norm(geom[0:3,0])
+        if spla.norm(geom[0:3,0]) >= PRM.Zero_Vec_Tol:
+            axes[:,(0,)] = geom[0:3,0] / spla.norm(geom[0:3,0])
         else:
-            axes[:,0] = geom[3:6,0] / spla.norm(geom[3:6,0])
+            axes[:,(0,)] = geom[3:6,0] / spla.norm(geom[3:6,0])
         ## end if
 
         # Second axis is the normalized rejection of the x-axis on the first
         #  axis, unless the molecule lies along the x-axis in which case it
         #  is taken as the normalized rejection of the y-axis on the first vec.
-        if parchk(axes[:,0], np.array([[1,0,0]]).T):
-            pass  #RESUME
+        #  The full rejection is calculated in the latter case to afford a 
+        #  slight increase in accuracy, since the axis may deviate slightly
+        #  from the x-axis
+        if prlchk(axes[:,(0,)], np.array([[1.,0.,0.]]).T):
+            # Too nearly (anti-)parallel
+            axes[:,(1,)] = rej(np.array([[0.,1.,0.]]).T, axes[:,(0,)])
+        else:
+            # Sufficiently non-(anti-)parallel
+            axes[:,(1,)] = rej(np.array([[1.,0.,0.]]).T, axes[:,(0,)])
+        ## end if
+        axes[:,1] /= spla.norm(axes[:,1])
+
+        ## Third axis is the first crossed with the second
+        axes[:,2] = sp.cross(axes[:,0], axes[:,1])
 
     elif top == ETT.Asymmetrical:
         pass
@@ -349,8 +361,8 @@ def principals(geom, masses):
     # Matrixify moments
     moments = np.asmatrix(moments)
 
-
-
+    # Return the moments, axes, and top type
+    return moments, axes, top
 
 ##end def principals
 
