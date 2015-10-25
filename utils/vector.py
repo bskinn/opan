@@ -270,7 +270,7 @@ def parallel_check(vec1, vec2):
     import scipy as sp
 
     # Initialize True
-    par = True
+    par = False
 
     # Shape check
     for v,n in zip([vec1, vec2], range(1,3)):
@@ -285,9 +285,8 @@ def parallel_check(vec1, vec2):
     # Check for (anti-)parallel character and return
     angle = sp.degrees(sp.arccos(sp.dot(vec1.T,vec2) / spla.norm(vec1) /
                                                         spla.norm(vec2)))
-    if abs(angle) < PRM.Non_Parallel_Tol or \
-                            abs(angle - 180) < PRM.Non_Parallel_Tol:
-        par = False
+    if min([abs(angle), abs(angle - 180.)]) < PRM.Non_Parallel_Tol:
+        par = True
     ## end if
 
     return par
