@@ -219,10 +219,10 @@ class OPAN_XYZ(object):
 
         Parameters
         ----------
-        atom_syms   : flattens to array of N strings
+        atom_syms   : squeezes to array of N strings
             Element symbols for the XYZ. Must be valid elements as defined in
             .const.atomNum.keys()
-        coords      : flattens to array of 3N np.float_ castables
+        coords      : squeezes to array of 3N np.float_ castables
             Coordinates for the geometry (x1, y1, z1, x2, y2, ...)
         bohrs       : bool, default True
             Units of coordinates
@@ -236,6 +236,7 @@ class OPAN_XYZ(object):
 
         # Imports
         import numpy as np
+        import scipy as sp
         from .const import atomNum
         from .error import XYZError
 
@@ -245,11 +246,17 @@ class OPAN_XYZ(object):
                     "Cannot overwrite contents of existing OPAN_XYZ", ""))
         ## end if
 
-        # Smash inputs to flat arrays
-        work_atoms = np.array(atom_syms).flatten()
-        work_coords = np.array(coords).flatten()
+        # Squeeze inputs to arrays
+        work_atoms = np.asarray(atom_syms).squeeze()
+        work_coords = np.asarray(coords).squeeze()
 
         # Check and store dimensions
+        if not len(work_coords.shape) == 1:
+            raise(ValueError("Coordinates are not a vector"))
+        ## end if
+        if not len(work_atoms.shape) == 1:
+            raise(ValueError("Atom symbols are not a simple list"))
+        ## end if
         if not work_coords.shape[0] == 3 * work_atoms.shape[0]:
             raise(ValueError("len(coords) != 3 * len(atom_syms)"))
         ## end if
@@ -270,7 +277,7 @@ class OPAN_XYZ(object):
         ## end if
 
         # Ensure the geometry is all numeric
-        if not all(map(np.isreal, work_coords)):
+        if not all(map(sp.isreal, work_coords)):
             raise(ValueError("All coordinates must be real numeric"))
         ## end if
 
@@ -279,11 +286,11 @@ class OPAN_XYZ(object):
         self.num_atoms = work_atoms.shape[0]
         self.num_geoms = 1
         self.in_str = self.LOAD_DATA_FLAG
-        self.descs = np.array([[self.LOAD_DATA_FLAG]])
+        self.descs = np.array([self.LOAD_DATA_FLAG])
         self.XYZ_path = self.LOAD_DATA_FLAG
 
         # Store the atoms as vector
-        self.atom_syms = map(str.upper, list(work_atoms.flatten()))
+        self.atom_syms = map(str.upper, list(work_atoms))
 
         # Store the single geometry by bracketing with an array
         self.geoms = [work_coords]
@@ -365,13 +372,11 @@ class OPAN_XYZ(object):
         # CANNOT use matrix type for the geometry since it's 3D.
         # Retriever function for geometry should convert the given slice
         #  to a vector as an np.matrix, though.
-        # Geometry is constructed as a 3N x 1 matrix (column vector) of
+        # Geometry is constructed as a length-3N vector of
         #  coordinates, where atom 1's x/y/z coordinates are sequential,
         #  then atom 2's x/y/z coordinates are sequential, etc.
-        # Multiple geometries in a single XYZ file are stacked in a third
-        #  dimension, which for the default py array ordering is the *first*
-        #  index: array3d[a,b,c] returns the element from the b-th row and
-        #  c-th column of the a-th stacked matrix in array3d.
+        # Multiple geometries in a single XYZ file are stacked in a simple
+        #  array.
         self.descs = []
         self.geoms = []
 
@@ -626,12 +631,12 @@ class OPAN_XYZ(object):
         """
         # Import used math library function(s)
         import numpy as np
-        from scipy import linalg as spla
+        import scipy as sp
         from .utils import safe_cast as scast
 
-        # The below errors are explicitly thrown since they are multiplied by
+        # The below errors are explicitly thrown since values are multiplied by
         #  three when they are used as an index and thus give non-intuitive
-        #  errors
+        #  errors in subsequent code.
         # Complain if at_1 is invalid
         if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
             raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
@@ -653,7 +658,7 @@ class OPAN_XYZ(object):
             dist = 0.0
         else:
             dist = scast( \
-                    spla.norm(self.Displ_single(g_num, at_1, at_2)), \
+                    sp.linalg.norm(self.Displ_single(g_num, at_1, at_2)), \
                             np.float_)
         ## end if
 
@@ -765,13 +770,12 @@ class OPAN_XYZ(object):
 
         # Imports
         import numpy as np
-        from scipy import linalg as spla
         from .utils import safe_cast as scast
         from .utils.vector import vec_angle
 
         # The below errors are explicitly thrown since they are multiplied by
         #  three when they are used as an index and thus give non-intuitive
-        #  errors
+        #  errors in later code.
         # Complain if at_1 is invalid
         if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
             raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
@@ -780,12 +784,12 @@ class OPAN_XYZ(object):
         if at_2 < -self.num_atoms or at_2 >= self.num_atoms:
             raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
 
-        # Complain if at_2 is invalid
+        # Complain if at_3 is invalid
         if at_3 < -self.num_atoms or at_3 >= self.num_atoms:
             raise(IndexError("Invalid index for 'at_3' (" + str(at_3) + ")"))
 
         # Should never be necessary (save for badly erroneous calling code),
-        #  but coerce at_1 and at_2 to their floor() values.  This is again
+        #  but coerce the at_x to their floor() values.  This is again
         #  needed since they are multiplied by three in the index expresssions
         #  below, and can cause funny behavior when truncated by the indexing
         at_1 = scast(np.floor(at_1), np.int_)
@@ -846,9 +850,9 @@ class OPAN_XYZ(object):
             If False, 'None' values are returned for results corresponding to
             invalid indices. If True, exceptions are raised like normal.
 
-        Returns
-        -------
-        angle : np.float64
+        Generates
+        ---------
+        angle : np.float_
             Atomic angle in degrees between atoms at_1-at_2-at_3, from
             geometry g_num
 
@@ -945,14 +949,14 @@ class OPAN_XYZ(object):
         """
         # library imports
         import numpy as np
-        from scipy import linalg as spla
-        from .utils.vector import ortho_basis
+        import scipy as sp
+        from .utils.vector import ortho_basis, rej, vec_angle
         from .utils import safe_cast as scast
         from .error import XYZError
         from .const import PRM
 
         # Should never be necessary (save for badly erroneous calling code),
-        #  but coerce at_1 and at_2 to their floor() values.  This is again
+        #  but coerce the at_x to their floor() values.  This is again
         #  needed since they are multiplied by three in the index expresssions
         #  below, and can cause funny behavior when truncated by the indexing
         at_1 = scast(np.floor(at_1), np.int_)
@@ -1010,9 +1014,9 @@ class OPAN_XYZ(object):
         ## next idx
 
         # Store normalized atomic displacement vector at_2 --> at_3 as that
-        #  defining the projection plane #RESUME
-        plane_norm = np.squeeze(np.array(self.Displ_single(g_num, at_2, at_3)))
-        plane_norm = plane_norm / spla.norm(plane_norm)
+        #  defining the projection plane
+        plane_norm = self.Displ_single(g_num, at_2, at_3)
+        plane_norm /= sp.linalg.norm(plane_norm)
 
         # Retrieve the orthonormal basis in the projection plane, with the
         #  first vector being the normalized projection of the at_1 --> at_2
@@ -1020,32 +1024,28 @@ class OPAN_XYZ(object):
         on1, on2 = ortho_basis(plane_norm, \
                             self.Displ_single(g_num, at_1, at_2))
 
-        # Convert on1 and on2 to squeezed np.arrays
-        on1 = np.squeeze(np.array(on1))
-        on2 = np.squeeze(np.array(on2))
-
         # Project the at_3 --> at_4 displacement onto the plane
         #
         # Retrieve the "back-side" displacement vector
-        back_vec = np.squeeze(np.array(self.Displ_single(g_num, at_3, at_4)))
+        back_vec = self.Displ_single(g_num, at_3, at_4)
 
         # Project onto the plane by subtracting out the plane_norm projection
-        #  and normalize
-        back_vec = back_vec - (np.dot(back_vec, plane_norm) * plane_norm)
-        back_vec /= spla.norm(back_vec)
+        #  and re-normalize
+        back_vec = rej(back_vec, plane_norm)
+        back_vec /= sp.linalg.norm(back_vec)
 
         # Calculate the absolute value of the departure of the dihedral/
         #  out-of-plane angle from 180 degrees as derived from the dot-product
         #  of on1 and back_vec. Both should be normalized at this point, so
         #  the calculation is straightforward
-        dihed = np.degrees(np.arccos(np.dot(back_vec, on1)))
+        dihed = vec_angle(back_vec, on1)
 
         # Given the handedness of the spanning vectors provided by ortho_basis,
         #  the sign of the dihed departure is that of the dot product
         #  of back_vec and on2.
         dihed *= np.sign(np.dot(back_vec, on2))
 
-        # Conversion to the stated typical definition of a dihehdral now
+        # Conversion to the stated typical definition of a dihedral now
         #  requires addition of 180 degrees.
         dihed += 180.0
 
@@ -1200,7 +1200,7 @@ class OPAN_XYZ(object):
             return np.array([0.0, 0.0, 0.0])
         ## end if
 
-        # Retrieve the geometry; np.float64 type should be retained
+        # Retrieve the geometry; np.float_ type should be retained
         g = self.Geom_single(g_num)
 
         # Calculate the displacement vector and return

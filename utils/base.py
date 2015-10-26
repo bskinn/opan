@@ -375,10 +375,10 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     match = True
 
     # Convert everything to squeezed np.arrays
-    c1 = np.array(c1).squeeze()
-    c2 = np.array(c2).squeeze()
-    a1 = np.array(a1).squeeze()
-    a2 = np.array(a2).squeeze()
+    c1 = np.asarray(c1).squeeze()
+    c2 = np.asarray(c2).squeeze()
+    a1 = np.asarray(a1).squeeze()
+    a2 = np.asarray(a2).squeeze()
 
     #** Check coords for suitable shape. Assume 1-D np.arrays.
     if not len(c1.shape) == 1:

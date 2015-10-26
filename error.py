@@ -114,7 +114,8 @@ class OPANError(Exception):
                     isinstance(self, SYMMError) or \
                     isinstance(self, REPOError) or \
                     isinstance(self, ANHARMError) or \
-                    isinstance(self, INERTIAError)
+                    isinstance(self, INERTIAError) or \
+                    isinstance(self, VECTORError)
                 ):
             raise(NotImplementedError("OPANError base class is abstract."))
         ## end if
@@ -403,6 +404,27 @@ class INERTIAError(OPANError):
     linear_mol = 'linear_mol'
 
 ## end class INERTIAError
+
+
+class VECTORError(OPANError):
+    """Error relating to utils.vector submodule functions.
+
+    See OPANError.__doc__ for more information.
+
+    Attributes:
+        tc, msg, src, subclass_name are inherited from OPANError
+
+        typecodes:
+            nonprl      :  Insufficient non-parallel character in some
+                            manner of calculation
+
+    """
+
+    # Typecodes as class-level variables
+    nonprl = 'nonprl'
+
+## end class VECTORError
+
 
 
 if __name__ == '__main__':  # pragma: no cover
