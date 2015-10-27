@@ -356,11 +356,12 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
             coord_mismatch      : Mismatch in one or more coordinates
             atom_mismatch       : Mismatch in one or more atoms
             #TODO: orca_utils.check_geom: Convert fail_type to an Enum
-    fail_loc   : 3N x 1 bool or N x 1 bool
-        np.matrix() column vector indicating positions of mismatch in
+    fail_loc   : length-3N bool or length-N bool or None
+        if match == False, np.array vector indicating positions of mismatch in
         either coords or atoms, depending on the value of fail_type.
         True elements indicate corresponding *MATCHING* values; False
-        elements mark *MISMATCHES*.
+        elements mark *MISMATCHES*.  'None' returned if failure is due to
+        object- rather than element-level problems.
 
     Raises
     ------
@@ -414,17 +415,16 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     if not c1.shape[0] == c2.shape[0]:
         match = False
         fail_type = "coord_dim_mismatch"
-        return match, fail_type
+        return match, fail_type, None
     ## end if
     if not a1.shape[0] == a2.shape[0]:
         match = False
         fail_type = "atom_dim_mismatch"
-        return match, fail_type
+        return match, fail_type, None
     ## end if
 
     #** Element-wise check for geometry match to within 'tol'
-    fail_loc = np.less_equal(np.abs( \
-                        np.subtract(c1,c2)), tol)
+    fail_loc = np.less_equal(np.abs(np.subtract(c1,c2)), tol)
     if sum(fail_loc) != c2.shape[0]:
         # Count of matching coordinates should equal the number of
         #  coordinates. If not, complain with 'coord_mismatch' fail type.
