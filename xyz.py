@@ -236,7 +236,6 @@ class OPAN_XYZ(object):
 
         # Imports
         import numpy as np
-        import scipy as sp
         from .const import atomNum
         from .error import XYZError
 
@@ -631,7 +630,7 @@ class OPAN_XYZ(object):
         """
         # Import used math library function(s)
         import numpy as np
-        import scipy as sp
+        from scipy import linalg as spla
         from .utils import safe_cast as scast
 
         # The below errors are explicitly thrown since values are multiplied by
@@ -658,7 +657,7 @@ class OPAN_XYZ(object):
             dist = 0.0
         else:
             dist = scast( \
-                    sp.linalg.norm(self.Displ_single(g_num, at_1, at_2)), \
+                    spla.norm(self.Displ_single(g_num, at_1, at_2)), \
                             np.float_)
         ## end if
 
@@ -949,7 +948,7 @@ class OPAN_XYZ(object):
         """
         # library imports
         import numpy as np
-        import scipy as sp
+        from scipy import linalg as spla
         from .utils.vector import ortho_basis, rej, vec_angle
         from .utils import safe_cast as scast
         from .error import XYZError
@@ -1016,7 +1015,7 @@ class OPAN_XYZ(object):
         # Store normalized atomic displacement vector at_2 --> at_3 as that
         #  defining the projection plane
         plane_norm = self.Displ_single(g_num, at_2, at_3)
-        plane_norm /= sp.linalg.norm(plane_norm)
+        plane_norm /= spla.norm(plane_norm)
 
         # Retrieve the orthonormal basis in the projection plane, with the
         #  first vector being the normalized projection of the at_1 --> at_2
@@ -1032,7 +1031,7 @@ class OPAN_XYZ(object):
         # Project onto the plane by subtracting out the plane_norm projection
         #  and re-normalize
         back_vec = rej(back_vec, plane_norm)
-        back_vec /= sp.linalg.norm(back_vec)
+        back_vec /= spla.norm(back_vec)
 
         # Calculate the absolute value of the departure of the dihedral/
         #  out-of-plane angle from 180 degrees as derived from the dot-product

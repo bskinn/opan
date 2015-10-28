@@ -102,17 +102,17 @@ class ORCA_HESS(object):
 
     Instance Variables
     ------------------
-    atom_masses     : N x 1 np.float_
-        Column vector of atom masses as reported in HESS
-    atom_syms       : N x 1 np.str
-        Column vector of uppercase atomic symbols
+    atom_masses     : length-N list of np.float_
+        List of atom masses as reported in HESS
+    atom_syms       : length-N list of str
+        List of uppercase atomic symbols
     dipders         : 3N x 3 np.float_
         Matrix of dipole derivatives
     energy          : float
         Energy reported in the Hessian file
-    freqs           : 3N x 1 np.float_
+    freqs           : length-3N np.float_
         Vibrational frequencies (cm**-1) as reported in the Hessian file
-    geom            : 3N x 1 np.float_
+    geom            : length-3N np.float_
         Column vector of geometry [x1, y1, z1, x2, y2, ...]
     hess            : 3N x 3N np.float_
         Cartesian Hessian matrix
@@ -126,12 +126,12 @@ class ORCA_HESS(object):
         Complete contents of the imported HESS file
     ir_comps        : 3N x 3 np.float_
         (Tx, Ty, Tz) components of the transition dipole for each normal mode
-    ir_mags         : 3N x 1 np.float_
+    ir_mags         : length-3N np.float_
         T**2 values (squared-magnitudes) of the transition dipole for each mode
     modes           : 3N x 3N np.float_
         Rotation- and translation-purified vibrational normal modes,
         with each mode (column vector) individually normalized by ORCA.
-    mwh_eigvals     : 3N x 1 np.float_
+    mwh_eigvals     : length-3N np.float_
         Eigenvalues of the mass-weighted Hessian
     mwh_eigvecs     : 3N x 3N np.float_
         Eigenvectors of the mass-weighted Hessian (as column vectors: the
@@ -140,9 +140,9 @@ class ORCA_HESS(object):
         Number of atoms in the system
     polders         : 3N x 6 np.float_
         Matrix of Cartesian polarizability derivatives
-    raman_acts      : 3N x 1 np.float_
+    raman_acts      : length-3N np.float_
         Vector of Raman activities
-    raman_depols    : 3N x 1 np.float_
+    raman_depols    : length-3N np.float_
         Vector of Raman depolarization factors
     temp            : float
         "Actual temperature" reported in the .hess file. May be meaningless.
@@ -525,9 +525,8 @@ class ORCA_HESS(object):
 
             Returns
             -------
-            workmtx     : np.matrix of np.float_
-                Data block returned as np.matrix(dtype=np.float_). Dimensions
-                will be 3*num_ats x 3*num_ats
+            workmtx     : 3N x 3N np.float_
+                Assembled array for storage
 
             """
 
@@ -536,8 +535,8 @@ class ORCA_HESS(object):
 
             # Confirm the anticipated matrix size matches 3*num_ats
             if not int(m_block.group("dim")) == 3*num_ats:
-                raise(HESSError(tc, blockname + " dimension " + \
-                        "specification mismatched with geometry", \
+                raise(HESSError(tc, blockname + " dimension " +
+                        "specification mismatched with geometry",
                         "HESS File: " + HESS_path))
             ## end if
 
@@ -587,21 +586,20 @@ class ORCA_HESS(object):
             #  a check against malformation of the HESS file, resulting in a
             #  reduced number of sections being retrieved.
             if not col_offset >= (3 * num_ats):
-                raise(HESSError(tc, "Insufficient number of " + blockname + \
-                        " sections found", \
+                raise(HESSError(tc, "Insufficient number of " + blockname +
+                        " sections found",
                         "HESS File: " + HESS_path))
             ## end if
 
             # Additional cross-check on number of rows imported
             if (rows_counter % (3*num_ats)) != 0:
                 # Not the right number of rows; complain
-                raise(HESSError(tc, \
-                            blockname + " row count mismatch", \
+                raise(HESSError(tc,
+                            blockname + " row count mismatch",
                             "HESS File: " + HESS_path))
             ## end if
 
-            # Return the working matrix as a matrix
-            workmtx = np.matrix(workmtx)
+            # Return the working matrix
             return workmtx
 
         ## end def parse_multiblock
@@ -682,7 +680,7 @@ class ORCA_HESS(object):
             except ValueError, TypeError:
                 # Nope, must be letters. Check if valid by poking it into the
                 #  dict. If not valid, should raise another error.
-                num = atomNum[str.upper(m.group('el'))]
+                num = atomNum[m.group('el').upper()]
             ## end try
 
             # If this point is reached, either it's cast ok to an int,
@@ -695,41 +693,38 @@ class ORCA_HESS(object):
             self.atom_masses.append(scast(m.group("mass"), np.float_))
 
             # Build geometry as a 1-D list
-            for gp in ["c1", "c2", "c3"]:
-                self.geom.append(scast(m.group(gp), np.float_))
-            ## next gp
+            self.geom.extend([scast(m.group(gp), np.float_) for
+                                                gp in ['c1', 'c2', 'c3']])
+        ## next m
 
         # Double-check that the number of atoms retrieved matches the
         #  number indicated in the HESS file. Checks of atomic masses
         #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
-            raise(HESSError(HESSError.at_block, "Atomic symbol dimension " + \
-                    "mismatch with HESS atom specification", \
+            raise(HESSError(HESSError.at_block, "Atomic symbol dimension " +
+                    "mismatch with HESS atom specification",
                     "HESS File: " + HESS_path))
         ## end if
 
-        # Convert instance variables to numpy storage forms
-        self.atom_syms = np.matrix(np.vstack(self.atom_syms))
-        self.atom_masses = np.matrix(np.vstack(np.array(self.atom_masses, \
-                                dtype=np.float_)))
-        self.geom = np.matrix(np.vstack(np.array(self.geom, dtype=np.float_)))
+        # Convert geometry to numpy storage form
+        self.geom = np.array(self.geom, dtype=np.float_)
 
         #=== Hessian and modes ===#
         # Pull the Hessian
-        self.hess = parse_multiblock(self.in_str, self.p_hess_block, \
-                self.p_hess_sec, self.p_hess_line, self.num_ats, \
+        self.hess = parse_multiblock(self.in_str, self.p_hess_block,
+                self.p_hess_sec, self.p_hess_line, self.num_ats,
                 "Hessian", HESSError.hess_block)
 
         # Pull the modes
-        self.modes = parse_multiblock(self.in_str, self.p_modes_block, \
-                self.p_modes_sec, self.p_modes_line, self.num_ats, \
+        self.modes = parse_multiblock(self.in_str, self.p_modes_block,
+                self.p_modes_sec, self.p_modes_line, self.num_ats,
                 "modes", HESSError.modes_block)
 
         # Extra check of 'dim' vs 'dim2' on modes
         m_work = self.p_modes_block.search(self.in_str)
         if scast(m_work.group("dim"), np.int_) != \
                             scast(m_work.group("dim2"), np.int_):
-            raise(HESSError(HESSError.modes_block, \
+            raise(HESSError(HESSError.modes_block,
                     "Normal mode block dimension specification mismatch",
                     "HESS File: " + self.HESS_path))
         ## end if
@@ -740,35 +735,32 @@ class ORCA_HESS(object):
 
         # Check that number of frequencies indicated in the block matches
         #  that expected from the number of atoms
-        if 3*self.num_ats != np.int_(m_work.group("num")):
-            raise(HESSError(HESSError.freq_block, \
-                    "Count in frequencies block != 3 * number of atoms", \
+        if 3*self.num_ats != scast(m_work.group("num"), np.int_):
+            raise(HESSError(HESSError.freq_block,
+                    "Count in frequencies block != 3 * number of atoms",
                     "HESS File: " + self.HESS_path))
         ## end if
 
-        # Retrieve the frequencies (this generates a row vector)
-        self.freqs = np.matrix( \
-                [np.float_(m.group("freq")) for m in \
+        # Retrieve the frequencies
+        self.freqs = np.array(
+                [scast(m.group("freq"), np.float_) for m in
                 self.p_freq_line.finditer(m_work.group("block"))])
 
-        # Proofread for proper size (still a row vector)
-        if not self.freqs.shape[1] == 3*self.num_ats:
-            raise(HESSError(HESSError.freq_block, \
-                    "Number of frequencies != 3 * number of atoms", \
+        # Proofread for proper size
+        if not self.freqs.shape[0] == 3*self.num_ats:
+            raise(HESSError(HESSError.freq_block,
+                    "Number of frequencies != 3 * number of atoms",
                     "HESS File: " + self.HESS_path))
         ## end if
-
-        # Transpose for column vector storage
-        self.freqs = self.freqs.transpose()
 
 
         #=== Pull the single values that should always be present ===#
         # Store the reported energy
-        self.energy = scast(self.p_energy.search(self.in_str).group("en"), \
+        self.energy = scast(self.p_energy.search(self.in_str).group("en"),
                                                                     np.float_)
 
         # Store the reported 'actual temperature'
-        self.temp = scast(self.p_temp.search(self.in_str).group("temp"), \
+        self.temp = scast(self.p_temp.search(self.in_str).group("temp"),
                                                                     np.float_)
 
         #=== Dipole derivatives ===#
@@ -779,25 +771,25 @@ class ORCA_HESS(object):
         else:
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
-            if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.dipder_block, \
-                        "Count in dipole derivatives block != 3 * # of atoms", \
+            if 3*self.num_ats != scast(m_work.group("dim"), np.int_):
+                raise(HESSError(HESSError.dipder_block,
+                        "Count in dipole derivatives block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Retrieve the derivatives
-            self.dipders = np.matrix( \
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
-                        for m in self.p_dipder_line.finditer( \
+            self.dipders = np.array(
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                        for m in self.p_dipder_line.finditer(
                                                     m_work.group("block")) ])
 
             # Proofread for proper size. Don't have to proofread the width of
             #  three, since any row not containing three numerical values will
-            #  result in the block getting truncated.
+            #  result in the block getting truncated, per the Regex constrution.
             if not self.dipders.shape[0] == 3*self.num_ats:
-                raise(HESSError(HESSError.dipder_block, \
-                        "Number of dipole derivative rows != " + \
-                                                    "3 * number of atoms", \
+                raise(HESSError(HESSError.dipder_block,
+                        "Number of dipole derivative rows != " +
+                                                    "3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
@@ -817,40 +809,40 @@ class ORCA_HESS(object):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.ir_block, \
-                        "Count in IR spectrum block != 3 * # of atoms", \
+                raise(HESSError(HESSError.ir_block,
+                        "Count in IR spectrum block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Pull the blocks
-            self.ir_comps = np.matrix( \
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
-                        for m in self.p_ir_line.finditer( \
+            self.ir_comps = np.array(
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                        for m in self.p_ir_line.finditer(
                                                     m_work.group("block")) ])
-            self.ir_mags = np.matrix( \
-                    [[np.float_(m.group("mag"))] \
-                        for m in self.p_ir_line.finditer( \
+            self.ir_mags = np.array(
+                    [np.float_(m.group("mag"))
+                        for m in self.p_ir_line.finditer(
                                                     m_work.group("block")) ])
 
             # Confirm length of ir_mags conforms. Shouldn't need to check both,
             #  since they both rely equally on p_ir_line.finditer.
             if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HESSError(HESSError.ir_block, \
-                        "Number of IR spectrum rows != " + \
-                                                    "3 * number of atoms", \
+                raise(HESSError(HESSError.ir_block,
+                        "Number of IR spectrum rows != " +
+                                                    "3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Confirm match of all frequencies with those reported separately
-            if not np.allclose( \
-                    self.freqs, \
-                    np.matrix([[np.float_(m.group('freq'))] \
-                                for m in self.p_ir_line.finditer( \
-                                m_work.group("block")) ]), \
-                    rtol=0, \
+            if not np.allclose(
+                    self.freqs,
+                    np.array([np.float_(m.group('freq'))
+                                for m in self.p_ir_line.finditer(
+                                m_work.group("block") )]),
+                    rtol=0,
                     atol=DEF.HESS_IR_Match_Tol):
-                raise(HESSError(HESSError.ir_block, \
-                        "Frequency mismatch between freq and IR blocks", \
+                raise(HESSError(HESSError.ir_block,
+                        "Frequency mismatch between freq and IR blocks",
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
@@ -865,16 +857,16 @@ class ORCA_HESS(object):
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.polder_block, \
-                        "Count in polarizability derivatives block " + \
-                                                    "!= 3 * # of atoms", \
+                raise(HESSError(HESSError.polder_block,
+                        "Count in polarizability derivatives block " +
+                                                    "!= 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Retrieve the derivatives
-            self.polders = np.matrix( \
-                    [[np.float_(m.group("e" + str(i))) for i in range(6)] \
-                        for m in self.p_polder_line.finditer( \
+            self.polders = np.array(
+                    [[np.float_(m.group("e" + str(i))) for i in range(6)]
+                        for m in self.p_polder_line.finditer(
                                                     m_work.group("block")) ])
 
             # Proofread for proper size. Don't have to proofread the width of
@@ -899,19 +891,19 @@ class ORCA_HESS(object):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.raman_block, \
-                        "Count in Raman spectrum block != 3 * # of atoms", \
+                raise(HESSError(HESSError.raman_block,
+                        "Count in Raman spectrum block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Pull the blocks
-            self.raman_acts = np.matrix( \
-                    [[np.float_(m.group("act"))] \
-                        for m in self.p_raman_line.finditer( \
+            self.raman_acts = np.array(
+                    [np.float_(m.group("act"))
+                        for m in self.p_raman_line.finditer(
                                                     m_work.group("block")) ])
-            self.raman_depols = np.matrix( \
-                    [[np.float_(m.group("depol"))] \
-                        for m in self.p_raman_line.finditer( \
+            self.raman_depols = np.array(
+                    [np.float_(m.group("depol"))
+                        for m in self.p_raman_line.finditer(
                                                     m_work.group("block")) ])
 
             # Confirm length of raman_acts conforms. Shouldn't need to check
@@ -924,15 +916,15 @@ class ORCA_HESS(object):
             ## end if
 
             # Confirm match of all frequencies with those reported separately
-            if not np.allclose( \
-                    self.freqs, \
-                    np.matrix([[np.float_(m.group('freq'))] \
-                                for m in self.p_raman_line.finditer( \
-                                m_work.group("block")) ]), \
-                    rtol=0, \
+            if not np.allclose(
+                    self.freqs,
+                    np.array([np.float_(m.group('freq'))
+                                for m in self.p_raman_line.finditer(
+                                m_work.group("block")) ]),
+                    rtol=0,
                     atol=DEF.HESS_IR_Match_Tol):
-                raise(HESSError(HESSError.raman_block, \
-                        "Frequency mismatch between freq and Raman blocks", \
+                raise(HESSError(HESSError.raman_block,
+                        "Frequency mismatch between freq and Raman blocks",
                         "HESS File: " + self.HESS_path))
             ## end if
         ## end if
@@ -947,28 +939,28 @@ class ORCA_HESS(object):
             # Check that number of joblist rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.job_block, \
-                        "Count in job list block != 3 * # of atoms", \
+                raise(HESSError(HESSError.job_block,
+                        "Count in job list block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Retrieve the job list
-            self.joblist = np.matrix( \
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)] \
-                        for m in self.p_jobs_line.finditer( \
+            self.joblist = np.array(
+                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                        for m in self.p_jobs_line.finditer(
                                                     m_work.group("block")) ])
 
             # Proofread for proper size. Don't have to proofread the width of
             #  three, since any row not containing three numerical values will
             #  result in the block getting truncated.
             if not self.joblist.shape[0] == self.num_ats:
-                raise(HESSError(HESSError.job_block, \
-                        "Number of job list rows != number of atoms", \
+                raise(HESSError(HESSError.job_block,
+                        "Number of job list rows != number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
             # Convert to boolean
-            self.joblist = np.equal(self.joblist, np.ones(self.joblist.shape))
+            self.joblist = np.equal(self.joblist, np.ones_like(self.joblist))
 
         ## end if
 
@@ -982,25 +974,22 @@ class ORCA_HESS(object):
             # Check that number of eigenvalues indicated in the block matches
             #  that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.eigval_block, \
-                        "Count in MWH eigenvalues block != 3 * number of atoms", \
+                raise(HESSError(HESSError.eigval_block,
+                        "Count in MWH eigenvalues block != 3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
 
-            # Retrieve the eigenvalues (this generates a row vector)
-            self.mwh_eigvals = np.matrix( \
-                    [np.float_(m.group("eig")) for m in \
+            # Retrieve the eigenvalues
+            self.mwh_eigvals = np.array(
+                    [np.float_(m.group("eig")) for m in
                     self.p_eigvals_line.finditer(m_work.group("block"))])
 
-            # Proofread for proper size (still a row vector)
-            if not self.mwh_eigvals.shape[1] == 3*self.num_ats:
-                raise(HESSError(HESSError.eigval_block, \
-                        "Number of MWH eigenvalues != 3 * number of atoms", \
+            # Proofread for proper size
+            if not self.mwh_eigvals.shape[0] == 3*self.num_ats:
+                raise(HESSError(HESSError.eigval_block,
+                        "Number of MWH eigenvalues != 3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
-
-            # Transpose for column vector storage
-            self.mwh_eigvals = self.mwh_eigvals.transpose()
 
         ## end if
 
@@ -1013,14 +1002,14 @@ class ORCA_HESS(object):
         else:
             # Pull the eigenvectors
             self.mwh_eigvecs = \
-                    parse_multiblock(self.in_str, self.p_eigvecs_block, \
-                    self.p_eigvecs_sec, self.p_eigvecs_line, self.num_ats, \
+                    parse_multiblock(self.in_str, self.p_eigvecs_block,
+                    self.p_eigvecs_sec, self.p_eigvecs_line, self.num_ats,
                     "MWH eigenvectors", HESSError.eigvec_block)
 
             # Extra check of 'dim' vs 'dim2' on modes
             if scast(m_work.group("dim"), np.int_) != \
                                 scast(m_work.group("dim2"), np.int_):
-                raise(HESSError(HESSError.eigvec_block, \
+                raise(HESSError(HESSError.eigvec_block,
                         "MWH eigenvectors dimension specification mismatch",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -1047,9 +1036,9 @@ class ORCA_HESS(object):
 
         Parameters
         ----------
-        coords : 3N x 1 float
+        coords : length-3N np.float_
             Vector of stacked 'lab-frame' Cartesian coordinates
-        atoms  : N x 1 string or int
+        atoms  : length-N string or int
             Vector of atom symbols or atomic numbers
         tol    : float, optional
             Tolerance for acceptable deviation of each geometry coordinate
@@ -1069,8 +1058,8 @@ class ORCA_HESS(object):
                 coord_mismatch      : Mismatch in one or more coordinates
                 atom_mismatch       : Mismatch in one or more atoms
                 #DOC: Propagate info when mismatch code converted to Enum
-        fail_loc   : 3N x 1 bool or N x 1 bool
-            np.matrix() column vector indicating positions of mismatch in
+        fail_loc   : length-3N bool or length-N bool
+            np.array vector indicating positions of mismatch in
             either coords or atoms, depending on the value of fail_type.
             True elements indicate corresponding *MATCHING* values; False
             elements mark *MISMATCHES*.

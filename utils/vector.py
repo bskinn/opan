@@ -46,7 +46,7 @@ def ortho_basis(normal, ref_vec=None):
     Parameters
     ----------
     normal   : length-3 np.float_
-        The orthonormal basis output will span the plane perpendicular 
+        The orthonormal basis output will span the plane perpendicular
         to 'normal'.
     ref_vec  : length-3 np.float_, optional
         If ref_vec specified, on1 will be the normalized projection of ref_vec
@@ -71,7 +71,8 @@ def ortho_basis(normal, ref_vec=None):
 
     # Imports for library functions
     import numpy as np
-    import scipy as sp
+    from scipy import linalg as spla
+    from scipy import random as sprnd
     from ..const import PRM
     from ..error import VECTORError
 
@@ -89,7 +90,7 @@ def ortho_basis(normal, ref_vec=None):
     ## end if
 
     # Normalize nv
-    nv = nv / sp.linalg.norm(nv)
+    nv = nv / spla.norm(nv)
 
     # Test for specification of ref_vec in the function call
     if ref_vec == None:
@@ -100,13 +101,13 @@ def ortho_basis(normal, ref_vec=None):
         # Generate suitable randomizer, looping as needed
         rv = nv
         while parallel_check(nv, rv):
-            rv = np.float64(1.0 - RAND_MAG + 2 * RAND_MAG * sp.random.rand(3))
+            rv = np.float64(1.0 - RAND_MAG + 2 * RAND_MAG * sprnd.rand(3))
         ## do loop
 
         # Calculate rejection of perturbed vector on the normal, then
         #  normalize
         rv = rej(rv, nv)
-        rv = rv / sp.linalg.norm(rv)
+        rv = rv / spla.norm(rv)
 
     else:
         # ref_vec specified, go ahead and use.  Start with validity check.
@@ -120,7 +121,7 @@ def ortho_basis(normal, ref_vec=None):
         ## end if
 
         # Normalize rv
-        rv = rv / sp.linalg.norm(rv)
+        rv = rv / spla.norm(rv)
 
         # Check for collinearity of nv and rv; raise error if too close
         if parallel_check(nv, rv):
@@ -135,13 +136,13 @@ def ortho_basis(normal, ref_vec=None):
     ## end try
 
     # on2 is the unit vector parallel to nv x rv
-    on2 = sp.cross(nv, rv)
-    on2 = on2 / sp.linalg.norm(on2)
+    on2 = np.cross(nv, rv)
+    on2 = on2 / spla.norm(on2)
 
     # on1 is on2 x nv (normalization should not be necessary here, but is
     #  performed just in case)
     on1 = np.cross(on2, nv)
-    on1 = on1 / sp.linalg.norm(on1)
+    on1 = on1 / spla.norm(on1)
 
     # Return the spanning vectors
     return on1, on2
@@ -251,7 +252,6 @@ def parallel_check(vec1, vec2):
     # Imports
     from ..const import PRM
     import numpy as np
-    import scipy as sp
 
     # Convert to squeezed np.array
     vec1 = np.array(vec1).squeeze()
@@ -301,7 +301,6 @@ def proj(vec, vec_onto):
 
     # Imports
     import numpy as np
-    import scipy as sp
 
     # Convert to np.arrays
     vec = np.asarray(vec).squeeze()
@@ -319,8 +318,8 @@ def proj(vec, vec_onto):
     ## end if
 
     # Calculate the projection and return
-    proj_vec = np.float_(sp.asscalar(sp.dot(vec.T, vec_onto))) / \
-                np.float_(sp.asscalar(sp.dot(vec_onto.T, vec_onto))) * vec_onto
+    proj_vec = np.float_(np.asscalar(np.dot(vec.T, vec_onto))) / \
+                np.float_(np.asscalar(np.dot(vec_onto.T, vec_onto))) * vec_onto
     return proj_vec
 
 ## end def proj
@@ -350,7 +349,7 @@ def rej(vec, vec_onto):
     # Convert vec to np.array. Checking/conversion of vec_onto handled by 'proj'
     vec = np.asarray(vec).squeeze()
 
-    # Calculate and return. 
+    # Calculate and return.
     rej_vec = vec - proj(vec, vec_onto)
     return rej_vec
 
@@ -380,7 +379,7 @@ def vec_angle(vec1, vec2):
 
     # Imports
     import numpy as np
-    import scipy as sp
+    from scipy import linalg as spla
     from ..const import PRM
 
     # Convert to np.arrays
@@ -399,23 +398,23 @@ def vec_angle(vec1, vec2):
     ## end if
 
     # Check magnitudes
-    if sp.linalg.norm(vec1) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec1) < PRM.Zero_Vec_Tol:
         raise(ValueError("'vec1' norm is too small"))
     ## end if
-    if sp.linalg.norm(vec2) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec2) < PRM.Zero_Vec_Tol:
         raise(ValueError("'vec2' norm is too small"))
     ## end if
 
     # Calculate the angle and return. Do in multiple steps to test for
     #  possible >1 or <-1 values from numerical precision errors.
-    dotp = sp.dot(vec1, vec2) / sp.linalg.norm(vec1) / sp.linalg.norm(vec2)
+    dotp = np.dot(vec1, vec2) / spla.norm(vec1) / spla.norm(vec2)
 
     if dotp > 1:
         angle = 0.
     elif dotp < -1:
         angle = 180.
     else:
-        angle = sp.degrees(sp.arccos(dotp))
+        angle = np.degrees(np.arccos(dotp))
     ## end if
 
     return angle

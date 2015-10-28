@@ -251,7 +251,6 @@ def principals(geom, masses):
 
     # Imports
     import numpy as np
-    import scipy as sp
     from scipy import linalg as spla
     from ..const import PRM, E_TopType as ETT
     from ..error import INERTIAError
@@ -311,12 +310,12 @@ def principals(geom, masses):
     ## end if
 
     # Initialize the axes
-    axes = sp.zeros((3,3))
+    axes = np.zeros((3,3))
 
     # Define the axes depending on the top type
     if top == ETT.Atom:
         # Just use the coordinate axes
-        axes = sp.identity(3, dtype=np.float_)
+        axes = np.identity(3, dtype=np.float_)
 
     elif top == ETT.Linear:
         # Zero-moment (molecular) axis always pointed toward the first atom,
@@ -330,7 +329,7 @@ def principals(geom, masses):
         # Second axis is the normalized rejection of the x-axis on the first
         #  axis, unless the molecule lies along the x-axis in which case it
         #  is taken as the normalized rejection of the y-axis on the first vec.
-        #  The full rejection is calculated in the latter case to afford a 
+        #  The full rejection is calculated in the latter case to afford a
         #  slight increase in accuracy, since the axis may deviate slightly
         #  from the x-axis
         if prlchk(axes[:,(0,)], np.array([[1.,0.,0.]]).T):
@@ -343,7 +342,7 @@ def principals(geom, masses):
         axes[:,1] /= spla.norm(axes[:,1])
 
         ## Third axis is the first crossed with the second
-        axes[:,2] = sp.cross(axes[:,0], axes[:,1])
+        axes[:,2] = np.cross(axes[:,0], axes[:,1])
 
     elif top == ETT.Asymmetrical:
         pass
@@ -416,7 +415,6 @@ def _fadnpv(vec, geom):
 
     # Imports
     import numpy as np
-    import scipy as sp
     from scipy import linalg as spla
     from ..const import PRM
     from ..error import INERTIAError
