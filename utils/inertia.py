@@ -47,15 +47,15 @@ def ctr_mass(geom, masses):
 
     Parameters
     ----------
-    geom    : 3N x 1 np.float_
+    geom    : length-3N np.float_
         Coordinates of the atoms
-    masses  : N x 1 OR 3N x 1 np.float_
-        Atomic masses of the atoms. 3N x 1 option is to allow calculation of
+    masses  : length-N OR length-3N list of np.float_
+        Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr     : 3 x 1 np.matrix of np.float_
+    ctr     : length-3 np.float_
         Vector location of center of mass
 
     Raises
@@ -67,21 +67,25 @@ def ctr_mass(geom, masses):
     # Imports
     import numpy as np
 
+    # Array-convert
+    geom = np.asarray(geom).squeeze()
+    masses = np.asarray(masses).squeeze()
+
     # Shape check
-    if len(geom.shape) != 2 or geom.shape[1] != 1:
-        raise(ValueError("Geometry is not a column vector"))
+    if len(geom.shape) != 1:
+        raise(ValueError("Geometry is not a vector"))
     ## end if
-    if len(masses.shape) != 2 or masses.shape[1] != 1:
-        raise(ValueError("Masses are not a column vector"))
+    if len(masses.shape) != 1:
+        raise(ValueError("Masses are not a vector"))
     ## end if
     if not geom.shape[0] % 3 == 0:
-        raise(ValueError("Geometry is not 3N x 1"))
+        raise(ValueError("Geometry is not length-3N"))
     ## end if
     if geom.shape[0] != 3*masses.shape[0] and geom.shape[0] != masses.shape[0]:
         raise(ValueError("Inconsistent geometry and mass vector lengths"))
     ## end if
 
-    # If N x 1 masses are provided, expand; if 3N x 1, retain.
+    # If N masses are provided, expand to 3N; if 3N, retain.
     if geom.shape[0] == 3*masses.shape[0]:
         masses = expand_masses(masses)
     ## end if
@@ -90,8 +94,8 @@ def ctr_mass(geom, masses):
     #  by coordinate row-wise, sum each row, then divide by the sum of masses,
     #  which must be divided by three because there are three replicates
     #  (possibly perturbed) of the mass of each atom.
-    ctr = np.multiply(geom, masses).reshape((geom.shape[0]/3,3)).T \
-                .sum(axis=1) / (masses.sum() / 3)
+    ctr = np.multiply(geom, masses).reshape((geom.shape[0]/3,3)) \
+                                .sum(axis=0).squeeze() / (masses.sum() / 3)
 
     # Return the vector
     return ctr
@@ -367,26 +371,32 @@ def principals(geom, masses):
 
 
 def expand_masses(masses):
-    """ Replicate an N x 1 vector of masses to a 3N x 1 vector.
+    """ Replicate a length-N vector of masses to a length-3N vector.
 
     Helper function for expanding a non-per-coordinate-perturbed masses vector
-    to a full 3N x 1 dimension.
+    to a full 3N dimension.
 
     Parameters
     ----------
-    masses   : N x 1 np.float_
+    masses   : length-N np.float_
         Vector of masses to expand
 
     Returns
     -------
-    expanded : 3N x 1 np.float_
+    expanded : length-3N np.float_
         Expanded vector of masses
 
     """
 
+    # Imports
+    import numpy as np
+
+    # Create np.array view of masses
+    mv = np.asarray(masses)
+
     # Calculate the expanded vector (implicitly assumes numpy array) and
     #  return
-    expanded = masses.repeat(3, axis=1).reshape((3*masses.shape[0],1))
+    expanded = mv[:, np.newaxis].repeat(3, axis=1).reshape(3*mv.shape[0])
     return expanded
 
 ## end def expand_masses
