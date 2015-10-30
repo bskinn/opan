@@ -505,6 +505,73 @@ def template_subst(template, subs, subs_delims=['<', '>']):
 ## end def template_subst
 
 
+# ======================  PRIVATE CLASSES/FUNCTIONS  ======================= #
+
+class _arraysqueeze(object):
+    """ Class-form decorator to convert select arguments to squeezed np.arrays
+
+    Pre-applies an np.array(...).squeeze() conversion to all positional
+    arguments according to integer indices passed, and to any keyword arguments
+    according to any strings passed.  Likely fragile with optional
+    arguments, but needs to be tested.
+
+    Using the class form of the decorator definition per the exposition here:
+        http://www.artima.com/weblogs/viewpost.jsp?thread=240845
+
+    """
+
+    def __init__(self, *args):
+        """ Pass the positions of arguments to be arraysqueezed as integers
+        """
+
+        # Check for integers and strings
+        for arg in args:
+            if not (isinstance(arg, int) or isinstance(arg, str)):
+                raise(ValueError("Invalid decorator argument: " + str(arg)))
+            ## end if
+        ## next arg
+
+        # If all ok, store
+        self.arglist = args
+
+    ## end def __init__
+
+    def __call__(self, f):
+        """ Call the wrapped function after arraysqueezing selected arguments.
+
+        Absent keyword arguments and positional/optional argument indices
+        beyond the range of the actual arguments of f are ignored.
+
+        """
+        def wrapped_f(*args, **kwargs):
+
+            # Must import numpy
+            import numpy as np
+
+            # Working list of args values, since args is a tuple
+            w_args = list(args)
+
+            # Parse the arguments and arraysqueeze them
+            for mod_arg in self.arglist:
+                if isinstance(mod_arg, int) and mod_arg < len(w_args):
+                    w_args[mod_arg] = np.array(w_args[mod_arg]).squeeze()
+                elif isinstance(mod_arg, str) and mod_arg in kwargs:
+                    kwargs[mod_arg] = np.array(kwargs[mod_arg]).squeeze()
+                # no 'else:' since type checked in __init__
+
+            # Execute the function and return its result
+            return f(*w_args, **kwargs)
+
+        ## end def wrapped_f
+
+        # Return the decorated function
+        return wrapped_f
+
+    ## end def __call__
+
+## end class _arraysqueeze
+
+
 if __name__ == '__main__': # pragma: no cover
     print("Module not executable.")
 

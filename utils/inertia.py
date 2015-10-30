@@ -35,10 +35,11 @@ principals      : Calculate principal axes/moments and molecular top type
 
 
 # Module-level imports
-
+from .base import _arraysqueeze
 
 # Functions
 
+@_arraysqueeze(0)
 def ctr_mass(geom, masses):
     """Calculate the center of mass of the indicated geometry.
 
@@ -66,33 +67,33 @@ def ctr_mass(geom, masses):
 
     # Imports
     import numpy as np
-
-    # Array-convert
-    geom = np.asarray(geom).squeeze()
-    masses = np.asarray(masses).squeeze()
+    from .base import safe_cast as scast
 
     # Shape check
     if len(geom.shape) != 1:
         raise(ValueError("Geometry is not a vector"))
     ## end if
-    if len(masses.shape) != 1:
-        raise(ValueError("Masses are not a vector"))
+    if not isinstance(masses, list):
+        raise(ValueError("Masses are not a list"))
     ## end if
     if not geom.shape[0] % 3 == 0:
         raise(ValueError("Geometry is not length-3N"))
     ## end if
-    if geom.shape[0] != 3*masses.shape[0] and geom.shape[0] != masses.shape[0]:
-        raise(ValueError("Inconsistent geometry and mass vector lengths"))
+    if geom.shape[0] != 3*len(masses) and geom.shape[0] != len(masses):
+        raise(ValueError("Inconsistent geometry vector and mass list lengths"))
     ## end if
+
+    # Ensure all masses cast to float
+    masses = np.asarray([scast(val, np.float_) for val in masses])
 
     # If N masses are provided, expand to 3N; if 3N, retain.
-    if geom.shape[0] == 3*masses.shape[0]:
-        masses = expand_masses(masses)
+    if geom.shape[0] == 3*len(masses):
+        masses = masses.repeat(3)
     ## end if
 
-    # Calculate the mass-weighted coordinates, reshape and transpose to group
-    #  by coordinate row-wise, sum each row, then divide by the sum of masses,
-    #  which must be divided by three because there are three replicates
+    # Calculate the mass-weighted coordinates, reshape to group by coordinate
+    #  column-wise, sum each column, then divide by the sum of masses, which
+    #  must further be divided by three because there are three replicates
     #  (possibly perturbed) of the mass of each atom.
     ctr = np.multiply(geom, masses).reshape((geom.shape[0]/3,3)) \
                                 .sum(axis=0).squeeze() / (masses.sum() / 3)
@@ -368,38 +369,6 @@ def principals(geom, masses):
     return moments, axes, top
 
 ##end def principals
-
-
-def expand_masses(masses):
-    """ Replicate a length-N vector of masses to a length-3N vector.
-
-    Helper function for expanding a non-per-coordinate-perturbed masses vector
-    to a full 3N dimension.
-
-    Parameters
-    ----------
-    masses   : length-N np.float_
-        Vector of masses to expand
-
-    Returns
-    -------
-    expanded : length-3N np.float_
-        Expanded vector of masses
-
-    """
-
-    # Imports
-    import numpy as np
-
-    # Create np.array view of masses
-    mv = np.asarray(masses)
-
-    # Calculate the expanded vector (implicitly assumes numpy array) and
-    #  return
-    expanded = mv[:, np.newaxis].repeat(3, axis=1).reshape(3*mv.shape[0])
-    return expanded
-
-## end def expand_masses
 
 
 def _fadnpv(vec, geom):
