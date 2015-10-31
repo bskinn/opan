@@ -35,11 +35,11 @@ principals      : Calculate principal axes/moments and molecular top type
 
 
 # Module-level imports
-from .base import _arraysqueeze
+from .decorate import arraysqueeze as _arraysqueeze
 
 # Functions
 
-@_arraysqueeze(0)
+@_arraysqueeze(0,1)
 def ctr_mass(geom, masses):
     """Calculate the center of mass of the indicated geometry.
 
@@ -50,7 +50,7 @@ def ctr_mass(geom, masses):
     ----------
     geom    : length-3N np.float_
         Coordinates of the atoms
-    masses  : length-N OR length-3N list of np.float_
+    masses  : length-N OR length-3N np.float_
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
@@ -73,21 +73,18 @@ def ctr_mass(geom, masses):
     if len(geom.shape) != 1:
         raise(ValueError("Geometry is not a vector"))
     ## end if
-    if not isinstance(masses, list):
-        raise(ValueError("Masses are not a list"))
+    if len(masses.shape) != 1:
+        raise(ValueError("Masses cannot be parsed as a vector"))
     ## end if
     if not geom.shape[0] % 3 == 0:
         raise(ValueError("Geometry is not length-3N"))
     ## end if
-    if geom.shape[0] != 3*len(masses) and geom.shape[0] != len(masses):
-        raise(ValueError("Inconsistent geometry vector and mass list lengths"))
+    if geom.shape[0] != 3*masses.shape[0] and geom.shape[0] != masses.shape[0]:
+        raise(ValueError("Inconsistent geometry and masses vector lengths"))
     ## end if
 
-    # Ensure all masses cast to float
-    masses = np.asarray([scast(val, np.float_) for val in masses])
-
     # If N masses are provided, expand to 3N; if 3N, retain.
-    if geom.shape[0] == 3*len(masses):
+    if geom.shape[0] == 3*masses.shape[0]:
         masses = masses.repeat(3)
     ## end if
 
@@ -104,6 +101,7 @@ def ctr_mass(geom, masses):
 ## end def ctr_mass
 
 
+@_arraysqueeze(0)  # masses not used directly, so not pretreated
 def ctr_geom(geom, masses):
     """ Return geometry shifted to center of mass.
 
@@ -112,15 +110,15 @@ def ctr_geom(geom, masses):
 
     Parameters
     ----------
-    geom    : 3N x 1 np.float_
+    geom    : length-3N np.float_
         Original coordinates of the atoms
-    masses  : N x 1 OR 3N x 1 np.float_
-        Atomic masses of the atoms. 3N x 1 option is to allow calculation of
+    masses  : length-N OR length-3N np.float_
+        Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr_geom    : 3N x 1 np.float_
+    ctr_geom    : length-3N np.float_
         Atomic coordinates after shift to center of mass
 
     Raises
@@ -134,8 +132,7 @@ def ctr_geom(geom, masses):
 
     # Calculate the shift vector. Possible bad shape of geom or masses is
     #  addressed internally by the ctr_mass call.
-    shift = np.repeat(ctr_mass(geom, masses), geom.shape[0] / 3, axis=1) \
-                                                .T.reshape((geom.shape[0],1))
+    shift = np.tile(ctr_mass(geom, masses), geom.shape[0] / 3)
 
     # Shift the geometry and return
     ctr_geom = geom - shift
@@ -144,6 +141,7 @@ def ctr_geom(geom, masses):
 ## end def ctr_geom
 
 
+@_arraysqueeze(1)  # geom reassigned to ctr_geom before use, so untreated.
 def inertia_tensor(geom, masses):
     """Generate the 3x3 moment-of-inertia tensor.
 
@@ -156,10 +154,10 @@ def inertia_tensor(geom, masses):
 
     Parameters
     ----------
-    geom     : 3N x 1 np.float_
+    geom     : length-3N np.float_
         Coordinates of the atoms
-    masses   : N x 1 OR 3N x 1 np.float_
-        Atomic masses of the atoms. 3N x 1 option is to allow calculation of
+    masses   : length-N OR length-3N np.float_
+        Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
@@ -180,9 +178,10 @@ def inertia_tensor(geom, masses):
     #  masses via the internal call to 'ctr_mass' within the call to 'ctr_geom'
     geom = ctr_geom(geom, masses)
 
-    # Expand the masses if required. Shape should only ever be N x 1 or 3N x 1
+    # Expand the masses if required. Shape should only ever be (N,) or (3N,),
+    #  else would raise an exception within the above 'ctr_geom' call
     if geom.shape[0] == 3*masses.shape[0]:
-        masses = expand_masses(masses)
+        masses = masses.repeat(3)
     ## end if
 
     # Initialize the tensor matrix
@@ -198,8 +197,8 @@ def inertia_tensor(geom, masses):
                                         range(0,geom.shape[0],3)])
 
                 # Calculate the tensor element
-                tensor[i,i] = np.multiply(np.square(geom[ind,0]),
-                                                        masses[ind,0]).sum()
+                tensor[i,i] = np.multiply(np.square(geom[ind]),
+                                                        masses[ind]).sum()
             else:
                 # Off-diagonal element; calculate the indices
                 ind_i = np.array(range(i,geom.shape[0]+i,3))
@@ -207,8 +206,8 @@ def inertia_tensor(geom, masses):
 
                 # Calculate the tensor element and its symmetric partner
                 tensor[i,j] = np.multiply(
-                        np.sqrt(np.multiply(masses[ind_i,0], masses[ind_j,0])) ,
-                        np.multiply(geom[ind_i,0], geom[ind_j,0]) ).sum() * -1
+                        np.sqrt(np.multiply(masses[ind_i], masses[ind_j])) ,
+                        np.multiply(geom[ind_i], geom[ind_j]) ).sum() * -1
                 tensor[j,i] = tensor[i,j]
             ## end if
         ## next j
@@ -217,9 +216,10 @@ def inertia_tensor(geom, masses):
     # Return the tensor
     return tensor
 
-## end def inertia_mtx
+## end def inertia_tensor
 
 
+@_arraysqueeze(1)  # geom reassigned to ctr_geom before use, so untreated.
 def principals(geom, masses):
     """Principal axes and moments of inertia for the indicated geometry.
 
@@ -235,20 +235,21 @@ def principals(geom, masses):
 
     Parameters
     ----------
-    geom     : 3N x 1 np.float_
+    geom     : length-3N np.float_
         Coordinates of the atoms
-    masses   : N x 1 OR 3N x 1 np.float_
-        Atomic masses of the atoms. 3N x 1 option is to allow calculation of
+    masses   : length-N OR length-3N np.float_
+        Atomic masses of the atoms. length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    moments : 1 x 3 np.float_
+    moments : length-3 np.float_
         Principal inertial moments, sorted in increasing order
         (0 <= I_A <= I_B <= I_C)
-    axes    : 3 x 3 np.float)
-        Principal axes, sorted with the principal moments and processed
-        for repeatability
+    axes    : 3 x 3 np.float_
+        Principal axes, as column vectors, sorted with the principal moments
+        and processed for repeatability. The axis corresponding to moments[i]
+        is retrieved as axes[:,i]
     top     : E_TopType
         Detected molecular top type
 
@@ -325,10 +326,10 @@ def principals(geom, masses):
     elif top == ETT.Linear:
         # Zero-moment (molecular) axis always pointed toward the first atom,
         #  or the second if the first is at center-of-mass
-        if spla.norm(geom[0:3,0]) >= PRM.Zero_Vec_Tol:
-            axes[:,(0,)] = geom[0:3,0] / spla.norm(geom[0:3,0])
+        if spla.norm(geom[0:3]) >= PRM.Zero_Vec_Tol:
+            axes[:,0] = geom[0:3] / spla.norm(geom[0:3])
         else:
-            axes[:,(0,)] = geom[3:6,0] / spla.norm(geom[3:6,0])
+            axes[:,0] = geom[3:6] / spla.norm(geom[3:6])
         ## end if
 
         # Second axis is the normalized rejection of the x-axis on the first
@@ -337,12 +338,12 @@ def principals(geom, masses):
         #  The full rejection is calculated in the latter case to afford a
         #  slight increase in accuracy, since the axis may deviate slightly
         #  from the x-axis
-        if prlchk(axes[:,(0,)], np.array([[1.,0.,0.]]).T):
+        if prlchk(axes[:,0], np.array([1.,0.,0.])):
             # Too nearly (anti-)parallel
-            axes[:,(1,)] = rej(np.array([[0.,1.,0.]]).T, axes[:,(0,)])
+            axes[:,1] = rej(np.array([0.,1.,0.]), axes[:,0])
         else:
             # Sufficiently non-(anti-)parallel
-            axes[:,(1,)] = rej(np.array([[1.,0.,0.]]).T, axes[:,(0,)])
+            axes[:,1] = rej(np.array([1.,0.,0.]), axes[:,0])
         ## end if
         axes[:,1] /= spla.norm(axes[:,1])
 
@@ -371,6 +372,7 @@ def principals(geom, masses):
 ##end def principals
 
 
+@_arraysqueeze(0,1)
 def _fadnpv(vec, geom):
     """First non-zero Atomic Displacement that is Non-Parallel with Vec
 
@@ -380,15 +382,15 @@ def _fadnpv(vec, geom):
 
     Parameters
     ----------
-    vec     : 3 x 1 np.float_
+    vec     : length-3 np.float_
         Reference vector. Does not need to be normalized
-    geom    : 3N x 1 np.float_
+    geom    : length-3N np.float_
         *CENTERED* molecular geometry
 
     Returns
     -------
-    out_vec : 3 x 1 np.float_
-        Normalized non-zero, non-atomic displacement not (anti-)parallel to vec
+    out_vec : length-3 np.float_
+        Normalized non-zero atomic displacement not (anti-)parallel to vec
 
     """
 
@@ -400,12 +402,11 @@ def _fadnpv(vec, geom):
     from .vector import parallel_check as parchk
 
     # Geom and vec must both be the right shape
-    if not (len(geom.shape) == 2 and geom.shape[0] % 3 == 0 and
-                                                        geom.shape[1] == 1):
-        raise(ValueError("Geometry is not 3N x 1"))
+    if not (len(geom.shape) == 1 and geom.shape[0] % 3 == 0):
+        raise(ValueError("Geometry is not length 3N"))
     ## end if
-    if not vec.shape == (3,1):
-        raise(ValueError("Reference vector is not 3 x 1"))
+    if not vec.shape == (3,):
+        raise(ValueError("Reference vector is not length 3"))
     ## end if
 
     # vec must not be the zero vector
@@ -413,17 +414,17 @@ def _fadnpv(vec, geom):
         raise(ValueError("Reference vector norm is too small"))
     ## end if
 
-    # Array-ify and normalize the ref vec
-    vec = np.asarray(vec).squeeze() / spla.norm(vec)
+    # Normalize the ref vec
+    vec = vec / spla.norm(vec)
 
     # Iterate over reshaped geometry
-    for disp in np.asarray(geom).reshape((geom.shape[0]/3, 3)):
+    for disp in geom.reshape((geom.shape[0]/3, 3)):
         # See if the displacement is nonzero
         if spla.norm(disp) >= PRM.Zero_Vec_Tol:
             # See if it's nonparallel to the ref vec
-            if not parchk(disp.reshape((3,1)), vec):
+            if not parchk(disp.reshape(3), vec):
                 # This is the displacement you are looking for
-                out_vec = np.matrix(disp / spla.norm(disp)).reshape((3,1))
+                out_vec = disp / spla.norm(disp)
                 break
             ## end if
         ## end if

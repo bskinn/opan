@@ -31,8 +31,10 @@
 
 # Imports (those required for defaults for method parameters
 from ..const import DEF as _DEF
+from .decorate import arraysqueeze as _arraysqueeze
 
 
+@_arraysqueeze(0,1)
 def ortho_basis(normal, ref_vec=None):
     """Generates an orthonormal basis in the plane perpendicular to 'normal'
 
@@ -80,17 +82,16 @@ def ortho_basis(normal, ref_vec=None):
     # Magnitude of the perturbation from 'normal' in constructing a random rv
     RAND_MAG = 0.25
 
-    # Convert 'normal' to np.array, then test for shape and length
-    nv = np.asarray(normal).squeeze()
-    if not len(nv.shape) == 1:
+    # Test 'normal' for shape and length
+    if not len(normal.shape) == 1:
         raise(ValueError("'normal' is not a vector"))
     ## end if
-    if not nv.shape[0] == 3:
+    if not normal.shape[0] == 3:
         raise(ValueError("Length of 'normal' is not three"))
     ## end if
 
-    # Normalize nv
-    nv = nv / spla.norm(nv)
+    # Normalize to concise variable 'nv'
+    nv = normal / spla.norm(normal)
 
     # Test for specification of ref_vec in the function call
     if ref_vec == None:
@@ -111,17 +112,15 @@ def ortho_basis(normal, ref_vec=None):
 
     else:
         # ref_vec specified, go ahead and use.  Start with validity check.
-        rv = np.asarray(ref_vec).squeeze()
-
-        if not len(rv.shape) == 1:
+        if not len(ref_vec.shape) == 1:
             raise(ValueError("ref_vec is not a vector"))
         ## end if
-        if not rv.shape[0] == 3:
+        if not ref_vec.shape[0] == 3:
             raise(ValueError("ref_vec length is not three"))
         ## end if
 
-        # Normalize rv
-        rv = rv / spla.norm(rv)
+        # Normalize ref_vec to 'rv'
+        rv = ref_vec / spla.norm(ref_vec)
 
         # Check for collinearity of nv and rv; raise error if too close
         if parallel_check(nv, rv):
@@ -230,6 +229,7 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 ## end def orthonorm_check
 
 
+@_arraysqueeze(0,1)
 def parallel_check(vec1, vec2):
     """Checks whether two vectors are parallel OR anti-parallel
 
@@ -252,10 +252,6 @@ def parallel_check(vec1, vec2):
     # Imports
     from ..const import PRM
     import numpy as np
-
-    # Convert to squeezed np.array
-    vec1 = np.array(vec1).squeeze()
-    vec2 = np.array(vec2).squeeze()
 
     # Initialize False
     par = False
@@ -281,6 +277,7 @@ def parallel_check(vec1, vec2):
 ## end def parallel_check
 
 
+@_arraysqueeze(0,1)
 def proj(vec, vec_onto):
     """ Vector projection
 
@@ -302,10 +299,6 @@ def proj(vec, vec_onto):
     # Imports
     import numpy as np
 
-    # Convert to np.arrays
-    vec = np.asarray(vec).squeeze()
-    vec_onto = np.asarray(vec_onto).squeeze()
-
     # Ensure vectors
     if not len(vec.shape) == 1:
         raise(ValueError("'vec' is not a vector"))
@@ -325,6 +318,7 @@ def proj(vec, vec_onto):
 ## end def proj
 
 
+@_arraysqueeze(0,1)
 def rej(vec, vec_onto):
     """ Vector rejection
 
@@ -346,9 +340,6 @@ def rej(vec, vec_onto):
     # Imports
     import numpy as np
 
-    # Convert vec to np.array. Checking/conversion of vec_onto handled by 'proj'
-    vec = np.asarray(vec).squeeze()
-
     # Calculate and return.
     rej_vec = vec - proj(vec, vec_onto)
     return rej_vec
@@ -356,6 +347,7 @@ def rej(vec, vec_onto):
 ## end def rej
 
 
+@_arraysqueeze(0,1)
 def vec_angle(vec1, vec2):
     """ Angle between two N-dimensional vectors.
 
@@ -381,10 +373,6 @@ def vec_angle(vec1, vec2):
     import numpy as np
     from scipy import linalg as spla
     from ..const import PRM
-
-    # Convert to np.arrays
-    vec1 = np.asarray(vec1).squeeze()
-    vec2 = np.asarray(vec2).squeeze()
 
     # Check shape and equal length
     if len(vec1.shape) != 1:

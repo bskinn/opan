@@ -131,6 +131,7 @@ class OPAN_XYZ(object):
 
     # Imports
     import re as _re
+    from .utils.decorate import arraysqueeze as _arraysqueeze
 
     # Class constants
     LOAD_DATA_FLAG = "DATA"
@@ -214,6 +215,7 @@ class OPAN_XYZ(object):
     ## end def __init__
 
 
+    @_arraysqueeze(1,2)
     def _load_data(self, atom_syms, coords, bohrs=True):
         """ Internal function for making XYZ object from explicit geom data.
 
@@ -245,54 +247,50 @@ class OPAN_XYZ(object):
                     "Cannot overwrite contents of existing OPAN_XYZ", ""))
         ## end if
 
-        # Squeeze inputs to arrays
-        work_atoms = np.asarray(atom_syms).squeeze()
-        work_coords = np.asarray(coords).squeeze()
-
         # Check and store dimensions
-        if not len(work_coords.shape) == 1:
+        if not len(coords.shape) == 1:
             raise(ValueError("Coordinates are not a vector"))
         ## end if
-        if not len(work_atoms.shape) == 1:
+        if not len(atom_syms.shape) == 1:
             raise(ValueError("Atom symbols are not a simple list"))
         ## end if
-        if not work_coords.shape[0] == 3 * work_atoms.shape[0]:
+        if not coords.shape[0] == 3 * atom_syms.shape[0]:
             raise(ValueError("len(coords) != 3 * len(atom_syms)"))
         ## end if
 
         # Proof the atoms list
-        if not all([(work_atoms[i].upper() in atomNum) \
-                                for i in range(work_atoms.shape[0])]):
+        if not all([(atom_syms[i].upper() in atomNum) \
+                                for i in range(atom_syms.shape[0])]):
             # Invalid atoms specified
             raise(ValueError("Invalid atoms specified: " + str( \
-                    [(j, work_atoms[j]) for j in \
+                    [(j, atom_syms[j]) for j in \
                         [i for i, valid in \
                             enumerate(map( \
                                         lambda k: k in atomNum, \
-                                        work_atoms)) \
+                                        atom_syms)) \
                             if not valid \
                         ] \
                     ] )))
         ## end if
 
         # Ensure the geometry is all numeric
-        if not all(map(sp.isreal, work_coords)):
+        if not all(map(np.isreal, coords)):
             raise(ValueError("All coordinates must be real numeric"))
         ## end if
 
         # Store the number of atoms. Only one geometry. Standard string
         #  content for things only relevant to file load.
-        self.num_atoms = work_atoms.shape[0]
+        self.num_atoms = atom_syms.shape[0]
         self.num_geoms = 1
         self.in_str = self.LOAD_DATA_FLAG
         self.descs = np.array([self.LOAD_DATA_FLAG])
         self.XYZ_path = self.LOAD_DATA_FLAG
 
         # Store the atoms as vector
-        self.atom_syms = map(str.upper, list(work_atoms))
+        self.atom_syms = map(str.upper, list(atom_syms))
 
         # Store the single geometry by bracketing with an array
-        self.geoms = [work_coords]
+        self.geoms = [coords]
 
         self.initialized = True
 
