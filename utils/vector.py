@@ -192,6 +192,7 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 
     # Imports
     import numpy as np
+    from .base import delta_fxn
 
     #!TODO? orthonorm_check Must add traps to ensure a is a single array,
     #    that it is 2D, that it's all real? To enforce the limits stated

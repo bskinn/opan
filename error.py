@@ -393,7 +393,7 @@ class INERTIAError(OPANError):
         typecodes:
             neg_moment  : A negative principal inertial moment was computed
             top_type    : No valid molecular top type was identified
-            linear_mol  : A linear geometry was passed to a function 
+            linear_mol  : A linear geometry was passed to a function
                             requiring a non-linear one
 
     """
@@ -417,11 +417,14 @@ class VECTORError(OPANError):
         typecodes:
             nonprl      :  Insufficient non-parallel character in some
                             manner of calculation
+            orthonorm   :  Vectors which should have been orthonormal were
+                            determined not to be
 
     """
 
     # Typecodes as class-level variables
     nonprl = 'nonprl'
+    orthonorm = 'orthonorm'
 
 ## end class VECTORError
 

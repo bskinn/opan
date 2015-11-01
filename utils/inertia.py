@@ -36,6 +36,7 @@ principals      : Calculate principal axes/moments and molecular top type
 
 # Module-level imports
 from .decorate import arraysqueeze as _arraysqueeze
+from ..const import DEF as _DEF
 
 # Functions
 
@@ -220,7 +221,7 @@ def inertia_tensor(geom, masses):
 
 
 @_arraysqueeze(1)  # geom reassigned to ctr_geom before use, so untreated.
-def principals(geom, masses):
+def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     """Principal axes and moments of inertia for the indicated geometry.
 
     Calculated by scipy.linalg.eigh, since the moment of inertia tensor
@@ -259,8 +260,9 @@ def principals(geom, masses):
     import numpy as np
     from scipy import linalg as spla
     from ..const import PRM, E_TopType as ETT
-    from ..error import INERTIAError
+    from ..error import INERTIAError, VECTORError
     from .vector import rej, parallel_check as prlchk
+    from .vector import orthonorm_check as orthchk
 
     # Center the geometry. Takes care of any improper shapes of geom or
     #  masses via the internal call to 'ctr_mass' within the call to
@@ -335,9 +337,6 @@ def principals(geom, masses):
         # Second axis is the normalized rejection of the x-axis on the first
         #  axis, unless the molecule lies along the x-axis in which case it
         #  is taken as the normalized rejection of the y-axis on the first vec.
-        #  The full rejection is calculated in the latter case to afford a
-        #  slight increase in accuracy, since the axis may deviate slightly
-        #  from the x-axis
         if prlchk(axes[:,0], np.array([1.,0.,0.])):
             # Too nearly (anti-)parallel
             axes[:,1] = rej(np.array([0.,1.,0.]), axes[:,0])
@@ -347,11 +346,33 @@ def principals(geom, masses):
         ## end if
         axes[:,1] /= spla.norm(axes[:,1])
 
-        ## Third axis is the first crossed with the second
+        # Third axis is the first crossed with the second
         axes[:,2] = np.cross(axes[:,0], axes[:,1])
 
     elif top == ETT.Asymmetrical:
-        pass
+        # Vectors should already be orthonormal; following error should
+        #  never occur
+        if not orthchk(vecs, tol=on_tol):  # pragma: no cover
+            raise(VECTORError(VECTORError.orthonorm,
+                         "'eigh' produced non-orthonormal axes", ""))
+        ## end if
+
+        # Duplicate the vectors to the axes object
+        axes = vecs.copy()
+
+        # Orient first two axes to have positive dot products with their
+        #  respective first non-zero, non-parallel atomic displacements.
+        axes[:,0] *= np.sign(np.dot(vecs[:,0], _fadnpv(vecs[:,0], geom)))
+        axes[:,1] *= np.sign(np.dot(vecs[:,1], _fadnpv(vecs[:,1], geom)))
+
+        # Orient the third axis such that a3 = a1 {cross} a2
+        axes[:,2] *= np.sign(np.dot(axes[:,2], np.cross(axes[:,0], axes[:,1])))
+
+        # Reconfirm orthonormality. Again, the error should never occur.
+        if not orthchk(axes, tol=on_tol): # pragma: no cover
+            raise(VECTORError(VECTORError.orthonorm,
+                        "Axis re-orientation broke orthonormality",""))
+        ## end if
 
     elif top == ETT.SymmOblate:
         pass
