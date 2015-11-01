@@ -32,7 +32,7 @@ class SuperORCA(unittest.TestCase):
 
     # Constants
     testdir = 'orca_test_dir'
-    resourcedir = os.path.join('resource','tests')
+    resourcedir = os.path.join('resource','orca')
 
 ## end class SuperORCA
 

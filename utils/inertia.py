@@ -280,8 +280,8 @@ def principals(geom, masses):
     top = None
 
     # Detect top type; start with error check
-    if moments[0] < -PRM.Zero_Moment_Tol:
-        # Invalid moment; raise error
+    if moments[0] < -PRM.Zero_Moment_Tol:  # pragma: no cover
+        # Invalid moment; raise error. Should be impossible!
         raise(INERTIAError(INERTIAError.neg_moment,
                     "Negative principal inertial moment", ""))
     elif moments[0] < PRM.Zero_Moment_Tol:
@@ -309,8 +309,8 @@ def principals(geom, masses):
         ## end if
     ## end if
 
-    # Check for nothing assigned
-    if top == None:
+    # Check for nothing assigned (this should never occur!)
+    if top == None:  # pragma: no cover
         raise(INERTIAError(INERTIAError.top_type,
                     "Unrecognized molecular top type",""))
     ## end if
@@ -362,9 +362,6 @@ def principals(geom, masses):
     elif top == ETT.Spherical:
         pass
     ## end if
-
-    # Matrixify moments
-    moments = np.asmatrix(moments)
 
     # Return the moments, axes, and top type
     return moments, axes, top
