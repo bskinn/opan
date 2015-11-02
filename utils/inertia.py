@@ -294,16 +294,16 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
             top = ETT.Linear
         ## end if
     else:
-        if abs(moments[0] - moments[1]) < PRM.Equal_Moment_Tol:
+        if abs((moments[1] / moments[0]) - 1.0) < PRM.Equal_Moment_Tol:
             # Spherical or oblate symmetrical
-            if abs(moments[1] - moments[2]) < PRM.Equal_Moment_Tol:
+            if abs((moments[2] / moments[1]) - 1.0) < PRM.Equal_Moment_Tol:
                 top = ETT.Spherical
             else:
                 top = ETT.SymmOblate
             ## end if
         else:
             # Prolate symmetrical or Asymmetric
-            if abs(moments[1] - moments[2]) < PRM.Equal_Moment_Tol:
+            if abs((moments[2] / moments[1]) - 1.0) < PRM.Equal_Moment_Tol:
                 top = ETT.SymmProlate
             else:
                 top = ETT.Asymmetrical
