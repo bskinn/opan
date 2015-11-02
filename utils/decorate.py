@@ -26,6 +26,10 @@ arraysqueeze    : Convert selected arguments to squeezed np.arrays
 
 """
 
+# Imports
+from functools import wraps as _wraps
+
+# Decorators
 class arraysqueeze(object):
     """ Class-form decorator to convert select arguments to squeezed np.arrays
 
@@ -62,6 +66,7 @@ class arraysqueeze(object):
         beyond the range of the actual *args of f are ignored.
 
         """
+        @_wraps(f)
         def wrapped_f(*args, **kwargs):
 
             # Must import numpy
