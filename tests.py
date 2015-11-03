@@ -2579,6 +2579,70 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
 ## end class TestOPANXYZBadUsage
 
 
+# ===========================  utils.inertia  =============================== #
+
+class SuperOPANUtilsInertia(unittest.TestCase):
+    # Superclass for all test cases for the various top types
+
+    # Imports
+    import os
+
+    # Common constants
+    filedir = os.path.join('resource','inertia')
+
+    # Common setUpClass method
+    @classmethod
+    def setUpClass(self):
+
+        # Imports
+        import os
+        from opan.xyz import OPAN_XYZ as XYZ
+        from opan.hess import ORCA_HESS as HESS
+
+        # Attach class objects
+        basename = os.path.join(self.filedir, self.fname)
+        self.xyz = XYZ(path=basename + '.xyz')
+        self.hess = HESS(basename + '.hess')
+
+        # Always long messages
+        self.longMessage = True
+
+    @staticmethod
+    def ctr_mass_test(testobj):
+        import opan.utils.inertia as oui
+        ctr_mass = oui.ctr_mass(testobj.xyz.geoms[0], testobj.hess.atom_masses)
+        for i in range(3):
+            testobj.assertAlmostEqual(testobj.ctr_mass[i], ctr_mass[i],
+                        delta=1e-7,
+                        msg="Center-of-mass index '" + str(i) + "'")
+
+## end class SuperOPANUtilsInertia
+
+
+class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia):
+    # Asymmetric molecule test-case. Only checking for the proper generation
+    #  of correct results; no invalid data tests planned.
+
+    # Imports
+    import numpy as np
+
+    # Constants for superclass method use
+    fname = "H2O_Asymm"
+    ctr_mass = np.array([-11.42671795,   0.2152039 ,  -0.02145012])
+
+    def test_UtilsInertiaAsymm_ctr_mass(self):
+        self.ctr_mass_test(self)
+
+    #TEST: Remainder of calculables for Asymm
+
+## end class TestOPANUtilsInertiaAsymm
+
+
+#TEST: Other top types: Atom, Linear, SymmProl, SymmObl, Spher
+
+#TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
+
+
 # ==========================  Helper Functions  ============================= #
 
 def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):

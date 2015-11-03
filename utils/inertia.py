@@ -371,39 +371,27 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
 
     elif top == ETT.SymmOblate:
         # First axis is taken as the normalized rejection of the first
-        #  non-orthogonal atomic displacement onto the third eigenvector.
-        #  All symmetric planar molecules will fail in the call to _fadnov
-        #  here, and must be treated separately.
+        #  non-(anti)parallel atomic displacement onto the third eigenvector.
+        axes[:,0] = rej(_fadnpv(vecs[:,2], geom), vecs[:,2])
+        axes[:,0] /= spla.norm(axes[:,0])
+
+        # Try to take the third axis directionality as that giving a positive
+        #  dot product with the first non-orthogonal atomic displacement.
+        # A planar system will cause an error in the _fadnov call, that
+        #  is trapped here.
+        # If planar, take the third axis as the normalized cross product
+        #  of the first and second nonzero atomic displacements.
+
         try:
-            axes[:,0] = rej(_fadnov(vecs[:,2], geom), vecs[:,2])
+            axes[:,2] = vecs[:,2] * np.sign(np.dot(vecs[:,2],
+                                                    _fadnov(vecs[:,2], geom)))
         except INERTIAError as IE:
-            if IE.tc == INERTIAError.bad_geom:
-                # Planar molecule; just use the first nonzero atomic
-                #  displacement
-                planar = True
-                if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol:
-                    axes[:,0] = geom[3:6]
-                else:
-                    axes[:,0] = geom[0:3]
-                ## end if
-            else:
-                # Some other problem; re-raise
+            # Check that typecode is as expected for error from planar system.
+            if not IE.tc == INERTIAError.bad_geom:
                 raise
             ## end if
-        else:
-            # Not planar
-            planar = False
 
-        finally:
-            # Either way, normalize
-            axes[:,0] /= spla.norm(axes[:,0])
-        ## end try
-
-        # If planar, take the third axis as the normalized cross product
-        #  of the first and second nonzero atomic displacements. If not,
-        #  take the third axis directionality as that giving a positive dot
-        #  product with the first non-orthogonal atomic displacement.
-        if planar:
+            # Select the appropriate displacements to define the third axis
             if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol:
                 # First displacement is zero
                 axes[:,2] = np.cross(geom[3:6], geom[6:9])
@@ -416,21 +404,45 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
             ## end if
 
             # Regardless of which calculation, normalize the vector
+        finally:
             axes[:,2] /= spla.norm(axes[:,2])
-        else:
-            # Not planar; just reorient if necessary
-            axes[:,2] = vecs[:,2] * np.sign(np.dot(vecs[:,2],
-                                                    _fadnov(vecs[:,2], geom)))
-        ## end if
+        ## end try
 
         # Second axis is the third axis crossed with the first
         axes[:,1] = np.cross(axes[:,2], axes[:,0])
 
     elif top == ETT.SymmProlate:
-        pass
+        # Special case of prolate symmetric is linear, which is separately
+        #  detected and already addressed.
+        # First (non-degenerate) axis is just taken to have a positive dot
+        #  product with its first non-orthogonal nonzero displacement
+        axes[:,0] = vecs[:,0] * np.sign(np.dot(vecs[:,0],
+                                                    _fadnov(vecs[:,0], geom)))
+
+        # Second (first degenerate) axis is the normalized rejection of that
+        #  first displacement onto the first axis
+        axes[:,1] = rej(_fadnov(vecs[:,0], geom), vecs[:,0])
+        axes[:,1] /= spla.norm(axes[:,1])
+
+        # Third (second degenerate) axis is just the first axis crossed with
+        #  the second.
+        axes[:,2] = np.cross(axes[:,0], axes[:,1])
 
     elif top == ETT.Spherical:
-        pass
+        # No preferred orientation -- ALL vectors are degenerate axes
+        # First axis is the first nonzero displacement, normalized
+        axes[:,0] = geom[3:6] if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol \
+                                                                else geom[0:3]
+        axes[:,0] /= spla.norm(axes[:,0])
+
+        # Second axis is the normalized rejection onto the first axis of the
+        #  first nonzero non-parallel displacement from that first axis
+        axes[:,1] = rej(_fadnpv(axes[:,0], geom), axes[:,0])
+        axes[:,1] /= spla.norm(axes[:,1])
+
+        # Third axis is the first crossed with the second
+        axes[:,2] = np.cross(axes[:,0], axes[:,1])
+
     ## end if
 
     # Reconfirm orthonormality. Again, the error should never occur.
@@ -507,6 +519,75 @@ def _fadnov(vec, geom):
         raise(INERTIAError(INERTIAError.bad_geom,
                     "No suitable atomic displacement found", ""))
     ## end for disp
+
+## end def _fadnpv
+
+
+@_arraysqueeze(0,1)
+def _fadnpv(vec, geom):
+    """First non-zero Atomic Displacement that is Non-Parallel with Vec
+
+    Utility function to identify the first atomic displacement in a geometry
+    that is both (a) not the zero vector and (b) non-(anti-)parallel with a
+    reference vector.
+
+    Parameters
+    ----------
+    vec     : length-3 np.float_
+        Reference vector. Does not need to be normalized
+    geom    : length-3N np.float_
+        *CENTERED* molecular geometry
+
+    Returns
+    -------
+    out_vec : length-3 np.float_
+        Normalized non-zero atomic displacement not (anti-)parallel to vec
+
+    """
+
+    # Imports
+    import numpy as np
+    from scipy import linalg as spla
+    from ..const import PRM
+    from ..error import INERTIAError
+    from .vector import parallel_check as parchk
+
+    # Geom and vec must both be the right shape
+    if not (len(geom.shape) == 1 and geom.shape[0] % 3 == 0):
+        raise(ValueError("Geometry is not length 3N"))
+    ## end if
+    if not vec.shape == (3,):
+        raise(ValueError("Reference vector is not length 3"))
+    ## end if
+
+    # vec must not be the zero vector
+    if spla.norm(vec) < PRM.Zero_Vec_Tol:
+        raise(ValueError("Reference vector norm is too small"))
+    ## end if
+
+     # Normalize the ref vec
+    vec = vec / spla.norm(vec)
+
+    # Iterate over reshaped geometry
+    for disp in geom.reshape((geom.shape[0]/3, 3)):
+        # See if the displacement is nonzero
+        if spla.norm(disp) >= PRM.Zero_Vec_Tol:
+            # See if it's nonparallel to the ref vec
+            if not parchk(disp.reshape(3), vec):
+                # This is the displacement you are looking for
+                out_vec = disp / spla.norm(disp)
+                break
+            ## end if
+        ## end if
+    ## next disp
+    else:
+        # Nothing fit the bill - must be a linear molecule?
+        raise(INERTIAError(INERTIAError.linear_mol,
+                    "Linear molecule, no non-parallel displacement", ""))
+    ## end for disp
+
+    # Return the resulting vector
+    return out_vec
 
 ## end def _fadnpv
 
