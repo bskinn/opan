@@ -2616,6 +2616,38 @@ class SuperOPANUtilsInertia(unittest.TestCase):
                         delta=1e-7,
                         msg="Center-of-mass index '" + str(i) + "'")
 
+    @staticmethod
+    def ctr_geom_test(testobj):
+        import opan.utils.inertia as oui
+        ctr_geom = oui.ctr_geom(testobj.xyz.geoms[0], testobj.hess.atom_masses)
+        for i in range(ctr_geom.shape[0]):
+            testobj.assertAlmostEqual(testobj.ctr_geom[i], ctr_geom[i],
+                        delta=1e-7,
+                        msg="Centered geometry index '" + str(i) + "'")
+
+    @staticmethod
+    def i_tensor_test(testobj):
+        import opan.utils.inertia as oui
+        i_tensor = oui.inertia_tensor(testobj.xyz.geoms[0],
+                                                    testobj.hess.atom_masses)
+        for i in range(i_tensor.shape[0]):
+            for j in range(i_tensor.shape[1]):
+                testobj.assertAlmostEqual(testobj.i_tensor[i,j],
+                            i_tensor[i,j],
+                            delta=1e-7,
+                            msg="Inertia tensor element (" + str(i) + "," +
+                                                             str(j) + ")")
+
+    @staticmethod
+    def moments_test(testobj):
+        import opan.utils.inertia as oui
+        moments = oui.principals(testobj.xyz.geoms[0],
+                                            testobj.hess.atom_masses)[0]
+        for i in range(moments.shape[0]):
+            testobj.assertAlmostEqual(testobj.moments[i], moments[i],
+                        delta=1e-7,
+                        msg="Principal moment index '" + str(i) + "'")
+
 ## end class SuperOPANUtilsInertia
 
 
@@ -2625,13 +2657,34 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia):
 
     # Imports
     import numpy as np
+    from opan.const import E_TopType
 
     # Constants for superclass method use
     fname = "H2O_Asymm"
     ctr_mass = np.array([-11.42671795,   0.2152039 ,  -0.02145012])
+    ctr_geom = np.array([-0.07503316, -0.09586698,  0.04549049,
+                1.7685783 ,  0.01137086, -0.00539566,
+                -0.57765012,  1.51023212, -0.71663048])
+    i_tensor = np.array([[ 2.99702139,  0.74400967, -0.35304507],
+                [ 0.74400967,  4.13012039,  1.16077065],
+                [-0.35304507,  1.16077065,  6.02553148]])
+    moments = np.array([ 2.41469379,  4.16164284,  6.57633663])
+    axes = np.array([[  8.16492638e-01,  -5.77355846e-01,   6.07765301e-15],
+                [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
+                [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
+    top = E_TopType.Asymmetrical
 
     def test_UtilsInertiaAsymm_ctr_mass(self):
         self.ctr_mass_test(self)
+
+    def test_UtilsInertiaAsymm_ctr_geom(self):
+        self.ctr_geom_test(self)
+
+    def test_UtilsInertiaAsymm_i_tensor(self):
+        self.i_tensor_test(self)
+
+    def test_UtilsInertiaAsymm_moments(self):
+        self.moments_test(self)
 
     #TEST: Remainder of calculables for Asymm
 
