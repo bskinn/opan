@@ -2581,8 +2581,17 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
 
 # ===========================  utils.inertia  =============================== #
 
-class SuperOPANUtilsInertia(unittest.TestCase):
-    # Superclass for all test cases for the various top types
+class SuperOPANUtilsInertia(object):
+    # Superclass for all test cases for the various top types. Implemented
+    #  as a top-level class rather than a subclass of unittest.TestCase to
+    #  prevent the tests being run spuriously on the superclass. Also avoids
+    #  run-time errors since self.fname does not exist in the superclass
+    #  namespace.
+    #
+    # Subclasses must also subclass unittest.TestCase, and must declare
+    #  SuperOPANUtilsInertia as a higher priority superclass. Otherwise, the
+    #  default form of the `setUpClass` method from unittest.TestCase will be
+    #  called.
 
     # Imports
     import os
@@ -2607,51 +2616,69 @@ class SuperOPANUtilsInertia(unittest.TestCase):
         # Always long messages
         self.longMessage = True
 
-    @staticmethod
-    def ctr_mass_test(testobj):
+    def test_ctr_mass(self):
         import opan.utils.inertia as oui
-        ctr_mass = oui.ctr_mass(testobj.xyz.geoms[0], testobj.hess.atom_masses)
+        ctr_mass = oui.ctr_mass(self.xyz.geoms[0], self.hess.atom_masses)
         for i in range(3):
-            testobj.assertAlmostEqual(testobj.ctr_mass[i], ctr_mass[i],
+            self.assertAlmostEqual(self.ctr_mass[i], ctr_mass[i],
                         delta=1e-7,
                         msg="Center-of-mass index '" + str(i) + "'")
 
-    @staticmethod
-    def ctr_geom_test(testobj):
+    def test_ctr_geom(self):
         import opan.utils.inertia as oui
-        ctr_geom = oui.ctr_geom(testobj.xyz.geoms[0], testobj.hess.atom_masses)
+        ctr_geom = oui.ctr_geom(self.xyz.geoms[0], self.hess.atom_masses)
         for i in range(ctr_geom.shape[0]):
-            testobj.assertAlmostEqual(testobj.ctr_geom[i], ctr_geom[i],
+            self.assertAlmostEqual(self.ctr_geom[i], ctr_geom[i],
                         delta=1e-7,
                         msg="Centered geometry index '" + str(i) + "'")
 
-    @staticmethod
-    def i_tensor_test(testobj):
+    def test_i_tensor(self):
         import opan.utils.inertia as oui
-        i_tensor = oui.inertia_tensor(testobj.xyz.geoms[0],
-                                                    testobj.hess.atom_masses)
+        i_tensor = oui.inertia_tensor(self.xyz.geoms[0],
+                                                    self.hess.atom_masses)
         for i in range(i_tensor.shape[0]):
             for j in range(i_tensor.shape[1]):
-                testobj.assertAlmostEqual(testobj.i_tensor[i,j],
+                self.assertAlmostEqual(self.i_tensor[i,j],
                             i_tensor[i,j],
                             delta=1e-7,
                             msg="Inertia tensor element (" + str(i) + "," +
                                                              str(j) + ")")
 
-    @staticmethod
-    def moments_test(testobj):
+    def test_moments(self):
         import opan.utils.inertia as oui
-        moments = oui.principals(testobj.xyz.geoms[0],
-                                            testobj.hess.atom_masses)[0]
+        moments = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[0]
         for i in range(moments.shape[0]):
-            testobj.assertAlmostEqual(testobj.moments[i], moments[i],
-                        delta=1e-7,
+            self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
+                        delta=1e-9,
                         msg="Principal moment index '" + str(i) + "'")
+
+    def test_axes(self):
+        import opan.utils.inertia as oui
+        axes = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[1]
+        for i in range(axes.shape[0]):
+            for j in range(axes.shape[1]):
+                self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
+                            delta=1e-9,
+                            msg="Principal axis #" + str(j) + ", element " +
+                                                                        str(i))
+
+    def test_axes_orthonorm(self):
+        import opan.utils.inertia as oui
+        from opan.utils.vector import orthonorm_check as onchk
+        axes = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[1]
+        on, nfail, ofail = onchk(axes, report=True)
+        self.assertTrue(on, msg="Norm failures: " + str(nfail) +
+                                "; ortho failures: " + str(ofail))
+
+    def test_toptype(self):
+        import opan.utils.inertia as oui
+        top = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[2]
+        self.assertEqual(top, self.top)
 
 ## end class SuperOPANUtilsInertia
 
 
-class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia):
+class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
     # Asymmetric molecule test-case. Only checking for the proper generation
     #  of correct results; no invalid data tests planned.
 
@@ -2674,24 +2701,31 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia):
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
     top = E_TopType.Asymmetrical
 
-    def test_UtilsInertiaAsymm_ctr_mass(self):
-        self.ctr_mass_test(self)
-
-    def test_UtilsInertiaAsymm_ctr_geom(self):
-        self.ctr_geom_test(self)
-
-    def test_UtilsInertiaAsymm_i_tensor(self):
-        self.i_tensor_test(self)
-
-    def test_UtilsInertiaAsymm_moments(self):
-        self.moments_test(self)
-
-    #TEST: Remainder of calculables for Asymm
-
 ## end class TestOPANUtilsInertiaAsymm
 
 
-#TEST: Other top types: Atom, Linear, SymmProl, SymmObl, Spher
+class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
+    # Lone atom test-case. Only checking for the proper generation
+    #  of correct results; no invalid data tests planned.
+    # TEST: Problems occurring with attempted test; need to fix
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "Cu_Atom"
+    ctr_mass = np.array([-1., 2., -4.])
+    ctr_geom = np.array([0.0, 0.0, 0.0])
+    i_tensor = np.zeros((3,3))
+    moments = np.zeros((3,))
+    axes = np.eye(3)
+    top = E_TopType.Atom
+
+## end class TestOPANUtilsInertiaAtom
+
+
+#TEST: Other top types: Linear, SymmProl, SymmObl, Spher
 
 #TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
 
