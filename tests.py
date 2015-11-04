@@ -2648,7 +2648,12 @@ class SuperOPANUtilsInertia(object):
         import opan.utils.inertia as oui
         moments = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[0]
         for i in range(moments.shape[0]):
-            self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
+            if moments[i] < 1e-10:
+                self.assertAlmostEqual(self.moments[i], moments[i],
+                        delta=1e-7,
+                        msg="Principal moment index '" + str(i) + "'")
+            else:
+                self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
                         delta=1e-9,
                         msg="Principal moment index '" + str(i) + "'")
 
@@ -2657,7 +2662,13 @@ class SuperOPANUtilsInertia(object):
         axes = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[1]
         for i in range(axes.shape[0]):
             for j in range(axes.shape[1]):
-                self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
+                if abs(axes[i,j]) < 1e-10:
+                    self.assertAlmostEqual(self.axes[i,j], axes[i,j],
+                            delta=1e-7,
+                            msg="Principal axis #" + str(j) + ", element " +
+                                                                        str(i))
+                else:
+                    self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
                             delta=1e-9,
                             msg="Principal axis #" + str(j) + ", element " +
                                                                         str(i))
@@ -2707,7 +2718,6 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
     # Lone atom test-case. Only checking for the proper generation
     #  of correct results; no invalid data tests planned.
-    # TEST: Problems occurring with attempted test; need to fix
 
     # Imports
     import numpy as np
@@ -2715,7 +2725,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Constants for superclass method use
     fname = "Cu_Atom"
-    ctr_mass = np.array([-1., 2., -4.])
+    ctr_mass = np.array([-1.88972612,  3.77945225, -7.5589045 ])
     ctr_geom = np.array([0.0, 0.0, 0.0])
     i_tensor = np.zeros((3,3))
     moments = np.zeros((3,))
@@ -2725,7 +2735,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
 ## end class TestOPANUtilsInertiaAtom
 
 
-#TEST: Other top types: Linear, SymmProl, SymmObl, Spher
+#TEST: Other top types: Linear, SymmProl, SymmObl (incl special Planar), Spher
 
 #TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
 
