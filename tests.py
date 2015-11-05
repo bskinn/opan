@@ -2654,7 +2654,7 @@ class SuperOPANUtilsInertia(object):
                         msg="Principal moment index '" + str(i) + "'")
             else:
                 self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
-                        delta=1e-9,
+                        delta=1e-8,
                         msg="Principal moment index '" + str(i) + "'")
 
     def test_axes(self):
@@ -2669,7 +2669,7 @@ class SuperOPANUtilsInertia(object):
                                                                         str(i))
                 else:
                     self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
-                            delta=1e-9,
+                            delta=1e-8,
                             msg="Principal axis #" + str(j) + ", element " +
                                                                         str(i))
 
@@ -2690,8 +2690,7 @@ class SuperOPANUtilsInertia(object):
 
 
 class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
-    # Asymmetric molecule test-case. Only checking for the proper generation
-    #  of correct results; no invalid data tests planned.
+    # Asymmetric molecule test-case (H2O).
 
     # Imports
     import numpy as np
@@ -2716,8 +2715,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 
 
 class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
-    # Lone atom test-case. Only checking for the proper generation
-    #  of correct results; no invalid data tests planned.
+    # Lone atom test-case (Cu).
 
     # Imports
     import numpy as np
@@ -2735,7 +2733,59 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
 ## end class TestOPANUtilsInertiaAtom
 
 
-#TEST: Other top types: Linear, SymmProl, SymmObl (incl special Planar), Spher
+class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
+    # Linear molecule test-case (chloroethyne).
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "HC2Cl_Linear"
+    ctr_mass = np.array([ 3.78157026, -0.13914054,  0.11918503])
+    ctr_geom = np.array([ -1.81226617e+00,   4.52442528e-10,   7.10376657e-09,
+                         1.29696963e+00,   4.73253989e-09,  -1.02091483e-08,
+                         3.58244725e+00,  -6.42275907e-09,  -1.13833863e-08,
+                         5.59880599e+00,   4.22696256e-09,   7.43858825e-09])
+    i_tensor = np.array([[  5.44288079e-15,   2.07854690e-07,   1.06328882e-06],
+                       [  2.07854690e-07,   3.22388376e+02,  -4.43485080e-16],
+                       [  1.06328882e-06,  -4.43485080e-16,   3.22388376e+02]])
+    moments = np.array([  5.68434189e-14,   3.22388376e+02,   3.22388376e+02])
+    axes = np.array([[ -1.00000000e+00,   2.49655671e-10,  -3.91982518e-09],
+                   [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
+                   [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
+    top = E_TopType.Linear
+
+## end class TestOPANUtilsInertiaLinear
+
+
+class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
+    # Prolate symmetric test case (chloromethane)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "CH3Cl_SymmProl"
+    ctr_mass = np.array([ 1.19526288,  1.19526288,  1.19526288])
+    ctr_geom = np.array([-1.36880665, -1.36880665, -1.36880665,
+                            0.61213832,  0.61213832, 0.61213832,
+                            -2.54039904, -2.54039904, -0.13884799,
+                            -0.13884799, -2.54039904, -2.54039904,
+                            -2.54039904, -0.13884799, -2.54039905])
+    i_tensor = np.array([[ 97.63769388, -43.0052599 , -43.00525991],
+                       [-43.0052599 ,  97.63769391, -43.00525989],
+                       [-43.00525991, -43.00525989,  97.63769389]])
+    moments = np.array([  11.6271741 ,  140.64295379,  140.6429538 ])
+    axes = np.array([[ -5.77350269e-01,  -4.08248290e-01,  -7.07106781e-01],
+                       [ -5.77350269e-01,  -4.08248291e-01,   7.07106781e-01],
+                       [ -5.77350269e-01,   8.16496581e-01,   2.78286699e-10]])
+    top = E_TopType.SymmProlate
+
+## end class TestOPANUtilsInertiaSymmProl
+
+#TEST: Other top types: SymmProl, SymmObl (incl special Planar), Spher
 
 #TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
 
