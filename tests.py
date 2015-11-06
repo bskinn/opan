@@ -2654,7 +2654,7 @@ class SuperOPANUtilsInertia(object):
                         msg="Principal moment index '" + str(i) + "'")
             else:
                 self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
-                        delta=1e-8,
+                        delta=1e-7,
                         msg="Principal moment index '" + str(i) + "'")
 
     def test_axes(self):
@@ -2669,7 +2669,7 @@ class SuperOPANUtilsInertia(object):
                                                                         str(i))
                 else:
                     self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
-                            delta=1e-8,
+                            delta=1e-7,
                             msg="Principal axis #" + str(j) + ", element " +
                                                                         str(i))
 
@@ -2785,7 +2785,73 @@ class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
 
 ## end class TestOPANUtilsInertiaSymmProl
 
-#TEST: Other top types: SymmProl, SymmObl (incl special Planar), Spher
+
+class TestOPANUtilsInertiaSymmObl(SuperOPANUtilsInertia, unittest.TestCase):
+    # Oblate symmetric test case (ammonia)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "NH3_SymmObl"
+    ctr_mass = np.array([ -1.36098776e+01,   1.70206822e+00,  -7.62922335e-04])
+    ctr_geom = np.array([ -4.79117194e-02,  -1.35356483e-01,   5.88277405e-03,
+                         1.89623378e+00,   3.55505121e-02,  -1.54206207e-03,
+                        -6.15221552e-01,   8.55891028e-01,  -1.57668545e+00,
+                        -6.15238957e-01,   9.89449583e-01,   1.49648146e+00])
+    i_tensor = np.array([[ 6.74683794,  0.98560398, -0.04281628],
+                           [ 0.98560398,  9.1833784 , -0.12106317],
+                           [-0.04281628, -0.12106317,  6.40284824]])
+    moments = np.array([ 6.39758672,  6.39807449,  9.53740337])
+    axes = np.array([[-0.941357532609, -0.052449650272, -0.333309210773],
+                   [ 0.334894464181, -0.024822665809, -0.94192862422 ],
+                   [ 0.041130203771, -0.998315015137,  0.040932100963]])
+    top = E_TopType.SymmOblate
+
+## end class TestOPANUtilsInertiaSymmObl
+
+
+class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
+    # Planar (oblate symmetric special case) test case (benzene)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "C6H6_Planar"
+    ctr_mass = np.array(
+            [1.148780590160e-08,  -5.515595476513e-09,   4.724360320833e-04])
+    ctr_geom = np.array(
+            [3.134460123683e-01,  -2.621979778021e+00,   1.403771092868e-03,
+            -2.114007729657e+00,  -1.582454017741e+00,   5.987279667302e-04,
+            -2.427423831250e+00,   1.039518493720e+00,  -8.015840172113e-04,
+            -3.134459944466e-01,   2.621979777359e+00,  -1.395744270491e-03,
+             2.114007724881e+00,   1.582454041733e+00,  -6.048491005300e-04,
+             2.427423830734e+00,  -1.039518523112e+00,   7.996832766822e-04,
+             5.583884194998e-01,  -4.670299677611e+00,   2.540143441376e-03,
+            -3.765458354349e+00,  -2.818705777330e+00,   1.033328606732e-03,
+            -4.323790859737e+00,   1.851559654140e+00,  -1.426932571554e-03,
+            -5.583886978890e-01,   4.670299682073e+00,  -2.461789695235e-03,
+             3.765458405107e+00,   2.818705705684e+00,  -1.093271421893e-03,
+             4.323790936887e+00,  -1.851559514706e+00,   1.408462681241e-03])
+    i_tensor = np.array(
+        [[  3.181602077872e+02,  -3.101234621809e-03,  -3.376679667532e-02],
+        [ -3.101234621809e-03,   3.181643821933e+02,   1.659146313555e-01],
+        [ -3.376679667532e-02,   1.659146313555e-01,   6.363244097576e+02]])
+    moments = np.array(\
+                [ 318.158549427492,  318.165950447577,  636.324499862997])
+    axes = np.array(
+        [[  1.187003596453e-01,   9.929301150410e-01,  -1.061351319883e-04],
+        [ -9.929299790531e-01,   1.187003991302e-01,   5.214825108384e-04],
+        [  5.303939720074e-04,   4.348459279668e-05,   9.999998583957e-01]])
+    top = E_TopType.SymmOblate
+
+## end class TestOPANUtilsInertiaPlanar
+
+
+#TEST: Other top types: Spher
 
 #TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
 
