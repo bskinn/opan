@@ -330,7 +330,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         #  or the second if the first is at center-of-mass
         if spla.norm(geom[0:3]) >= PRM.Zero_Vec_Tol:
             axes[:,0] = geom[0:3] / spla.norm(geom[0:3])
-        else:
+        else:  # pragma: no cover (assume alt case ok)
             axes[:,0] = geom[3:6] / spla.norm(geom[3:6])
         ## end if
 
@@ -340,7 +340,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         if prlchk(axes[:,0], np.array([1.,0.,0.])):
             # Too nearly (anti-)parallel
             axes[:,1] = rej(np.array([0.,1.,0.]), axes[:,0])
-        else:
+        else:  # pragma: no cover (assume alt case ok)
             # Sufficiently non-(anti-)parallel
             axes[:,1] = rej(np.array([1.,0.,0.]), axes[:,0])
         ## end if
@@ -394,10 +394,10 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
             # Select the appropriate displacements to define the third axis
             if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol:
                 # First displacement is zero
-                axes[:,2] = np.cross(geom[3:6], geom[6:9])
+                axes[:,2] = np.cross(geom[3:6], geom[6:9]) # pragma: no cover
             elif spla.norm(geom[3:6]) < PRM.Zero_Vec_Tol:
                 # Second displacement is zero
-                axes[:,2] = np.cross(geom[0:3], geom[6:9])
+                axes[:,2] = np.cross(geom[0:3], geom[6:9]) # pragma: no cover
             else:
                 # First and second displacements are okay
                 axes[:,2] = np.cross(geom[0:3], geom[3:6])

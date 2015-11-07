@@ -2690,7 +2690,8 @@ class SuperOPANUtilsInertia(object):
 
 
 class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
-    # Asymmetric molecule test-case (H2O).
+    # Asymmetric molecule test-case (H2O). Includes proofreading tests for,
+    #  e.g., bad object shapes
 
     # Imports
     import numpy as np
@@ -2710,6 +2711,10 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
                 [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
     top = E_TopType.Asymmetrical
+
+#TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
+##    def test_UtilsInertiaBadGeom(self):
+##        self.assertRaises(
 
 ## end class TestOPANUtilsInertiaAsymm
 
@@ -2847,9 +2852,35 @@ class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
 ## end class TestOPANUtilsInertiaPlanar
 
 
-#TEST: Other top types: Spher
+class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
+    # Spherical test case (methane)
 
-#TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "CH4_Spher"
+    ctr_mass = np.array(
+            [  8.734135537996e-11,   4.387156003093e-11,  -1.188484647673e-11])
+    ctr_geom = np.array(
+            [  4.000728815448e-11,   2.009566928560e-11,  -5.443942085537e-12,
+             1.180503717314e+00,   1.180503717408e+00,   1.180503717381e+00,
+            -1.180503717657e+00,  -1.180503717520e+00,   1.180503717479e+00,
+             1.180503717435e+00,  -1.180503717544e+00,  -1.180503717454e+00,
+            -1.180503717568e+00,   1.180503717417e+00,  -1.180503717341e+00])
+    i_tensor = np.array(
+            [[  1.123790191290e+01,   7.775846633251e-11,   5.015445836420e-10],
+           [  7.775846633251e-11,   1.123790191310e+01,  -3.777778090353e-11],
+           [  5.015445836420e-10,  -3.777778090353e-11,   1.123790191366e+01]])
+    moments = np.array([ 11.237901912633,  11.237901913117,  11.237901913909])
+    axes = np.array(
+            [[  5.773502691632e-01,  -4.082482905123e-01,   7.071067811802e-01],
+           [  5.773502692095e-01,  -4.082482904247e-01,  -7.071067811929e-01],
+           [  5.773502691962e-01,   8.164965809231e-01,   6.946399011554e-11]])
+    top = E_TopType.Spherical
+
+## end class TestOPANUtilsInertiaSpher
 
 
 # ==========================  Helper Functions  ============================= #
