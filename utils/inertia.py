@@ -387,7 +387,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
                                                     _fadnOv(vecs[:,2], geom)))
         except INERTIAError as IE:
             # Check that typecode is as expected for error from planar system.
-            if not IE.tc == INERTIAError.bad_geom:
+            if not IE.tc == INERTIAError.bad_geom:  # pragma: no cover
                 raise
             ## end if
 
