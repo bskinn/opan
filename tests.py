@@ -2712,9 +2712,45 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
     top = E_TopType.Asymmetrical
 
-#TEST: Invalid inputs (vector shapes, etc.) raise the proper errors.
-##    def test_UtilsInertiaBadGeom(self):
-##        self.assertRaises(
+
+    def test_UtilsInertiaBadGeomShape(self):
+        from opan.utils.inertia import ctr_mass as cm, _fadnOv as fO, \
+                                                        _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, cm, np.array([[1,1],[1,1]]),
+                                                    self.hess.atom_masses)
+        self.assertRaises(ValueError, fO, [1,2,3], self.xyz.geoms[0][:-2])
+        self.assertRaises(ValueError, fP, [1,2,3], self.xyz.geoms[0][:-2])
+
+    def test_UtilsInertiaBadMassesShape(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0],
+                                                     np.array([[1,1],[1,1]]))
+
+    def test_UtilsInertiaBadGeomLength(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0][:-2],
+                                                    self.hess.atom_masses)
+
+    def test_UtilsInertiaBadGeomMassesLengths(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0],
+                                                self.hess.atom_masses[:-2])
+
+    def test_UtilsInertiaBadRefVecShape(self):
+        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, fO, [1,2,3,4], self.xyz.geoms[0])
+        self.assertRaises(ValueError, fP, [1,2,3,4], self.xyz.geoms[0])
+
+    def test_UtilsInertiaBadRefVecNorm(self):
+        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, fO, [1e-7, 0, 1e-9], self.xyz.geoms[0])
+        self.assertRaises(ValueError, fP, [1e-7, 0, 1e-9], self.xyz.geoms[0])
 
 ## end class TestOPANUtilsInertiaAsymm
 
@@ -2760,6 +2796,14 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
                    [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
                    [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
     top = E_TopType.Linear
+
+    def test_UtilsInertiaLinearNoNonParallelVec(self):
+        from opan.utils.inertia import _fadnPv as fP, ctr_geom as cg
+        import numpy as np
+        from opan.error import INERTIAError as INErr
+        assertErrorAndTypecode(self, INErr, fP , INErr.bad_geom,
+                            self.xyz.Displ_single(0,0,1),
+                            cg(self.xyz.geoms[0], self.hess.atom_masses))
 
 ## end class TestOPANUtilsInertiaLinear
 

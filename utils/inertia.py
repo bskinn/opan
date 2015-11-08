@@ -582,7 +582,7 @@ def _fadnPv(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be a linear molecule?
-        raise(INERTIAError(INERTIAError.linear_mol,
+        raise(INERTIAError(INERTIAError.bad_geom,
                     "Linear molecule, no non-parallel displacement", ""))
     ## end for disp
 
