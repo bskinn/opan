@@ -306,7 +306,7 @@ class PHYS(object):
     """Container for physical constants
 
     Ang_per_Bohr = 0.52917721092
-    amu_per_me = 1822.8885
+    me_per_amu = 1822.8885
     sec_per_Ta = 2.4188843265e-17
     light_speed = 137.082  (B/Ta units)
     Planck = 6.28318531  (value of 2*pi; Eh*Ta/cyc units)
@@ -314,7 +314,7 @@ class PHYS(object):
     """
 
     Ang_per_Bohr = 0.52917721092
-    amu_per_me = 1822.8885
+    me_per_amu = 1822.8885
     sec_per_Ta = 2.4188843265e-17
     light_speed = 137.082
     Planck = 6.28318531
