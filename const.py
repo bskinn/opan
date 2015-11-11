@@ -313,11 +313,14 @@ class PHYS(object):
     Planck_bar = 1  (Eh*Ta units)
     """
 
+    # Imports
+    import numpy as _np
+
     Ang_per_Bohr = 0.52917721092
     me_per_amu = 1822.8885
     sec_per_Ta = 2.4188843265e-17
     light_speed = 137.082
-    Planck = 6.28318531
+    Planck = 2 * _np.pi
     Planck_bar = 1
 
 ## end class PHYS

@@ -521,25 +521,28 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
         mom[0] = PRM.Zero_Moment_Tol
     ## end if
 
-    # Calculate the value in the indicated units
-    if units == EURC.InvInertia:
+    # Calculate the values in the indicated units
+    if units == EURC.InvInertia:            # 1/(amu*B^2)
         rc = 1.0 / (2.0 * mom)
-    elif units == EURC.AngFreqAtomic:
-        pass #RESUME
-    elif units == EURC.AngFreqSeconds:
-        pass
-    elif units == EURC.CyclicFreqAtomic:
-        pass
-    elif units == EURC.CyclicFreqHz:
-        pass
-    elif units == EURC.CyclicFreqMHz:
-        pass
-    elif units == EURC.WaveNumAtomic:
-        pass
-    elif units == EURC.WaveNumCM:
+    elif units == EURC.AngFreqAtomic:       # 1/Ta
+        rc = PHYS.Planck_bar / (2.0 * mom * PHYS.me_per_amu)
+    elif units == EURC.AngFreqSeconds:      # 1/s
+        rc = PHYS.Planck_bar / (2.0 * mom * PHYS.me_per_amu) / PHYS.sec_per_Ta
+    elif units == EURC.CyclicFreqAtomic:    # cyc/Ta
+        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu)
+    elif units == EURC.CyclicFreqHz:        # cyc/s
+        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu) / \
+                                                            PHYS.sec_per_Ta
+    elif units == EURC.CyclicFreqMHz:       # Mcyc/s
+        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu) / \
+                                                    PHYS.sec_per_Ta / 1.0e6
+    elif units == EURC.WaveNumAtomic:       # cyc/B
         rc = PHYS.Planck / (mom * PHYS.me_per_amu) / \
-            (8.0 * np.pi**2.0 * PHYS.light_speed * PHYS.Ang_per_Bohr ) * 1.0e8
-    else:
+            (8.0 * np.pi**2.0 * PHYS.light_speed)
+    elif units == EURC.WaveNumCM:           # cyc/cm
+        rc = PHYS.Planck / (mom * PHYS.me_per_amu) / \
+            (8.0 * np.pi**2.0 * PHYS.light_speed * PHYS.Ang_per_Bohr) * 1.0e8
+    else:               # pragma: no cover -- Valid units; not implemented
         raise(NotImplementedError("Units conversion not yet implemented."))
     ## end if
 

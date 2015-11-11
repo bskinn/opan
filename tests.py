@@ -2681,6 +2681,21 @@ class SuperOPANUtilsInertia(object):
         self.assertTrue(on, msg="Norm failures: " + str(nfail) +
                                 "; ortho failures: " + str(ofail))
 
+    def test_rot_consts(self):
+        import opan.utils.inertia as oui
+        from opan.const import PRM, EU_RotConst as EURC
+        rc = oui.rot_consts(self.xyz.geoms[0], self.hess.atom_masses,
+                                                            EURC.InvInertia)
+        for i in range(rc.shape[0]):
+            if rc[i] >= 1/(2.0*PRM.Zero_Moment_Tol):
+                self.assertAlmostEqual(self.rc[i], rc[i],
+                        delta=1.0,
+                        msg="Rotational constant index '" + str(i) + "'")
+            else:
+                self.assertAlmostEqual(self.rc[i] / rc[i], 1.0,
+                        delta=PRM.Equal_Moment_Tol,
+                        msg="Rotational constant index '" + str(i) + "'")
+
     def test_toptype(self):
         import opan.utils.inertia as oui
         top = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[2]
@@ -2695,7 +2710,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import E_TopType, EU_RotConst as EURC
 
     # Constants for superclass method use
     fname = "H2O_Asymm"
@@ -2711,6 +2726,16 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
                 [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
     top = E_TopType.Asymmetrical
+    rc = np.array([ 0.207065592447,  0.120144860861,  0.076030171231])
+
+    rc_units = {EURC.AngFreqAtomic: np.array([  1.135920230159e-04,   6.590905634729e-05,   4.170862410476e-05]),
+         EURC.AngFreqSeconds: np.array([  4.696050231566e+12,   2.724770904719e+12,   1.724291800473e+12]),
+         EURC.CyclicFreqAtomic: np.array([  1.807873195879e-05,   1.048975211219e-05,   6.638133695834e-06]),
+         EURC.CyclicFreqHz: np.array([  7.473996073616e+11,   4.336607582790e+11,   2.744295633781e+11]),
+         EURC.CyclicFreqMHz: np.array([ 747399.60736156872 ,  433660.758279046626,  274429.563378054823]),
+         EURC.InvInertia: np.array([ 0.207065592447,  0.120144860861,  0.076030171231]),
+         EURC.WaveNumAtomic: np.array([  1.318826101078e-07,   7.652173233680e-08,   4.842454659134e-08]),
+         EURC.WaveNumCM: np.array([ 24.922201369646,  14.460511669382,   9.150913076387])}
 
 
     def test_UtilsInertiaBadGeomShape(self):
@@ -2752,6 +2777,22 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
         self.assertRaises(ValueError, fO, [1e-7, 0, 1e-9], self.xyz.geoms[0])
         self.assertRaises(ValueError, fP, [1e-7, 0, 1e-9], self.xyz.geoms[0])
 
+    def test_UtilsInertiaCheckAllRotConstUnits(self):
+        from opan.utils.inertia import rot_consts
+        from opan.const import EU_RotConst as EURC
+        for (u, a) in [(u, rot_consts(self.xyz.geoms[0],
+                    self.hess.atom_masses, units=u)) for u in EURC]:
+            for i in range(a.shape[0]):
+                self.assertAlmostEqual(self.rc_units[u][i] / a[i], 1.0,
+                        delta=1e-8,
+                        msg="Rotational constant units '" + str(u) +
+                                                ",' index '" + str(i) + "'")
+
+    def test_UtilsInertiaBadRotConstUnits(self):
+        from opan.utils.inertia import rot_consts
+        self.assertRaises(ValueError, rot_consts, self.xyz.geoms[0],
+                                self.hess.atom_masses, units="ThisIsInvalid")
+
 ## end class TestOPANUtilsInertiaAsymm
 
 
@@ -2760,7 +2801,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import E_TopType, PRM
 
     # Constants for superclass method use
     fname = "Cu_Atom"
@@ -2770,6 +2811,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
     moments = np.zeros((3,))
     axes = np.eye(3)
     top = E_TopType.Atom
+    rc = np.repeat(1.0/(2.0*PRM.Zero_Moment_Tol), 3)
 
 ## end class TestOPANUtilsInertiaAtom
 
@@ -2779,7 +2821,7 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import E_TopType, PRM
 
     # Constants for superclass method use
     fname = "HC2Cl_Linear"
@@ -2796,6 +2838,8 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
                    [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
                    [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
     top = E_TopType.Linear
+    rc = np.array([1.0/(2.0*PRM.Equal_Moment_Tol),
+                                    1.550924404326e-03, 1.550924404326e-03])
 
     def test_UtilsInertiaLinearNoNonParallelVec(self):
         from opan.utils.inertia import _fadnPv as fP, ctr_geom as cg
@@ -2831,6 +2875,7 @@ class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
                        [ -5.77350269e-01,  -4.08248291e-01,   7.07106781e-01],
                        [ -5.77350269e-01,   8.16496581e-01,   2.78286699e-10]])
     top = E_TopType.SymmProlate
+    rc = np.array([ 0.043002710352,  0.003555101671,  0.003555101671])
 
 ## end class TestOPANUtilsInertiaSymmProl
 
@@ -2857,6 +2902,7 @@ class TestOPANUtilsInertiaSymmObl(SuperOPANUtilsInertia, unittest.TestCase):
                    [ 0.334894464181, -0.024822665809, -0.94192862422 ],
                    [ 0.041130203771, -0.998315015137,  0.040932100963]])
     top = E_TopType.SymmOblate
+    rc = np.array([ 0.078154470132,  0.078148511783,  0.05242517071 ])
 
 ## end class TestOPANUtilsInertiaSymmObl
 
@@ -2892,6 +2938,7 @@ class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
                        [ 0.,  1.,  0.],
                        [ 0.,  0.,  1.]])
     top = E_TopType.SymmOblate
+    rc = np.array([ 0.002909145427,  0.002909145427,  0.001454572714])
 
 ## end class TestOPANUtilsInertiaPlanar
 
@@ -2923,6 +2970,7 @@ class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
            [  5.773502692095e-01,  -4.082482904247e-01,  -7.071067811929e-01],
            [  5.773502691962e-01,   8.164965809231e-01,   6.946399011554e-11]])
     top = E_TopType.Spherical
+    rc = np.array([ 0.044492290811,  0.044492290809,  0.044492290806])
 
 ## end class TestOPANUtilsInertiaSpher
 
