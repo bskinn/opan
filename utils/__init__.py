@@ -35,15 +35,17 @@ template_subst   -- Perform a field-based substitution into a string template
 
 Sub-Modules
 -----------
-vector           -- Vector / symmetry utility functions
 execute          -- Functions for execution of external computational
                         software packages
+inertia          -- Inertia-related tools (c.o.m., rotational constants, etc.)
+symm             -- Molecular symmetry utility functions
+vector           -- Vector utility functions
 
 """
 
 from __future__ import absolute_import
 
-__all__ = ['execute', 'vector']
+__all__ = ['decorate', 'execute', 'inertia', 'symm', 'vector']
 
 from . import *
 from .base import check_geom, delta_fxn, make_timestamp, pack_tups

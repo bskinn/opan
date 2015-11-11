@@ -181,7 +181,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        import h5py as h5, numpy as np
+        import h5py as h5
         from ..error import REPOError as RErr
         from ..const import E_DispDirection as _E_DD
         from ..const import ERA_Data
@@ -207,8 +207,7 @@ class OPAN_REPO(object):
         if disp == _E_DD.NoDisp:
             grpname = self.G_geom_ref
         else:
-            grpname = self.F_mode_fmt % \
-                                    (mode, self.dircode[disp])
+            grpname = self.F_mode_fmt % (mode, self.dircode[disp])
         ## end if
 
         # Get the group, creating if absent
@@ -249,7 +248,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        import os, numpy as np
+        import os
         from ..const import E_DispDirection as _E_DD
         from ..const import ERA_Data
         from ..error import REPOError as RErr
@@ -303,8 +302,7 @@ class OPAN_REPO(object):
                     self.fname))
         ## end try
 
-        # Matrixify and return
-        out_data = np.matrix(out_data)
+        # Return as-is (h5py creates NumPy arrays of appropriate dimensions)
         return out_data
 
     ## end def get_data
@@ -394,7 +392,7 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        import os, numpy as np
+        import os
         from ..const import ERA_Param
         from ..error import REPOError as RErr
 
@@ -421,11 +419,6 @@ class OPAN_REPO(object):
                     "Parameter '" + param + "' not found", \
                     self.fname))
         ## end try
-
-        # If param is an array, matrixify.
-        if len(grp.get(param).shape) != 0:
-            out_param = np.matrix(out_param)
-        ## end if
 
         # Return
         self._repo.flush()

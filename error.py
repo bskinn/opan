@@ -113,7 +113,9 @@ class OPANError(Exception):
                     isinstance(self, OUTPUTError) or \
                     isinstance(self, SYMMError) or \
                     isinstance(self, REPOError) or \
-                    isinstance(self, ANHARMError)
+                    isinstance(self, ANHARMError) or \
+                    isinstance(self, INERTIAError) or \
+                    isinstance(self, VECTORError)
                 ):
             raise(NotImplementedError("OPANError base class is abstract."))
         ## end if
@@ -378,6 +380,54 @@ class ANHARMError(OPANError):
     status = 'status'
 
 ## end class ANHARMError
+
+
+class INERTIAError(OPANError):
+    """Error relating to utils.inertia submodule functions.
+
+    See OPANError.__doc__ for more information.
+
+    Attributes:
+        tc, msg, src, subclass_name are inherited from OPANError
+
+        typecodes:
+            neg_moment  : A negative principal inertial moment was computed
+            top_type    : No valid molecular top type was identified
+            bad_geom    : A geometry being parsed was unsuitable for a
+                            particular type of calculation/manipulation
+
+    """
+
+    # Typecodes as class-level variables
+    neg_moment = 'neg_moment'
+    top_type = 'top_type'
+    bad_geom = 'bad_geom'
+
+## end class INERTIAError
+
+
+class VECTORError(OPANError):
+    """Error relating to utils.vector submodule functions.
+
+    See OPANError.__doc__ for more information.
+
+    Attributes:
+        tc, msg, src, subclass_name are inherited from OPANError
+
+        typecodes:
+            nonprl      :  Insufficient non-parallel character in some
+                            manner of calculation
+            orthonorm   :  Vectors which should have been orthonormal were
+                            determined not to be
+
+    """
+
+    # Typecodes as class-level variables
+    nonprl = 'nonprl'
+    orthonorm = 'orthonorm'
+
+## end class VECTORError
+
 
 
 if __name__ == '__main__':  # pragma: no cover

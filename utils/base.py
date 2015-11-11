@@ -36,6 +36,7 @@ template_subst   -- Perform a field-based substitution into a string template
 
 # Imports
 from ..const import DEF as _DEF
+from .decorate import arraysqueeze as _arraysqueeze
 
 
 def pack_tups(*args):
@@ -316,6 +317,7 @@ def make_timestamp(el_time):
 ## end def make_timestamp
 
 
+@_arraysqueeze(0,1,2,3)
 def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     """ Check for consistency of two geometries and atom symbol lists
 
@@ -330,13 +332,13 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
 
     Parameters
     ----------
-    c1      : 3N x 1 float
+    c1      : length-3N np.float_
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
-    a1      : N x 1 string or int
+    a1      : length-N string or int
         Vector of first set of atom symbols or atomic numbers
-    c2      : 3N x 1 float
+    c2      : length-3N np.float_
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
-    a2      : N x 1 string or int
+    a2      : length-N string or int
         Vector of second set of atom symbols or atomic numbers
     tol    : float, optional
         Tolerance for acceptable deviation of each geometry coordinate
@@ -356,11 +358,12 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
             coord_mismatch      : Mismatch in one or more coordinates
             atom_mismatch       : Mismatch in one or more atoms
             #TODO: orca_utils.check_geom: Convert fail_type to an Enum
-    fail_loc   : 3N x 1 bool or N x 1 bool
-        np.matrix() column vector indicating positions of mismatch in
+    fail_loc   : length-3N bool or length-N bool or None
+        if match == False, np.array vector indicating positions of mismatch in
         either coords or atoms, depending on the value of fail_type.
         True elements indicate corresponding *MATCHING* values; False
-        elements mark *MISMATCHES*.
+        elements mark *MISMATCHES*.  'None' returned if failure is due to
+        object- rather than element-level problems.
 
     Raises
     ------
@@ -374,67 +377,51 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     # Initialize return value to success condition
     match = True
 
-    #** Check coords for suitable shape. Must convert to np.array() since
-    #  a np.matrix() vector will not reduce to a single dimension.
-    if not len(np.array(c1).squeeze().shape) == 1:
+    #** Check coords for suitable shape. Assume 1-D np.arrays.
+    if not len(c1.shape) == 1:
         # Cannot coerce to vector; complain.
         raise(ValueError(("'c1' is not a vector.")))
-    else:
-        # Coercible to a vector. Store a copy as an np.matrix() vector
-        in_g1 = np.matrix(np.array(c1).squeeze().copy()).transpose()
     ## end if
-
-    if not len(np.array(c2).squeeze().shape) == 1:
+    if not len(c2.shape) == 1:
         # Cannot coerce to vector; complain.
         raise(ValueError(("'c2' is not a vector.")))
-    else:
-        # Coercible to a vector. Store a copy as an np.matrix() vector
-        in_g2 = np.matrix(np.array(c2).squeeze().copy()).transpose()
     ## end if
 
-    #** Check atoms for suitable shape. Must convert to np.array() since
-    #  a np.matrix() vector will not reduce to a single dimension.
-    if not len(np.array(a1).squeeze().shape) == 1:
-        # Cannot coerce to vector; complain.
-        raise(ValueError(("'a1' is not a vector.")))
-    else:
-        # Coercible to a vector. Store a copy as an np.matrix() vector
-        in_a1 = np.matrix(np.array(a1).squeeze().copy()).transpose()
+    #** Check atoms for suitable shape. Assume lists of strings, so
+    # convert to np.array to check.
+    if not len(a1.shape) == 1:
+        # Not a vector; complain
+        raise(ValueError(("'a1' is not a simple list.")))
     ## end if
-
-    if not len(np.array(a2).squeeze().shape) == 1:
-        # Cannot coerce to vector; complain.
-        raise(ValueError(("'a2' is not a vector.")))
-    else:
-        # Coercible to a vector. Store a copy as an np.matrix() vector
-        in_a2 = np.matrix(np.array(a2).squeeze().copy()).transpose()
+    if not len(a2.shape) == 1:
+        # Not a vector; complain.
+        raise(ValueError(("'a2' is not a simple list.")))
     ## end if
 
     #** Confirm proper lengths of coords vs atoms
-    if not in_g1.shape[0] == 3 * in_a1.shape[0]:
+    if not c1.shape[0] == 3 * a1.shape[0]:
         raise(ValueError("len(c1) != 3*len(a1)"))
     ## end if
-    if not in_g2.shape[0] == 3 * in_a2.shape[0]:
+    if not c2.shape[0] == 3 * a2.shape[0]:
         raise(ValueError("len(c2) != 3*len(a2)"))
     ## end if
 
     #** Confirm matching lengths of coords and atoms w/corresponding
-    #  objects within the ORCA_ENGRAD instance
-    if not in_g1.shape[0] == in_g2.shape[0]:
+    #  objects among the two geometries
+    if not c1.shape[0] == c2.shape[0]:
         match = False
         fail_type = "coord_dim_mismatch"
-        return match, fail_type
+        return match, fail_type, None
     ## end if
-    if not in_a1.shape[0] == in_a2.shape[0]:
+    if not a1.shape[0] == a2.shape[0]:
         match = False
         fail_type = "atom_dim_mismatch"
-        return match, fail_type
+        return match, fail_type, None
     ## end if
 
     #** Element-wise check for geometry match to within 'tol'
-    fail_loc = np.less_equal(np.abs( \
-                        np.subtract(in_g1,in_g2)), tol)
-    if sum(fail_loc) != in_g2.shape[0]:
+    fail_loc = np.less_equal(np.abs(np.subtract(c1,c2)), tol)
+    if sum(fail_loc) != c2.shape[0]:
         # Count of matching coordinates should equal the number of
         #  coordinates. If not, complain with 'coord_mismatch' fail type.
         match = False
@@ -444,22 +431,18 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
 
     #** Element-wise check for atoms match. Quietly convert both input and
     #  instance atom arrays to atomNums to allow np.equals comparison.
-    if np.issubdtype(in_a1.dtype, np.dtype('str')):
+    if np.issubdtype(a1.dtype, np.dtype('str')):
         # Presume atomic symbol data and attempt conversion
-        in_a1 = np.matrix( \
-                    [atomNum[e] for e in np.array(in_a1)[:,0]] \
-                    ).transpose()
+        a1 = np.array([atomNum[e] for e in a1])
     ## end if
-    if np.issubdtype(in_a2.dtype, np.dtype('str')):
+    if np.issubdtype(a2.dtype, np.dtype('str')):
         # Presume atomic symbol data and attempt conversion
-        in_a2 = np.matrix( \
-                    [atomNum[e] for e in np.array(in_a2)[:,0]] \
-                    ).transpose()
+        a2 = np.array([atomNum[e] for e in a2])
     ## end if
-    fail_loc = np.equal(in_a1, in_a2)
+    fail_loc = np.equal(a1, a2)
 
     #** Perform the test to ensure all atoms match.
-    if sum(fail_loc) != in_a2.shape[0]:
+    if sum(fail_loc) != a2.shape[0]:
         # Count of matching atoms should equal number of atoms. If not,
         #  complain with the 'atom_mismatch' fail type.
         match = False
@@ -516,6 +499,8 @@ def template_subst(template, subs, subs_delims=['<', '>']):
     return input_text
 
 ## end def template_subst
+
+
 
 
 if __name__ == '__main__': # pragma: no cover

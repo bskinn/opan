@@ -22,9 +22,24 @@
 import unittest
 
 
+# =============================   ORCA   ==================================== #
+
+class SuperORCA(unittest.TestCase):
+    # Superclass for all ORCA test case superclasses
+
+    # Imports
+    import os
+
+    # Constants
+    testdir = 'orca_test_dir'
+    resourcedir = os.path.join('resource','orca')
+
+## end class SuperORCA
+
+
 # ============================  ORCA_ENGRAD ================================= #
 
-class SuperORCAEngrad(unittest.TestCase):
+class SuperORCAEngrad(SuperORCA):
     # Superclass for all ORCA engrad test cases
 
     # Imports
@@ -32,7 +47,6 @@ class SuperORCAEngrad(unittest.TestCase):
     import numpy as np
 
     # Superclass constants
-    testdir = 'orca_test_dir'
     file_name = 'test.engrad'
     file_text_good = dedent("""\
         #
@@ -91,16 +105,16 @@ class SuperORCAEngrad(unittest.TestCase):
             names.atomicnum: (' 29    -1.5545432', '229    -1.5545432')
                         }
 
-    atoms = np.array([['CU'],['O'],['H'],['H']])
-    gradient = np.matrix([0.000004637000, 0.000001922807, 0.000002366827, \
-                0.000010704036, -0.000004735732, -0.000005580943, \
-                0.000011997130, -0.000008391237, -0.000007912155, \
-                0.000011493781, -0.000008177479, -0.000008233658]).transpose()
+    atoms = ['CU', 'O', 'H', 'H']
+    gradient = np.array([0.000004637000, 0.000001922807, 0.000002366827,
+                0.000010704036, -0.000004735732, -0.000005580943,
+                0.000011997130, -0.000008391237, -0.000007912155,
+                0.000011493781, -0.000008177479, -0.000008233658])
     energy = -1715.759691151236
-    geom = np.matrix([-1.5545432, -0.4923021, -0.4922193, \
-                            1.8640436, 0.3660366, 0.3660223, \
-                            2.6798241, 1.9892213, -0.1622520, \
-                            2.6798521, -0.1622023, 1.9892043]).transpose()
+    geom = np.array([-1.5545432, -0.4923021, -0.4922193,
+                            1.8640436, 0.3660366, 0.3660223,
+                            2.6798241, 1.9892213, -0.1622520,
+                            2.6798521, -0.1622023, 1.9892043])
 
 ## end class SuperORCAEngrad
 
@@ -138,22 +152,24 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         # Create the object
         self.oe = ORCA_ENGRAD(self.file_name)
 
+        # Enable long messages
+        self.longMessage = True
+
     def test_ENGRAD_KnownGoodAtomVec(self):
         # Confirm the values coming out of the ENGRAD match the known-good
         #  example file.
 
         # Confirm the atom list is good
-        for i in range(self.oe.atom_syms.shape[0]):
-            self.assertEqual(self.oe.atom_syms[i,0], self.atoms[i,0])
+        for i in range(len(self.oe.atom_syms)):
+            self.assertEqual(self.oe.atom_syms[i], self.atoms[i])
 
     def test_ENGRAD_KnownGoodGradient(self):
         # Confirm the known-good gradient matches what's expected.
 
         # Confirm the gradient vector is good
-        self.longMessage = True
         for i in range(self.oe.gradient.shape[0]):
-            self.assertAlmostEqual(self.oe.gradient[i,0], \
-                        self.gradient[i,0], delta=1e-10, \
+            self.assertAlmostEqual(self.oe.gradient[i],
+                        self.gradient[i], delta=1e-10,
                         msg="Gradient index " + str(i))
 
     def test_ENGRAD_KnownGoodEnergy(self):
@@ -161,10 +177,9 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         self.assertAlmostEqual(self.energy, self.oe.energy, delta=1e-12)
 
     def test_ENGRAD_KnownGoodGeom(self):
-        self.longMessage = True
         for i in range(self.oe.geom_vec.shape[0]):
-            self.assertAlmostEqual(self.oe.geom_vec[i,0], \
-                        self.geom[i,0], delta=1e-7, \
+            self.assertAlmostEqual(self.oe.geom_vec[i],
+                        self.geom[i], delta=1e-7,
                         msg="Coordinate index " + str(i))
 
     def test_ENGRAD_KnownGoodInitFlagDefined(self):
@@ -187,7 +202,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         # Write the files
         for bname in self.bad_block_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.bad_block_substs[bname]))
 
     @classmethod
@@ -197,7 +212,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                             self.bad_block_substs.keys()]
 
         # Remove the directory
@@ -208,7 +223,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.numats, self.file_name + self.names.numats)
 
     def test_ENGRAD_MissingBlockEnergy(self):
@@ -216,7 +231,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.en, self.file_name + self.names.energy)
 
     def test_ENGRAD_MissingBlockGrad(self):
@@ -224,7 +239,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_MissingBlockGeom(self):
@@ -232,7 +247,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end def TestORCAEngradMissingBlocks
@@ -251,7 +266,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         # Write the files
         for bname in self.trunc_block_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.trunc_block_substs[bname]))
 
 
@@ -262,7 +277,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                         self.trunc_block_substs.keys()]
 
         # Try to remove the directory
@@ -273,7 +288,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_TruncatedBlockGeom(self):
@@ -281,7 +296,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
                     GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end class TestORCAEngradTruncatedBlocks
@@ -300,7 +315,7 @@ class TestORCAEngradBadData(SuperORCAEngrad):
         # Write the files
         for dname in self.bad_data_substs.keys():
             with open(self.file_name + dname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.bad_data_substs[dname]))
 
     @classmethod
@@ -310,7 +325,7 @@ class TestORCAEngradBadData(SuperORCAEngrad):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in \
+        [os.remove(self.file_name + dname) for dname in
                                             self.bad_data_substs.keys()]
 
         # Remove the test directory
@@ -321,20 +336,40 @@ class TestORCAEngradBadData(SuperORCAEngrad):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.geomblock, self.file_name \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+                    GRADError.geomblock, self.file_name
                                         + self.names.atomicnum)
 
     def test_ENGRAD_BadDataNumAtoms(self):
         from opan.error import GRADError
         from opan.grad import ORCA_ENGRAD
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD, \
-                    GRADError.gradblock, self.file_name \
+        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+                    GRADError.gradblock, self.file_name
                                         + self.names.numats)
 
 ## end class TestORCAEngradBadData
 
+
+class TestORCAEngradLiveData(SuperORCAEngrad):
+
+    def test_ENGRAD_LiveData(self):
+
+        import os
+        from opan.grad import ORCA_ENGRAD
+        from opan.error import GRADError
+
+        for fname in os.listdir(self.resourcedir):
+            if fname[:9] == "test_orca" and fname[-6:] == "engrad":
+                print("\nTesting file '" + fname + "' ... ")
+                try:
+                    ORCA_ENGRAD(os.path.join(self.resourcedir, fname))
+                except (IOError, GRADError) as e: # pragma: no cover
+                    self.longMessage = True
+                    self.fail("Load of test file '" + str(fname) +
+                            "' failed:\n" + str(e))
+
+## end class TestORCAEngradLiveData
 
 
 # ============================  OPAN_ERROR ================================== #
@@ -347,16 +382,14 @@ class TestOPANErrorInitErrors(unittest.TestCase):
         from opan.error import OPANError
 
         # Confirm OPANError parent class as abstract
-        self.assertRaises(NotImplementedError, OPANError, \
-                    "tc", "msg", "src")
+        self.assertRaises(NotImplementedError, OPANError, "tc", "msg", "src")
 
     def test_XYZError_init_BadTypecode(self):
         # Must import
         from opan.error import XYZError
 
         # Confirm KeyError raised when invalid typecode passed
-        self.assertRaises(KeyError, XYZError, \
-                    "INVALID TYPECODE", "msg", "src")
+        self.assertRaises(KeyError, XYZError, "INVALID TYPECODE", "msg", "src")
 
 ## end class TestOPANErrorInitErrors
 
@@ -373,7 +406,7 @@ class TestXYZErrorInitConfig(unittest.TestCase):
     def test_XYZError_init_SubclassName(self):
         # Confirm subclass name is retrieved correctly
         from opan.error import XYZError as XE
-        self.assertEqual(XE(self.tc, self.msg, self.src).subclass_name, \
+        self.assertEqual(XE(self.tc, self.msg, self.src).subclass_name,
                                                 self.subclass_name)
 
     def test_XYZError_init_TypecodeStored(self):
@@ -396,7 +429,7 @@ class TestXYZErrorInitConfig(unittest.TestCase):
 
 # =============================  ORCA_HESS  ================================= #
 
-class SuperORCAHess(unittest.TestCase):
+class SuperORCAHess(SuperORCA):
     # Superclass for all ORCA .hess test cases
 
     # Imports
@@ -718,7 +751,7 @@ class SuperORCAHess(unittest.TestCase):
     file_name = 'test.hess'
 
     #=== Matching data values ===#
-    hess = np.matrix([[  5.69133000e-01,  -7.00000000e-06,  -0.00000000e+00,
+    hess = np.array([[  5.69133000e-01,  -7.00000000e-06,  -0.00000000e+00,
           -3.41891000e-01,   9.00000000e-06,   0.00000000e+00,
           -7.56840000e-02,   9.41130000e-02,   0.00000000e+00,
           -7.56850000e-02,  -4.69810000e-02,  -8.13740000e-02,
@@ -794,22 +827,22 @@ class SuperORCAHess(unittest.TestCase):
            9.35400000e-03,   1.32340000e-02,  -1.78040000e-02,
           -8.78910000e-02,  -1.24307000e-01,   2.56265000e-01]])
 
-    atoms = np.array([['C'],['H'],['H'],['H'],['H']])
-    geom = np.matrix([-0.000000, 0.000000, 0.000000, \
-                            2.059801,  0.,  0., \
-                            -0.6866  ,  1.942   ,  0., \
-                            -0.6866  , -0.971   , -1.681821, \
+    atoms =['C','H','H','H','H']
+    geom = np.array([-0.000000, 0.000000, 0.000000,
+                            2.059801,  0.,  0.,
+                            -0.6866  ,  1.942   ,  0.,
+                            -0.6866  , -0.971   , -1.681821,
                             -0.6866  , -0.971   ,  1.681821
-                            ]).transpose()
-    masses = np.matrix([12.011, 1.008, 1.008, 1.008, 1.008]).transpose()
+                            ])
+    masses = [12.011, 1.008, 1.008, 1.008, 1.008]
     energy = -40.451555
     temp = 0.0
-    freqs = np.matrix([[    0.      ,     0.      ,     0.      ,     0.      ,
+    freqs = np.array([    0.      ,     0.      ,     0.      ,     0.      ,
              0.      ,     0.      ,  1292.217629,  1292.583415,
           1292.939274,  1524.411513,  1524.709386,  3100.659679,
-          3239.096249,  3240.029637,  3241.018763]]).transpose()
+          3239.096249,  3240.029637,  3241.018763])
 
-    modes = np.matrix([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
+    modes = np.array([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
            0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
           -1.23657000e-01,  -1.05760000e-02,   7.10000000e-05,
           -3.00000000e-06,   1.00000000e-06,  -1.65000000e-04,
@@ -885,7 +918,7 @@ class SuperORCAHess(unittest.TestCase):
           -2.88303000e-01,  -9.10000000e-05,  -4.09334000e-01,
            5.69893000e-01,   4.09845000e-01,   4.14270000e-02]])
 
-    dipders = np.matrix([[ -3.01190000e-02,  -2.50000000e-05,   0.00000000e+00],
+    dipders = np.array([[ -3.01190000e-02,  -2.50000000e-05,   0.00000000e+00],
         [  1.00000000e-05,  -3.01190000e-02,  -0.00000000e+00],
         [ -0.00000000e+00,   0.00000000e+00,  -3.01590000e-02],
         [ -1.18178000e-01,   1.90000000e-05,   0.00000000e+00],
@@ -901,7 +934,7 @@ class SuperORCAHess(unittest.TestCase):
         [ -2.80840000e-02,   3.01860000e-02,   6.87890000e-02],
         [  4.87530000e-02,   6.89440000e-02,  -4.94920000e-02]])
 
-    ir_comps = np.matrix([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
+    ir_comps = np.array([[  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
         [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
         [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
         [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00],
@@ -917,7 +950,7 @@ class SuperORCAHess(unittest.TestCase):
         [  1.90370000e+00,   3.37040000e+00,   3.10000000e-03],
         [  3.50280000e+00,  -1.98250000e+00,  -7.00000000e-04]])
 
-    ir_mags = np.matrix([[  0.00000000e+00],
+    ir_mags = np.array([[  0.00000000e+00],
         [  0.00000000e+00],
         [  0.00000000e+00],
         [  0.00000000e+00],
@@ -931,9 +964,9 @@ class SuperORCAHess(unittest.TestCase):
         [  2.03000000e-02],
         [  1.38923000e+01],
         [  1.49837000e+01],
-        [  1.61995000e+01]])
+        [  1.61995000e+01]]).squeeze()
 
-    polders = np.matrix([[ -5.94341300e+00,   2.97188100e+00,   2.97161800e+00,
+    polders = np.array([[ -5.94341300e+00,   2.97188100e+00,   2.97161800e+00,
           -2.47000000e-04,   0.00000000e+00,   0.00000000e+00],
         [ -1.68000000e-04,  -4.20303600e+00,   4.20264600e+00,
            2.96567900e+00,   0.00000000e+00,  -0.00000000e+00],
@@ -964,25 +997,24 @@ class SuperORCAHess(unittest.TestCase):
         [  7.84977000e-01,   1.01696600e+00,   5.96557600e+00,
            3.30327000e-01,  -1.84401000e+00,  -2.60853100e+00]])
 
-    raman_acts = np.matrix([[ 0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,
+    raman_acts = np.array([ 0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,
             1.5128,    1.5204,    1.5313,   26.2882,   26.2096,  140.8157,
-           60.6507,   60.7749,   60.8277]]).transpose()
+           60.6507,   60.7749,   60.8277])
 
-    raman_depols = np.matrix([[0., 0.,  0.,  0.,  0.,  0.,  0.75,  0.75,  0.75,
-          0.75,  0.75,  0.  ,  0.75,  0.75,  0.75]]).transpose()
+    raman_depols = np.array([0., 0.,  0.,  0.,  0.,  0.,  0.75,  0.75,  0.75,
+          0.75,  0.75,  0.  ,  0.75,  0.75,  0.75])
 
-    joblist = np.matrix([[ True,  True,  True],
+    joblist = np.array([[ True,  True,  True],
         [ True,  True,  True],
         [ True,  True,  True],
         [ True,  True,  True],
         [ True,  True,  True]], dtype=bool)
 
-    mwh_eigvals = np.matrix([[ 0.     ,  0.     ,  0.     ,  0.     ,  0.     ,
+    mwh_eigvals = np.array([ 0.     ,  0.     ,  0.     ,  0.     ,  0.     ,
           0.        ,  0.06319196,  0.06322774,  0.06326256,  0.08794171,
-          0.08797609,  0.36383015,  0.39704359,  0.39727245,  0.39751505]]) \
-                                                                .transpose()
+          0.08797609,  0.36383015,  0.39704359,  0.39727245,  0.39751505])
 
-    mwh_eigvecs = np.matrix([[0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+    mwh_eigvecs = np.array([[0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
            0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
           -3.94942498e-01,  -3.37783511e-02,   2.26733150e-04,
           -1.01615700e-05,   2.38076000e-06,  -5.69347300e-04,
@@ -1081,7 +1113,7 @@ class SuperORCAHess(unittest.TestCase):
         suffix_badfreq = '_badfreq'
         suffix_badval = '_badval'
 
-        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes, \
+        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes,
                     dipders, ir, polders, raman, mwh_eigvals, mwh_eigvecs])
         suffixes = frozenset([suffix_dim2, suffix_badfreq, suffix_badval])
 
@@ -1196,35 +1228,35 @@ class TestORCAHessKnownGood(SuperORCAHess):
         # Create the object
         self.oh = ORCA_HESS(self.file_name)
 
+        # Enable long messages
+        self.longMessage = True
+
     def test_HESS_KnownGoodAtomVec(self):
-        self.assertEqual(self.oh.atom_syms.shape, self.atoms.shape)
-        for i in range(self.oh.atom_syms.shape[0]):
-            self.assertEqual(self.oh.atom_syms[i,0], self.atoms[i,0])
+        self.assertEqual(len(self.oh.atom_syms), len(self.atoms))
+        for i in range(len(self.oh.atom_syms)):
+            self.assertEqual(self.oh.atom_syms[i], self.atoms[i])
 
     def test_HESS_KnownGoodAtomMasses(self):
-        self.longMessage = True
-        self.assertEqual(self.oh.atom_masses.shape, self.masses.shape)
-        for i in range(self.oh.atom_masses.shape[0]):
-            self.assertAlmostEqual(self.oh.atom_masses[i,0], \
-                        self.masses[i,0], delta=1e-4, \
+        self.assertEqual(len(self.oh.atom_masses), len(self.masses))
+        for i in range(len(self.oh.atom_masses)):
+            self.assertAlmostEqual(self.oh.atom_masses[i],
+                        self.masses[i], delta=1e-4,
                         msg="Atom index " + str(i))
 
     def test_HESS_KnownGoodHess(self):
-        self.longMessage = True
         self.assertEqual(self.oh.hess.shape, self.hess.shape)
         for i in range(self.oh.hess.shape[0]):
             for j in range(self.oh.hess.shape[1]):
-                self.assertAlmostEqual(self.oh.hess[i,j], \
-                            self.hess[i,j], delta=1e-6, \
-                            msg="Hessian element (" + str(i) + ',' + \
+                self.assertAlmostEqual(self.oh.hess[i,j],
+                            self.hess[i,j], delta=1e-6,
+                            msg="Hessian element (" + str(i) + ',' +
                                                         str(j) + ')')
 
     def test_HESS_KnownGoodGeom(self):
-        self.longMessage = True
         self.assertEqual(self.oh.geom.shape, self.geom.shape)
         for i in range(self.oh.geom.shape[0]):
-            self.assertAlmostEqual(self.oh.geom[i,0], \
-                        self.geom[i,0], delta=1e-6, \
+            self.assertAlmostEqual(self.oh.geom[i],
+                        self.geom[i], delta=1e-6,
                         msg="Coordinate index " + str(i))
 
     def test_HESS_KnownGoodCheckGeomWorks(self):
@@ -1237,11 +1269,10 @@ class TestORCAHessKnownGood(SuperORCAHess):
         self.assertAlmostEqual(self.oh.temp, self.temp, delta=1e-6)
 
     def test_HESS_KnownGoodFreqs(self):
-        self.longMessage = True
         self.assertEqual(self.oh.freqs.shape, self.freqs.shape)
         for i in range(self.oh.freqs.shape[0]):
-            self.assertAlmostEqual(self.oh.freqs[i,0], \
-                        self.freqs[i,0], delta=1e-6, \
+            self.assertAlmostEqual(self.oh.freqs[i],
+                        self.freqs[i], delta=1e-6,
                         msg="Frequency index " + str(i))
 
     def test_HESS_KnownGoodInitFlagDefined(self):
@@ -1250,83 +1281,75 @@ class TestORCAHessKnownGood(SuperORCAHess):
             self.assertTrue(self.oh.initialized)
 
     def test_HESS_KnownGoodModes(self):
-        self.longMessage = True
         self.assertEqual(self.oh.modes.shape, self.modes.shape)
         for i in range(self.oh.modes.shape[0]):
             for j in range(self.oh.modes.shape[1]):
-                self.assertAlmostEqual(self.oh.modes[i,j], \
-                            self.modes[i,j], delta=1e-6, \
+                self.assertAlmostEqual(self.oh.modes[i,j],
+                            self.modes[i,j], delta=1e-6,
                             msg="Mode " + str(j) + ", element " + str(i))
 
     def test_HESS_KnownGoodDipDers(self):
-        self.longMessage = True
         self.assertEqual(self.oh.dipders.shape, self.dipders.shape)
         for i in range(self.oh.dipders.shape[0]):
             for j in range(self.oh.dipders.shape[1]):
-                self.assertAlmostEqual(self.oh.dipders[i,j], \
-                            self.dipders[i,j], delta=1e-6, \
-                            msg="Dipole derivative element (" + str(i) + ',' + \
+                self.assertAlmostEqual(self.oh.dipders[i,j],
+                            self.dipders[i,j], delta=1e-6,
+                            msg="Dipole derivative element (" + str(i) + ',' +
                                                         str(j) + ')')
 
     def test_HESS_KnownGoodIRSpectrum(self):
-        self.longMessage = True
         self.assertEqual(self.oh.ir_comps.shape, self.ir_comps.shape)
         self.assertEqual(self.oh.ir_mags.shape, self.ir_mags.shape)
         for i in range(self.oh.ir_comps.shape[0]):
-            self.assertAlmostEqual(self.oh.ir_mags[i,0], self.ir_mags[i,0], \
+            self.assertAlmostEqual(self.oh.ir_mags[i], self.ir_mags[i],
                     delta=1e-4, msg="IR T**2 element (" + str(i) + ')')
             for j in range(self.oh.ir_comps.shape[1]):
-                self.assertAlmostEqual(self.oh.ir_comps[i,j], \
-                            self.ir_comps[i,j], delta=1e-4, \
-                            msg="IR T_i derivative element (" + str(i) + ',' + \
+                self.assertAlmostEqual(self.oh.ir_comps[i,j],
+                            self.ir_comps[i,j], delta=1e-4,
+                            msg="IR T_i derivative element (" + str(i) + ',' +
                                                         str(j) + ')')
 
     def test_HESS_KnownGoodPolDers(self):
-        self.longMessage = True
         self.assertEqual(self.oh.polders.shape, self.polders.shape)
         for i in range(self.oh.polders.shape[0]):
             for j in range(self.oh.polders.shape[1]):
-                self.assertAlmostEqual(self.oh.polders[i,j], \
-                            self.polders[i,j], delta=1e-4, \
-                            msg="Polarizability derivative element (" + \
+                self.assertAlmostEqual(self.oh.polders[i,j],
+                            self.polders[i,j], delta=1e-4,
+                            msg="Polarizability derivative element (" +
                                         str(i) + ',' + str(j) + ')')
 
     def test_HESS_KnownGoodRamanSpectrum(self):
-        self.longMessage = True
         self.assertEqual(self.oh.raman_acts.shape, self.raman_acts.shape)
         self.assertEqual(self.oh.raman_depols.shape, self.raman_depols.shape)
         for i in range(self.oh.raman_acts.shape[0]):
-            self.assertAlmostEqual(self.oh.raman_acts[i,0], \
-                    self.raman_acts[i,0], \
+            self.assertAlmostEqual(self.oh.raman_acts[i],
+                    self.raman_acts[i],
                     delta=1e-4, msg="Raman activity element (" + str(i) + ')')
-            self.assertAlmostEqual(self.oh.raman_depols[i,0], \
-                        self.raman_depols[i,0], delta=1e-4, \
+            self.assertAlmostEqual(self.oh.raman_depols[i],
+                        self.raman_depols[i], delta=1e-4,
                         msg="Raman depolarization element (" + str(i) + ')')
 
     def test_HESS_KnownGoodJobList(self):
-        self.longMessage = True
         self.assertEqual(self.oh.joblist.shape, self.joblist.shape)
         for i in range(self.oh.joblist.shape[0]):
             for j in range(3):
-                self.assertEqual(self.oh.joblist[i,j], self.joblist[i,j], \
+                self.assertEqual(self.oh.joblist[i,j], self.joblist[i,j],
                         msg="Job list element (" + str(i) + ',' + str(j) + ')')
 
     def test_HESS_KnownGoodMWHEigvals(self):
-        self.longMessage = True
         self.assertEqual(self.oh.mwh_eigvals.shape, self.mwh_eigvals.shape)
         for i in range(self.oh.mwh_eigvals.shape[0]):
-            self.assertAlmostEqual(self.oh.mwh_eigvals[i,0], \
-                    self.mwh_eigvals[i,0], \
+            self.assertAlmostEqual(self.oh.mwh_eigvals[i],
+                    self.mwh_eigvals[i],
                     delta=1e-8, msg="MWH eigenvector (" + str(i) + ')')
 
     def test_HESS_KnownGoodMWHEigvecs(self):
-        self.longMessage = True
         self.assertEqual(self.oh.mwh_eigvecs.shape, self.mwh_eigvecs.shape)
         for i in range(self.oh.mwh_eigvecs.shape[0]):
             for j in range(self.oh.mwh_eigvecs.shape[1]):
-                self.assertAlmostEqual(self.oh.mwh_eigvecs[i,j], \
-                        self.oh.mwh_eigvecs[i,j], \
-                        delta=1e-8, msg="MWH eigenvectors element (" + \
+                self.assertAlmostEqual(self.oh.mwh_eigvecs[i,j],
+                        self.oh.mwh_eigvecs[i,j],
+                        delta=1e-8, msg="MWH eigenvectors element (" +
                                                 str(i) + ',' + str(j) + ')')
 
 
@@ -1346,7 +1369,7 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         # Write the files
         for bname in self.bad_block_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.bad_block_substs[bname]))
 
     @classmethod
@@ -1356,7 +1379,7 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                             self.bad_block_substs.keys()]
 
         # Remove the directory
@@ -1367,8 +1390,8 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.hess_block, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.hess_block, self.file_name +
                     self.names.hess)
 
     def test_HESS_MissingBlockGeom(self):
@@ -1376,8 +1399,8 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.at_block, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.at_block, self.file_name +
                     self.names.geom)
 
     def test_HESS_MissingBlockEnergy(self):
@@ -1385,8 +1408,8 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.energy, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.energy, self.file_name +
                     self.names.energy)
 
     def test_HESS_MissingBlockTemp(self):
@@ -1394,8 +1417,8 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.temp, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.temp, self.file_name +
                     self.names.temp)
 
     def test_HESS_MissingBlockFreqs(self):
@@ -1403,8 +1426,8 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.freq_block, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.freq_block, self.file_name +
                     self.names.freqs)
 
     def test_HESS_MissingBlockModes(self):
@@ -1412,15 +1435,15 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.modes_block, self.file_name + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.modes_block, self.file_name +
                     self.names.modes)
 
     def test_HESS_MissingBlockDipders(self):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
+        self.assertIsNone(ORCA_HESS(self.file_name +
                                             self.names.dipders).dipders)
 
     def test_HESS_MissingBlockIRSpectrum(self):
@@ -1436,7 +1459,7 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
+        self.assertIsNone(ORCA_HESS(self.file_name +
                                             self.names.polders).polders)
 
     def test_HESS_MissingBlockRamanSpectrum(self):
@@ -1452,21 +1475,21 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
+        self.assertIsNone(ORCA_HESS(self.file_name +
                                             self.names.joblist).joblist)
 
     def test_HESS_MissingBlockMWHEigvals(self):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
+        self.assertIsNone(ORCA_HESS(self.file_name +
                                         self.names.mwh_eigvals).mwh_eigvals)
 
     def test_HESS_MissingBlockMWHEigvecs(self):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + \
+        self.assertIsNone(ORCA_HESS(self.file_name +
                                         self.names.mwh_eigvecs).mwh_eigvecs)
 
 ## end class TestORCAHessMissingBlocks
@@ -1485,7 +1508,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         # Write the files
         for bname in self.trunc_block_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.trunc_block_substs[bname]))
 
     @classmethod
@@ -1495,7 +1518,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                             self.trunc_block_substs.keys()]
 
         # Remove the directory
@@ -1507,11 +1530,11 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         # 'Early' (non-final section) truncation
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.hess_block, self.file_name + self.names.hess)
         # 'Late' (final section) truncation
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.hess_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.hess_block,
                     self.file_name + self.names.hess + self.names.suffix_dim2)
 
     def test_HESS_TruncatedBlocksGeom(self):
@@ -1519,7 +1542,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.at_block, self.file_name + self.names.geom)
 
     def test_HESS_TruncatedBlocksFreqs(self):
@@ -1527,7 +1550,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.freq_block, self.file_name + self.names.freqs)
 
     def test_HESS_TruncatedBlocksModes(self):
@@ -1535,7 +1558,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.modes_block, self.file_name + self.names.modes)
 
     def test_HESS_TruncatedBlocksDipders(self):
@@ -1543,7 +1566,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
     def test_HESS_TruncatedBlocksIRSpectrum(self):
@@ -1551,7 +1574,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.ir_block, self.file_name + self.names.ir)
 
     def test_HESS_TruncatedBlocksPolders(self):
@@ -1559,7 +1582,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.polder_block, self.file_name + self.names.polders)
 
     def test_HESS_TruncatedBlocksRamanSpectrum(self):
@@ -1567,7 +1590,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.raman_block, self.file_name + self.names.raman)
 
     def test_HESS_TruncatedBlocksJobList(self):
@@ -1575,7 +1598,7 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.job_block, self.file_name + self.names.joblist)
 
     def test_HESS_TruncatedBlocksMWHEigvals(self):
@@ -1583,8 +1606,8 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.eigval_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.eigval_block,
                     self.file_name + self.names.mwh_eigvals)
 
     def test_HESS_TruncatedBlocksMWHEigvecs(self):
@@ -1592,8 +1615,8 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.eigvec_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.eigvec_block,
                     self.file_name + self.names.mwh_eigvecs)
 
 ## end class TestORCAHessTruncatedBlocks
@@ -1612,7 +1635,7 @@ class TestORCAHessBadData(SuperORCAHess):
         # Write the files
         for bname in self.bad_data_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.bad_data_substs[bname]))
 
     @classmethod
@@ -1622,7 +1645,7 @@ class TestORCAHessBadData(SuperORCAHess):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in \
+        [os.remove(self.file_name + dname) for dname in
                                             self.bad_data_substs.keys()]
 
         # Remove the directory
@@ -1633,7 +1656,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.hess_block, self.file_name + self.names.hess)
 
     def test_HESS_BadDataFreqDim(self):
@@ -1641,7 +1664,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.freq_block, self.file_name + self.names.freqs)
 
     def test_HESS_BadDataAtomSym(self):
@@ -1649,7 +1672,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        self.assertRaises(KeyError, ORCA_HESS, \
+        self.assertRaises(KeyError, ORCA_HESS,
                                     self.file_name + self.names.atsym)
 
     def test_HESS_BadDataNormalModes(self):
@@ -1658,11 +1681,11 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         # First dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.modes_block, self.file_name + self.names.modes)
         # Second dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.modes_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.modes_block,
                     self.file_name + self.names.modes + self.names.suffix_dim2)
 
     def test_HESS_BadDataDipdersDim(self):
@@ -1670,14 +1693,14 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
     def test_HESS_BadDataDipdersTooBig(self):
 
         from opan.hess import ORCA_HESS
 
-        self.assertIsNone(ORCA_HESS(self.file_name + self.names.dipders + \
+        self.assertIsNone(ORCA_HESS(self.file_name + self.names.dipders +
                         self.names.suffix_badval).dipders)
 
     def test_HESS_BadDataIRSpectrum(self):
@@ -1686,11 +1709,11 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         # Bad dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.ir_block, self.file_name + self.names.ir)
         # Mismatched frequency
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.ir_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.ir_block,
                     self.file_name + self.names.ir + self.names.suffix_badfreq)
 
     def test_HESS_BadDataPoldersDim(self):
@@ -1698,7 +1721,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.polder_block, self.file_name + self.names.polders)
 
     def test_HESS_BadDataRamanSpectrum(self):
@@ -1707,12 +1730,12 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         # Bad dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.raman_block, self.file_name + self.names.raman)
         # Mismatched frequency
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.raman_block, \
-                    self.file_name + self.names.raman + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.raman_block,
+                    self.file_name + self.names.raman +
                                                 self.names.suffix_badfreq)
 
     def test_HESS_BadDataJobListDim(self):
@@ -1720,7 +1743,7 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
                     HESSError.job_block, self.file_name + self.names.joblist)
 
     def test_HESS_BadDataMWHEigvalsDim(self):
@@ -1728,8 +1751,8 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.error import HESSError
         from opan.hess import ORCA_HESS
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.eigval_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.eigval_block,
                     self.file_name + self.names.mwh_eigvals)
 
     def test_HESS_BadDataMWHEigvecs(self):
@@ -1738,13 +1761,13 @@ class TestORCAHessBadData(SuperORCAHess):
         from opan.hess import ORCA_HESS
 
         # First dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.eigvec_block, \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.eigvec_block,
                     self.file_name + self.names.mwh_eigvecs)
         # Second dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS, \
-                    HESSError.eigvec_block, \
-                    self.file_name + self.names.mwh_eigvecs + \
+        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+                    HESSError.eigvec_block,
+                    self.file_name + self.names.mwh_eigvecs +
                             self.names.suffix_dim2)
 
 ## end class TestORCAHessBadData
@@ -1763,7 +1786,7 @@ class TestORCAHessAltData(SuperORCAHess):
         # Write the files
         for bname in self.alt_data_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.alt_data_substs[bname]))
 
     @classmethod
@@ -1773,11 +1796,15 @@ class TestORCAHessAltData(SuperORCAHess):
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in \
+        [os.remove(self.file_name + dname) for dname in
                                             self.alt_data_substs.keys()]
 
         # Remove the directory
         tearDownTestDir(self.testdir)
+
+    def setUp(self):
+        # Long messages
+        self.longMessage = True
 
     def test_HESS_AltDataJobList(self):
 
@@ -1785,16 +1812,39 @@ class TestORCAHessAltData(SuperORCAHess):
 
         h = ORCA_HESS(self.file_name + self.names.joblist)
 
-        self.longMessage = True
-        self.assertEqual(h.joblist.shape, \
+        self.assertEqual(h.joblist.shape,
                         self.alt_data_values[self.names.joblist].shape)
         for i in range(h.joblist.shape[0]):
             for j in range(3):
-                self.assertEqual(h.joblist[i,j], \
-                        self.alt_data_values[self.names.joblist][i,j], \
+                self.assertEqual(h.joblist[i,j],
+                        self.alt_data_values[self.names.joblist][i,j],
                         msg="Job list element (" + str(i) + ',' + str(j) + ')')
 
 ## end class TestORCAHessAltData
+
+
+class TestORCAHessLiveData(SuperORCAHess):
+
+    def setUp(self):
+        # Enable long messages
+        self.longMessage = True
+
+    def test_HESS_LiveData(self):
+
+        import os
+        from opan.hess import ORCA_HESS
+        from opan.error import HESSError
+
+        for fname in os.listdir(self.resourcedir):
+            if fname[:9] == "test_orca" and fname[-4:] == "hess":
+                print("\nTesting file '" + fname + "' ....")
+                try:
+                    ORCA_HESS(os.path.join(self.resourcedir, fname))
+                except (IOError, HESSError) as e: # pragma: no cover
+                    self.fail("Load of test file '" + str(fname) +
+                            "' failed:\n" + str(e))
+
+## end class TestORCAHessLiveData
 
 
 # =============================  OPAN_XYZ  ================================== #
@@ -1907,7 +1957,7 @@ class SuperOPANXYZ(unittest.TestCase):
       H       1.418117     -0.085834      1.052642
     """)
 
-    testdir = 'orca_test_dir'
+    testdir = 'opan_test_dir'
     file_name = 'test.xyz'
 
     class names(object):
@@ -1933,87 +1983,107 @@ class SuperOPANXYZ(unittest.TestCase):
     num_atoms = 4
     num_geoms = 16
 
-    atom_syms = np.array([['CU', 'O', 'H', 'H']], dtype='|S2').transpose()
-    geoms = np.array( \
-        [[[-1.32000015, -1.35703123, -1.41727759, -1.4787088, -1.51819463,
-         -1.53507744, -1.54565991, -1.5547854 , -1.55643513, -1.55529184,
-         -1.55467768, -1.55453595, -1.55451895, -1.55453973, -1.5545454 ,
-         -1.55454351],
-        [-0.39071977, -0.409789  , -0.44107909, -0.47250334, -0.49109825,
-         -0.49677498, -0.49781433, -0.49582067, -0.49323931, -0.49231712,
-         -0.49224909, -0.49228121, -0.49230956, -0.49231145, -0.49230389,
-         -0.492302  ],
-        [-0.39106748, -0.41003088, -0.44117168, -0.47245232, -0.49097163,
-         -0.49662947, -0.49766882, -0.49569217, -0.49312781, -0.49221318,
-         -0.49215082, -0.49218673, -0.49222074, -0.49222641, -0.49222074,
-         -0.49221885],
-        [ 1.89908972,  1.87646403,  1.84592227,  1.8214163 ,  1.81419755,
-          1.81964185,  1.83155657,  1.85162547,  1.86298083,  1.86467214,
-          1.86418837,  1.86399561,  1.86396916,  1.86401262,  1.86404475,
-          1.86404286],
-        [ 0.27643859,  0.29368612,  0.32885581,  0.36720213,  0.38944043,
-          0.39302146,  0.38805715,  0.37545079,  0.36686954,  0.36520469,
-          0.3655902 ,  0.36588121,  0.36605318,  0.36606263,  0.36603995,
-          0.36603617],
-        [ 0.27668425,  0.293928  ,  0.329024  ,  0.36726071,  0.38941019,
-          0.39295154,  0.387974  ,  0.37538087,  0.3668223 ,  0.36517068,
-          0.36556374,  0.36585665,  0.36603239,  0.36604562,  0.36602483,
-          0.36602294],
-        [ 2.54469386,  2.57461012,  2.62012984,  2.66321181,  2.68661796,
-          2.69234572,  2.69167487,  2.68618899,  2.68132295,  2.67989999,
-          2.67983196,  2.67985274,  2.67985274,  2.6798414 ,  2.67982629,
-          2.6798244 ],
-        [ 1.96100848,  1.9880996 ,  1.99961181,  1.99269541,  1.98001157,
-          1.97478648,  1.97503025,  1.98055959,  1.98649333,  1.98886683,
-          1.98920887,  1.98922398,  1.98921643,  1.98921643,  1.98922209,
-          1.98922209],
-        [-0.14614197, -0.17140194, -0.18675596, -0.1867125 , -0.17763992,
-         -0.17030779, -0.16454412, -0.15946454, -0.15940785, -0.16104246,
-         -0.16184181, -0.16211582, -0.16225377, -0.16226322, -0.16225377,
-         -0.16225189],
-        [ 2.54539117,  2.57513357,  2.62040385,  2.66325906,  2.68655749,
-          2.69226824,  2.69160684,  2.68614742,  2.68130783,  2.67989621,
-          2.67983574,  2.67986219,  2.67987164,  2.67986408,  2.67985274,
-          2.67985274],
-        [-0.14597189, -0.17124509, -0.18663502, -0.18664069, -0.17760024,
-         -0.17028133, -0.16451956, -0.15943619, -0.15937005, -0.160999  ,
-         -0.16179835, -0.16207047, -0.16220653, -0.16221409, -0.16220464,
-         -0.16220275],
-        [ 1.9612806 ,  1.98826022,  1.99965716,  1.99265951,  1.97995677,
-          1.97474112,  1.97499435,  1.98053124,  1.98646876,  1.98884037,
-          1.9891843 ,  1.98920131,  1.98919753,  1.98919942,  1.98920509,
-          1.98920509]]]).transpose()
+    atom_syms = ['CU', 'O', 'H', 'H']
+    geoms = [np.array([-1.32000015, -0.39071977, -0.39106748,  1.89908972,  0.27643859,
+        0.27668425,  2.54469386,  1.96100848, -0.14614197,  2.54539117,
+       -0.14597189,  1.9612806 ]),
+         np.array([-1.35703123, -0.409789  , -0.41003088,  1.87646403,  0.29368612,
+                0.293928  ,  2.57461012,  1.9880996 , -0.17140194,  2.57513357,
+               -0.17124509,  1.98826022]),
+         np.array([-1.41727759, -0.44107909, -0.44117168,  1.84592227,  0.32885581,
+                0.329024  ,  2.62012984,  1.99961181, -0.18675596,  2.62040385,
+               -0.18663502,  1.99965716]),
+         np.array([-1.4787088 , -0.47250334, -0.47245232,  1.8214163 ,  0.36720213,
+                0.36726071,  2.66321181,  1.99269541, -0.1867125 ,  2.66325906,
+               -0.18664069,  1.99265951]),
+         np.array([-1.51819463, -0.49109825, -0.49097163,  1.81419755,  0.38944043,
+                0.38941019,  2.68661796,  1.98001157, -0.17763992,  2.68655749,
+               -0.17760024,  1.97995677]),
+         np.array([-1.53507744, -0.49677498, -0.49662947,  1.81964185,  0.39302146,
+                0.39295154,  2.69234572,  1.97478648, -0.17030779,  2.69226824,
+               -0.17028133,  1.97474112]),
+         np.array([-1.54565991, -0.49781433, -0.49766882,  1.83155657,  0.38805715,
+                0.387974  ,  2.69167487,  1.97503025, -0.16454412,  2.69160684,
+               -0.16451956,  1.97499435]),
+         np.array([-1.5547854 , -0.49582067, -0.49569217,  1.85162547,  0.37545079,
+                0.37538087,  2.68618899,  1.98055959, -0.15946454,  2.68614742,
+               -0.15943619,  1.98053124]),
+         np.array([-1.55643513, -0.49323931, -0.49312781,  1.86298083,  0.36686954,
+                0.3668223 ,  2.68132295,  1.98649333, -0.15940785,  2.68130783,
+               -0.15937005,  1.98646876]),
+         np.array([-1.55529184, -0.49231712, -0.49221318,  1.86467214,  0.36520469,
+                0.36517068,  2.67989999,  1.98886683, -0.16104246,  2.67989621,
+               -0.160999  ,  1.98884037]),
+         np.array([-1.55467768, -0.49224909, -0.49215082,  1.86418837,  0.3655902 ,
+                0.36556374,  2.67983196,  1.98920887, -0.16184181,  2.67983574,
+               -0.16179835,  1.9891843 ]),
+         np.array([-1.55453595, -0.49228121, -0.49218673,  1.86399561,  0.36588121,
+                0.36585665,  2.67985274,  1.98922398, -0.16211582,  2.67986219,
+               -0.16207047,  1.98920131]),
+         np.array([-1.55451895, -0.49230956, -0.49222074,  1.86396916,  0.36605318,
+                0.36603239,  2.67985274,  1.98921643, -0.16225377,  2.67987164,
+               -0.16220653,  1.98919753]),
+         np.array([-1.55453973, -0.49231145, -0.49222641,  1.86401262,  0.36606263,
+                0.36604562,  2.6798414 ,  1.98921643, -0.16226322,  2.67986408,
+               -0.16221409,  1.98919942]),
+         np.array([-1.5545454 , -0.49230389, -0.49222074,  1.86404475,  0.36603995,
+                0.36602483,  2.67982629,  1.98922209, -0.16225377,  2.67985274,
+               -0.16220464,  1.98920509]),
+         np.array([-1.55454351, -0.492302  , -0.49221885,  1.86404286,  0.36603617,
+                0.36602294,  2.6798244 ,  1.98922209, -0.16225189,  2.67985274,
+               -0.16220275,  1.98920509])]
+
+    dist_Cu_O = np.array([3.354629, 3.383183, 3.440127, 3.507285, 3.557423,
+                3.582909, 3.602044, 3.622363, 3.629285, 3.628582, 3.627700,
+                3.627540, 3.627595, 3.627663, 3.627685, 3.627680])
+    dist_O_H1 = np.array([1.852933, 1.890762, 1.912290, 1.912522, 1.900678,
+                1.892315, 1.887740, 1.886512, 1.889388, 1.891501, 1.891975,
+                1.891988, 1.891935, 1.891909, 1.891903, 1.891904])
+
+    angle_Cu_O_H1 = np.array([118.017, 119.211, 121.278, 123.250, 124.283,
+                124.437, 124.193, 123.537, 123.041, 122.911, 122.909, 122.911,
+                122.910, 122.909, 122.907, 122.907])
+
+    dihed_H2_O_Cu_H1 = np.array([131.287, 135.462, 142.180, 148.963, 152.551,
+                152.735, 151.323, 148.425, 146.671, 146.400, 146.499, 146.558,
+                146.589, 146.589, 146.584, 146.584])
 
 
-    good_direct_geom = np.array([[-1.32000015, -0.39071977, -0.39106748,
+    good_direct_geom = [np.array([-1.32000015, -0.39071977, -0.39106748,
          1.89908972,  0.27643859, 0.27668425,  2.54469386,  1.96100848,
-         -0.14614197,  2.54539117, -0.14597189,  1.9612806 ]]).transpose()
-    good_direct_atoms = np.array([['CU', 'O', 'H', 'H']]).transpose()
+         -0.14614197,  2.54539117, -0.14597189,  1.9612806 ])]
+    good_direct_atoms = ['CU', 'O', 'H', 'H']
+    good_direct_O1Dist = np.array([3.3546284826543507, 0.0,
+                                1.8529334749323307, 1.8531057866658869])
+    good_direct_CuO1Angle = np.array([0.0, None, 118.0167027446415,
+                                            118.05344488961961], dtype=object)
+    good_direct_Dihed = np.array([None, None, None, 131.28736349459098],
+                                                                dtype=object)
 
     bad_file_data_substs = {
                 names.file_start : ('4\nCoordin', '\n4\nCoordin'),
-                names.atom_counts : \
+                names.atom_counts :
                             ('H       1.421470      1.048067', 'shmarb'),
-                names.const_numats : \
+                names.const_numats :
                             ('1.052449\n4', '1.052449\n6'),
-                names.bad_lategeom_atomnum : \
+                names.bad_lategeom_atomnum :
                             ('Cu     -0.822629', '300    -0.822629'),
-                names.diff_lategeom_atomnum : \
+                names.diff_lategeom_atomnum :
                             ('Cu     -0.822629', '45     -0.822629'),
-                names.bad_1stgeom_atomnum : \
+                names.bad_1stgeom_atomnum :
                             ('Cu     -0.698514', '300     -0.698514'),
-                names.bad_lategeom_atomsym : \
+                names.bad_lategeom_atomsym :
                             ('Cu     -0.822629', 'Xd     -0.822629'),
-                names.diff_lategeom_atomsym : \
+                names.diff_lategeom_atomsym :
                             ('Cu     -0.822629', 'Se     -0.822629'),
-                names.bad_1stgeom_atomsym : \
+                names.bad_1stgeom_atomsym :
                             ('Cu     -0.698514', 'Xd      -0.698514')
                             }
 
     alt_file_data_substs = {
-                names.Cu_1st_as_atomnum : \
+                names.Cu_1st_as_atomnum :
                             ('Cu     -0.698514', '29     -0.822629'),
-                names.Cu_late_as_atomnum : \
+                names.Cu_late_as_atomnum :
                             ('Cu     -0.822629', '29     -0.822629')
                             }
 
@@ -2037,7 +2107,7 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
     def tearDownClass(self):
         import os
 
-        # Delete the hess file
+        # Delete the xyz file
         os.remove(self.file_name)
 
         # Remove the test directory
@@ -2052,6 +2122,9 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
         # Create the object
         self.xyz = OPAN_XYZ(path=self.file_name)
 
+        # Long messages
+        self.longMessage = True
+
     def test_XYZ_GoodFileDataNumAtoms(self):
         self.assertEqual(self.xyz.num_atoms, self.num_atoms)
 
@@ -2059,49 +2132,91 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
         self.assertEqual(self.xyz.num_geoms, self.num_geoms)
 
     def test_XYZ_GoodFileDataAtomSyms(self):
-        self.longMessage = True
-        for i in range(self.xyz.atom_syms.shape[0]):
-            self.assertEqual(self.xyz.atom_syms[i,0], \
-                    self.atom_syms[i,0], \
+        for i in range(len(self.xyz.atom_syms)):
+            self.assertEqual(self.xyz.atom_syms[i],
+                    self.atom_syms[i],
                     msg="Coordinates element (" + str(i) + ')')
 
     def test_XYZ_GoodFileDataCoords(self):
-        self.longMessage = True
-        for g in range(self.geoms.shape[0]):
-            for i in range(self.geoms.shape[1]):
-                self.assertAlmostEqual(self.xyz.geoms[g][i,0], \
-                        self.geoms[g][i,0], \
-                        delta=1e-6, \
-                        msg="Geometry #" + str(g) + \
+        for g in range(len(self.geoms)):
+            for i in range(self.geoms[g].shape[0]):
+                self.assertAlmostEqual(self.xyz.geoms[g][i],
+                        self.geoms[g][i],
+                        delta=1e-6,
+                        msg="Geometry #" + str(g) +
                                 ", coordinate element #" + str(i))
+
+    def test_XYZ_GoodFileDataDistances(self):
+        for t in zip(self.dist_Cu_O, self.xyz.Dist_iter(None, 0, 1),
+                                        range(self.dist_Cu_O.shape[0])):
+            self.assertAlmostEqual(t[0], t[1], delta=1e-5,
+                        msg="Cu-O distance mismatch at geom #" + str(t[2]) +
+                        ": " + str(t[0:2]))
+        for t in zip(self.dist_O_H1, self.xyz.Dist_iter(None, 1, 2),
+                                        range(self.dist_O_H1.shape[0])):
+            self.assertAlmostEqual(t[0], t[1], delta=1e-5,
+                        msg="O-H1 distance mismatch at geom #" + str(t[2]) +
+                        ": " + str(t[0:2]))
+
+    def test_XYZ_GoodFileDataAngles(self):
+        for t in zip(self.angle_Cu_O_H1, self.xyz.Angle_iter(None, 0, 1, 2),
+                                        range(self.angle_Cu_O_H1.shape[0])):
+            self.assertAlmostEqual(t[0], t[1], delta=1e-2,
+                        msg="Cu-O-H1 angle mismatch at geom #" + str(t[2]) +
+                        ": " + str(t[0:2]))
+
+    def test_XYZ_GoodFileDataDihedrals(self):
+        for t in zip(self.dihed_H2_O_Cu_H1,
+                                    self.xyz.Dihed_iter(None, 3, 1, 0, 2),
+                                    range(self.dihed_H2_O_Cu_H1.shape[0])):
+            self.assertAlmostEqual(t[0], t[1], delta=1e-2,
+                        msg="H2-Cu-O-H1 dihedral mismatch at geom #" +
+                        str(t[2]) + ": " + str(t[0:2]))
+
+    def test_XYZ_GoodFileDataIterGeom(self):
+
+        import numpy as np
+
+        idxs = [1,4,8]
+        for t in zip(np.array(self.geoms)[idxs],
+                        self.xyz.Geom_iter(idxs),
+                        range(len(idxs))
+                    ):
+            for i in range(t[0].shape[0]):
+                self.assertAlmostEqual(t[0][i], t[1][i], delta=1e-6,
+                        msg="Geometry #" + str(t[2]) + \
+                                ", coordinate element #" + str(i))
+
+    #TEST: Displ_iter call (Dist_iter only calls Displ_single)
 
 ## end class TestOPANXYZGoodData
 
 
 class TestOPANXYZAltFileData(SuperOPANXYZ):
-    # Ensuring importing an XYZ file with data of generally valid formatting but
-    #  invalid content raises the appropriate errors
+    # Ensuring successful import of an XYZ file with valid data of alternative
+    #  formatting to that contained in SuperOPANXYZ.file_text_good
+    #  (primarily if elements are specified by atomic number).
 
     @classmethod
     def setUpClass(self):
-        # Set up the directory and add munged files
+        # Set up the directory and add alternate-g files
 
         setUpTestDir(self.testdir)
 
         # Write the files
         for bname in self.alt_file_data_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.alt_file_data_substs[bname]))
 
     @classmethod
     def tearDownClass(self):
-        # Remove any engrad files and try to remove the temp directory
+        # Remove any created files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                             self.alt_file_data_substs.keys()]
 
         # Remove the directory
@@ -2114,11 +2229,11 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
 
         try:
             xyz = OPAN_XYZ(path=(self.file_name + self.names.Cu_1st_as_atomnum))
-        except XYZError:
+        except XYZError:  # pragma: no cover
             self.fail("XYZ import failed when success was expected.")
 
-        self.assertEqual(xyz.atom_syms[0,0].upper(), \
-                                        self.good_direct_atoms[0,0])
+        self.assertEqual(xyz.atom_syms[0].upper(),
+                                        self.good_direct_atoms[0])
 
     def test_XYZ_AltFileDataLateCuAtomnum(self):
 
@@ -2126,13 +2241,13 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
         from opan.error import XYZError
 
         try:
-            xyz = OPAN_XYZ(path=(self.file_name + \
+            xyz = OPAN_XYZ(path=(self.file_name +
                                             self.names.Cu_late_as_atomnum))
-        except XYZError:
+        except XYZError:  # pragma: no cover
             self.fail("XYZ import failed when success was expected.")
 
-        self.assertEqual(xyz.atom_syms[0,0].upper(), \
-                                        self.good_direct_atoms[0,0])
+        self.assertEqual(xyz.atom_syms[0].upper(),
+                                        self.good_direct_atoms[0])
 
 ## end class TestOPANXYZAltFileData
 
@@ -2147,11 +2262,14 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
         from opan.xyz import OPAN_XYZ
 
         # Create the object
-        self.xyz = OPAN_XYZ(atom_syms=self.good_direct_atoms, \
-                            coords=self.good_direct_geom)
+        self.xyz = OPAN_XYZ(atom_syms=self.good_direct_atoms,
+                                            coords=self.good_direct_geom)
+
+        # Long messages
+        self.longMessage = True
 
     def test_XYZ_GoodDirectDataNumAtoms(self):
-        self.assertEqual(self.xyz.num_atoms, self.good_direct_atoms.shape[0])
+        self.assertEqual(self.xyz.num_atoms, len(self.good_direct_atoms))
 
     def test_XYZ_GoodDirectDataNumGeoms(self):
         self.assertEqual(self.xyz.num_geoms, 1)
@@ -2160,12 +2278,44 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
         self.assertEqual(self.xyz.geoms[0].shape[0], self.xyz.num_atoms * 3)
 
     def test_XYZ_GoodDirectDataCoords(self):
-        self.longMessage = True
-        for i in range(self.good_direct_geom.shape[0]):
-            self.assertAlmostEqual(self.xyz.geoms[0][i,0], \
-                    self.good_direct_geom[i,0], \
-                    delta=1e-8, \
+        for i in range(self.good_direct_geom[0].shape[0]):
+            self.assertAlmostEqual(self.xyz.geoms[0][i],
+                    self.good_direct_geom[0][i],
+                    delta=1e-8,
                     msg="Coordinates element (" + str(i) + ')')
+
+    def test_XYZ_GoodDirectDataIterO1Dist(self):
+        for tup in zip(
+                    self.good_direct_O1Dist,
+                    self.xyz.Dist_iter(0,1,None),
+                    range(self.good_direct_O1Dist.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=1e-5,
+                    msg="Distance between O1 and atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2]].capitalize() +
+                            ")")
+
+    def test_XYZ_GoodDirectDataIterCuO1Angle(self):
+        for tup in zip(
+                    self.good_direct_CuO1Angle,
+                    self.xyz.Angle_iter(0,0,1,None),
+                    range(self.good_direct_CuO1Angle.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
+                    msg="Angle Cu-O-X with atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2]].capitalize() +
+                            ")")
+
+    def test_XYZ_GoodDirectDataIterDihed(self):
+        for tup in zip(
+                    self.good_direct_Dihed,
+                    self.xyz.Dihed_iter(0,None, 1,0,2),
+                    range(self.good_direct_Dihed.shape[0])
+                        ):
+            self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
+                    msg="Dihedral with atom #" + str(tup[2]) +
+                            " (" + self.xyz.atom_syms[tup[2]].capitalize() +
+                            ")")
 
 ## end class TestOPANXYZGoodDirectData
 
@@ -2183,17 +2333,17 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Write the files
         for bname in self.bad_file_data_substs.keys():
             with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good \
+                f.write(self.file_text_good
                                     .replace(*self.bad_file_data_substs[bname]))
 
     @classmethod
     def tearDownClass(self):
-        # Remove any engrad files and try to remove the temp directory
+        # Remove any created files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in \
+        [os.remove(self.file_name + bname) for bname in
                                             self.bad_file_data_substs.keys()]
 
         # Remove the directory
@@ -2206,8 +2356,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.file_start))
 
     def test_XYZ_BadFileDataAtomCounts(self):
@@ -2218,8 +2368,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.atom_counts))
 
     def test_XYZ_BadFileDataConstNumats(self):
@@ -2229,8 +2379,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.const_numats))
 
     def test_XYZ_BadFileDataBadLateGeomAtomNum(self):
@@ -2239,8 +2389,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_lategeom_atomnum))
 
     def test_XYZ_BadFileDataDifferentLateGeomAtomNum(self):
@@ -2249,8 +2399,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                    XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                    XYZError.xyzfile,
                     path=(self.file_name + self.names.diff_lategeom_atomnum))
 
     def test_XYZ_BadFileDataBadFirstGeomAtomNum(self):
@@ -2259,8 +2409,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_1stgeom_atomnum))
 
     def test_XYZ_BadFileDataBadLateGeomAtomSym(self):
@@ -2269,8 +2419,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_lategeom_atomsym))
 
     def test_XYZ_BadFileDataDifferentLateGeomAtomSym(self):
@@ -2279,8 +2429,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                    XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                    XYZError.xyzfile,
                     path=(self.file_name + self.names.diff_lategeom_atomsym))
 
     def test_XYZ_BadFileDataBadFirstGeomAtomSym(self):
@@ -2289,8 +2439,8 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         from opan.error import XYZError
         from opan.xyz import OPAN_XYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
-                        XYZError.xyzfile, \
+        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+                        XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_1stgeom_atomsym))
 
 ## end class TestOPANXYZBadFileData
@@ -2303,15 +2453,15 @@ class TestOPANXYZBadDirectData(SuperOPANXYZ):
     def test_XYZ_BadDirectDataTruncCoords(self):
         from opan.xyz import OPAN_XYZ
         self.assertRaises(ValueError, OPAN_XYZ, \
-                    coords=self.good_direct_geom[:-2,0], \
+                    coords=self.good_direct_geom[0][:-2], \
                     atom_syms=self.good_direct_atoms)
 
     def test_XYZ_BadDirectDataBadElement(self):
         from opan.xyz import OPAN_XYZ
 
         # Copy symbols, munge, and pass into assert
-        munge_atoms = self.good_direct_atoms.copy()
-        munge_atoms.put((0), 'CX')
+        munge_atoms = self.good_direct_atoms[:]
+        munge_atoms[0] = 'CX'
         self.assertRaises(ValueError, OPAN_XYZ, \
                     coords=self.good_direct_geom, \
                     atom_syms=munge_atoms)
@@ -2321,10 +2471,22 @@ class TestOPANXYZBadDirectData(SuperOPANXYZ):
         import numpy as np
 
         # Copy coords, munge, and pass to assert
-        munge_coords = self.good_direct_geom.copy() * 1.j
+        munge_coords = self.good_direct_geom[0].copy() * 1.j
         self.assertRaises(ValueError, OPAN_XYZ, \
                     coords=munge_coords, \
                     atom_syms=self.good_direct_atoms)
+
+    # TEST: ValueError for Angle at_1 == at_2 and at_3 == at_2 cases
+
+    # TEST: ValueError for Dihed any at_x equal
+
+    # TEST: IndexError for invalid (out-of-range) at_x for Dist, Angle, Dihed
+
+    # TEST: XYZError.dihed for too-nearly-linear atom trio(s)
+
+    # TEST: ValueError when multiple 'None' values passed to an X_iter method
+
+    # TEST: ValueError when 'None' passed to an X_iter with another iterable
 
 ## end class TestOPANXYZBadDirectData
 
@@ -2346,7 +2508,7 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
     def tearDownClass(self):
         import os
 
-        # Delete the hess file
+        # Delete the xyz file
         os.remove(self.file_name)
 
         # Remove the test directory
@@ -2415,6 +2577,402 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
 
 
 ## end class TestOPANXYZBadUsage
+
+
+# ===========================  utils.inertia  =============================== #
+
+class SuperOPANUtilsInertia(object):
+    # Superclass for all test cases for the various top types. Implemented
+    #  as a top-level class rather than a subclass of unittest.TestCase to
+    #  prevent the tests being run spuriously on the superclass. Also avoids
+    #  run-time errors since self.fname does not exist in the superclass
+    #  namespace.
+    #
+    # Subclasses must also subclass unittest.TestCase, and must declare
+    #  SuperOPANUtilsInertia as a higher priority superclass. Otherwise, the
+    #  default form of the `setUpClass` method from unittest.TestCase will be
+    #  called.
+
+    # Imports
+    import os
+
+    # Common constants
+    filedir = os.path.join('resource','inertia')
+
+    # Common setUpClass method
+    @classmethod
+    def setUpClass(self):
+
+        # Imports
+        import os
+        from opan.xyz import OPAN_XYZ as XYZ
+        from opan.hess import ORCA_HESS as HESS
+
+        # Attach class objects
+        basename = os.path.join(self.filedir, self.fname)
+        self.xyz = XYZ(path=basename + '.xyz')
+        self.hess = HESS(basename + '.hess')
+
+        # Always long messages
+        self.longMessage = True
+
+    def test_ctr_mass(self):
+        import opan.utils.inertia as oui
+        ctr_mass = oui.ctr_mass(self.xyz.geoms[0], self.hess.atom_masses)
+        for i in range(3):
+            self.assertAlmostEqual(self.ctr_mass[i], ctr_mass[i],
+                        delta=1e-7,
+                        msg="Center-of-mass index '" + str(i) + "'")
+
+    def test_ctr_geom(self):
+        import opan.utils.inertia as oui
+        ctr_geom = oui.ctr_geom(self.xyz.geoms[0], self.hess.atom_masses)
+        for i in range(ctr_geom.shape[0]):
+            self.assertAlmostEqual(self.ctr_geom[i], ctr_geom[i],
+                        delta=1e-7,
+                        msg="Centered geometry index '" + str(i) + "'")
+
+    def test_i_tensor(self):
+        import opan.utils.inertia as oui
+        i_tensor = oui.inertia_tensor(self.xyz.geoms[0],
+                                                    self.hess.atom_masses)
+        for i in range(i_tensor.shape[0]):
+            for j in range(i_tensor.shape[1]):
+                self.assertAlmostEqual(self.i_tensor[i,j],
+                            i_tensor[i,j],
+                            delta=1e-7,
+                            msg="Inertia tensor element (" + str(i) + "," +
+                                                             str(j) + ")")
+
+    def test_moments(self):
+        import opan.utils.inertia as oui
+        moments = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[0]
+        for i in range(moments.shape[0]):
+            if moments[i] < 1e-10:
+                self.assertAlmostEqual(self.moments[i], moments[i],
+                        delta=1e-7,
+                        msg="Principal moment index '" + str(i) + "'")
+            else:
+                self.assertAlmostEqual(self.moments[i] / moments[i], 1.0,
+                        delta=1e-7,
+                        msg="Principal moment index '" + str(i) + "'")
+
+    def test_axes(self):
+        import opan.utils.inertia as oui
+        axes = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[1]
+        for i in range(axes.shape[0]):
+            for j in range(axes.shape[1]):
+                if abs(axes[i,j]) < 1e-10:
+                    self.assertAlmostEqual(self.axes[i,j], axes[i,j],
+                            delta=1e-7,
+                            msg="Principal axis #" + str(j) + ", element " +
+                                                                        str(i))
+                else:
+                    self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
+                            delta=1e-7,
+                            msg="Principal axis #" + str(j) + ", element " +
+                                                                        str(i))
+
+    def test_axes_orthonorm(self):
+        import opan.utils.inertia as oui
+        from opan.utils.vector import orthonorm_check as onchk
+        axes = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[1]
+        on, nfail, ofail = onchk(axes, report=True)
+        self.assertTrue(on, msg="Norm failures: " + str(nfail) +
+                                "; ortho failures: " + str(ofail))
+
+    def test_rot_consts(self):
+        import opan.utils.inertia as oui
+        from opan.const import PRM, EU_RotConst as EURC
+        rc = oui.rot_consts(self.xyz.geoms[0], self.hess.atom_masses,
+                                                            EURC.InvInertia)
+        for i in range(rc.shape[0]):
+            if rc[i] >= 1/(2.0*PRM.Zero_Moment_Tol):
+                self.assertAlmostEqual(self.rc[i], rc[i],
+                        delta=1.0,
+                        msg="Rotational constant index '" + str(i) + "'")
+            else:
+                self.assertAlmostEqual(self.rc[i] / rc[i], 1.0,
+                        delta=PRM.Equal_Moment_Tol,
+                        msg="Rotational constant index '" + str(i) + "'")
+
+    def test_toptype(self):
+        import opan.utils.inertia as oui
+        top = oui.principals(self.xyz.geoms[0], self.hess.atom_masses)[2]
+        self.assertEqual(top, self.top)
+
+## end class SuperOPANUtilsInertia
+
+
+class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
+    # Asymmetric molecule test-case (H2O). Includes proofreading tests for,
+    #  e.g., bad object shapes
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType, EU_RotConst as EURC
+
+    # Constants for superclass method use
+    fname = "H2O_Asymm"
+    ctr_mass = np.array([-11.42671795,   0.2152039 ,  -0.02145012])
+    ctr_geom = np.array([-0.07503316, -0.09586698,  0.04549049,
+                1.7685783 ,  0.01137086, -0.00539566,
+                -0.57765012,  1.51023212, -0.71663048])
+    i_tensor = np.array([[ 2.99702139,  0.74400967, -0.35304507],
+                [ 0.74400967,  4.13012039,  1.16077065],
+                [-0.35304507,  1.16077065,  6.02553148]])
+    moments = np.array([ 2.41469379,  4.16164284,  6.57633663])
+    axes = np.array([[  8.16492638e-01,  -5.77355846e-01,   6.07765301e-15],
+                [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
+                [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
+    top = E_TopType.Asymmetrical
+    rc = np.array([ 0.207065592447,  0.120144860861,  0.076030171231])
+
+    rc_units = {EURC.AngFreqAtomic: np.array([  1.135920230159e-04,   6.590905634729e-05,   4.170862410476e-05]),
+         EURC.AngFreqSeconds: np.array([  4.696050231566e+12,   2.724770904719e+12,   1.724291800473e+12]),
+         EURC.CyclicFreqAtomic: np.array([  1.807873195879e-05,   1.048975211219e-05,   6.638133695834e-06]),
+         EURC.CyclicFreqHz: np.array([  7.473996073616e+11,   4.336607582790e+11,   2.744295633781e+11]),
+         EURC.CyclicFreqMHz: np.array([ 747399.60736156872 ,  433660.758279046626,  274429.563378054823]),
+         EURC.InvInertia: np.array([ 0.207065592447,  0.120144860861,  0.076030171231]),
+         EURC.WaveNumAtomic: np.array([  1.318826101078e-07,   7.652173233680e-08,   4.842454659134e-08]),
+         EURC.WaveNumCM: np.array([ 24.922201369646,  14.460511669382,   9.150913076387])}
+
+
+    def test_UtilsInertiaBadGeomShape(self):
+        from opan.utils.inertia import ctr_mass as cm, _fadnOv as fO, \
+                                                        _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, cm, np.array([[1,1],[1,1]]),
+                                                    self.hess.atom_masses)
+        self.assertRaises(ValueError, fO, [1,2,3], self.xyz.geoms[0][:-2])
+        self.assertRaises(ValueError, fP, [1,2,3], self.xyz.geoms[0][:-2])
+
+    def test_UtilsInertiaBadMassesShape(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0],
+                                                     np.array([[1,1],[1,1]]))
+
+    def test_UtilsInertiaBadGeomLength(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0][:-2],
+                                                    self.hess.atom_masses)
+
+    def test_UtilsInertiaBadGeomMassesLengths(self):
+        from opan.utils.inertia import ctr_mass as cm
+        import numpy as np
+        self.assertRaises(ValueError, cm, self.xyz.geoms[0],
+                                                self.hess.atom_masses[:-2])
+
+    def test_UtilsInertiaBadRefVecShape(self):
+        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, fO, [1,2,3,4], self.xyz.geoms[0])
+        self.assertRaises(ValueError, fP, [1,2,3,4], self.xyz.geoms[0])
+
+    def test_UtilsInertiaBadRefVecNorm(self):
+        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        import numpy as np
+        self.assertRaises(ValueError, fO, [1e-7, 0, 1e-9], self.xyz.geoms[0])
+        self.assertRaises(ValueError, fP, [1e-7, 0, 1e-9], self.xyz.geoms[0])
+
+    def test_UtilsInertiaCheckAllRotConstUnits(self):
+        from opan.utils.inertia import rot_consts
+        from opan.const import EU_RotConst as EURC
+        for (u, a) in [(u, rot_consts(self.xyz.geoms[0],
+                    self.hess.atom_masses, units=u)) for u in EURC]:
+            for i in range(a.shape[0]):
+                self.assertAlmostEqual(self.rc_units[u][i] / a[i], 1.0,
+                        delta=1e-8,
+                        msg="Rotational constant units '" + str(u) +
+                                                ",' index '" + str(i) + "'")
+
+    def test_UtilsInertiaBadRotConstUnits(self):
+        from opan.utils.inertia import rot_consts
+        self.assertRaises(ValueError, rot_consts, self.xyz.geoms[0],
+                                self.hess.atom_masses, units="ThisIsInvalid")
+
+## end class TestOPANUtilsInertiaAsymm
+
+
+class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
+    # Lone atom test-case (Cu).
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType, PRM
+
+    # Constants for superclass method use
+    fname = "Cu_Atom"
+    ctr_mass = np.array([-1.88972612,  3.77945225, -7.5589045 ])
+    ctr_geom = np.array([0.0, 0.0, 0.0])
+    i_tensor = np.zeros((3,3))
+    moments = np.zeros((3,))
+    axes = np.eye(3)
+    top = E_TopType.Atom
+    rc = np.repeat(1.0/(2.0*PRM.Zero_Moment_Tol), 3)
+
+## end class TestOPANUtilsInertiaAtom
+
+
+class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
+    # Linear molecule test-case (chloroethyne).
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType, PRM
+
+    # Constants for superclass method use
+    fname = "HC2Cl_Linear"
+    ctr_mass = np.array([ 3.78157026, -0.13914054,  0.11918503])
+    ctr_geom = np.array([ -1.81226617e+00,   4.52442528e-10,   7.10376657e-09,
+                         1.29696963e+00,   4.73253989e-09,  -1.02091483e-08,
+                         3.58244725e+00,  -6.42275907e-09,  -1.13833863e-08,
+                         5.59880599e+00,   4.22696256e-09,   7.43858825e-09])
+    i_tensor = np.array([[  5.44288079e-15,   2.07854690e-07,   1.06328882e-06],
+                       [  2.07854690e-07,   3.22388376e+02,  -4.43485080e-16],
+                       [  1.06328882e-06,  -4.43485080e-16,   3.22388376e+02]])
+    moments = np.array([  5.68434189e-14,   3.22388376e+02,   3.22388376e+02])
+    axes = np.array([[ -1.00000000e+00,   2.49655671e-10,  -3.91982518e-09],
+                   [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
+                   [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
+    top = E_TopType.Linear
+    rc = np.array([1.0/(2.0*PRM.Equal_Moment_Tol),
+                                    1.550924404326e-03, 1.550924404326e-03])
+
+    def test_UtilsInertiaLinearNoNonParallelVec(self):
+        from opan.utils.inertia import _fadnPv as fP, ctr_geom as cg
+        import numpy as np
+        from opan.error import INERTIAError as INErr
+        assertErrorAndTypecode(self, INErr, fP , INErr.bad_geom,
+                            self.xyz.Displ_single(0,0,1),
+                            cg(self.xyz.geoms[0], self.hess.atom_masses))
+
+## end class TestOPANUtilsInertiaLinear
+
+
+class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
+    # Prolate symmetric test case (chloromethane)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "CH3Cl_SymmProl"
+    ctr_mass = np.array([ 1.19526288,  1.19526288,  1.19526288])
+    ctr_geom = np.array([-1.36880665, -1.36880665, -1.36880665,
+                            0.61213832,  0.61213832, 0.61213832,
+                            -2.54039904, -2.54039904, -0.13884799,
+                            -0.13884799, -2.54039904, -2.54039904,
+                            -2.54039904, -0.13884799, -2.54039905])
+    i_tensor = np.array([[ 97.63769388, -43.0052599 , -43.00525991],
+                       [-43.0052599 ,  97.63769391, -43.00525989],
+                       [-43.00525991, -43.00525989,  97.63769389]])
+    moments = np.array([  11.6271741 ,  140.64295379,  140.6429538 ])
+    axes = np.array([[ -5.77350269e-01,  -4.08248290e-01,  -7.07106781e-01],
+                       [ -5.77350269e-01,  -4.08248291e-01,   7.07106781e-01],
+                       [ -5.77350269e-01,   8.16496581e-01,   2.78286699e-10]])
+    top = E_TopType.SymmProlate
+    rc = np.array([ 0.043002710352,  0.003555101671,  0.003555101671])
+
+## end class TestOPANUtilsInertiaSymmProl
+
+
+class TestOPANUtilsInertiaSymmObl(SuperOPANUtilsInertia, unittest.TestCase):
+    # Oblate symmetric test case (ammonia)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "NH3_SymmObl"
+    ctr_mass = np.array([ -1.36098776e+01,   1.70206822e+00,  -7.62922335e-04])
+    ctr_geom = np.array([ -4.79117194e-02,  -1.35356483e-01,   5.88277405e-03,
+                         1.89623378e+00,   3.55505121e-02,  -1.54206207e-03,
+                        -6.15221552e-01,   8.55891028e-01,  -1.57668545e+00,
+                        -6.15238957e-01,   9.89449583e-01,   1.49648146e+00])
+    i_tensor = np.array([[ 6.74683794,  0.98560398, -0.04281628],
+                           [ 0.98560398,  9.1833784 , -0.12106317],
+                           [-0.04281628, -0.12106317,  6.40284824]])
+    moments = np.array([ 6.39758672,  6.39807449,  9.53740337])
+    axes = np.array([[-0.941357532609, -0.052449650272, -0.333309210773],
+                   [ 0.334894464181, -0.024822665809, -0.94192862422 ],
+                   [ 0.041130203771, -0.998315015137,  0.040932100963]])
+    top = E_TopType.SymmOblate
+    rc = np.array([ 0.078154470132,  0.078148511783,  0.05242517071 ])
+
+## end class TestOPANUtilsInertiaSymmObl
+
+
+class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
+    # Planar (oblate symmetric special case) test case (benzene)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "C6H6_Planar"
+    ctr_mass = np.array(
+            [0.0, 0.0, 0.0])
+    ctr_geom = np.array([ 1.889726124565,  0.            ,  0.,
+                0.944863062283, 1.636550830098,  0.,
+                -0.944863062283,  1.636550830098, 0.,
+                -1.889726124565,  0.            ,  0.,
+                -0.944863062283, -1.636550830098,  0.,
+                0.944863062283, -1.636550830098,  0.,
+                3.77945224913 ,  0., 0.,
+                1.889726124565,  3.273101660137,  0.,
+                -1.889726124565,  3.273101660137,  0.,
+                -3.77945224913 , 0.,  0.,
+                -1.889726124565, -3.273101660137, 0.,
+                 1.889726124565, -3.273101660137,  0.])
+    i_tensor = np.array([[ 171.871779008624,   -0.,   -0.],
+                            [  -0.,  171.871779003993,   -0.],
+                            [  -0., -0.,  343.743558012617]])
+    moments = np.array([171.871779003993, 171.871779008624, 343.743558012617])
+    axes = np.array([[ 1.,  0.,  0.],
+                       [ 0.,  1.,  0.],
+                       [ 0.,  0.,  1.]])
+    top = E_TopType.SymmOblate
+    rc = np.array([ 0.002909145427,  0.002909145427,  0.001454572714])
+
+## end class TestOPANUtilsInertiaPlanar
+
+
+class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
+    # Spherical test case (methane)
+
+    # Imports
+    import numpy as np
+    from opan.const import E_TopType
+
+    # Constants for superclass method use
+    fname = "CH4_Spher"
+    ctr_mass = np.array(
+            [  8.734135537996e-11,   4.387156003093e-11,  -1.188484647673e-11])
+    ctr_geom = np.array(
+            [  4.000728815448e-11,   2.009566928560e-11,  -5.443942085537e-12,
+             1.180503717314e+00,   1.180503717408e+00,   1.180503717381e+00,
+            -1.180503717657e+00,  -1.180503717520e+00,   1.180503717479e+00,
+             1.180503717435e+00,  -1.180503717544e+00,  -1.180503717454e+00,
+            -1.180503717568e+00,   1.180503717417e+00,  -1.180503717341e+00])
+    i_tensor = np.array(
+            [[  1.123790191290e+01,   7.775846633251e-11,   5.015445836420e-10],
+           [  7.775846633251e-11,   1.123790191310e+01,  -3.777778090353e-11],
+           [  5.015445836420e-10,  -3.777778090353e-11,   1.123790191366e+01]])
+    moments = np.array([ 11.237901912633,  11.237901913117,  11.237901913909])
+    axes = np.array(
+            [[  5.773502691632e-01,  -4.082482905123e-01,   7.071067811802e-01],
+           [  5.773502692095e-01,  -4.082482904247e-01,  -7.071067811929e-01],
+           [  5.773502691962e-01,   8.164965809231e-01,   6.946399011554e-11]])
+    top = E_TopType.Spherical
+    rc = np.array([ 0.044492290811,  0.044492290809,  0.044492290806])
+
+## end class TestOPANUtilsInertiaSpher
 
 
 # ==========================  Helper Functions  ============================= #
