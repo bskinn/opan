@@ -58,3 +58,6 @@ target/
 
 # PyScripter project files
 *.psproj
+
+# NoteTab backups
+*.bak

@@ -4,14 +4,18 @@
    contain the root `toctree` directive.
 
 
-Welcome to opan's documentation!
+Welcome to opan!
 ================================
+
+*Eventually, one will find here at least the API and a user's guide.*
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   api/index
+   userguide/index
 
 
 Indices and tables
@@ -21,5 +25,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. automodule:: opan.hess
-   :members: ORCA_HESS
