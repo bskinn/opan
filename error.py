@@ -104,19 +104,8 @@ class OPANError(Exception):
         # Import(s)
         import re
 
-        # Check for and complain at instantiation of base class. Will need
-        #  to update this every time a new subclass of error is created.
-        if not (
-                    isinstance(self, XYZError) or \
-                    isinstance(self, GRADError) or \
-                    isinstance(self, HESSError) or \
-                    isinstance(self, OUTPUTError) or \
-                    isinstance(self, SYMMError) or \
-                    isinstance(self, REPOError) or \
-                    isinstance(self, ANHARMError) or \
-                    isinstance(self, INERTIAError) or \
-                    isinstance(self, VECTORError)
-                ):
+        # Check for and complain at instantiation of base class.
+        if type(self) == OPANError:
             raise(NotImplementedError("OPANError base class is abstract."))
         ## end if
 
