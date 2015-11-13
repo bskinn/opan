@@ -19,36 +19,45 @@
 #
 #-------------------------------------------------------------------------------
 
+
+
+"""
+#DOC: Need module docstring
+
+Attributes
+----------
+OPANError
+    Abstract superclass for all custom OpenAnharmonic errors
+"""
+
+
 # Module-level imports
 
 
 class OPANError(Exception):
-    """Base class for custom Errors defined for OpenAnharmonic
+    """Base class for custom errors defined for OpenAnharmonic
 
-    OPANError is an abstract superclass of any custom errors built under the
-    OpenAnharmonic umbrella. It defines all common methods shared among the
-    various subtype error classes, such that the only contents that must be
-    declared by a subclass are str class variables with contents identical to
-    their names.  These are recognized by the __iter__ defined in __metaclass__
-    as being the set of valid typecodes.
+    :class:`OPANError` is an abstract superclass of any custom errors built
+    under the OpenAnharmonic umbrella. It defines all common methods shared
+    among the various subtype error classes, such that the only contents that
+    must be declared by a subclass are str class variables with contents
+    identical to their names.  These are recognized by the :meth:`__iter__`
+    defined in :class:`~opan.error.OPANError.__metaclass__` as being the
+    set of valid typecodes.
 
-    Instantiation
-    -------------
+    Arguments
+    ---------
     tc  : str
-        String representation of typecode to be associated with the OPANError
-        subclass instance. *Must* be a validly constructed class variable
-        defined for the relevant subclass.
+        String representation of typecode to be associated with the
+        :class:`OPANError` subclass instance. *Must* be a validly
+        constructed class variable defined for the relevant subclass.
     msg : str
         Explanation of the nature of the error being reported.
     src : str
         Further detail of the code/file source of the error behavior.
 
-    Class Variables
-    ---------------
-    (none)
-
-    Instance Variables
-    ------------------
+    Attributes
+    ----------
     msg : str
         Explanation of the nature of the error being reported.
     src : str
@@ -56,25 +65,8 @@ class OPANError(Exception):
     subclass_name   : str
         String representation of the name of the OPANError subclass of the
         current OPANError instance.
-    tc  : int
-        Numeric value of the typecode associated with the instance, as defined
-        in the 'typecodes' dict of the subclass
-
-    Class Methods
-    -------
-    (none)
-
-    Class Generators
-    ----------------
-    __iter__() : Iterates over valid typecodes for the (sub)class
-        Technically, iterates over all class variables whose contents are
-        strings identical to their names. For a properly constructed
-        OPANError subclass, this should correspond exactly to the list of
-        valid typecodes.
-
-        Example:
-            >>> 'xyzfile' in opan.error.XYZError
-            True
+    tc  : str
+        String typecode associated with the instance
 
     """
 
@@ -84,20 +76,17 @@ class OPANError(Exception):
 
         Parameters
         ----------
-        tc   :  typecode for error
-                    (see subclass docstrings for allowed typecodes)
-        msg  :  explanation of the error
-        src  :  source of the problematic data
-
-        Returns
-        -------
-        (none)
+        tc   :  str
+            Typecode for error (see subclass docstrings for allowed typecodes)
+        msg  :  str
+            Explanation of the error
+        src  :  str
+            Source of the problematic data
 
         Raises
         ------
-        KeyError : Invalid typecode provided in 'tc'
-        NotImplementedError : Upon attempt to instantiate abstract ORCAError
-            base class.
+        NotImplementedError
+            Upon attempt to instantiate abstract ORCAError base class.
 
         """
 
@@ -129,26 +118,19 @@ class OPANError(Exception):
 
 
     def __str__(self):  # pragma: no cover   (str rep has no code significance)
-        """ String representation of an instance of an ORCAError subclass.
+        """ String representation of an :class:`OPANError` subclass instance.
 
         Implemented primarily so that the error stack handling of the Python
         interpreter will provide useful information to the user.
 
-        Return value is constructed as follows:
-            (typecode string) Error message: Error source
+        Return value is constructed as:
 
-        Parameters
-        ----------
-        (none)
+        ``(typecode string) Error message: Error source``
 
         Returns
         -------
-        retstr : str
+        str
             String representation of the instance.
-
-        Raises
-        ------
-        (none)
 
         """
 
@@ -161,22 +143,24 @@ class OPANError(Exception):
 
 
     class __metaclass__(type):
-        """ type metaclass provides ability to iterate over typecodes.
+        """ Metaclass providing ability to iterate over typecodes.
 
-        With this metaclass, iterating over the (sub)class yields the valid
-        typecodes for the (sub)class.  Technically, it iterates over all
-        class variables whose contents are the same as the variable name.
-
-        Provides
-        --------
-        __iter__() : Generator
-            Iterates over all class variables whose names match their contents.
-            For a properly constructed OPAN subclass, these are identical to
-            the typecodes.
+        With this metaclass, iterating over the class itself (rather than an
+        instance) yields the valid typecodes for the class.
         """
 
         # Enable iteration over the typecodes
         def __iter__(self):
+            """ Iterate over all defined typecodes.
+
+            Generator iterating over all class variables whose names match
+            their contents. For a properly constructed
+            :class:`~opan.error.OPANError`
+            subclass, these are identical to the typecodes.
+
+            >>> 'xyzfile' in opan.error.XYZError
+            True
+            """
             for item in self.__dict__:
                 if item == self.__dict__[item]:
                     yield item
