@@ -3,7 +3,16 @@
 opan.error
 =======================
 
-.. automodule:: opan.error
 
-   .. autoclass:: opan.error.OPANError
-      :members: __init__, __metaclass__, __str__
+.. automodule:: opan.error
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+

@@ -24,10 +24,6 @@
 """
 #DOC: Need module docstring
 
-Attributes
-----------
-OPANError
-    Abstract superclass for all custom OpenAnharmonic errors
 """
 
 
@@ -42,7 +38,7 @@ class OPANError(Exception):
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are str class variables with contents
     identical to their names.  These are recognized by the :meth:`__iter__`
-    defined in :class:`~opan.error.OPANError.__metaclass__` as being the
+    defined in :class:`~OPANError.__metaclass__` as being the
     set of valid typecodes.
 
     Arguments
@@ -56,6 +52,11 @@ class OPANError(Exception):
     src : str
         Further detail of the code/file source of the error behavior.
 
+    Raises
+    ------
+    NotImplementedError
+        Upon attempt to instantiate abstract :class:`OPANError` base class.
+
     Attributes
     ----------
     msg : str
@@ -64,31 +65,35 @@ class OPANError(Exception):
         Further detail of the code source of the error behavior.
     subclass_name   : str
         String representation of the name of the OPANError subclass of the
-        current OPANError instance.
+        instance.
     tc  : str
         String typecode associated with the instance
 
+
+    .. class:: __metaclass__(type)
+
+        Metaclass providing ability to iterate over typecodes.
+
+        With this metaclass, iterating over the class itself (rather than an
+        instance) yields the valid typecodes for the class.
+
+        .. method:: __iter__()
+
+            Iterate over all defined typecodes.
+
+            Generator iterating over all class variables whose names match
+            their contents. For a properly constructed
+            :class:`~opan.error.OPANError`
+            subclass, these are identical to the typecodes.
+
+            **Example:**
+
+            >>> 'xyzfile' in opan.error.XYZError
+            True
+
     """
 
-
     def __init__(self, tc, msg, src):
-        """ Uniform constructor for subclasses of abstract OPANError.
-
-        Parameters
-        ----------
-        tc   :  str
-            Typecode for error (see subclass docstrings for allowed typecodes)
-        msg  :  str
-            Explanation of the error
-        src  :  str
-            Source of the problematic data
-
-        Raises
-        ------
-        NotImplementedError
-            Upon attempt to instantiate abstract ORCAError base class.
-
-        """
 
         # Import(s)
         import re
@@ -143,24 +148,8 @@ class OPANError(Exception):
 
 
     class __metaclass__(type):
-        """ Metaclass providing ability to iterate over typecodes.
-
-        With this metaclass, iterating over the class itself (rather than an
-        instance) yields the valid typecodes for the class.
-        """
-
         # Enable iteration over the typecodes
         def __iter__(self):
-            """ Iterate over all defined typecodes.
-
-            Generator iterating over all class variables whose names match
-            their contents. For a properly constructed
-            :class:`~opan.error.OPANError`
-            subclass, these are identical to the typecodes.
-
-            >>> 'xyzfile' in opan.error.XYZError
-            True
-            """
             for item in self.__dict__:
                 if item == self.__dict__[item]:
                     yield item
@@ -169,7 +158,7 @@ class OPANError(Exception):
         ##end def __iter__
     ## end class __metaclass__
 
-## end class ORCAError
+## end class OPANError
 
 
 class XYZError(OPANError):

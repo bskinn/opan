@@ -32,7 +32,8 @@ import shlex
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    #'sphinx.ext.doctest',
+#    'numpydoc',
+#    'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',

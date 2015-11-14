@@ -8,6 +8,6 @@ The full public and private API is delineated below.  Unless explicitly indicate
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    error
