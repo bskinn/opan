@@ -10,4 +10,11 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
+   anharm
+   const
    error
+   grad
+   hess
+   output
+   utils
+

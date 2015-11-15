@@ -322,19 +322,18 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     """ Check for consistency of two geometries and atom symbol lists
 
     Cartesian coordinates are considered consistent with the input
-        coords if each component matches to within 'tol' (default value
-        specified by orca_const._DEF.Coord_Match_Tol).  If coords or
-        atoms vectors are passed that are of mismatched lengths, a
-        False value is returned.
+    coords if each component matches to within `tol`.  If coords or
+    atoms vectors are passed that are of mismatched lengths, a
+    `False` value is returned.
 
     Both coords vectors must be three times the length of the atoms vectors
-        or a ValueError is raised.
+    or a :exc:`ValueError` is raised.
 
     Parameters
     ----------
-    c1      : length-3N np.float_
+    c1      : length-3N :class:`numpy.float_`
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
-    a1      : length-N string or int
+    a1      : length-N `str` or `int`
         Vector of first set of atom symbols or atomic numbers
     c2      : length-3N np.float_
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
@@ -343,7 +342,8 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     tol    : float, optional
         Tolerance for acceptable deviation of each geometry coordinate
         from that in the reference instance to still be considered
-        matching
+        matching. Default value is specified by
+        :attr:`opan.const.DEF.XYZ_Coord_Match_Tol`)
 
     Returns
     -------

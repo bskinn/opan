@@ -23,6 +23,8 @@
 
 Functions
 ---------
+.. autofunction:: opan.utils.base.check_geom
+
 check_geom       -- Confirm two OpenBabel geometries (atom types and
                         coordinates) match to within a specified tolerance
 delta_fxn        -- Generalized Kronecker delta function

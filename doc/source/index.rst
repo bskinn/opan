@@ -26,3 +26,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. |external link| image:: /_static/extlink.svg

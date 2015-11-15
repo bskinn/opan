@@ -19,51 +19,85 @@
 #-------------------------------------------------------------------------------
 
 
-"""Module with container classes and dictionaries bearing assorted constants
-    for OpenAnharmonic.
+"""Defines objects bearing assorted constants for OpenAnharmonic.
 
+Module-Level Members
+=========================
+
+Attributes
+----------
+infty : str
+    Infinity symbol as Unicode string
+atomNum : dict
+    Atomic number lookup from element symbol
+
+    .. note:: Keys for `atomNum` are **all uppercase** (e.g., 'AR' for argon)
+
+atomSym : dict
+    Element symbol lookup from atomic number, returned as **all uppercase**
+
+
+Classes
+=============
+
+Overview
+~~~~~~~~~~
 
 Constants Classes
------------------
-CIC     -- Application-internal code information constants
-PHYS    -- Physical constants
-DEF     -- Default values for (theoretically) user-adjustable parameters
-PRM     -- Internal computation parameters, intended to be non-user-
-             adjustable
-SYMM    -- Constants relating to the point-group implementation in
-            opan.utils.vector
-UNINIT  -- Constants representing un-initialized values
-UNITS   -- Functions returning text strings of units descriptions
+------------------
+:class:`~opan.const.CIC` -- Application-internal code information constants
+
+:class:`~opan.const.PHYS` -- Physical constants
+
+:class:`~opan.const.DEF` -- Default values for parameters intended to be
+user-adjustable
+
+:class:`~opan.const.PRM` -- Internal computation parameters, intended to be
+non-user-adjustable
+
+:class:`~opan.const.SYMM` -- Constants relating to the point-group detection
+implementation in :mod:`opan.utils.symm`
+
+:class:`~opan.const.UNINIT` -- Constants representing un-initialized values
+
+:class:`~opan.const.UNITS` -- Functions returning text strings of
+units descriptions
 
 Enumeration Classes
--------------------
-OPANEnum            -- Superclass for Enumerations
-E_DispDirection     -- Displacement direction along a particular mode
-E_MassPerturbation  -- Type of atomic mass perturbation being applied
-E_TopType           -- Molecular top classification
-E_Software          -- Implemented computational software packages
-E_FileType          -- Various file types relevant to the software packages
+----------------------
+:class:`~opan.const.OPANEnum` -- Superclass for enumerations
 
-Anharmonic (VPT2) HDF5 Repository Enumeration Classes
------------------------------------------------------
-ERA_Data            -- Displacement-specific values
-ERA_Param           -- Displacement-nonspecific values
+    **Plain Enumerations**
 
-Units Enumeration Classes
--------------------------
-EU_RotConst         -- Rotational constants
+    :class:`~opan.const.E_DispDirection` -- Displacement direction along
+    a particular mode
+
+    :class:`~opan.const.E_FileType` -- Various file types relevant to
+    the software packages
+
+    :class:`~opan.const.E_MassPertType`  -- Type of atomic mass
+    perturbation being applied
+
+    :class:`~opan.const.E_Software` -- Implemented computational
+    software packages
+
+    :class:`~opan.const.E_TopType` -- Molecular top classification
+
+    **Anharmonic (VPT2) HDF5 Repository Enumerations**
+
+    :class:`~opan.const.ERA_Data` -- Displacement-specific values
+
+    :class:`~opan.const.ERA_Param` -- Displacement-nonspecific values
+
+    **Units Enumerations**
+
+    Units implemented for numerical conversions for various physical quantities.
+
+    :class:`~opan.const.EU_RotConst` -- Rotational constants
 
 
-Dictionaries
-------------
-atomNum  -- Atomic number lookup from element symbol
-                Note: keys are *all uppercase* (e.g., AR, NE, and NA)
-atomSym  -- Element symbol lookup from atomic number
-                Note: symbols are returned as *all uppercase*
-
-Variables
----------
-infty    -- Infinity symbol as Unicode string
+Full Classes API
+~~~~~~~~~~~~~~~~~~~
 
 """
 
@@ -73,13 +107,33 @@ infty = u"\u221E"
 
 
 class OPANEnum(object):
-    """ Abstract superclass for enumeration objects.
+    """ Superclass for enumeration objects.
 
-    Adds metaclass __iter__ to allow direct iteration and membership testing
-    of enumeration values on the subclass type:
+    Metaclassed to allow direct iteration and membership testing
+    of enumeration values on the subclass type.
 
-    >>> 'NoDisp' in E_DispDirection
-    True
+
+    .. class:: __metaclass__(type)
+
+        Metaclass providing ability to iterate over enum values.
+
+        With this metaclass, iterating over the class itself (rather than an
+        instance) yields the valid enumeration values.
+
+        .. method:: __iter__()
+
+            Iterate over all defined enumeration values.
+
+            Generator iterating over all class variables whose names match
+            their contents. For a properly constructed
+            :class:`~opan.error.OPANEnum` subclass, these are identical to
+            the enumeration values.
+
+            **Example:**
+
+            >>> 'NoDisp' in E_DispDirection
+            True
+
     """
 
     class __metaclass__(type):  # pragma: no cover
@@ -99,20 +153,18 @@ class E_DispDirection(OPANEnum):
     """ Enumeration class for displacement directions.
 
     Contains enumeration parameters to indicate the displacement of the
-    molecular geometry associated with a gradient, hess or other object
+    molecular geometry associated with a gradient, hessian or other object.
 
+    **Typecodes**
 
-    Enum Values
-    -----------
-    Uninitialized : Object created without declaration of a displacement
-            direction. [removed]
-    Positive : Positive displacement along a particular normal mode.
-    NoDisp : Non-displaced geometry.
-    Negative : Negative displacement along a particular normal mode.
     """
-
+    #: Positive displacement along a particular normal mode
     Positive = 'Positive'
+
+    #: Non-displaced geometry
     NoDisp = 'NoDisp'
+
+    #: Negative displacement along a particular normal mode
     Negative = 'Negative'
 
 ## end class E_DispDirection
@@ -125,23 +177,23 @@ class E_MassPertType(OPANEnum):
     to be applied to the various atoms of a geometry, in order to: (a) break
     inertial degeneracy sufficiently to allow VPT2 computation using a lower-
     symmetry formalism; and (b), in the case of linear molecules, introduce
-    an artificial 'directional preference' to the masses of the atoms (ByCoord
-    enum value) to break the intrinsic degeneracy of the bending modes.
+    an artificial 'directional preference' to the masses of the atoms
+    (:attr:`ByCoord` enum value) to break the intrinsic degeneracy
+    of the bending modes.
 
+    **Typecodes**
 
-    Enum Values
-    -----------
-    Uninitialized : Object created without declaration of a mass perturbation
-            type. [removed]
-    NoPerturb : Atomic masses are used without modification
-    ByAtom : Atomic masses are perturbed atom-by-atom in an isotropic fashion.
-    ByCoord : Atomic masses are perturbed anisotropically, where the
-        perturbation factor for each atom's mass varies slightly in the
-        x-, y-, and z-directions.
     """
 
+    #: Atomic masses are used without modification
     NoPerturb = 'NoPerturb'
+
+    #: Atomic masses are perturbed atom-by-atom in an isotropic fashion
     ByAtom = 'ByAtom'
+
+    #: Atomic masses are perturbed anisotropically, where the
+    #: perturbation factor for each atom's mass varies slightly in the
+    #: x-, y-, and z-directions
     ByCoord = 'ByCoord'
 
 ## end class E_MassPertType
@@ -153,49 +205,76 @@ class E_TopType(OPANEnum):
     Contains enumeration parameters to indicate the type of molecular top
     associated with a particular geometry.
 
+    Inertial moments with magnitudes less than
+    :attr:`opan.const.PRM.Zero_Moment_Tol` are taken as zero. Nonzero moments
+    by this metric are considered to be equal if their ratio differs from
+    unity by less than :attr:`opan.const.PRM.Equal_Moment_Tol`.  See
+    :func:`opan.utils.inertia.principals` and the other functions defined
+    in :mod:`opan.utils.inertia` for more details.
 
-    Enum Values
-    -----------
-    Uninitialized : Object created without declaration of a top type.
-                [removed]
-    Invalid : Inertia matrix malformed during computation.
-                (realistically, should never be needed) [removed]
-    Atom : Three zero principal inertial moments.
-    Linear : One zero and two equal non-zero moments.
-    Spherical : Three equal, non-zero moments.
-    SymmetricalProlate : Three non-zero moments; largest two equal.
-    SymmetricalOblate : Three non-zero moments; smallest two equal.
-    Asymmetrical : Three unique non-zero moments.
+    **Typecodes**
+
     """
 
+    #: Three zero principal inertial moments
     Atom = 'Atom'
+
+    #: One zero and two equal non-zero moments
     Linear = 'Linear'
+
+    #: Three equal, non-zero moments
     Spherical = 'Spherical'
+
+    #: Three non-zero moments; largest two equal
     SymmProlate = 'SymmProlate'
+
+    #: Three non-zero moments; smallest two equal
     SymmOblate = 'SymmOblate'
+
+    #: Three unique non-zero moments
     Asymmetrical = 'Asymmetrical'
 
 ## end class E_TopType
 
 
 class E_Software(OPANEnum):
-    """ #DOC: Docstring for E_Software
+    """ Enumeration class for identifying computational chemistry packages.
+
+    This enum will be expanded if/when support for additional packages is
+    implemented.
+
+    **Typecodes**
 
     """
 
+    #: The `ORCA <http://orcaforum.cec.mpg.de>`_ |external link| program package
     ORCA = 'ORCA'
 
 ## end class E_Software
 
 
 class E_FileType(OPANEnum):
-    """ #DOC: Docstring for E_FileType
+    """ Enumeration class for the file types generated by computational codes.
+
+    **Typecodes**
+
     """
 
+    #: XYZ atomic coordinates, assumed to follow the `Open Babel XYZ
+    #: specification <http://openbabel.org/docs/2.3.0/FileFormats/
+    #: XYZ_cartesian_coordinates_format.html>`_ |external link|
     xyz = 'xyz'
+
+    #: Files containing nuclear gradient information
     grad = 'grad'
+
+    #: Files containing nuclear Hessian information
     hess = 'hess'
+
+    #: Files containing computational output
     output = 'output'
+
+    #: Input files for defining computations
     inputfile = 'inputfile'
 
 ## end class E_FileType
@@ -328,43 +407,50 @@ class PHYS(object):
 
 class DEF(object):
     """Container for default parameter values (possibly user-adjustable)
-
-    Mass_Perturbation_Magnitude = 1e-4 (relative to each atom's default mass)
-    Moment_Tol = 1e-4  (Equality test tolerance for inertial moments)
-    Orthonorm_Tol = 1e-8  (Acceptable deviation from Kronecker delta for
-                            orthonormality testing)
-    HESS_Coord_Match_Tol = 1e-6 (Max precision of HESS geometries)
-    HESS_IR_Match_Tol = 1e-2 (Max precision of freqs in IR spectrum block)
-    GRAD_Coord_Match_Tol = 1e-7 (Max precision of GRAD geometries)
-    XYZ_Coord_Match_Tol = 1e-12 (Max tolerable deviation between XYZ geoms)
-    Symm_Match_Tol = 1e-3 (for quality of fit in symmetry matching)
-    Symm_Axis_Match_Tol = 0.026179939 (radians, equals 1.5 deg; tolerance for
-                    deviation in searching for neighbor axes in cubic
-                    symmetry groups)
-    Symm_AtWt_Round_Digits = 4 (to avoid precision errors in atom matching)
-    Symm_Match_nMax = 10 (initial order of symmetry rotation to test for)
-    Symm_Avg_Max = 2 (maximum order of atom averaging when looking for
-                        possible axes of rotational symmetry)
-    File_Extensions (dictionary of dictionaries of file extensions for
-                geom, gradient, and hessian files from the various softwares;
-                access as F_E[E_Software][E_FileType])
     """
 
     from .const import E_Software as _E_SW, E_FileType as _E_FT
 
+    #: Relative magnitude of atomic mass perturbations
     Mass_Perturbation_Magnitude = 1e-4
-    Moment_Tol = 1e-4
+
+    #Moment_Tol = 1e-4
+
+    #: Acceptable deviation from Kronecker delta for orthonormality testing
     Orthonorm_Tol = 1e-8
+
+    #: Max precision of HESS geometries (currently ORCA-specific)
     HESS_Coord_Match_Tol = 1e-6
+
+    #: Max precision of freqs in IR spectrum block (currently ORCA-specific)
     HESS_IR_Match_Tol = 1e-2
+
+    #: Max precision of GRAD geometries (currently ORCA-specific)
     GRAD_Coord_Match_Tol = 1e-7
+
+    #: Max tolerable deviation between XYZ geoms (currently ORCA-specific)
     XYZ_Coord_Match_Tol = 1e-12
+
+    #: Required quality of coordinate match for symmetry detection
     Symm_Match_Tol = 1e-3
+
+    #: Tolerance for deviation in searching for neighbor axes in cubic
+    #: symmetry groups -- value is in radians, and equals 1.5 degrees
     Symm_Axis_Match_Tol = 0.026179939
+
+    #: Rounding atomic masses to avoid precision errors in atom matching
     Symm_AtWt_Round_Digits = 4
+
+    #: Initial order of rotational symmetry to test for (conservative)
     Symm_Match_nMax = 10
+
+    #: Maximum order of atom averaging when looking for possible axes of
+    #: rotational symmetry
     Symm_Avg_Max = 2
 
+    #: Dictionary of dictionaries of file extensions for geom, gradient,
+    #: and hessian files from the various softwares.
+    #: Access as `File_Extensions`\ [\ `E_Software`\ ][\ `E_FileType`\ ]
     File_Extensions = {
             _E_SW.ORCA :
                 { _E_FT.grad : 'engrad',

@@ -321,9 +321,9 @@ class REPOError(OPANError):
 
 
 class ANHARMError(OPANError):
-    """Error relating to OPAN_ANHARM class actions.
+    """Error relating to :class:`~opan.anharm.OPAN_ANHARM` actions.
 
-    See OPANError.__doc__ for more information.
+    See the OPANError.__doc__ for more information.
 
     Attributes:
         tc, msg, src, subclass_name are inherited from OPANError
