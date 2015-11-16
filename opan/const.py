@@ -320,7 +320,9 @@ class ERA_Param(OPANEnum):
     #: Length-`N` vector of all-caps atomic symbols
     atoms = 'atoms'
 
-    #: Displacement increment in Bohr*amu\ :math:`^{1/2}`
+    #: Displacement increment in :math:`\mathrm{B}\ \mathrm{u^{1/2}}`.
+    #: Note that these are *not* atomic units, which would instead be
+    #: :math:`\mathrm{B}\ \mathrm{m_e^{1/2}}`.
     increment = 'increment'
 
     #: Cartesian center of mass of system, *with perturbations applied*,
@@ -345,29 +347,45 @@ class EU_RotConst(OPANEnum):
     Contains enumeration parameters to indicate the associated/desired units
     of interpretation/display of a rotational constant.
 
-    More detailed exposition of the form/nature of the various units is
-    provided in const.UNITS.rotConst
+    String versions of these units are provided in
+    :attr:`UNITS.rotConst`.
 
+    #DOC: Add link to exposition(?) of how RotConst expression is developed,
+    once written.
 
-    Enum Values
-    -----------
-    InvInertia : Inverse moment of inertia
-    AngFreqAtomic : Angular frequency, a.u., 1/Ta
-    AngFreqSeconds : Angular frequency, 1/s
-    CyclicFreqAtomic : Cyclic frequency, a.u., cyc/Ta
-    CyclicFreqHz : Cyclic Frequency, Hz (cyc/s)
-    CyclicFreqMHz : Cyclic Frequency, MHz (1e6 cyc/s)
-    WaveNumAtomic : Wavenumber, a.u., cyc/Bohr
-    WaveNumCM : Wavenumber, cyc/cm
+    **Enum Values**
+
     """
 
+    #: Inverse moment of inertia, :math:`\frac{1}{\mathrm{u\ B^2}}`. Note that
+    #: the mass units here are *not* atomic units, which would require
+    #: :math:`\frac{1}{\mathrm{m_e\ B^2}}`.
     InvInertia = 'InvInertia'
+
+    #: Angular frequency in atomic units, :math:`\frac{1}{\mathrm{T_a}}`
     AngFreqAtomic = 'AngFreqAtomic'
+
+    #: Angular frequency in SI units, :math:`\frac{1}{\mathrm s}`
+    #: (**NOT** :math:`\mathrm{Hz}`!)
     AngFreqSeconds = 'AngFreqSeconds'
+
+    #: Cyclic frequency in atomic units,
+    #: :math:`\frac{\mathrm{cyc}}{\mathrm{T_a}}`
     CyclicFreqAtomic = 'CyclicFreqAtomic'
+
+    #: Cyclic frequency in :math:`\mathrm{Hz}`,
+    #: :math:`\frac{\mathrm{cyc}}{\mathrm s}`
     CyclicFreqHz = 'CyclicFreqHz'
+
+    #: Cyclic frequency in :math:`\mathrm{MHz}`,
+    #: millions of :math:`\frac{\mathrm{cyc}}{\mathrm s}`
     CyclicFreqMHz = 'CyclicFreqMHz'
+
+    #: Wavenumbers in atomic units, :math:`\frac{\mathrm{cyc}}{\mathrm{B}}`
     WaveNumAtomic = 'WaveNumAtomic'
+
+    #: Wavenumbers in conventional units,
+    #: :math:`\frac{\mathrm{cyc}}{\mathrm{cm}}`
     WaveNumCM = 'WaveNumCM'
 
 ## end class EU_RotConst
@@ -393,22 +411,39 @@ class PHYS(object):
 
     """Container for physical constants
 
-    Ang_per_Bohr = 0.52917721092
-    me_per_amu = 1822.8885
-    sec_per_Ta = 2.4188843265e-17
-    light_speed = 137.082  (B/Ta units)
-    Planck = 6.28318531  (value of 2*pi; Eh*Ta/cyc units)
-    Planck_bar = 1  (Eh*Ta units)
+    **Members**
+
     """
 
     # Imports
     import numpy as _np
 
-    Ang_per_Bohr = 0.52917721092
+    #: Angstroms per Bohr radius (source: `NIST <http://physics.nist.gov/
+    #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |external link|)
+    Ang_per_Bohr = 0.52917721067
+
+    #: Electron mass per unified atomic mass unit (source: `NIST
+    #: <http://physics.nist.gov/cgi-bin/cuu/Value?meu|
+    #: search_for=electron+mass>`__ |external link|)
     me_per_amu = 1822.8885
+
+    #: Seconds per atomic time unit (source: `NIST <http://physics.nist.gov/
+    #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |external link|)
     sec_per_Ta = 2.4188843265e-17
-    light_speed = 137.082
+
+    #: Speed of light in atomic units, :math:`\frac{B}{T_a}`. Calculated from
+    #: the `NIST <http://physics.nist.gov/cgi-bin/cuu/Value
+    #: ?c|search_for=speed+of+light>`__ |external link| value for the speed of
+    #: light in vacuum, :math:`2.99792458e8\ \frac{m}{s}`, using
+    #: :attr:`Ang_per_Bohr` and :attr:`sec_per_Ta` as conversion factors
+    light_speed = 137.036
+
+    #: Standard Planck constant, equal to :math:`2\pi` in atomic units of
+    #: :math:`\frac{\mathrm{E_h\ T_a}}{\mathrm{cyc}}`
     Planck = 2 * _np.pi
+
+    #: Reduced Planck constant, unity by definition in the atomic units
+    #: of :math:`\mathrm{E_h\ T_a}`
     Planck_bar = 1
 
 ## end class PHYS

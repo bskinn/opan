@@ -17,6 +17,7 @@ Contents:
    api/index
    userguide/index
    dependencies
+   units
 
 
 Indices and tables
