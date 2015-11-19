@@ -55,8 +55,8 @@ user-adjustable
 :class:`~opan.const.PRM` -- Internal computation parameters, intended to be
 non-user-adjustable
 
-:class:`~opan.const.SYMM` -- Constants relating to the point-group detection
-implementation in :mod:`opan.utils.symm`
+.. :class:`~opan.const.SYMM` -- Constants relating to the point-group detection
+   implementation in :mod:`opan.utils.symm`
 
 :class:`~opan.const.UNINIT` -- Constants representing un-initialized values
 
@@ -393,15 +393,20 @@ class EU_RotConst(OPANEnum):
 
 class CIC(object):
     """Container for application-internal code information constants
-    Invalid_Atom_Symbol = -1
-    Unsupported_Atomic_Number = "INVALID"
-    Max_Atomic_Num = 103
-    Min_Atomic_Num = 1
+
+    These may need expansion into dictionaries keyed by
+    :class:`~opan.const.E_Software` enum values, depending on the atoms
+    supported by various software packages. They may also require adjustment
+    to accommodate 'special' atom types such as ghost atoms and point charges.
+
+    **Members**
+
     """
 
-    Invalid_Atom_Symbol = -1
-    Unsupported_Atomic_Number = "INVALID"
+    #: Maximum atomic number supported
     Max_Atomic_Num = 103
+
+    #: Minimum atomic number supported
     Min_Atomic_Num = 1
 
 ## end class CIC
@@ -475,21 +480,21 @@ class DEF(object):
     #: Max tolerable deviation between XYZ geoms (currently ORCA-specific)
     XYZ_Coord_Match_Tol = 1e-12
 
-    #: Required quality of coordinate match for symmetry detection
+    # Required quality of coordinate match for symmetry detection
     Symm_Match_Tol = 1e-3
 
-    #: Tolerance for deviation in searching for neighbor axes in cubic
-    #: symmetry groups -- value is in radians, and equals 1.5 degrees
+    # Tolerance for deviation in searching for neighbor axes in cubic
+    # symmetry groups -- value is in radians, and equals 1.5 degrees
     Symm_Axis_Match_Tol = 0.026179939
 
-    #: Rounding atomic masses to avoid precision errors in atom matching
+    # Rounding atomic masses to avoid precision errors in atom matching
     Symm_AtWt_Round_Digits = 4
 
-    #: Initial order of rotational symmetry to test for (conservative)
+    # Initial order of rotational symmetry to test for (conservative)
     Symm_Match_nMax = 10
 
-    #: Maximum order of atom averaging when looking for possible axes of
-    #: rotational symmetry
+    # Maximum order of atom averaging when looking for possible axes of
+    # rotational symmetry
     Symm_Avg_Max = 2
 
     #: Dictionary of dictionaries of file extensions for geom, gradient,
@@ -511,34 +516,43 @@ class DEF(object):
 class PRM(object):
     """Container for internal computation parameters (not user-adjustable)
 
-    Non_Parallel_Tol = 1e-3     (Minimum angle deviation (degrees) required
-                                 for two vectors to be considered non-parallel)
-    Zero_Vec_Tol = 1e-6         (Vector magnitude below which a vector is
-                                 considered equal to the zero vector; Bohr
-                                 units or dimensionless)
-    Max_Sane_DipDer = 100       (Trap value for aberrantly large dipole
-                                 derivative values in ORCA if dipoles are not
-                                 calculated in a NUMFREQ run)
-    Equal_Moment_Tol = 1e-3     (Minimum deviation-ratio from unity below which
-                                 two principal inertial moments are considered
-                                 equal)
-    Zero_Moment_Tol = 1e-3      (Theshold value below which moments are
-                                 considered equal to zero; amu-Bohr^2 units)
+    **Members**
+
     """
 
+    #: Minimum angle deviation (degrees) required for two vectors to be
+    #: considered non-parallel
     Non_Parallel_Tol = 1e-3
+
+    #: Vector magnitude below which a vector is considered equal to the zero
+    #: vector; dimensionless or units of :math:`\mathrm{B}`
     Zero_Vec_Tol = 1e-6
+
+    #: Trap value for aberrantly large dipole  derivative values in ORCA
+    #: if dipoles are not calculated in a NUMFREQ run
     Max_Sane_DipDer = 100
+
+    #: Minimum deviation-ratio from unity below which two principal inertial
+    #: moments are considered equal
     Equal_Moment_Tol = 1e-3
+
+    #: Threshold value below which moments are  considered equal to zero;
+    #: units of :math:`\mathrm{u\ B^2}`
     Zero_Moment_Tol = 1e-3
 
 ## end class PRM
 
 
 class SYMM(object):
+    1 # Dummy line as first line to detach the docstring
+    # Be sure to also re-doc-comment the parameters in DEF and de-comment the
+    # SYMM class reference in the module docstring, in addition to completing
+    # this docstring, once the symmetry tools are in workable shape.
     """ Container for constants used in symmetry determination.
 
     Angles are in radians.
+
+    *UNDER DEVELOPMENT*
 
     Td_C2_C2 = Oh_C4_C4 = 1.570796327 (90 deg)
     Td_C2_C3 = Oh_C4_C3 = 0.955316618 (54.736 deg)
@@ -610,15 +624,20 @@ class UNINIT(object):
 
     #TODO: (?)UNINIT: Consider deprecating in favor of a custom Exception.
 
-    Unsigned_Long = -1
-    Unsigned_Double = -1
-    Signed_Long = 1234567890
-    Signed_Double = 1234567890.12345
+    **Members**
     """
 
+    # Empty doc comments trigger inclusion in the documentation
+    #:
     Unsigned_Long = -1
-    Unsigned_Double = -1
+
+    #:
+    Unsigned_Double = -1.0
+
+    #:
     Signed_Long = 1234567890
+
+    #:
     Signed_Double = 1234567890.12345
 
 ## end class UNINIT
@@ -626,23 +645,27 @@ class UNINIT(object):
 
 class UNITS(object):
     """Container for dicts providing strings describing the various display
-        units available for physical quantities.
+    units available for physical quantities.
 
     Dictionary keys are the enum values provided in the corresponding
-        EU_xxxx class in this module (const).
+    ``EU_xxxx`` class in this module (:mod:`opan.const`).
 
+    ================== ===================== =====================
+      Dictionary              Enum             Physical Quantity
+    ================== ===================== =====================
+     :attr:`rotConst`   :attr:`EU_RotConst`   Rotational constant
+    ================== ===================== =====================
 
-      Dictionary  | ENUM                | Physical Quantity
-    -------------------------------------------------------------------------
-       rotConst   |  .RotConstUnits     |  Rotational constant
-    -------------------------------------------------------------------------
     """
 
     #TODO: (as occurs) const.UNITS: Add dicts for other units-based enums
+    #TODO: (?) If good way of prettyprinting the dict becomes available,
+    #   add doc comments.
 
     # Imports
     from .const import EU_RotConst as _EUrc
 
+    #:
     rotConst = {
             _EUrc.InvInertia :        "1/(amu*B^2)",
             _EUrc.AngFreqAtomic :     "1/Ta",

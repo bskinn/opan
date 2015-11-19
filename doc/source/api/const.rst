@@ -6,7 +6,6 @@ opan.const
 
 .. automodule:: opan.const
    :members:
-   :undoc-members:
    :show-inheritance:
 
 
