@@ -6,7 +6,6 @@ opan.anharm
 
 .. automodule:: opan.anharm
    :members:
-   :undoc-members:
    :show-inheritance:
 
 

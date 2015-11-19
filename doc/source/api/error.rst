@@ -6,7 +6,6 @@ opan.error
 
 .. automodule:: opan.error
    :members:
-   :undoc-members:
    :show-inheritance:
 
 

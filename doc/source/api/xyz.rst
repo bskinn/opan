@@ -6,7 +6,6 @@ opan.xyz
 
 .. automodule:: opan.xyz
    :members:
-   :undoc-members:
    :show-inheritance:
 
 

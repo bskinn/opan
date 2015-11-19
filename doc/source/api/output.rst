@@ -6,7 +6,6 @@ opan.output
 
 .. automodule:: opan.output
    :members:
-   :undoc-members:
    :show-inheritance:
 
 

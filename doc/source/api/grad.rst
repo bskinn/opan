@@ -6,7 +6,6 @@ opan.grad
 
 .. automodule:: opan.grad
    :members:
-   :undoc-members:
    :show-inheritance:
 
 
