@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        error
-# Purpose:     Definitions of all custom Errors for the OpenAnharmonic
+# Purpose:     Definitions of all custom errors for the OpenAnharmonic
 #                package.
 #
 # Author:      Brian Skinn
@@ -21,8 +21,49 @@
 
 
 
-"""
-#DOC: Need module docstring
+"""Custom errors for OpenAnharmonic
+
+Error classes are subclassed from :exc:`Exception` via an abstract superclass,
+:class:`~opan.error.OPANError`, which defines several common features:
+
+ * Storage of a 'typecode' and a 'source' string along with the error message
+   to allow passing of more fine-grained information to the exception stack
+ * Implementation of a :attr:`~opan.error.OPANError.__metaclass__` on
+   :class:`OPANError` enabling typecode validity checking with `is`
+ * Re-implementation of :func:`~OPANError.__str__` to enhance the usefulness
+   of stack messages when one of these errors is raised
+
+:class:`OPANError` **Subclasses**
+
+    :class:`ANHARMError` -- Raised as a result of
+    :class:`~opan.anharm.OPAN_ANHARM` actions
+
+    :class:`GRADError` -- Raised during parsing of or calculations using
+    gradient data
+
+    :class:`HESSError` -- Raised during parsing of or calculations using
+    Hessian data
+
+    :class:`INERTIAError` -- Raised by :mod:`opan.utils.inertia`
+    submodule functions
+
+    :class:`OUTPUTError` -- Raised during parsing of or calculations using
+    output data
+
+    :class:`REPOError` -- Raised by HDF5 repository interactions
+
+    :class:`SYMMError` -- Raised by :mod:`opan.utils.symm` submodule functions
+
+    :class:`VECTORError` -- Raised by :mod:`opan.utils.vector`
+    submodule functions
+
+    :class:`XYZError` -- Raised during parsing of or calculations using
+    XYZ data
+
+
+----------------
+
+**API**
 
 """
 
@@ -37,7 +78,8 @@ class OPANError(Exception):
     under the OpenAnharmonic umbrella. It defines all common methods shared
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are str class variables with contents
-    identical to their names.  These are recognized by the :meth:`__iter__`
+    identical to their names.  These are recognized by the
+    :meth:`~OPANError.__metaclass__.__iter__`
     defined in :class:`~OPANError.__metaclass__` as being the
     set of valid typecodes.
 
@@ -46,7 +88,7 @@ class OPANError(Exception):
     tc  : str
         String representation of typecode to be associated with the
         :class:`OPANError` subclass instance. *Must* be a validly
-        constructed class variable defined for the relevant subclass.
+        constructed typecode defined for the relevant subclass.
     msg : str
         Explanation of the nature of the error being reported.
     src : str
@@ -162,29 +204,28 @@ class OPANError(Exception):
 
 
 class XYZError(OPANError):
-    """Error relating to parsing of or calculation from XYZ data.
+    """Error relating to parsing of or calculation using XYZ data.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            xyzfile     :  inconsistent geometry in an OpenBabel XYZ
-                            file (XYZ or TRJ from ORCA)
-            overwrite   :  object already initialized (overwrite not supported)
-            dihed       :  dihedral angle calculation requested for a set
-                            of atoms containing an insufficiently
-                            nonlinear trio of atoms
-            nonprl      :  insufficient non-parallel character in some
-                            manner of calculation
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: Inconsistent geometry in an OpenBabel XYZ file
+    #:
+    #: * ORCA -- `.xyz` or `.trj`
     xyzfile = 'xyzfile'
+
+    #: Object already initialized (overwrite not supported)
     overwrite = 'overwrite'
+
+    #: Dihedral angle calculation requested for a set of atoms containing
+    #: an insufficiently nonlinear trio of atoms
     dihed = 'dihed'
+
+    #: Insufficient non-parallel character in some manner of calculation
     nonprl = 'nonprl'
 
 ## end class XYZError
@@ -369,23 +410,19 @@ class INERTIAError(OPANError):
 
 
 class VECTORError(OPANError):
-    """Error relating to utils.vector submodule functions.
+    """Error relating to :mod:`opan.utils.vector` submodule functions.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            nonprl      :  Insufficient non-parallel character in some
-                            manner of calculation
-            orthonorm   :  Vectors which should have been orthonormal were
-                            determined not to be
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: Insufficient non-parallel character in some manner of calculation
     nonprl = 'nonprl'
+
+    #: Vectors which should have been orthonormal were determined not to be
     orthonorm = 'orthonorm'
 
 ## end class VECTORError

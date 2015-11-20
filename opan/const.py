@@ -96,8 +96,8 @@ Enumeration Classes
     :class:`~opan.const.EU_RotConst` -- Rotational constants
 
 
-Full Classes API
-~~~~~~~~~~~~~~~~~~~
+API
+~~~~
 
 """
 
