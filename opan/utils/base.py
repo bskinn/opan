@@ -327,7 +327,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     `False` value is returned.
 
     Both coords vectors must be three times the length of the atoms vectors
-    or a :exc:`ValueError` is raised.
+    or a :exc:`~exceptions.ValueError` is raised.
 
     Parameters
     ----------

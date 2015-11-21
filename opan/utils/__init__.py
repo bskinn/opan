@@ -21,9 +21,24 @@
 """Utility functions for OpenAnharmonic, including execution automation.
 
 
+Sub-Modules
+-----------
+:mod:`~opan.utils.decorate` -- Custom OpenAnharmonic decorators
+
+:mod:`~opan.utils.execute` -- Functions for execution of external computational
+software packages
+
+:mod:`~opan.utils.inertia` -- Inertia-related tools (center of mass,
+rotational constants, principal moments/axes, etc.)
+
+:mod:`~opan.utils.symm` -- Molecular symmetry utility functions
+(\ **INCOMPLETE**\ )
+
+:mod:`~opan.utils.vector` -- Vector utility functions
+
 Functions
 ---------
-.. autofunction:: opan.utils.base.check_geom
+.. autofunction:: opan.utils.base.check_geom(c1,a1,c2,a2[,tol])
 
 check_geom       -- Confirm two OpenBabel geometries (atom types and
                         coordinates) match to within a specified tolerance
@@ -35,13 +50,7 @@ safe_cast        -- Robustified casting with a post-check to confirm the cast
                         actually resulted in the proper type
 template_subst   -- Perform a field-based substitution into a string template
 
-Sub-Modules
------------
-execute          -- Functions for execution of external computational
-                        software packages
-inertia          -- Inertia-related tools (c.o.m., rotational constants, etc.)
-symm             -- Molecular symmetry utility functions
-vector           -- Vector utility functions
+
 
 """
 

@@ -3,10 +3,17 @@
 opan.anharm
 =======================
 
-
 .. automodule:: opan.anharm
-   :members:
-   :show-inheritance:
+
+
+
+.. toctree::
+   :hidden:
+
+   anharm/repo
+
+
+
 
 
 

@@ -74,10 +74,10 @@ Error classes are subclassed from :exc:`Exception` via an abstract superclass,
 class OPANError(Exception):
     """Base class for custom errors defined for OpenAnharmonic
 
-    :class:`OPANError` is an abstract superclass of any custom errors built
+    :class:`OPANError` is an abstract superclass of any custom errors defined
     under the OpenAnharmonic umbrella. It defines all common methods shared
     among the various subtype error classes, such that the only contents that
-    must be declared by a subclass are str class variables with contents
+    must be declared by a subclass are `str` class variables with contents
     identical to their names.  These are recognized by the
     :meth:`~OPANError.__metaclass__.__iter__`
     defined in :class:`~OPANError.__metaclass__` as being the
@@ -90,24 +90,26 @@ class OPANError(Exception):
         :class:`OPANError` subclass instance. *Must* be a validly
         constructed typecode defined for the relevant subclass.
     msg : str
-        Explanation of the nature of the error being reported.
+        Explanation of the nature of the error being reported
     src : str
-        Further detail of the code/file source of the error behavior.
+        Further detail of the code/file source of the error behavior,
+        if relevant
 
     Raises
     ------
     NotImplementedError
         Upon attempt to instantiate abstract :class:`OPANError` base class.
+    KeyError
+        Upon instantiation with an invalid typecode
 
     Attributes
     ----------
     msg : str
-        Explanation of the nature of the error being reported.
+        Explanation of the nature of the error being reported
     src : str
-        Further detail of the code source of the error behavior.
+        Further detail of the code source of the error behavior
     subclass_name   : str
-        String representation of the name of the OPANError subclass of the
-        instance.
+        String representation of the :class:`OPANError` subclass name
     tc  : str
         String typecode associated with the instance
 
@@ -234,25 +236,25 @@ class XYZError(OPANError):
 class GRADError(OPANError):
     """Error relating to parsing of or calculation from gradient data.
 
-    See OPANError.__doc__ for more information.
+    Not all typecodes may be relevant for all software packages.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-        typecodes:
-            numats     : Invalid number of atoms specification,
-                            or specification not found
-            en         : Energy specification not found
-            gradblock  : Invalid gradient block or gradient block
-                            not found
-            geomblock  : Invalid geometry block or geometry block not found
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: Invalid number-of-atoms specification, or specification not found
     numats = 'numats'
+
+    #: Energy value not found
     en = 'en'
+
+    #: Malformed or missing gradient block
     gradblock = 'gradblock'
+
+    #: Malformed or missing geometry block
     geomblock = 'geomblock'
 
 ## end class ENGRADError
@@ -261,13 +263,12 @@ class GRADError(OPANError):
 class OUTPUTError(OPANError):
     """Error relating to parsing of or calculation from output data.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
+    **Typecodes**
 
-        typecodes:
-            {none yet}
+    *(none yet)*
 
     """
 
@@ -277,62 +278,68 @@ class OUTPUTError(OPANError):
 class HESSError(OPANError):
     """Error relating to parsing of or calculation from Hessian data.
 
-    See OPANError.__doc__ for more information.
+    Not all typecodes may be relevant for all software packages.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-        typecodes:
-            at_block    : Malformed or missing atom specification block
-            energy      : Malformed or missing energy value
-            freq_block  : Malformed or missing frequencies block
-            hess_block  : Malformed or missing Hessian block
-            modes_block : Malformed or missing normal modes block
-            temp        : Malformed or missing 'actual temperature' value
-
-            dipder_block: Malformed dipole derivatives block
-            eigval_block: Malformed mass-wt Hessian eigenvalues block
-            eigvec_block: Malformed mass-wt Hessian eigenvectors block
-            ir_block    : Malformed IR spectrum block
-            job_block   : Malformed job list block
-            polder_block: Malformed polarizability derivatives block
-            raman_block : Malformed Raman spectrum block
-
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: Malformed or missing atom/geometry specification block
     at_block = "at_block"
+
+    #: Malformed or missing Hessian block
     hess_block = "hess_block"
+
+    #: Malformed or missing frequencies block
     freq_block = "freq_block"
+
+    #: Malformed or missing normal modes block
     modes_block = "modes_block"
+
+    #: Malformed dipole derivatives block
     dipder_block = "dipder_block"
+
+    #: Malformed IR spectrum block
     ir_block = "ir_block"
+
+    #: Malformed polarizability derivatives block
     polder_block = "polder_block"
+
+    #: Malformed Raman spectrum block
     raman_block = "raman_block"
+
+    #: Malformed job list block
     job_block = "job_block"
+
+    #: Malformed mass-weighted-Hessian eigenvalues block
     eigval_block = "eigval_block"
+
+    #: Malformed mass-weighted-Hessian eigenvectors block
     eigvec_block = "eigvec_block"
+
+    #: Malformed or missing energy value
     energy = "energy"
+
+    #: Malformed or missing temperature value
     temp = "temp"
 
 ## end class HESSError
 
 
 class SYMMError(OPANError):
-    """Error relating to determination of molecular symmetry.
+    """Error relating to :mod:`opan.utils.symm` submodule functions.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            notfound    : Symmetry element expected but not found.
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: Symmetry element expected but not found
     notfound = 'notfound'
 
 ## end class SYMMError
@@ -341,69 +348,64 @@ class SYMMError(OPANError):
 class REPOError(OPANError):
     """Error relating to HDF5 repository interactions.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            status      : HDF5 repo in improper status for requested operation.
-            group       : Problem with a group in linked HDF5 file
-            data        : Problem with a dataset in linked HDF5 file
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: HDF5 repo in improper status for requested operation
     status = 'status'
+
+    #: Problem with a dataset in linked HDF5 :class:`h5py:File`
     data = 'data'
+
+    #: Problem with a group in linked HDF5 :class:`h5py:File`
     group = 'group'
 
 ## end class REPOError
 
 
 class ANHARMError(OPANError):
-    """Error relating to :class:`~opan.anharm.OPAN_ANHARM` actions.
+    """Error relating to :class:`opan.anharm.OPAN_ANHARM` actions.
 
-    See the OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            repo        : OPAN_REPO conflict -- no repo bound when assignment
-                            attempted, or attempt made to bind new repo when
-                            one already bound
-            status      : OPAN_ANHARM internal variables in inappropriate
-                            status for the requested operation
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: OPAN_REPO conflict -- no repo bound when assignment attempted,
+    #: or attempt made to bind new repo when one already bound
     repo = 'repo'
+
+    #: OPAN_ANHARM internal variables in inappropriate state for the
+    #: requested operation
     status = 'status'
 
 ## end class ANHARMError
 
 
 class INERTIAError(OPANError):
-    """Error relating to utils.inertia submodule functions.
+    """Error relating to :mod:`opan.utils.inertia` submodule functions.
 
-    See OPANError.__doc__ for more information.
+    See the :class:`OPANError` documentation for more information on
+    attributes, methods, etc.
 
-    Attributes:
-        tc, msg, src, subclass_name are inherited from OPANError
-
-        typecodes:
-            neg_moment  : A negative principal inertial moment was computed
-            top_type    : No valid molecular top type was identified
-            bad_geom    : A geometry being parsed was unsuitable for a
-                            particular type of calculation/manipulation
+    **Typecodes**
 
     """
 
-    # Typecodes as class-level variables
+    #: A negative principal inertial moment was computed
     neg_moment = 'neg_moment'
+
+    #: No valid molecular top type was identified
     top_type = 'top_type'
+
+    #: A geometry being parsed was unsuitable for a particular type of
+    #: calculation/manipulation
     bad_geom = 'bad_geom'
 
 ## end class INERTIAError

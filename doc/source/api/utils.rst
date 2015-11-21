@@ -3,10 +3,23 @@
 opan.utils
 =======================
 
-
 .. automodule:: opan.utils
-   :members:
-   :show-inheritance:
+
+
+
+
+.. toctree::
+   :hidden:
+
+   utils/decorate
+   utils/execute
+   utils/inertia
+   utils/symm
+   utils/vector
+
+
+
+
 
 
 

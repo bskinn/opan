@@ -18,6 +18,15 @@
 #
 #-------------------------------------------------------------------------------
 
+"""**NEEDS DOCSTRING**, add submodules and base members to this docstring
+
+Sub-Modules
+-----------
+
+:mod:`~opan.anharm.repo` -- HDF5 repository for :class:`OPAN_ANHARM`
+
+"""
+
 from __future__ import absolute_import
 
 __all__ = ['repo']
