@@ -43,40 +43,44 @@ def pack_tups(*args):
     """Pack an arbitrary set of iterables and non-iterables into tuples.
 
     Function packs a set of inputs with arbitrary iterability into tuples.
-        Non-iterable inputs are repeated in each output tuple. Iterable inputs
-        are expanded uniformly across the output tuples.  For consistency, all
-        iterables must be the same length.
+    Iterability is tested with :func:`iterable`. Non-iterable inputs
+    are repeated in each output tuple. Iterable inputs are expanded
+    uniformly across the output tuples.  For consistency, all iterables must
+    be the same length.
+
+    The input arguments are parsed such that bare strings are treated as
+    **NON-ITERABLE**, through the use of a local subclass of `str` that
+    cripples the ``__iter__`` method. Any strings passed are returned
+    in the packed tuples as standard, **ITERABLE** instances of `str`, however.
 
     The order of the input arguments is retained within each output tuple.
 
-    No structural conversion is attempted on the individual args.
+    No structural conversion is attempted on the arguments.
 
-    If all inputs are non-iterable, a list containing a single tuple will be
-        returned.
+    If all inputs are non-iterable, a list containing a single `tuple` will be
+    returned.
 
     Parameters
     ----------
-    args : just about anything?
+    \*args
         Arbitrary number of arbitrary mix of iterable and non-iterable
-        objects to be packed into tuples. The input arguments are parsed
-	such that bare strings are treated as **NON-ITERABLE**, through the
-	use of a local subclass of str that cripples the __iter__ method.
-	Any strings passed are returned in the packed tuples as standard,
-	**ITERABLE** instances of str, however.
+        objects to be packed into tuples.
 
     Returns
     -------
-    tups :  list of tuples
+    tups :  `list` of `tuple`
         Number of tuples returned is equal to the length of the iterables
-        passed in args
+        passed in `*args`
 
     Raises
     ------
-    ValueError :  If any iterable objects are of different lengths
+    ~exceptions.ValueError
+        If any iterable objects are of different lengths
+
     """
 
     # Imports
-    import numpy as np
+    #import numpy as np
 
     # Debug flag
     _DEBUG = False
@@ -109,7 +113,7 @@ def pack_tups(*args):
     #  of the modified args members for iterability and length
     iter_len = UNINIT_VAL
     for idx in range(len(mod_args)):
-        if np.iterable(mod_args[idx]):
+        if iterable(mod_args[idx]):
             if iter_len == UNINIT_VAL:
                 iter_len = len(mod_args[idx])
             else:
@@ -142,7 +146,7 @@ def pack_tups(*args):
     # The call string is built either by iteration over iterables, or by
     #  repeated placement of non-iterables.
     for idx in range(len(mod_args)):
-        if np.iterable(mod_args[idx]):
+        if iterable(mod_args[idx]):
             itstr = itstr + "a" + str(idx) + ", "
             zipstr = zipstr + "args[" + str(idx) + "], "
             callstr = callstr + "a" + str(idx) + ", "
@@ -192,92 +196,67 @@ def pack_tups(*args):
 
 
 def delta_fxn(a, b):
-    """Returns Kronecker delta for indices a and b.
+    """Kronecker delta for objects `a` and `b`.
 
     Parameters
     ----------
-    a : scalar
-        First index
-    b : scalar
-        Second index
+    a :
+        First object
+    b :
+        Second object
 
     Returns
     -------
-    delta : int
-        Value of Kronecker delta for provided indices
-
-    Raises
-    ------
-    TypeError : if nonscalar inputs are provided
+    int
+        Value of Kronecker delta for provided indices, as tested by
+        Python "\ `==`\ "
 
     """
-
-    # Imports
-    from numpy import isscalar
-
-    # Throw exception if either of a or b is not a scalar numeric
-    # isscalar() apparently checks for non-matrix AND numeric...?
-    if not isscalar(a):
-        raise TypeError("orca_utils.delta_fxn() requires scalar "
-                "numeric inputs" + chr(10) + "            "
-                "Type of 'a' is: " + str(type(a)))
-
-    if not isscalar(b):
-        raise TypeError("orca_utils.delta_fxn() requires scalar "
-                "numeric inputs" + chr(10) + "            "
-                "Type of 'b' is: " + str(type(b)))
 
     return (1 if a == b else 0)
 
 ## end def delta_fxn
 
 
-def safe_cast(invar, totype, check=True):
-    """Performs a safe typecast.
+def safe_cast(invar, totype):
+    """Performs a "safe" typecast.
 
-    Ensures that 'invar' is castable to 'totype'. Optionally 'check' after
-    casting that the result is actually of type 'totype'.
+    Ensures that `invar` properly casts to `totype`. Checks after
+    casting that the result is actually of type `totype`. Any exceptions raised
+    by the typecast itself are unhandled.
 
     Parameters
     ----------
     invar   : arbitrary
         Value to be typecast.
-    totype  : type or method performing typecast
-        Type to which 'invar' is to be cast.
-    check   : bool
-        If True, confirm that result from typecast is actually type 'totype'
+    totype  : `type`
+        Type to which `invar` is to be cast.
 
     Returns
     -------
-    outvar  : type 'totype'
-        Typecast version of 'invar'
+    outvar  : `type 'totype'`
+        Typecast version of `invar`
 
     Raises
     ------
-    TypeError : If 'invar' does not typecast to 'totype'.  Also, if check==True,
-        if result of typecast is not of type 'totype'.
-    TypeError : If 'totype' is anything other than type 'type'
+    ~exceptions.TypeError
+        If result of typecast is not of type `totype`
 
     """
 
-    # Confirm 'totype' is a type
-    if not isinstance(totype, type):
-        raise(TypeError("'totype' is not a type object."))
-    ## end if
-
-    # Attempt the typecast. Just use Python built-in exceptioning
+    # Make the typecast. Just use Python built-in exceptioning
     outvar = totype(invar)
 
-    # If indicated, check that the cast type matches
-    if check:
-        if not isinstance(outvar, totype):
-            raise(TypeError("Result of cast to '" + str(totype) + \
-                        "' is type '" + str(type(outvar)) + ".'"))
-        ## end if
+    # Check that the cast type matches
+    if not isinstance(outvar, totype):
+        raise(TypeError("Result of cast to '" + str(totype) + \
+                    "' is type '" + str(type(outvar)) ))
     ## end if
 
     # Success; return the cast value
     return outvar
+
+## end def safe_cast
 
 
 def make_timestamp(el_time):
@@ -290,12 +269,12 @@ def make_timestamp(el_time):
 
     Parameters
     ----------
-    el_time : int or float
-        Time interval to be converted to h/m/s format
+    el_time : `int` or `float`
+        Time interval in seconds to be converted to h/m/s format
 
     Returns
     -------
-    stamp   : str
+    str
         String timestamp in h/m/s format
     """
 
@@ -324,21 +303,25 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     Cartesian coordinates are considered consistent with the input
     coords if each component matches to within `tol`.  If coords or
     atoms vectors are passed that are of mismatched lengths, a
-    `False` value is returned.
+    ``False`` value is returned.
 
     Both coords vectors must be three times the length of the atoms vectors
     or a :exc:`~exceptions.ValueError` is raised.
 
     Parameters
     ----------
-    c1      : :class:`numpy.NPY_FLOAT`
+    c1      : length-3N ``np.float_``
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
+
     a1      : length-N `str` or `int`
         Vector of first set of atom symbols or atomic numbers
-    c2      : length-3N np.float_
+
+    c2      : length-3N ``np.float_``
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
-    a2      : length-N string or int
+
+    a2      : length-N `str` or `int`
         Vector of second set of atom symbols or atomic numbers
+
     tol    : float, optional
         Tolerance for acceptable deviation of each geometry coordinate
         from that in the reference instance to still be considered
@@ -348,26 +331,58 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     Returns
     -------
     match  : bool
-        Whether input coords and atoms match those in the ORCA_ENGRAD
-        instance (True) or not (False)
-    fail_type  : string
-        If match == False, a string description code for the reason
-        for the failed match:
-            coord_dim_mismatch  : Mismatch in coordinate vector sizes
-            atom_dim_mismatch   : Mismatch in atom symbol vector sizes
-            coord_mismatch      : Mismatch in one or more coordinates
-            atom_mismatch       : Mismatch in one or more atoms
-            #TODO: orca_utils.check_geom: Convert fail_type to an Enum
-    fail_loc   : length-3N bool or length-N bool or None
-        if match == False, np.array vector indicating positions of mismatch in
-        either coords or atoms, depending on the value of fail_type.
-        True elements indicate corresponding *MATCHING* values; False
-        elements mark *MISMATCHES*.  'None' returned if failure is due to
-        object- rather than element-level problems.
+        Whether input coords and atoms match (\ ``True``\ ) or
+        not (\ ``False``\ )
+
+    fail_type  : `str` or ``None``
+        Type of check failure
+
+        If `match` == ``True``:
+
+            Returns ``None``
+
+        If `match` == ``False``:
+
+            A string code describing the reason for the failed match:
+
+                `coord_dim_mismatch` -- Mismatch in coordinate vector sizes
+
+                `atom_dim_mismatch`  -- Mismatch in atom vector sizes
+
+                `coord_mismatch`     -- Mismatch in one or more coordinates
+
+                `atom_mismatch`      -- Mismatch in one or more atoms
+
+                **#TODO:** ``opan.utils.check_geom``: Convert ``fail_type`` to Enum
+
+    fail_loc   : length-3N `bool` or length-N `bool` or ``None``
+        Mismatched elements
+
+        If `match` == ``True``:
+
+            Returns ``None``
+
+        If `match` == ``False``:
+
+            For "array-level" problems such as a dimension mismatch, a
+            ``None`` value is returned.
+
+            For "element-level" problems, an ``np.array`` vector is returned
+            indicating positions of mismatch in either `coords` or `atoms`,
+            depending on the value of `fail_type`.
+
+                ``True`` elements indicate **MATCHING** values
+
+                ``False`` elements mark **MISMATCHES**
 
     Raises
     ------
-    ValueError : If len(c#) != 3 * len(a#)
+    ValueError
+        If array lengths are inconsistent ::
+
+            if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
+                raise(ValueError(...))
+
     """
 
     # Import(s)
@@ -450,39 +465,52 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
         return match, fail_type, fail_loc
 
     #** If reached here, all tests passed; return success.
-    return match
+    return match, None, None
 
 ## end def check_geom
 
 
-def template_subst(template, subs, subs_delims=['<', '>']):
-    """ Perform substitution of content into tagged input template.
+def template_subst(template, subs, delims=['<', '>']):
+    """ Perform substitution of content into tagged string.
 
-    No checks for valid ORCA input syntax are performed once all substitutions
-    have been completed.
+    For substitutions into template input files for external computational
+    packages, no checks for valid syntax are performed.
+
+    The first element of each 2-tuple of `subs` corresponds to a delimited
+    substitution tag to be replaced in `template` by the entire
+    text of the second element. For example, the tuple ``("ABC", "text")`` would
+    convert ``The <ABC> is working`` to  ``The text is working``, using the
+    default delimiters of '<' and '>'. Substitutions are performed in
+    iteration order from the `subs` iterable. Recursive substitution
+    as the tag parsing proceeds is thus
+    feasible if an ordered iterable is used.
+
+    Start and end delimiters for the tags are modified by `delims`. For
+    example, to substitute a tag of the form **{\|TAG\|}**, the tuple
+    ``("{|","|}")`` should be passed to `subs_delims`.  Any elements in
+    `delims` past the second are ignored. No checking is
+    performed for whether the delimiters are "sensible" or not.
 
     Parameters
     ----------
-    template : str
-        Template for an ORCA input containing tags delimited by 'subs_delims',
-        with tag names and substitution contents provided in 'subs'.
-    subs    : iterable of two-tuples of strings
-        Iterable contains tag names and corresponding content to be
+    template : `str`
+        Template containing tags delimited by `subs_delims`,
+        with tag names and substitution contents provided in `subs`
+
+    subs    : `tuple` of `2-tuples` of `str`
+        Each `2-tuple` contains a tag name and corresponding content to be
         substituted into the provided template.
-    subs_delims : iterable of str
+
+    delims : iterable of `str`
         Iterable containing the 'open' and 'close' strings used to mark tags
         in the template, which are drawn from elements zero and one,
         respectively. Any elements beyond these are ignored.
 
     Returns
     -------
-    input_text : str
-        Input file generated from the parsed template, with all tag
+    str
+        String generated from the parsed template, with all tag
         substitutions performed.
-
-    Raises
-    ------
-    (none yet)
 
     """
 
@@ -490,10 +518,10 @@ def template_subst(template, subs, subs_delims=['<', '>']):
     input_text = template
 
     # Iterate over subs and perform the .replace() calls
-    for repset in subs:
-        input_text = input_text.replace( \
-                subs_delims[0] + repset[0] + subs_delims[1], repset[1])
-    ##next repset
+    for tup in subs:
+        input_text = input_text.replace(
+                delims[0] + tup[0] + delims[1], tup[1])
+    ## next tup
 
     # Return the result
     return input_text
@@ -501,6 +529,41 @@ def template_subst(template, subs, subs_delims=['<', '>']):
 ## end def template_subst
 
 
+def iterable(y):
+    """Check whether or not an object supports iteration.
+
+    Adapted directly from NumPy ~= 1.10 at commit `46d2e83
+    <https://github.com/numpy/numpy/tree/
+    46d2e8356760e7549d0c80da9fe232177924183c/numpy/lib/
+    function_base.py#L48-L76>`__.
+
+    Parameters
+    ----------
+    y : object
+      Object to be tested.
+
+    Returns
+    -------
+    bool
+      Returns ``True`` if the object has an iterator method or is a sequence,
+      and ``False`` otherwise.
+
+    Examples
+    --------
+    >>> np.iterable([1, 2, 3])
+    True
+    >>> np.iterable(2)
+    False
+
+    """
+    try:
+        iter(y)
+    except:
+        return False
+    return True
+
+
+## end def iterable
 
 
 if __name__ == '__main__': # pragma: no cover

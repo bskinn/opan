@@ -18,11 +18,12 @@
 #
 #-------------------------------------------------------------------------------
 
-""" #DOC: utils.decorate module docstring
+""" Custom decorators defined for OpenAnharmonic.
 
 Decorators
 ----------
-arraysqueeze    : Convert selected arguments to squeezed np.arrays
+
+.. autoclass:: arraysqueeze
 
 """
 
@@ -31,15 +32,34 @@ from functools import wraps as _wraps
 
 # Decorators
 class arraysqueeze(object):
-    """ Class-form decorator to convert select arguments to squeezed np.arrays
+    """ Converts selected arguments to squeezed np.arrays
 
-    Pre-applies an np.array(...).squeeze() conversion to all positional
+    Pre-applies an ``np.array(...).squeeze()`` conversion to all positional
     arguments according to integer indices passed, and to any keyword arguments
-    according to any strings passed.  Likely fragile with optional
-    arguments, but needs to be tested.
+    according to any strings passed.
 
-    Using the class form of the decorator definition per the exposition here:
-        http://www.artima.com/weblogs/viewpost.jsp?thread=240845
+    Each `int` argument passed instructs the decorator to convert the
+    corresponding positional argument in the function definition.
+
+    Each `str` argument passed instructs the decorator to convert the
+    corresponding keyword argument.
+
+    `str` parameters corresponding to keyword arguments absent in a
+    particular function call and positional/optional argument indices
+    beyond the range of the actual `\*args` of the decorated
+    function are ignored.
+
+    .. warning:: Likely fragile with optional arguments; needs to be tested.
+
+    Arguments
+    ---------
+    \*args : `int` or `str`
+        Arguments to convert to squeezed np.arrays.
+
+
+    .. Decorator built using the class form per the exposition
+        `here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
+        |extlink|.
 
     """
 

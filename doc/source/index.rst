@@ -28,4 +28,3 @@ Indices and tables
 * :ref:`search`
 
 
-.. |external link| image:: /_static/extlink.svg

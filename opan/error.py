@@ -23,8 +23,9 @@
 
 """Custom errors for OpenAnharmonic
 
-Error classes are subclassed from :exc:`Exception` via an abstract superclass,
-:class:`~opan.error.OPANError`, which defines several common features:
+Error classes are subclassed from :exc:`~exceptions.Exception` via an
+abstract superclass, :class:`~opan.error.OPANError`, which defines
+several common features:
 
  * Storage of a 'typecode' and a 'source' string along with the error message
    to allow passing of more fine-grained information to the exception stack
@@ -97,9 +98,9 @@ class OPANError(Exception):
 
     Raises
     ------
-    NotImplementedError
+    ~exceptions.NotImplementedError
         Upon attempt to instantiate abstract :class:`OPANError` base class.
-    KeyError
+    ~exceptions.KeyError
         Upon instantiation with an invalid typecode
 
     Attributes

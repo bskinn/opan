@@ -114,7 +114,13 @@ exclude_patterns = []
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+modindex_common_prefix = ['opan.']
+
+# Epilogue for all files
+rst_epilog = """
+.. |extlink| image:: /_static/extlink.svg
+.. |orca| replace:: `ORCA <http://orcaforum.cec.mpg.de>`__
+"""
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False
