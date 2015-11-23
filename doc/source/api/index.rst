@@ -3,9 +3,7 @@
 opan API
 ================================
 
-The full public and private API is delineated below.  Unless explicitly indicated otherwise, all objects are public **except** those named with a leading underscore.
-
-Cross-references to NumPy are displayed with the ``np`` package shorthand.
+The full public API is delineated below.  Cross-references to NumPy are displayed with the ``np`` package abbreviation.
 
  * :mod:`~opan.anharm`
 

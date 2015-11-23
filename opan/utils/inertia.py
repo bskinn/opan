@@ -19,18 +19,25 @@
 #
 #-------------------------------------------------------------------------------
 
-"""Utilities for calculation of inertia tensor & principal axes/moments
+"""Utilities for calculation of inertia tensor & principal axes/moments.
 
-Some of these functions may have broader applicability but are housed here
-due to anticipated common usage within the context of VPT2 calculations.
+These functions are housed separately from the :mod:`opan.anharm` VPT2 module
+since they may have broader applicability to other envisioned capabilites of
+opan.
 
-Functions
----------
-ctr_geom        : Shift geometry relative to center of mass
-ctr_mass        : Calculate the center of mass
-expand_masses   : Utility for converting an N x 1 masses vector to 3N x 1
-inertia_tensor  : Calculate the inertia tensor for a system
-principals      : Calculate principal axes/moments and molecular top type
+**Functions**
+
+.. autofunction:: opan.utils.inertia.ctr_geom(geom, masses)
+
+.. autofunction:: opan.utils.inertia.ctr_mass(geom, masses)
+
+.. autofunction:: opan.utils.inertia.inertia_tensor(geom, masses)
+
+.. autofunction:: opan.utils.inertia.principals(geom, masses[, on_tol])
+
+.. autofunction:: opan.utils.inertia.rot_consts
+    (geom, masses[, units[, on_tol]])
+
 """
 
 
@@ -44,25 +51,26 @@ from ..const import DEF as _DEF, EU_RotConst as _EURC
 def ctr_mass(geom, masses):
     """Calculate the center of mass of the indicated geometry.
 
-    Take a geometry (coordinates in BOHRS) and atoms of the indicated masses
-    (in amu) and compute the location of the center of mass.
+    Take a geometry and atom masses and compute the location of
+    the center of mass.
 
     Parameters
     ----------
-    geom    : length-3N np.float_
+    geom    : length-3N ``np.float_``
         Coordinates of the atoms
-    masses  : length-N OR length-3N np.float_
+    masses  : length-N OR length-3N ``np.float_``
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr     : length-3 np.float_
+    ctr     : length-3 ``np.float_``
         Vector location of center of mass
 
     Raises
     ------
-    ValueError  : If geom & masses shapes are inconsistent
+    ValueError
+        If `geom` & `masses` shapes are inconsistent
 
     """
 
@@ -104,27 +112,28 @@ def ctr_mass(geom, masses):
 
 @_arraysqueeze(0)  # masses not used directly, so not pretreated
 def ctr_geom(geom, masses):
-    """ Return geometry shifted to center of mass.
+    """ Returns geometry shifted to center of mass.
 
     Helper function to automate / encapsulate translation of a geometry to its
     center of mass.
 
     Parameters
     ----------
-    geom    : length-3N np.float_
+    geom    : length-3N ``np.float_``
         Original coordinates of the atoms
-    masses  : length-N OR length-3N np.float_
+    masses  : length-N OR length-3N ``np.float_``
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr_geom    : length-3N np.float_
+    ctr_geom    : length-3N ``np.float_``
         Atomic coordinates after shift to center of mass
 
     Raises
-    -------
-    (same as ctr_mass)
+    ------
+    ~exceptions.ValueError
+        If shapes of `geom` & `masses` are inconsistent
 
     """
 
@@ -146,29 +155,31 @@ def ctr_geom(geom, masses):
 def inertia_tensor(geom, masses):
     """Generate the 3x3 moment-of-inertia tensor.
 
-    Compute the 3x3 moment-of-inertia tensor for the provided geometry
-    and atomic masses.  Always recenters the geometry to the center of mass.
+    Compute the 3x3 moment-of-inertia tensor for the
+    provided geometry and atomic masses.  Always recenters the
+    geometry to the center of mass as the first step.
 
-    Reference for moment of inertia tensor (accessed 19 Oct 2015):
-        http://www.chem.ox.ac.uk/teaching/Physics%20for%20Chemists/
-                                Rotation/Moment%20of%20inertia.html#Int3
+    Reference for inertia tensor: [Kro92]_, Eq. (2.26)
+
+    *#DOC: Replace cite eventually with link to exposition in user guide.*
 
     Parameters
     ----------
-    geom     : length-3N np.float_
+    geom     : length-3N ``np.float_``
         Coordinates of the atoms
-    masses   : length-N OR length-3N np.float_
+    masses   : length-N OR length-3N ``np.float_``
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    tensor   : 3 x 3 np.float_
+    tensor   : 3 x 3 ``np.float_``
         Moment of inertia tensor for the system
 
     Raises
     ------
-    (same as ctr_mass)
+    ~exceptions.ValueError
+        If shapes of `geom` & `masses` are inconsistent
 
     """
 

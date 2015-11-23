@@ -22,6 +22,8 @@
 
 """ Utilities submodule for molecular symmetry operations and detection.
 
+.. warning:: Module is **NON-FUNCTIONAL**
+
 [Assumes molecule has already been translated to center-of-mass.]
 
 [Molecular geometry is a vector, in order of x1, y1, z1, x2, y2, z2, ...]

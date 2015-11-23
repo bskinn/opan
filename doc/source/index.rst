@@ -18,6 +18,7 @@ Contents:
    userguide/index
    dependencies
    units
+   references
 
 
 Indices and tables
