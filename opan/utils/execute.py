@@ -218,7 +218,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
             for s in exec_cmd_subs]
 
     # Perform the content substitutions into the template string
-    input_text = template_subst(inp_tp, subs, subs_delims=subs_delims)
+    input_text = template_subst(inp_tp, subs, delims=subs_delims)
 
     # Create and write the input file
     with open(inp_fname, 'w') as input_file:
