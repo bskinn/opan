@@ -20,12 +20,24 @@
 #-------------------------------------------------------------------------------
 
 
-""" Submodule for vector operations on
+""" Submodule for miscellaneous vector operations
 
-[Functions implemented here are not available as of NumPy v1.8.1 and
-    SciPy v0.4.9.]
+Functions implemented here are (to the best of this author's knowledge)
+not available in NumPy or SciPy.
 
-#DOC: Complete vector module docstring
+**Functions**
+
+.. autofunction:: opan.utils.vector.ortho_basis(normal[, ref_vec])
+
+.. autofunction:: opan.utils.vector.orthonorm_check(a[, tol[, report]])
+
+.. autofunction:: opan.utils.vector.parallel_check(vec1, vec2)
+
+.. autofunction:: opan.utils.vector.proj(vec, vec_onto)
+
+.. autofunction:: opan.utils.vector.rej(vec, vec_onto)
+
+.. autofunction:: opan.utils.vector.vec_angle(vec1, vec2)
 
 """
 
@@ -150,44 +162,49 @@ def ortho_basis(normal, ref_vec=None):
 
 
 def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
-    """Checks orthonormality of the column vectors of a.
+    """Checks orthonormality of the column vectors of a matrix.
 
-    #!DOC: [orthonorm_check: complete verbose docstring]
+    If a one-dimensional np.array is passed to `a`, it is treated as a single
+    column vector, rather than a row matrix of length-one column vectors.
+
+    The matrix `a` does not need to be square, though it must have at least
+    as many rows as columns, since orthonormality is only possible in N-space
+    with a set of no more than N vectors. (This condition is not directly
+    checked.)
 
     Parameters
     ----------
-    a : (N, M) array_like
-        2D array of column vectors (all real assumed) to be checked for
-        orthonormality. Does not need to be square.  N >= M strictly
-        enforced, as orthonormality is only possible with <= N vectors in
-        N-space.
-    tol : float, optional
-        Default: specified by _DEF.Orthonorm_Tol of module .const
-        Tolerance for deviation of dot products from one or zero.
+    a : R x S ``np.float_``
+        2-D array of column vectors to be checked for orthonormality.
+
+    tol : ``np.float_``, optional
+        Tolerance for deviation of dot products from one or zero. Default
+        value is :data:`opan.const.DEF.Orthonorm_Tol`.
+
     report : bool, optional
-        Default: False
         Whether to record and return vectors / vector pairs failing the
-        orthonormality condition.
+        orthonormality condition. Default is ``False``.
 
     Returns
     -------
     o : bool
         Indicates whether column vectors of `a` are orthonormal to within
-        tolerance `tol`
-    n_fail : int list
-        (if report == True)
-        List of indices of column vectors failing normality condition. An
-        empty list is returned if all vectors are normalized.
-    o_fail : (int, int) list
-        (if report == True)
-        List of 2-tuples of indices of column vectors failing orthogonality
-        condition.  An empty list is returned if all vectors are orthogonal.
+        tolerance `tol`.
 
-    Raises
-    ------
-    ValueError : If an object with any non-numeric elements is provided
-    ValueError : If any object is passed that is parsed as having more than
-        two dimensions when converted to a matrix
+    n_fail : list of int or ``None``
+        If `report` == ``True``: A list of indices of column vectors
+        failing the normality condition, or an empty list if all vectors
+        are normalized.
+
+        If `report` == ``False``: ``None``
+
+    o_fail : (int, int) list
+        If `report` == ``True``: A list of 2-tuples of indices of
+        column vectors failing the orthogonality condition, or an
+        empty list if all vectors are orthogonal.
+
+        If `report` == ``False``: ``None``
+
     """
 
     # Imports
@@ -203,17 +220,23 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
     n_fail = []
     o_fail = []
 
-    # Coerce to float_ matrix. Should handle any objects with more than
+    # Coerce to float_ matrix. Must treat 1-D vector as column vector.
+    #  Should raise an exception for any objects with more than
     #  two dimensions; real and all-numeric are still not yet checked, but
     #  will probably be run-time caught if too bad an object is passed.
-    a_mx = np.matrix(a,dtype=np.float_)
-    a_split = np.hsplit(a_mx,a_mx.shape[1])
+    if len(a.shape) == 1:
+        a_mx = np.matrix(a, dtype=np.float_).T
+    else:
+        a_mx = np.matrix(a, dtype=np.float_)
 
-    # Loop over vectors and check orthonormality
+    # Split matrix into separate vectors for convenient indexing.
+    a_split = np.hsplit(a_mx, a_mx.shape[1])
+
+    # Loop over vectors and check orthonormality.
     for iter1 in range(a_mx.shape[1]):
         for iter2 in range(iter1,a_mx.shape[1]):
             if not abs((a_split[iter1].T * a_split[iter2])[0,0] -
-                        np.float64(delta_fxn(iter1, iter2))) <= tol:
+                        np.float_(delta_fxn(iter1, iter2))) <= tol:
                 orth = False
                 if report:
                     if iter1 == iter2:
@@ -225,7 +248,7 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
     if report:
         return orth, n_fail, o_fail
     else:
-        return orth
+        return orth, None, None
 
 ## end def orthonorm_check
 
