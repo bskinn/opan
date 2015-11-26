@@ -558,7 +558,7 @@ def iterable(y):
     """
     try:
         iter(y)
-    except:
+    except Exception:
         return False
     return True
 
