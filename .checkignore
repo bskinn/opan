@@ -1,0 +1,6 @@
+.gitignore
+LICENSE.txt
+README.md
+doc/*
+opan/resource/*
+opan/tests.py
