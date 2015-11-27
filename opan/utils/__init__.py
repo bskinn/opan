@@ -62,7 +62,7 @@ __all__ = ['decorate', 'execute', 'inertia', 'symm', 'vector']
 
 from . import *
 from .base import check_geom, delta_fxn, make_timestamp, pack_tups
-from .base import safe_cast, template_subst
+from .base import safe_cast, template_subst, iterable
 
 
 

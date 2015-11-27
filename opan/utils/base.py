@@ -80,10 +80,12 @@ def pack_tups(*args):
     """
 
     # Imports
-    #import numpy as np
 
     # Debug flag
     _DEBUG = False
+
+    # Marker value for non-iterable items
+    NOT_ITER = -1
 
     # Uninitialized test value
     UNINIT_VAL = -1
@@ -100,34 +102,21 @@ def pack_tups(*args):
     ## end class str_noiter
 
     # Re-wrap input arguments with non-iterable strings if required
-    mod_args = range(len(args))
-    for idx in range(len(args)):
-        if isinstance(args[idx], str):
-            mod_args[idx] = str_noiter(args[idx])
-        else:
-            mod_args[idx] = args[idx]
-        ## end if
-    ## next idx
+    mod_args = [(str_noiter(a) if isinstance(a, str) else a) for a in args]
 
-    # Initialize the info variable for the iterable length and scan all
-    #  of the modified args members for iterability and length
-    iter_len = UNINIT_VAL
-    for idx in range(len(mod_args)):
-        if iterable(mod_args[idx]):
-            if iter_len == UNINIT_VAL:
-                iter_len = len(mod_args[idx])
-            else:
-                if not iter_len == len(mod_args[idx]):
-                    raise(ValueError("All iterable items must be of " + \
-                            "equal length."))
-                ## end if
-            ## end if
-        ## end if
-    ## next idx
+    # Determine the length or non-iterable status of each item and store
+    #  the maximum value (depends on NOT_ITER < 0)
+    iterlens = [(len(a) if iterable(a) else NOT_ITER) for a in mod_args]
+    maxiter = max(iterlens)
+
+    # Check to ensure all iterables are the same length
+    if not all(map(lambda v: v in (NOT_ITER, maxiter), iterlens)):
+        raise(ValueError("All iterable items must be of equal length"))
+    ## end if
 
     # If everything is non-iterable, just return the args tuple wrapped in
-    #  a list
-    if iter_len == UNINIT_VAL:
+    #  a list (as above, depends on NOT_ITER < 0)
+    if maxiter == NOT_ITER:
         return [args]
     ## end if
 
