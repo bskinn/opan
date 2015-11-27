@@ -80,6 +80,7 @@ def pack_tups(*args):
     """
 
     # Imports
+    import numpy as np
 
     # Debug flag
     _DEBUG = False
@@ -120,58 +121,10 @@ def pack_tups(*args):
         return [args]
     ## end if
 
-    # Some items are iterable, so must construct iteration strings
-    # Initialize strings for the iteration variables, the zip contents,
-    #  and the output block of the final tuple-building for-loop
-    itstr = ""
-    zipstr = ""
-    callstr = ""
-
-    # Append suitable blips as things are iterable. Iteration variables are
-    #  of the form "a###", with ### as digit(s).  Variables being zipped are
-    #  the various elements of ***args***, which if there are any strings
-    #  present will be instances of the **base str class**, rather than the
-    #  local non-iterable string class, which is the desired behavior.
-    # The call string is built either by iteration over iterables, or by
-    #  repeated placement of non-iterables.
-    for idx in range(len(mod_args)):
-        if iterable(mod_args[idx]):
-            itstr = itstr + "a" + str(idx) + ", "
-            zipstr = zipstr + "args[" + str(idx) + "], "
-            callstr = callstr + "a" + str(idx) + ", "
-        else:
-            callstr = callstr + "args[" + str(idx) + "], "
-        ## end if
-    ## next idx
-
-    # Looping is always required if code gets to this point
-    # Trim the excess comma and space from the strings
-    itstr = itstr[:len(itstr) - 2]
-    zipstr = zipstr[:len(zipstr) - 2]
-    callstr = callstr[:len(callstr) - 2]
-
-    # Build the start of the evaluation string
-    evalstr = "[ (" + callstr + ") for " + itstr + " in "
-
-    # Only zip() if more than one thing is being looped over
-    evalstr = evalstr + ("zip(" if itstr.count(",") >= 1 else "")
-
-    # Provide the zip string
-    evalstr = evalstr + zipstr
-
-    # Only close the zip() if more than one thing is being looped
-    evalstr = evalstr + (")]" if itstr.count(",") >= 1 else "]")
-
-    # Dump the built strings if in debug mode
-    if _DEBUG:  # pragma: no cover
-        print("evalstr = " + evalstr)
-        print("itstr = " + itstr)
-        print("zipstr = " + zipstr)
-        print("callstr = " + callstr)
-    ## end if
-
-    # eval() the for loop to obtain tuples of arguments
-    tups = eval(evalstr)
+    # Swap any non-iterables for a suitable length repeat, and zip to
+    #  tuples for return
+    tups = zip(*[(np.repeat(a, maxiter) if l == NOT_ITER else a)
+            for (a,l) in zip(mod_args, iterlens)])
 
     # Dump the resulting tuples, if in debug mode
     if _DEBUG:  # pragma: no cover

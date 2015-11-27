@@ -48,39 +48,45 @@ from .decorate import arraysqueeze as _arraysqueeze
 
 @_arraysqueeze(0,1)
 def ortho_basis(normal, ref_vec=None):
-    """Generates an orthonormal basis in the plane perpendicular to 'normal'
+    """Generates an orthonormal basis in the plane perpendicular to `normal`
 
-    The orthonormal basis generated spans the plane defined with 'normal' as
-        its normal vector.  The handedness of on1 and on2 is such that:
+    The orthonormal basis generated spans the plane defined with `normal` as
+    its normal vector.  The handedness of `on1` and `on2` in the returned
+    basis is such that:
 
-            on1 x on2 == normal/||normal||
+    .. math::
 
-    'normal' must be expressible as a one-dimensional np.array of length 3.
+            \\mathsf{on1} \\times \\mathsf{on2} =
+            {\\mathsf{normal} \\over \\left\\| \\mathsf{normal}\\right\\|}
+
+    `normal` must be expressible as a one-dimensional np.array of length 3.
 
     Parameters
     ----------
-    normal   : length-3 np.float_
+    normal   : length-3 ``np.float_``
         The orthonormal basis output will span the plane perpendicular
-        to 'normal'.
-    ref_vec  : length-3 np.float_, optional
-        If ref_vec specified, on1 will be the normalized projection of ref_vec
-        onto the plane perpendicular to 'normal'
+        to `normal`.
+    ref_vec  : length-3 ``np.float_``, optional
+        If specified, `on1` will be the normalized projection of `ref_vec`
+        onto the plane perpendicular to `normal`. Default is ``None``.
 
     Returns
     -------
-    on1 : length-3 np.float_
+    on1 : length-3 ``np.float_``
         First vector defining the orthonormal basis in the plane
-        normal to 'normal'
-    on2 : length-3 np.float_
+        normal to `normal`
+    on2 : length-3 ``np.float_``
         Second vector defining the orthonormal basis in the plane
-        normal to 'normal'
+        normal to `normal`
 
     Raises
     ------
-    ValueError : If normal or ref_vec is not expressible as a 1-D vector
+    ~exceptions.ValueError
+        If `normal` or `ref_vec` is not expressible as a 1-D vector
         with 3 elements
-    XYZError   : If ref_vec is specified and it is insufficiently non-
-        parallel with respect to 'normal'
+    ~opan.error.XYZError
+        If `ref_vec` is specified and it is insufficiently non-
+        parallel with respect to `normal`
     """
 
     # Imports for library functions
@@ -191,14 +197,14 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
         Indicates whether column vectors of `a` are orthonormal to within
         tolerance `tol`.
 
-    n_fail : list of int or ``None``
+    n_fail : list of `int` or ``None``
         If `report` == ``True``: A list of indices of column vectors
         failing the normality condition, or an empty list if all vectors
         are normalized.
 
         If `report` == ``False``: ``None``
 
-    o_fail : (int, int) list
+    o_fail : list of 2-tuples of `int` or ``None``
         If `report` == ``True``: A list of 2-tuples of indices of
         column vectors failing the orthogonality condition, or an
         empty list if all vectors are orthogonal.

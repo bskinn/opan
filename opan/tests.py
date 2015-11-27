@@ -2638,9 +2638,15 @@ class SuperOPANUtilsInertia(object):
                                                     self.hess.atom_masses)
         for i in range(i_tensor.shape[0]):
             for j in range(i_tensor.shape[1]):
-                self.assertAlmostEqual(self.i_tensor[i,j],
+                if i_tensor[i,j] < 1e-10:
+                    self.assertAlmostEqual(self.i_tensor[i,j],
                             i_tensor[i,j],
                             delta=1e-7,
+                            msg="Inertia tensor element (" + str(i) + "," +
+                                                             str(j) + ")")
+                else:
+                    self.assertAlmostEqual(self.i_tensor[i,j] / i_tensor[i,j],
+                            1.0, delta=1e-7,
                             msg="Inertia tensor element (" + str(i) + "," +
                                                              str(j) + ")")
 
@@ -2669,7 +2675,7 @@ class SuperOPANUtilsInertia(object):
                                                                         str(i))
                 else:
                     self.assertAlmostEqual(self.axes[i,j] / axes[i,j], 1.0,
-                            delta=1e-7,
+                            delta=1e-6,
                             msg="Principal axis #" + str(j) + ", element " +
                                                                         str(i))
 
@@ -2784,7 +2790,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
                     self.hess.atom_masses, units=u)) for u in EURC]:
             for i in range(a.shape[0]):
                 self.assertAlmostEqual(self.rc_units[u][i] / a[i], 1.0,
-                        delta=1e-8,
+                        delta=1e-3,
                         msg="Rotational constant units '" + str(u) +
                                                 ",' index '" + str(i) + "'")
 

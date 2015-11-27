@@ -9,6 +9,16 @@ Welcome to opan!
 
 *Eventually, one will find here at least the API and a user's guide.*
 
+*Need to add notes about conventions*:
+
+ * Upright sans-serif in equations when referring to code names
+
+ * Italics in text when referring to mathematical symbols
+
+ * Italics in text when referring to code names
+
+ * [Others?]
+
 Contents:
 
 .. toctree::

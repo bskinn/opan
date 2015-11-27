@@ -512,7 +512,7 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
     units    : :class:`~opan.const.EU_RotConst`, optional
         Enum value indicating the desired units of the output rotational
-        constants. Default is :data:`~EU_RotConst.InvInertia`
+        constants. Default is :data:`~opan.const.EU_RotConst.InvInertia`
         :math:`\\left(1\\over \\mathrm{uB^2}\\right)`
 
     on_tol   : ``np.float_``, optional
@@ -631,7 +631,7 @@ def _fadnOv(vec, geom):
         if spla.norm(disp) >= PRM.Zero_Vec_Tol:
             # See if it's not orthonormal
             if not onchk(np.column_stack((disp / spla.norm(disp),
-                                                vec / spla.norm(vec)))):
+                                                vec / spla.norm(vec))))[0]:
                 # This is the displacement you are looking for
                 out_vec = disp / spla.norm(disp)
                 return out_vec

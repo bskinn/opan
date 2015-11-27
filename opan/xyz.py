@@ -595,7 +595,7 @@ class OPAN_XYZ(object):
 
         vals = pack_tups(g_nums)
         for val in vals:
-            yield self.Geom_single(val)
+            yield self.Geom_single(val[0])
 
     ## end def Geom_iter
 
