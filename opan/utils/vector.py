@@ -261,22 +261,23 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 
 @_arraysqueeze(0,1)
 def parallel_check(vec1, vec2):
-    """Checks whether two vectors are parallel OR anti-parallel
+    """Checks whether two vectors are parallel OR anti-parallel.
 
     Vectors must be of the same dimension.
 
     Parameters
     ----------
-    vec1    : length-a np.float_
+    vec1    : length-R ``np.float_``
         First vector to compare
-    vec2    : length-a np.float_
+    vec2    : length-R ``np.float_``
         Second vector to compare
 
     Returns
     -------
-    par     : bool
-        True if (anti-)parallel to within 'PRM.Non_Parallel_Tol' degrees.
-        False otherwise.
+    bool
+        ``True`` if (anti-)parallel to within :data:`opan.const.PRM.
+        Non_Parallel_Tol` degrees.  ``False`` otherwise.
+
     """
 
     # Imports

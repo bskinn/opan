@@ -17,6 +17,10 @@ Welcome to opan!
 
  * Italics in text when referring to code names
 
+ * N always refers to the number of atoms in the system of interest
+
+ * Arbitrary integers repped as R and S
+
  * [Others?]
 
 Contents:
