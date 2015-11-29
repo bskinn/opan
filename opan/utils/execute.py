@@ -82,10 +82,12 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     See :func:`utils.template_subst <opan.utils.base.template_subst>` for
     implementation details of the tag substitution mechanism.
 
-    Here, in addition to performing any substitutions indicated by `subs`,
+    Here, in addition to performing any substitutions on the input file
+    template as indicated by `subs`,
     the special tags **INP** and **OUT**, enclosed with the
     `subs_delims` delimiters, will be replaced with ``sim_name + '.' + inp_ext``
-    and ``sim_name + '.' + out_ext``, respectively, in all elements of
+    and ``sim_name + '.' + out_ext``, respectively, in the input template and
+    in all elements of
     `exec_cmd` before executing the call. In the special case of
     `inp_ext` == ``None``, the **INP** tag will be replaced with just
     `sim_name` (no extension), and similarly for **OUT** if
@@ -131,13 +133,13 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         be to a local script; stream redirection of the forked process
         is not supported in this function.
 
-    subs    : ordered iterable of 2-tuples/-lists of str, optional
+    subs    : `dict` of `str`, optional
         Substitutions to be performed in the template (see *Template
         Substitution*, above).
 
     subs_delims : 2-tuple of str, optional
-        Tag delimiters passed directly to :func:`~opan.utils.base.
-        template_subst`.  Defaults to `['<','>']`.
+        Tag delimiters passed directly to
+        :func:`~opan.utils.base.template_subst`.  Defaults to `('<','>')`.
 
     sim_name : str, optional
         Basename to use for the input/output/working files.
@@ -165,6 +167,9 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     ~exceptions.KeyError
         If special tag names **INP**, **OUT**, or **NAME** are defined in `subs`
 
+    ~exceptions.TypeError
+        If any elements in `subs` are not tuples
+
     """
 
     # Imports
@@ -174,6 +179,11 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     from ..grad import ORCA_ENGRAD
     from ..hess import ORCA_HESS
     from ..utils import template_subst
+
+    # Special key constants
+    INPKEY = "INP"
+    OUTKEY = "OUT"
+    NAMEKEY = "NAME"
 
     # Store old dir; switch to new; default exception fine for
     #  handling case of invalid dir.
@@ -185,15 +195,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         raise(ValueError("'inp_ext' and 'out_ext' cannot be identical."))
     ##end if
 
-    # Complain if special tags used in subs
-    for tup in subs:
-        for t in["INP", "OUT", "NAME"]:
-            if t == tup[0]:
-                raise(KeyError("Cannot redefine custom tag '" + t + "'"))
-        ## end if
-    ## next t
-
-    # Build the input and output file names
+    # Build the input and output file names and store the substitution keys
     if inp_ext:
         inp_fname = sim_name + '.' + inp_ext
     else:
@@ -205,20 +207,29 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         out_fname = sim_name
     ##end if
 
+    SPECIALSUBS = {INPKEY: inp_fname, OUTKEY: out_fname, NAMEKEY: sim_name}
+
+    # Complain if special tags used in subs
+    if not set(SPECIALSUBS.keys()).isdisjoint(subs):
+        raise(KeyError("Redefinition of special tag(s) is forbidden:" +
+                str(list(set(SPECIALSUBS.keys()).intersection(subs)))))
+    ## end if
+
     # Perform the replacement into the exec_cmd of the input and output
     #  filenames.
-    exec_cmd_subs = [ \
-                s.replace(subs_delims[0] + "INP" + subs_delims[1], inp_fname) \
+    exec_cmd_subs = [
+                s.replace(subs_delims[0] + INPKEY + subs_delims[1], inp_fname)
             for s in exec_cmd]
-    exec_cmd_subs = [ \
-                s.replace(subs_delims[0] + "OUT" + subs_delims[1], out_fname) \
+    exec_cmd_subs = [
+                s.replace(subs_delims[0] + OUTKEY + subs_delims[1], out_fname)
             for s in exec_cmd_subs]
-    exec_cmd_subs = [ \
-                s.replace(subs_delims[0] + "NAME" + subs_delims[1], sim_name) \
+    exec_cmd_subs = [
+                s.replace(subs_delims[0] + NAMEKEY + subs_delims[1], sim_name)
             for s in exec_cmd_subs]
 
     # Perform the content substitutions into the template string
-    input_text = template_subst(inp_tp, subs, delims=subs_delims)
+    augsubs = subs.copy().update(SPECIALSUBS)
+    input_text = template_subst(inp_tp, augsubs, delims=subs_delims)
 
     # Create and write the input file
     with open(inp_fname, 'w') as input_file:

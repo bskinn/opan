@@ -412,20 +412,21 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
 ## end def check_geom
 
 
-def template_subst(template, subs, delims=['<', '>']):
+def template_subst(template, subs, delims=('<', '>')):
     """ Perform substitution of content into tagged string.
 
     For substitutions into template input files for external computational
     packages, no checks for valid syntax are performed.
 
-    The first element of each 2-tuple of `subs` corresponds to a delimited
-    substitution tag to be replaced in `template` by the entire
-    text of the second element. For example, the tuple ``("ABC", "text")`` would
+    Each key in `subs` corresponds to a delimited
+    substitution tag to be replaced in `template` by the entire text of the
+    value of that key. For example, the dict ``{"ABC": "text"}`` would
     convert ``The <ABC> is working`` to  ``The text is working``, using the
     default delimiters of '<' and '>'. Substitutions are performed in
-    iteration order from the `subs` iterable. Recursive substitution
+    iteration order from `subs`; recursive substitution
     as the tag parsing proceeds is thus
-    feasible if an ordered iterable is used.
+    feasible if an :class:`~collections.OrderedDict` is used and substitution
+    key/value pairs are added in the proper order.
 
     Start and end delimiters for the tags are modified by `delims`. For
     example, to substitute a tag of the form **{\|TAG\|}**, the tuple
@@ -439,9 +440,9 @@ def template_subst(template, subs, delims=['<', '>']):
         Template containing tags delimited by `subs_delims`,
         with tag names and substitution contents provided in `subs`
 
-    subs    : `tuple` of `2-tuples` of `str`
-        Each `2-tuple` contains a tag name and corresponding content to be
-        substituted into the provided template.
+    subs    : `dict` of `str`
+        Each item's key and value are the tag name and corresponding content to
+        be substituted into the provided template.
 
     delims : iterable of `str`
         Iterable containing the 'open' and 'close' strings used to mark tags
@@ -460,9 +461,9 @@ def template_subst(template, subs, delims=['<', '>']):
     input_text = template
 
     # Iterate over subs and perform the .replace() calls
-    for tup in subs:
+    for (k,v) in subs:
         input_text = input_text.replace(
-                delims[0] + tup[0] + delims[1], tup[1])
+                delims[0] + k + delims[1], v)
     ## next tup
 
     # Return the result
