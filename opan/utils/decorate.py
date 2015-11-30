@@ -100,12 +100,12 @@ class arraysqueeze(object):
             for mod_arg in self.arglist:
                 if isinstance(mod_arg, int) and mod_arg < len(w_args):
                     w_args[mod_arg] = np.array(w_args[mod_arg]).squeeze()
-                    if len(w_args[mod_arg].shape) == 0:
+                    if not w_args[mod_arg].shape:
                         w_args[mod_arg] = w_args[mod_arg][np.newaxis]
                     ## end if
                 elif isinstance(mod_arg, str) and mod_arg in kwargs:
                     kwargs[mod_arg] = np.array(kwargs[mod_arg]).squeeze()
-                    if len(kwargs[mod_arg].shape) == 0:
+                    if not kwargs[mod_arg].shape:
                         kwargs[mod_arg] = kwargs[mod_arg][np.newaxis]
                     ## end if
                 # no 'else:' since type checked in __init__

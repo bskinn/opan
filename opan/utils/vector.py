@@ -112,7 +112,7 @@ def ortho_basis(normal, ref_vec=None):
     nv = normal / spla.norm(normal)
 
     # Test for specification of ref_vec in the function call
-    if ref_vec == None:
+    if ref_vec is None:
         # ref_vec not specified.
         #
         # Generate reference vector by generation of a random perturbation

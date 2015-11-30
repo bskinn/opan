@@ -100,7 +100,7 @@ class OPAN_REPO(object):
         if isinstance(fname, str):
             self.fname = fname
             self._repo = h5.File(fname)
-        elif fname == None:
+        elif fname is None:
             self._repo = None
             self.fname = None
         else:
@@ -287,7 +287,7 @@ class OPAN_REPO(object):
         ## end try
 
         # If succeeded, check if group not found
-        if grp == None:
+        if grp is None:
             raise(RErr(RErr.group, \
                     "Group '" + grpname + "' not found", \
                     self.fname))
@@ -357,7 +357,7 @@ class OPAN_REPO(object):
         ## end try
 
         # If succeeded, check if group not found
-        if grp == None:
+        if grp is None:
             raise(RErr(RErr.group, \
                     "Parameters group not found", \
                     self.fname))

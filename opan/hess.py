@@ -766,7 +766,7 @@ class ORCA_HESS(object):
         #=== Dipole derivatives ===#
         # Check if block found. Store None if not; otherwise import
         m_work = self.p_dipder_block.search(self.in_str)
-        if m_work == None:
+        if m_work is None:
             self.dipders = None
         else:
             # Check that number of derivatives rows indicated in the block
@@ -803,7 +803,7 @@ class ORCA_HESS(object):
         #=== IR Spectrum ===#
         # If dipole derivs absent or munged, or if block missing, then skip
         m_work = self.p_ir_block.search(self.in_str)
-        if self.dipders == None or m_work == None:
+        if None in [self.dipders, m_work]:
             self.ir_comps = None
             self.ir_mags = None
         else:
@@ -851,7 +851,7 @@ class ORCA_HESS(object):
         #=== Polarizability Derivatives ===#
         # If block is missing, skip it
         m_work = self.p_polder_block.search(self.in_str)
-        if m_work == None:
+        if m_work is None:
             self.polders = None
         else:
             # Check that number of derivatives rows indicated in the block
@@ -885,7 +885,7 @@ class ORCA_HESS(object):
         # If polarizability derivs absent or munged, or if block missing,
         #  then skip
         m_work = self.p_raman_block.search(self.in_str)
-        if self.polders == None or m_work == None:
+        if None in [self.polders, m_work]:
             self.raman_acts = None
             self.raman_depols = None
         else:
@@ -933,7 +933,7 @@ class ORCA_HESS(object):
         #=== Job list ===#
         # Check if block found. Store None if not; otherwise import
         m_work = self.p_jobs_block.search(self.in_str)
-        if m_work == None:
+        if m_work is None:
             self.joblist = None
         else:
             # Check that number of joblist rows indicated in the block
@@ -968,7 +968,7 @@ class ORCA_HESS(object):
         #=== Mass-weighted Hessian -- Eigenvalues ===#
         # Pull the block; continue only if block is present
         m_work = self.p_eigvals_block.search(self.in_str)
-        if m_work == None:
+        if m_work is None:
             self.mwh_eigvals = None
         else:
             # Check that number of eigenvalues indicated in the block matches
@@ -997,7 +997,7 @@ class ORCA_HESS(object):
         #=== Mass-weighted Hessian -- Eigenvalues ===#
         # See if the block is there; import if so
         m_work = self.p_eigvecs_block.search(self.in_str)
-        if m_work == None:
+        if m_work is None:
             self.mwh_eigvecs = None
         else:
             # Pull the eigenvectors

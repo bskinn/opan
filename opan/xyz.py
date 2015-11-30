@@ -200,7 +200,7 @@ class OPAN_XYZ(object):
                     bohrs=(kwargs['bohrs'] if 'bohrs' in kwargs else False))
         else:
             # Look for the from-coordinates objects
-            if all([(k in kwargs) for k in ('atom_syms', 'coords')]):
+            if all((k in kwargs) for k in ('atom_syms', 'coords')):
                 # Found. Call the by-data initializer. 'bohrs' defaults to
                 #  TRUE here (presume main call is from repo)
                 self._load_data(kwargs['atom_syms'], \
@@ -259,8 +259,8 @@ class OPAN_XYZ(object):
         ## end if
 
         # Proof the atoms list
-        if not all([(atom_syms[i].upper() in atomNum) \
-                                for i in range(atom_syms.shape[0])]):
+        if not all( (atom_syms[i].upper() in atomNum) \
+                                for i in range(atom_syms.shape[0]) ):
             # Invalid atoms specified
             raise(ValueError("Invalid atoms specified: " + str( \
                     [(j, atom_syms[j]) for j in \

@@ -336,7 +336,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     ## end if
 
     # Check for nothing assigned (this should never occur!)
-    if top == None:  # pragma: no cover
+    if top is None:  # pragma: no cover
         raise(INERTIAError(INERTIAError.top_type,
                     "Unrecognized molecular top type",""))
     ## end if
