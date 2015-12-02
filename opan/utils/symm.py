@@ -422,7 +422,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
     # Imports
     import numpy as np, itertools as itt
     from scipy import linalg as spla
-    from ..const import PRM, E_TopType as ETT
+    from ..const import PRM, EnumTopType as ETT
     from itertools import combinations as nCr
     from collections import namedtuple
     from ..error import SYMMError

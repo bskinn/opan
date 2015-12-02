@@ -21,15 +21,15 @@
 """ #DOC: Docstring for anharm.base
 """
 
-class ORCA_ANHARM(object):
-    """ #DOC: ORCA_ANHARM class-level docstring
+class OrcaAnharm(object):
+    """ #DOC: OrcaAnharm class-level docstring
     """
 
     # Imports
-    from ..const import E_Software as _E_SW
+    from ..const import EnumSoftware as _E_SW
 
     def __init__(self):
-        """ #DOC: ORCA_ANHARM.__init__ docstring (if needed)?
+        """ #DOC: OrcaAnharm.__init__ docstring (if needed)?
         """
 
         # Declare the holding variables for the XYZ, GRAD, HESS
@@ -57,11 +57,11 @@ class ORCA_ANHARM(object):
         # Imports
         import os
         from os import path as osp
-        from ..xyz import OPAN_XYZ as OX
-        from ..grad import ORCA_ENGRAD as OE
-        from ..hess import ORCA_HESS as OH
-        from .repo import OPAN_REPO as OR
-        from ..const import E_DispDirection as E_DDir, E_FileType as E_FT
+        from ..xyz import OpanXYZ as OX
+        from ..grad import OrcaEngrad as OE
+        from ..hess import OrcaHess as OH
+        from .repo import OpanAnharmRepo as OR
+        from ..const import EnumDispDirection as E_DDir, EnumFileType as E_FT
         from ..const import _E_SW as E_SW
         from ..const import DEF
         from ..error import ANHARMError as ANHErr
@@ -144,7 +144,7 @@ class ORCA_ANHARM(object):
 
     ## end def new_from_files
 
-## end class ORCA_ANHARM
+## end class OrcaAnharm
 
 
 

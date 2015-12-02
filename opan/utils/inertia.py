@@ -44,7 +44,7 @@ opan.
 
 # Module-level imports
 from .decorate import arraysqueeze as _arraysqueeze
-from ..const import DEF as _DEF, EU_RotConst as _EURC
+from ..const import DEF as _DEF, EnumUnitsRotConst as _EURC
 
 # Functions
 
@@ -275,7 +275,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         and processed for repeatability. The axis corresponding to `moments[i]`
         is retrieved as `axes[:,i]`
 
-    top     :  :class:`~opan.const.E_TopType`
+    top     :  :class:`~opan.const.EnumTopType`
         Detected molecular top type
 
     """
@@ -283,7 +283,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     # Imports
     import numpy as np
     from scipy import linalg as spla
-    from ..const import PRM, E_TopType as ETT
+    from ..const import PRM, EnumTopType as ETT
     from ..error import INERTIAError, VECTORError
     from .vector import rej, parallel_check as prlchk
     from .vector import orthonorm_check as orthchk
@@ -510,9 +510,9 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
         Atomic masses of the atoms. length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
-    units    : :class:`~opan.const.EU_RotConst`, optional
+    units    : :class:`~opan.const.EnumUnitsRotConst`, optional
         Enum value indicating the desired units of the output rotational
-        constants. Default is :data:`~opan.const.EU_RotConst.InvInertia`
+        constants. Default is :data:`~opan.const.EnumUnitsRotConst.InvInertia`
         :math:`\\left(1\\over \\mathrm{uB^2}\\right)`
 
     on_tol   : ``np.float_``, optional
@@ -529,7 +529,7 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
     # Imports
     import numpy as np
-    from ..const import E_TopType as ETT, EU_RotConst as EURC, PRM, PHYS
+    from ..const import EnumTopType as ETT, EnumUnitsRotConst as EURC, PRM, PHYS
 
     # Ensure units are valid
     if not units in EURC:

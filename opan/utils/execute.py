@@ -28,7 +28,7 @@
 
 
 # Module-level imports
-from ..const import DEF as _DEF, E_Software as _E_SW, E_FileType as _E_FT
+from ..const import DEF as _DEF, EnumSoftware as _E_SW, EnumFileType as _E_FT
 
 
 # Functions
@@ -104,7 +104,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
         A `tuple` of objects is returned, with elements of type ::
 
-            (ORCA_OUTPUT, OPAN_XYZ, ORCA_ENGRAD, ORCA_HESS)
+            (OrcaOutput, OpanXYZ, OrcaEngrad, OrcaHess)
 
         These objects contain the corresponding results from the computation,
         if the latter exist, or ``None`` if they are missing.
@@ -174,10 +174,10 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     # Imports
     import os, subprocess as sp
-    from ..output import ORCA_OUTPUT
-    from ..xyz import OPAN_XYZ
-    from ..grad import ORCA_ENGRAD
-    from ..hess import ORCA_HESS
+    from ..output import OrcaOutput
+    from ..xyz import OpanXYZ
+    from ..grad import OrcaEngrad
+    from ..hess import OrcaHess
     from ..utils import template_subst
 
     # Special key constants
@@ -245,33 +245,33 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         # Bind ORCA_XXXXX objects and return. Have to address possibility of
         #  any or all of these not existing.
         try:
-            o_out = ORCA_OUTPUT(out_fname,'file')
+            o_out = OrcaOutput(out_fname,'file')
         except IOError:
             o_out = None
         ## end try
 
         try:
-            o_xyz = OPAN_XYZ(path=os.path.join(work_dir, sim_name + ".xyz"), \
+            o_xyz = OpanXYZ(path=os.path.join(work_dir, sim_name + ".xyz"), \
                                                                 bohrs=bohrs)
         except IOError:
             o_xyz = None
         ## end try
 
         try:
-            o_trj = OPAN_XYZ(path=os.path.join(work_dir, sim_name + ".trj"), \
+            o_trj = OpanXYZ(path=os.path.join(work_dir, sim_name + ".trj"), \
                                                                 bohrs=bohrs)
         except IOError:
             o_trj = None
         ## end try
 
         try:
-            o_engrad = ORCA_ENGRAD(os.path.join(work_dir, sim_name + ".engrad"))
+            o_engrad = OrcaEngrad(os.path.join(work_dir, sim_name + ".engrad"))
         except IOError:
             o_engrad = None
         ## end try
 
         try:
-            o_hess = ORCA_HESS(os.path.join(work_dir, sim_name + ".hess"))
+            o_hess = OrcaHess(os.path.join(work_dir, sim_name + ".hess"))
         except IOError:
             o_hess = None
         ## end try

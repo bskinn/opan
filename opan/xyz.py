@@ -26,7 +26,7 @@
 _DEBUG = False
 
 
-class OPAN_XYZ(object):
+class OpanXYZ(object):
     """ Container for OpenBabel XYZ data.
 
     Contains all geometries present in the OpenBabel file at the path passed
@@ -43,8 +43,8 @@ class OPAN_XYZ(object):
 
     Initializer can be called in one of two forms:
 
-        OPAN_XYZ(path='path/to/file')
-        OPAN_XYZ(atom_syms={array of atoms}, coords={array of coordinates})
+        OpanXYZ(path='path/to/file')
+        OpanXYZ(atom_syms={array of atoms}, coords={array of coordinates})
 
     In both forms, the optional keyword argument 'bohrs' can be specified, to
     indicate the units of the coordinates as Bohrs (True) or Angstroms (False).
@@ -181,8 +181,8 @@ class OPAN_XYZ(object):
 
         Initializer can be called in one of two forms:
 
-        OPAN_XYZ(path='path/to/file')
-        OPAN_XYZ(atom_syms={array of atoms}, coords={array of coordinates})
+        OpanXYZ(path='path/to/file')
+        OpanXYZ(atom_syms={array of atoms}, coords={array of coordinates})
 
         In both forms, the optional keyword argument 'bohrs' can be specified,
         to indicate the units of the coordinates as Bohrs (True) or
@@ -244,7 +244,7 @@ class OPAN_XYZ(object):
         # Gripe if already initialized
         if 'initialized' in dir(self):
             raise(XYZError(XYZError.overwrite, \
-                    "Cannot overwrite contents of existing OPAN_XYZ", ""))
+                    "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
 
         # Check and store dimensions
@@ -298,7 +298,7 @@ class OPAN_XYZ(object):
 
 
     def _load_file(self, XYZ_path, bohrs=False):
-        """ Initialize OPAN_XYZ geometry object from OpenBabel file
+        """ Initialize OpanXYZ geometry object from OpenBabel file
 
         Import of an arbitrary number of multiple geometries from an OpenBabel
         file. All geometries must have the same number and type of atoms,
@@ -327,7 +327,7 @@ class OPAN_XYZ(object):
         # Complain if already initialized
         if 'initialized' in dir(self):
             raise(XYZError(XYZError.overwrite, \
-                    "Cannot overwrite contents of existing OPAN_XYZ", ""))
+                    "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
 
         # Open file, read contents, close stream
@@ -341,7 +341,7 @@ class OPAN_XYZ(object):
 
         # Check to ensure at least one geom match; else raise some sort of
         #  error
-        if not OPAN_XYZ.p_geom.search(self.in_str):
+        if not OpanXYZ.p_geom.search(self.in_str):
             raise(XYZError(XYZError.xyzfile,
                     "No valid geometry found",
                     "XYZ file: " + XYZ_path))
@@ -357,7 +357,7 @@ class OPAN_XYZ(object):
         #  I don't have to check for a subtype of AttributeError...
         # Can't think of a need for an else or a finally here
         try:
-            self.num_atoms = scast(OPAN_XYZ.p_geom.match(self.in_str)
+            self.num_atoms = scast(OpanXYZ.p_geom.match(self.in_str)
                                             .group("num"), np.int_)
         except AttributeError:
             raise(XYZError(XYZError.xyzfile,
@@ -385,7 +385,7 @@ class OPAN_XYZ(object):
         self.num_geoms = 0
 
         # Loop over the geometry blocks found in the input file
-        for mch in OPAN_XYZ.p_geom.finditer(self.in_str):
+        for mch in OpanXYZ.p_geom.finditer(self.in_str):
             # Check that the number of atoms is consistent with the spec
             #  found in the first geometry block
             if not scast(mch.group("num"), np.int_) == self.num_atoms:
@@ -402,7 +402,7 @@ class OPAN_XYZ(object):
             # Reset the atom counter and the coordinates vector
             atom_count = 0
             coord_vec = np.empty((0,),dtype=np.float_)
-            for line_mch in OPAN_XYZ.p_coords.finditer(mch.group("coord")):
+            for line_mch in OpanXYZ.p_coords.finditer(mch.group("coord")):
                 # Check for whether element list has been fully populated
                 if len(self.atom_syms) < self.num_atoms:
                     # If not, continue populating it; have to check for
@@ -533,7 +533,7 @@ class OPAN_XYZ(object):
 
 
     def Geom_single(self, g_num):
-        """ Retrieve a single geometry from the OPAN_XYZ instance.
+        """ Retrieve a single geometry from the OpanXYZ instance.
 
         The atom coordinates are returned as a length-3N np.array,
             with each atom's x/y/z coordinates returned together:
@@ -563,7 +563,7 @@ class OPAN_XYZ(object):
 
 
     def Geom_iter(self, g_nums):
-        """Iterator over selected geometries from the OPAN_XYZ instance.
+        """Iterator over selected geometries from the OpanXYZ instance.
 
         The indices of the geometries to be returned are indicated by an
             iterable of integers passed as g_nums.
@@ -601,7 +601,7 @@ class OPAN_XYZ(object):
 
 
     def Dist_single(self, g_num, at_1, at_2):
-        """ Retrieve an interatomic distance from the OPAN_XYZ instance.
+        """ Retrieve an interatomic distance from the OpanXYZ instance.
 
         Returns the interatomic distance between the two atoms at_1 and at_2
             from geometry g_num in Bohrs.
@@ -734,7 +734,7 @@ class OPAN_XYZ(object):
 
 
     def Angle_single(self, g_num, at_1, at_2, at_3):
-        """ Retrieve an atomic angle from the OPAN_XYZ instance.
+        """ Retrieve an atomic angle from the OpanXYZ instance.
 
         Returns the angle between three atoms at_1, at_2 and at_3
             from geometry g_num in degrees, with at_2 the central atom.
@@ -899,7 +899,7 @@ class OPAN_XYZ(object):
 
 
     def Dihed_single(self, g_num, at_1, at_2, at_3, at_4):
-        """ Retrieve a dihedral/out-of-plane angle from the OPAN_XYZ instance.
+        """ Retrieve a dihedral/out-of-plane angle from the OpanXYZ instance.
 
         Returns the out-of-plane angle among four atoms at_1, at_2, at_3
             and at_4 from geometry g_num, in degrees.  The reference plane
@@ -1143,7 +1143,7 @@ class OPAN_XYZ(object):
 
 
     def Displ_single(self, g_num, at_1, at_2):
-        """ Displacement vector between two atoms from an OPAN_XYZ instance.
+        """ Displacement vector between two atoms from an OpanXYZ instance.
 
         Returns the displacement vector pointing from at_1 toward at_2 from the
             indicated geometry.  If at_1 == at_2 the zero vector is returned.
@@ -1384,7 +1384,7 @@ class OPAN_XYZ(object):
 
     ## end def _iter_return
 
-## end class OPAN_XYZ
+## end class OpanXYZ
 
 
 if __name__ == '__main__':  # pragma: no cover

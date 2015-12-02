@@ -37,7 +37,7 @@ class SuperORCA(unittest.TestCase):
 ## end class SuperORCA
 
 
-# ============================  ORCA_ENGRAD ================================= #
+# ============================  OrcaEngrad ================================= #
 
 class SuperORCAEngrad(SuperORCA):
     # Superclass for all ORCA engrad test cases
@@ -147,10 +147,10 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         # Load the object
 
         # Imports
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
         # Create the object
-        self.oe = ORCA_ENGRAD(self.file_name)
+        self.oe = OrcaEngrad(self.file_name)
 
         # Enable long messages
         self.longMessage = True
@@ -221,33 +221,33 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
     def test_ENGRAD_MissingBlockNumAts(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.numats, self.file_name + self.names.numats)
 
     def test_ENGRAD_MissingBlockEnergy(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.en, self.file_name + self.names.energy)
 
     def test_ENGRAD_MissingBlockGrad(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_MissingBlockGeom(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end def TestORCAEngradMissingBlocks
@@ -286,17 +286,17 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
     def test_ENGRAD_TruncatedBlockGrad(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.gradblock, self.file_name + self.names.grad)
 
     def test_ENGRAD_TruncatedBlockGeom(self):
 
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.geomblock, self.file_name + self.names.geom)
 
 ## end class TestORCAEngradTruncatedBlocks
@@ -334,17 +334,17 @@ class TestORCAEngradBadData(SuperORCAEngrad):
 
     def test_ENGRAD_BadDataAtomicNum(self):
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.geomblock, self.file_name
                                         + self.names.atomicnum)
 
     def test_ENGRAD_BadDataNumAtoms(self):
         from opan.error import GRADError
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
 
-        assertErrorAndTypecode(self, GRADError, ORCA_ENGRAD,
+        assertErrorAndTypecode(self, GRADError, OrcaEngrad,
                     GRADError.gradblock, self.file_name
                                         + self.names.numats)
 
@@ -356,14 +356,14 @@ class TestORCAEngradLiveData(SuperORCAEngrad):
     def test_ENGRAD_LiveData(self):
 
         import os
-        from opan.grad import ORCA_ENGRAD
+        from opan.grad import OrcaEngrad
         from opan.error import GRADError
 
         for fname in os.listdir(self.resourcedir):
             if fname[:9] == "test_orca" and fname[-6:] == "engrad":
                 print("\nTesting file '" + fname + "' ... ")
                 try:
-                    ORCA_ENGRAD(os.path.join(self.resourcedir, fname))
+                    OrcaEngrad(os.path.join(self.resourcedir, fname))
                 except (IOError, GRADError) as e: # pragma: no cover
                     self.longMessage = True
                     self.fail("Load of test file '" + str(fname) +
@@ -374,15 +374,15 @@ class TestORCAEngradLiveData(SuperORCAEngrad):
 
 # ============================  OPAN_ERROR ================================== #
 
-class TestOPANErrorInitErrors(unittest.TestCase):
+class TestOpanErrorInitErrors(unittest.TestCase):
     # Testing errors that should be thrown on initialization
 
-    def test_OPANError_init_NotImplemented(self):
+    def test_OpanError_init_NotImplemented(self):
         # Must import
-        from opan.error import OPANError
+        from opan.error import OpanError
 
-        # Confirm OPANError parent class as abstract
-        self.assertRaises(NotImplementedError, OPANError, "tc", "msg", "src")
+        # Confirm OpanError parent class as abstract
+        self.assertRaises(NotImplementedError, OpanError, "tc", "msg", "src")
 
     def test_XYZError_init_BadTypecode(self):
         # Must import
@@ -391,11 +391,11 @@ class TestOPANErrorInitErrors(unittest.TestCase):
         # Confirm KeyError raised when invalid typecode passed
         self.assertRaises(KeyError, XYZError, "INVALID TYPECODE", "msg", "src")
 
-## end class TestOPANErrorInitErrors
+## end class TestOpanErrorInitErrors
 
 
 class TestXYZErrorInitConfig(unittest.TestCase):
-    # XYZError used as a representative OPANError subclass
+    # XYZError used as a representative OpanError subclass
 
     # Class-level constants
     tc = 'nonprl'
@@ -427,7 +427,7 @@ class TestXYZErrorInitConfig(unittest.TestCase):
 ## end class TestXYZErrorInitConfig
 
 
-# =============================  ORCA_HESS  ================================= #
+# =============================  OrcaHess  ================================= #
 
 class SuperORCAHess(SuperORCA):
     # Superclass for all ORCA .hess test cases
@@ -1223,10 +1223,10 @@ class TestORCAHessKnownGood(SuperORCAHess):
         # Load the object
 
         # Imports
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # Create the object
-        self.oh = ORCA_HESS(self.file_name)
+        self.oh = OrcaHess(self.file_name)
 
         # Enable long messages
         self.longMessage = True
@@ -1388,108 +1388,108 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
     def test_HESS_MissingBlockHess(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.hess_block, self.file_name +
                     self.names.hess)
 
     def test_HESS_MissingBlockGeom(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.at_block, self.file_name +
                     self.names.geom)
 
     def test_HESS_MissingBlockEnergy(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.energy, self.file_name +
                     self.names.energy)
 
     def test_HESS_MissingBlockTemp(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.temp, self.file_name +
                     self.names.temp)
 
     def test_HESS_MissingBlockFreqs(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.freq_block, self.file_name +
                     self.names.freqs)
 
     def test_HESS_MissingBlockModes(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.modes_block, self.file_name +
                     self.names.modes)
 
     def test_HESS_MissingBlockDipders(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name +
+        self.assertIsNone(OrcaHess(self.file_name +
                                             self.names.dipders).dipders)
 
     def test_HESS_MissingBlockIRSpectrum(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        h = ORCA_HESS(self.file_name + self.names.ir)
+        h = OrcaHess(self.file_name + self.names.ir)
 
         self.assertIsNone(h.ir_comps)
         self.assertIsNone(h.ir_mags)
 
     def test_HESS_MissingBlockPolders(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name +
+        self.assertIsNone(OrcaHess(self.file_name +
                                             self.names.polders).polders)
 
     def test_HESS_MissingBlockRamanSpectrum(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        h = ORCA_HESS(self.file_name + self.names.raman)
+        h = OrcaHess(self.file_name + self.names.raman)
 
         self.assertIsNone(h.raman_acts)
         self.assertIsNone(h.raman_depols)
 
     def test_HESS_MissingBlockJobList(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name +
+        self.assertIsNone(OrcaHess(self.file_name +
                                             self.names.joblist).joblist)
 
     def test_HESS_MissingBlockMWHEigvals(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name +
+        self.assertIsNone(OrcaHess(self.file_name +
                                         self.names.mwh_eigvals).mwh_eigvals)
 
     def test_HESS_MissingBlockMWHEigvecs(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name +
+        self.assertIsNone(OrcaHess(self.file_name +
                                         self.names.mwh_eigvecs).mwh_eigvecs)
 
 ## end class TestORCAHessMissingBlocks
@@ -1527,95 +1527,95 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
     def test_HESS_TruncatedBlocksHess(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # 'Early' (non-final section) truncation
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.hess_block, self.file_name + self.names.hess)
         # 'Late' (final section) truncation
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.hess_block,
                     self.file_name + self.names.hess + self.names.suffix_dim2)
 
     def test_HESS_TruncatedBlocksGeom(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.at_block, self.file_name + self.names.geom)
 
     def test_HESS_TruncatedBlocksFreqs(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.freq_block, self.file_name + self.names.freqs)
 
     def test_HESS_TruncatedBlocksModes(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.modes_block, self.file_name + self.names.modes)
 
     def test_HESS_TruncatedBlocksDipders(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
     def test_HESS_TruncatedBlocksIRSpectrum(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.ir_block, self.file_name + self.names.ir)
 
     def test_HESS_TruncatedBlocksPolders(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.polder_block, self.file_name + self.names.polders)
 
     def test_HESS_TruncatedBlocksRamanSpectrum(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.raman_block, self.file_name + self.names.raman)
 
     def test_HESS_TruncatedBlocksJobList(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.job_block, self.file_name + self.names.joblist)
 
     def test_HESS_TruncatedBlocksMWHEigvals(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.eigval_block,
                     self.file_name + self.names.mwh_eigvals)
 
     def test_HESS_TruncatedBlocksMWHEigvecs(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.eigvec_block,
                     self.file_name + self.names.mwh_eigvecs)
 
@@ -1654,86 +1654,86 @@ class TestORCAHessBadData(SuperORCAHess):
     def test_HESS_BadDataHessDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.hess_block, self.file_name + self.names.hess)
 
     def test_HESS_BadDataFreqDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.freq_block, self.file_name + self.names.freqs)
 
     def test_HESS_BadDataAtomSym(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertRaises(KeyError, ORCA_HESS,
+        self.assertRaises(KeyError, OrcaHess,
                                     self.file_name + self.names.atsym)
 
     def test_HESS_BadDataNormalModes(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # First dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.modes_block, self.file_name + self.names.modes)
         # Second dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.modes_block,
                     self.file_name + self.names.modes + self.names.suffix_dim2)
 
     def test_HESS_BadDataDipdersDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.dipder_block, self.file_name + self.names.dipders)
 
     def test_HESS_BadDataDipdersTooBig(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        self.assertIsNone(ORCA_HESS(self.file_name + self.names.dipders +
+        self.assertIsNone(OrcaHess(self.file_name + self.names.dipders +
                         self.names.suffix_badval).dipders)
 
     def test_HESS_BadDataIRSpectrum(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # Bad dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.ir_block, self.file_name + self.names.ir)
         # Mismatched frequency
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.ir_block,
                     self.file_name + self.names.ir + self.names.suffix_badfreq)
 
     def test_HESS_BadDataPoldersDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.polder_block, self.file_name + self.names.polders)
 
     def test_HESS_BadDataRamanSpectrum(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # Bad dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.raman_block, self.file_name + self.names.raman)
         # Mismatched frequency
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.raman_block,
                     self.file_name + self.names.raman +
                                                 self.names.suffix_badfreq)
@@ -1741,31 +1741,31 @@ class TestORCAHessBadData(SuperORCAHess):
     def test_HESS_BadDataJobListDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.job_block, self.file_name + self.names.joblist)
 
     def test_HESS_BadDataMWHEigvalsDim(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.eigval_block,
                     self.file_name + self.names.mwh_eigvals)
 
     def test_HESS_BadDataMWHEigvecs(self):
 
         from opan.error import HESSError
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
         # First dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.eigvec_block,
                     self.file_name + self.names.mwh_eigvecs)
         # Second dimension
-        assertErrorAndTypecode(self, HESSError, ORCA_HESS,
+        assertErrorAndTypecode(self, HESSError, OrcaHess,
                     HESSError.eigvec_block,
                     self.file_name + self.names.mwh_eigvecs +
                             self.names.suffix_dim2)
@@ -1808,9 +1808,9 @@ class TestORCAHessAltData(SuperORCAHess):
 
     def test_HESS_AltDataJobList(self):
 
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
 
-        h = ORCA_HESS(self.file_name + self.names.joblist)
+        h = OrcaHess(self.file_name + self.names.joblist)
 
         self.assertEqual(h.joblist.shape,
                         self.alt_data_values[self.names.joblist].shape)
@@ -1832,14 +1832,14 @@ class TestORCAHessLiveData(SuperORCAHess):
     def test_HESS_LiveData(self):
 
         import os
-        from opan.hess import ORCA_HESS
+        from opan.hess import OrcaHess
         from opan.error import HESSError
 
         for fname in os.listdir(self.resourcedir):
             if fname[:9] == "test_orca" and fname[-4:] == "hess":
                 print("\nTesting file '" + fname + "' ....")
                 try:
-                    ORCA_HESS(os.path.join(self.resourcedir, fname))
+                    OrcaHess(os.path.join(self.resourcedir, fname))
                 except (IOError, HESSError) as e: # pragma: no cover
                     self.fail("Load of test file '" + str(fname) +
                             "' failed:\n" + str(e))
@@ -1847,7 +1847,7 @@ class TestORCAHessLiveData(SuperORCAHess):
 ## end class TestORCAHessLiveData
 
 
-# =============================  OPAN_XYZ  ================================== #
+# =============================  OpanXYZ  ================================== #
 
 class SuperOPANXYZ(unittest.TestCase):
     # Superclass for all OPAN .xyz test cases
@@ -2117,10 +2117,10 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
         # Load the object
 
         # Imports
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         # Create the object
-        self.xyz = OPAN_XYZ(path=self.file_name)
+        self.xyz = OpanXYZ(path=self.file_name)
 
         # Long messages
         self.longMessage = True
@@ -2224,11 +2224,11 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
 
     def test_XYZ_AltFileDataFirstCuAtomnum(self):
 
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
         from opan.error import XYZError
 
         try:
-            xyz = OPAN_XYZ(path=(self.file_name + self.names.Cu_1st_as_atomnum))
+            xyz = OpanXYZ(path=(self.file_name + self.names.Cu_1st_as_atomnum))
         except XYZError:  # pragma: no cover
             self.fail("XYZ import failed when success was expected.")
 
@@ -2237,11 +2237,11 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
 
     def test_XYZ_AltFileDataLateCuAtomnum(self):
 
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
         from opan.error import XYZError
 
         try:
-            xyz = OPAN_XYZ(path=(self.file_name +
+            xyz = OpanXYZ(path=(self.file_name +
                                             self.names.Cu_late_as_atomnum))
         except XYZError:  # pragma: no cover
             self.fail("XYZ import failed when success was expected.")
@@ -2253,16 +2253,16 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
 
 
 class TestOPANXYZGoodDirectData(SuperOPANXYZ):
-    # Confirming sanity of an OPAN_XYZ generated directly from data.
+    # Confirming sanity of an OpanXYZ generated directly from data.
 
     def setUp(self):
         # Load the object
 
         # Imports
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         # Create the object
-        self.xyz = OPAN_XYZ(atom_syms=self.good_direct_atoms,
+        self.xyz = OpanXYZ(atom_syms=self.good_direct_atoms,
                                             coords=self.good_direct_geom)
 
         # Long messages
@@ -2354,9 +2354,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         #  an XYZError
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.file_start))
 
@@ -2366,9 +2366,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         #  spec at the top of each geometry block
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.atom_counts))
 
@@ -2377,9 +2377,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         #  head of each geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.const_numats))
 
@@ -2387,9 +2387,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Invalid atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_lategeom_atomnum))
 
@@ -2397,9 +2397,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Discrepant atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                     XYZError.xyzfile,
                     path=(self.file_name + self.names.diff_lategeom_atomnum))
 
@@ -2407,9 +2407,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Invalid atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_1stgeom_atomnum))
 
@@ -2417,9 +2417,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Invalid atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_lategeom_atomsym))
 
@@ -2427,9 +2427,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Discrepant atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                     XYZError.xyzfile,
                     path=(self.file_name + self.names.diff_lategeom_atomsym))
 
@@ -2437,9 +2437,9 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
         # Invalid atomic number in a non-initial geometry block.
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        assertErrorAndTypecode(self, XYZError, OPAN_XYZ,
+        assertErrorAndTypecode(self, XYZError, OpanXYZ,
                         XYZError.xyzfile,
                         path=(self.file_name + self.names.bad_1stgeom_atomsym))
 
@@ -2447,32 +2447,32 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
 
 
 class TestOPANXYZBadDirectData(SuperOPANXYZ):
-    # Ensuring invalid data passed directly to construct an OPAN_XYZ instance
+    # Ensuring invalid data passed directly to construct an OpanXYZ instance
     #  throws the appropriate errors or otherwise exhibits the correct problems.
 
     def test_XYZ_BadDirectDataTruncCoords(self):
-        from opan.xyz import OPAN_XYZ
-        self.assertRaises(ValueError, OPAN_XYZ, \
+        from opan.xyz import OpanXYZ
+        self.assertRaises(ValueError, OpanXYZ, \
                     coords=self.good_direct_geom[0][:-2], \
                     atom_syms=self.good_direct_atoms)
 
     def test_XYZ_BadDirectDataBadElement(self):
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         # Copy symbols, munge, and pass into assert
         munge_atoms = self.good_direct_atoms[:]
         munge_atoms[0] = 'CX'
-        self.assertRaises(ValueError, OPAN_XYZ, \
+        self.assertRaises(ValueError, OpanXYZ, \
                     coords=self.good_direct_geom, \
                     atom_syms=munge_atoms)
 
     def test_XYZ_BadDirectDataNonRealCoords(self):
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
         import numpy as np
 
         # Copy coords, munge, and pass to assert
         munge_coords = self.good_direct_geom[0].copy() * 1.j
-        self.assertRaises(ValueError, OPAN_XYZ, \
+        self.assertRaises(ValueError, OpanXYZ, \
                     coords=munge_coords, \
                     atom_syms=self.good_direct_atoms)
 
@@ -2492,7 +2492,7 @@ class TestOPANXYZBadDirectData(SuperOPANXYZ):
 
 
 class TestOPANXYZBadUsage(SuperOPANXYZ):
-    # Ensuring bad use cases of OPAN_XYZ throw the appropriate errors or
+    # Ensuring bad use cases of OpanXYZ throw the appropriate errors or
     #  otherwise exhibit the correct problems.
 
     @classmethod
@@ -2517,21 +2517,21 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
     def test_XYZ_BadUsageBadInitParams(self):
         # Calling without 'path' or both 'atom_syms' and 'coords'
 
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
-        self.assertRaises(NameError, OPAN_XYZ)
-        self.assertRaises(NameError, OPAN_XYZ, atom_syms=['CU', 'O'])
-        self.assertRaises(NameError, OPAN_XYZ, coords=[1,2,3])
+        self.assertRaises(NameError, OpanXYZ)
+        self.assertRaises(NameError, OpanXYZ, atom_syms=['CU', 'O'])
+        self.assertRaises(NameError, OpanXYZ, coords=[1,2,3])
 
     def test_XYZ_BadUsageReInitDirectData(self):
         # Should pitch a fit if someone uses the private data method to try to
-        #  reinit an OPAN_XYZ instance
+        #  reinit an OpanXYZ instance
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         # Should work fine
-        xyz = OPAN_XYZ(coords=self.good_direct_geom, \
+        xyz = OpanXYZ(coords=self.good_direct_geom, \
                                 atom_syms=self.good_direct_atoms)
 
         # Should raise error to re-init with same contents.
@@ -2542,13 +2542,13 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
 
     def test_XYZ_BadUsageReInitFileData(self):
         # Should pitch a fit if someone uses the private file method to try to
-        #  reinit an OPAN_XYZ instance
+        #  reinit an OpanXYZ instance
 
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         # Should work fine
-        xyz = OPAN_XYZ(path=self.file_name)
+        xyz = OpanXYZ(path=self.file_name)
 
         # Should raise error to re-init with same contents.
         assertErrorAndTypecode(self, XYZError, xyz._load_file, \
@@ -2559,7 +2559,7 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
 
         import os
         from opan.error import XYZError
-        from opan.xyz import OPAN_XYZ
+        from opan.xyz import OpanXYZ
 
         badfilename = 'bad.file'
 
@@ -2568,7 +2568,7 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
                 f.write("This is not an OpenBabel file.\n\n")
                 f.write("(In case you were wondering...)\n\n")
 
-            assertErrorAndTypecode(self, XYZError, OPAN_XYZ, \
+            assertErrorAndTypecode(self, XYZError, OpanXYZ, \
                             XYZError.xyzfile, \
                             path=badfilename)
 
@@ -2605,8 +2605,8 @@ class SuperOPANUtilsInertia(object):
 
         # Imports
         import os
-        from opan.xyz import OPAN_XYZ as XYZ
-        from opan.hess import ORCA_HESS as HESS
+        from opan.xyz import OpanXYZ as XYZ
+        from opan.hess import OrcaHess as HESS
 
         # Attach class objects
         basename = os.path.join(self.filedir, self.fname)
@@ -2689,7 +2689,7 @@ class SuperOPANUtilsInertia(object):
 
     def test_rot_consts(self):
         import opan.utils.inertia as oui
-        from opan.const import PRM, EU_RotConst as EURC
+        from opan.const import PRM, EnumUnitsRotConst as EURC
         rc = oui.rot_consts(self.xyz.geoms[0], self.hess.atom_masses,
                                                             EURC.InvInertia)
         for i in range(rc.shape[0]):
@@ -2716,7 +2716,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType, EU_RotConst as EURC
+    from opan.const import EnumTopType, EnumUnitsRotConst as EURC
 
     # Constants for superclass method use
     fname = "H2O_Asymm"
@@ -2731,7 +2731,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
     axes = np.array([[  8.16492638e-01,  -5.77355846e-01,   6.07765301e-15],
                 [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
-    top = E_TopType.Asymmetrical
+    top = EnumTopType.Asymmetrical
     rc = np.array([ 0.207065592447,  0.120144860861,  0.076030171231])
 
     rc_units = {EURC.AngFreqAtomic: np.array([  1.135920230159e-04,   6.590905634729e-05,   4.170862410476e-05]),
@@ -2785,7 +2785,7 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 
     def test_UtilsInertiaCheckAllRotConstUnits(self):
         from opan.utils.inertia import rot_consts
-        from opan.const import EU_RotConst as EURC
+        from opan.const import EnumUnitsRotConst as EURC
         for (u, a) in [(u, rot_consts(self.xyz.geoms[0],
                     self.hess.atom_masses, units=u)) for u in EURC]:
             for i in range(a.shape[0]):
@@ -2807,7 +2807,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType, PRM
+    from opan.const import EnumTopType, PRM
 
     # Constants for superclass method use
     fname = "Cu_Atom"
@@ -2816,7 +2816,7 @@ class TestOPANUtilsInertiaAtom(SuperOPANUtilsInertia, unittest.TestCase):
     i_tensor = np.zeros((3,3))
     moments = np.zeros((3,))
     axes = np.eye(3)
-    top = E_TopType.Atom
+    top = EnumTopType.Atom
     rc = np.repeat(1.0/(2.0*PRM.Zero_Moment_Tol), 3)
 
 ## end class TestOPANUtilsInertiaAtom
@@ -2827,7 +2827,7 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType, PRM
+    from opan.const import EnumTopType, PRM
 
     # Constants for superclass method use
     fname = "HC2Cl_Linear"
@@ -2843,7 +2843,7 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
     axes = np.array([[ -1.00000000e+00,   2.49655671e-10,  -3.91982518e-09],
                    [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
                    [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
-    top = E_TopType.Linear
+    top = EnumTopType.Linear
     rc = np.array([1.0/(2.0*PRM.Equal_Moment_Tol),
                                     1.550924404326e-03, 1.550924404326e-03])
 
@@ -2863,7 +2863,7 @@ class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import EnumTopType
 
     # Constants for superclass method use
     fname = "CH3Cl_SymmProl"
@@ -2880,7 +2880,7 @@ class TestOPANUtilsInertiaSymmProl(SuperOPANUtilsInertia, unittest.TestCase):
     axes = np.array([[ -5.77350269e-01,  -4.08248290e-01,  -7.07106781e-01],
                        [ -5.77350269e-01,  -4.08248291e-01,   7.07106781e-01],
                        [ -5.77350269e-01,   8.16496581e-01,   2.78286699e-10]])
-    top = E_TopType.SymmProlate
+    top = EnumTopType.SymmProlate
     rc = np.array([ 0.043002710352,  0.003555101671,  0.003555101671])
 
 ## end class TestOPANUtilsInertiaSymmProl
@@ -2891,7 +2891,7 @@ class TestOPANUtilsInertiaSymmObl(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import EnumTopType
 
     # Constants for superclass method use
     fname = "NH3_SymmObl"
@@ -2907,7 +2907,7 @@ class TestOPANUtilsInertiaSymmObl(SuperOPANUtilsInertia, unittest.TestCase):
     axes = np.array([[-0.941357532609, -0.052449650272, -0.333309210773],
                    [ 0.334894464181, -0.024822665809, -0.94192862422 ],
                    [ 0.041130203771, -0.998315015137,  0.040932100963]])
-    top = E_TopType.SymmOblate
+    top = EnumTopType.SymmOblate
     rc = np.array([ 0.078154470132,  0.078148511783,  0.05242517071 ])
 
 ## end class TestOPANUtilsInertiaSymmObl
@@ -2918,7 +2918,7 @@ class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import EnumTopType
 
     # Constants for superclass method use
     fname = "C6H6_Planar"
@@ -2943,7 +2943,7 @@ class TestOPANUtilsInertiaPlanar(SuperOPANUtilsInertia, unittest.TestCase):
     axes = np.array([[ 1.,  0.,  0.],
                        [ 0.,  1.,  0.],
                        [ 0.,  0.,  1.]])
-    top = E_TopType.SymmOblate
+    top = EnumTopType.SymmOblate
     rc = np.array([ 0.002909145427,  0.002909145427,  0.001454572714])
 
 ## end class TestOPANUtilsInertiaPlanar
@@ -2954,7 +2954,7 @@ class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
 
     # Imports
     import numpy as np
-    from opan.const import E_TopType
+    from opan.const import EnumTopType
 
     # Constants for superclass method use
     fname = "CH4_Spher"
@@ -2975,7 +2975,7 @@ class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
             [[  5.773502691632e-01,  -4.082482905123e-01,   7.071067811802e-01],
            [  5.773502692095e-01,  -4.082482904247e-01,  -7.071067811929e-01],
            [  5.773502691962e-01,   8.164965809231e-01,   6.946399011554e-11]])
-    top = E_TopType.Spherical
+    top = EnumTopType.Spherical
     rc = np.array([ 0.044492290811,  0.044492290809,  0.044492290806])
 
 ## end class TestOPANUtilsInertiaSpher
@@ -2984,7 +2984,7 @@ class TestOPANUtilsInertiaSpher(SuperOPANUtilsInertia, unittest.TestCase):
 # ==========================  Helper Functions  ============================= #
 
 def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
-    """ Wrapper for asserting correct OPANErrors and proper typecodes.
+    """ Wrapper for asserting correct OpanErrors and proper typecodes.
 
     Function tests (using testclass.assertX methods) whether 'cobj' raises
     'errtype' with typecode 'tc' when instantiated/called with *args and
@@ -2996,7 +2996,7 @@ def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
         Subclass of unittest.TestCase (or related), from which the .assertX
         methods should be called
     errtype     : object reference
-        Subclass of OPANError expected to be raised
+        Subclass of OpanError expected to be raised
     cobj        : object reference
         Callable object to be instantiated or called
     tc          : str / typecode "enum"

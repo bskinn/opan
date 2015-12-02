@@ -24,8 +24,8 @@
 # Imports
 
 
-class OPAN_REPO(object):
-    """ #DOC: OPAN_REPO docstring
+class OpanAnharmRepo(object):
+    """ #DOC: OpanAnharmRepo docstring
 
     Operations here **DO NOT** ensure consistency with the surrounding data.
     Such consistency must be checked/handled at a higher level. This is just
@@ -60,7 +60,7 @@ class OPAN_REPO(object):
     """
 
     # Imports
-    from ..const import E_DispDirection as _E_DD
+    from ..const import EnumDispDirection as _E_DD
 
 
     # Class variables
@@ -183,8 +183,8 @@ class OPAN_REPO(object):
         # Imports
         import h5py as h5
         from ..error import REPOError as RErr
-        from ..const import E_DispDirection as _E_DD
-        from ..const import ERA_Data
+        from ..const import EnumDispDirection as _E_DD
+        from ..const import EnumAnharmRepoData
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -198,7 +198,7 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid repo data type
-        if not datatype in ERA_Data:
+        if not datatype in EnumAnharmRepoData:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "data type enum value"))
         ## end if
@@ -249,8 +249,8 @@ class OPAN_REPO(object):
 
         # Imports
         import os
-        from ..const import E_DispDirection as _E_DD
-        from ..const import ERA_Data
+        from ..const import EnumDispDirection as _E_DD
+        from ..const import EnumAnharmRepoData
         from ..error import REPOError as RErr
 
         # Must be valid mode
@@ -265,7 +265,7 @@ class OPAN_REPO(object):
         ## end if
 
         # Must be a valid data type
-        if not datatype in ERA_Data:
+        if not datatype in EnumAnharmRepoData:
             raise(ValueError("'" + str(datatype) + "' is not a valid " + \
                     "repository data type enum value"))
         ## end if
@@ -339,11 +339,11 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from ..const import ERA_Param
+        from ..const import EnumAnharmRepoParam
         from ..error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ERA_Param:
+        if not param in EnumAnharmRepoParam:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -393,11 +393,11 @@ class OPAN_REPO(object):
 
         # Imports
         import os
-        from ..const import ERA_Param
+        from ..const import EnumAnharmRepoParam
         from ..error import REPOError as RErr
 
         # Must be a valid parameter name
-        if not param in ERA_Param:
+        if not param in EnumAnharmRepoParam:
             raise(ValueError("'" + str(param) + "' is not a valid " + \
                     "parameter enum value"))
         ## end if
@@ -506,12 +506,12 @@ class OPAN_REPO(object):
         """
 
         # Imports
-        from ..xyz import OPAN_XYZ as XYZ
-        from ..const import ERA_Param, ERA_Data
+        from ..xyz import OpanXYZ as XYZ
+        from ..const import EnumAnharmRepoParam, EnumAnharmRepoData
 
         # Generate XYZ and return
-        out_XYZ = XYZ(atom_syms=self.get_param(ERA_Param.atoms), \
-                        coords=self.get_data(ERA_Data.geom, mode, disp))
+        out_XYZ = XYZ(atom_syms=self.get_param(EnumAnharmRepoParam.atoms), \
+                        coords=self.get_data(EnumAnharmRepoData.geom, mode, disp))
         return out_XYZ
 
     ## end def get_XYZ

@@ -96,14 +96,14 @@ def pack_tups(*args):
         print("args = " + str(args))
 
     # Non-iterable subclass of str
-    class str_noiter(str):
+    class StrNoIter(str):
         def __iter__(self):
             raise(NotImplementedError("Non-iterable string"))
         ## end def __iter__
-    ## end class str_noiter
+    ## end class StrNoIter
 
     # Re-wrap input arguments with non-iterable strings if required
-    mod_args = [(str_noiter(a) if isinstance(a, str) else a) for a in args]
+    mod_args = [(StrNoIter(a) if isinstance(a, str) else a) for a in args]
 
     # Determine the length or non-iterable status of each item and store
     #  the maximum value (depends on NOT_ITER < 0)

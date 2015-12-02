@@ -24,17 +24,17 @@
 """Custom errors for OpenAnharmonic
 
 Error classes are subclassed from :exc:`~exceptions.Exception` via an
-abstract superclass, :class:`~opan.error.OPANError`, which defines
+abstract superclass, :class:`~opan.error.OpanError`, which defines
 several common features:
 
  * Storage of a 'typecode' and a 'source' string along with the error message
    to allow passing of more fine-grained information to the exception stack
- * Implementation of a :attr:`~opan.error.OPANError.__metaclass__` on
-   :class:`OPANError` enabling typecode validity checking with `is`
- * Re-implementation of :func:`~OPANError.__str__` to enhance the usefulness
+ * Implementation of a :attr:`~opan.error.OpanError.__metaclass__` on
+   :class:`OpanError` enabling typecode validity checking with `is`
+ * Re-implementation of :func:`~OpanError.__str__` to enhance the usefulness
    of stack messages when one of these errors is raised
 
-:class:`OPANError` **Subclasses**
+:class:`OpanError` **Subclasses**
 
     :class:`ANHARMError` -- Raised as a result of
     :class:`~opan.anharm.OPAN_ANHARM` actions
@@ -72,23 +72,23 @@ several common features:
 # Module-level imports
 
 
-class OPANError(Exception):
+class OpanError(Exception):
     """Base class for custom errors defined for OpenAnharmonic
 
-    :class:`OPANError` is an abstract superclass of any custom errors defined
+    :class:`OpanError` is an abstract superclass of any custom errors defined
     under the OpenAnharmonic umbrella. It defines all common methods shared
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are `str` class variables with contents
     identical to their names.  These are recognized by the
-    :meth:`~OPANError.__metaclass__.__iter__`
-    defined in :class:`~OPANError.__metaclass__` as being the
+    :meth:`~OpanError.__metaclass__.__iter__`
+    defined in :class:`~OpanError.__metaclass__` as being the
     set of valid typecodes.
 
     Arguments
     ---------
     tc  : str
         String representation of typecode to be associated with the
-        :class:`OPANError` subclass instance. *Must* be a validly
+        :class:`OpanError` subclass instance. *Must* be a validly
         constructed typecode defined for the relevant subclass.
     msg : str
         Explanation of the nature of the error being reported
@@ -99,7 +99,7 @@ class OPANError(Exception):
     Raises
     ------
     ~exceptions.NotImplementedError
-        Upon attempt to instantiate abstract :class:`OPANError` base class.
+        Upon attempt to instantiate abstract :class:`OpanError` base class.
     ~exceptions.KeyError
         Upon instantiation with an invalid typecode
 
@@ -110,7 +110,7 @@ class OPANError(Exception):
     src : str
         Further detail of the code source of the error behavior
     subclass_name   : str
-        String representation of the :class:`OPANError` subclass name
+        String representation of the :class:`OpanError` subclass name
     tc  : str
         String typecode associated with the instance
 
@@ -128,7 +128,7 @@ class OPANError(Exception):
 
             Generator iterating over all class variables whose names match
             their contents. For a properly constructed
-            :class:`~opan.error.OPANError`
+            :class:`~opan.error.OpanError`
             subclass, these are identical to the typecodes.
 
             **Example:**
@@ -144,8 +144,8 @@ class OPANError(Exception):
         import re
 
         # Check for and complain at instantiation of base class.
-        if type(self) == OPANError:
-            raise(NotImplementedError("OPANError base class is abstract."))
+        if type(self) == OpanError:
+            raise(NotImplementedError("OpanError base class is abstract."))
         ## end if
 
         # Quick RegEx to extract the name of the subclass.
@@ -168,7 +168,7 @@ class OPANError(Exception):
 
 
     def __str__(self):  # pragma: no cover   (str rep has no code significance)
-        """ String representation of an :class:`OPANError` subclass instance.
+        """ String representation of an :class:`OpanError` subclass instance.
 
         Implemented primarily so that the error stack handling of the Python
         interpreter will provide useful information to the user.
@@ -203,13 +203,13 @@ class OPANError(Exception):
         ##end def __iter__
     ## end class __metaclass__
 
-## end class OPANError
+## end class OpanError
 
 
-class XYZError(OPANError):
+class XYZError(OpanError):
     """Error relating to parsing of or calculation using XYZ data.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -234,12 +234,12 @@ class XYZError(OPANError):
 ## end class XYZError
 
 
-class GRADError(OPANError):
+class GRADError(OpanError):
     """Error relating to parsing of or calculation from gradient data.
 
     Not all typecodes may be relevant for all software packages.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -261,10 +261,10 @@ class GRADError(OPANError):
 ## end class ENGRADError
 
 
-class OUTPUTError(OPANError):
+class OUTPUTError(OpanError):
     """Error relating to parsing of or calculation from output data.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -276,12 +276,12 @@ class OUTPUTError(OPANError):
 ## end class OUTPUTError
 
 
-class HESSError(OPANError):
+class HESSError(OpanError):
     """Error relating to parsing of or calculation from Hessian data.
 
     Not all typecodes may be relevant for all software packages.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -330,10 +330,10 @@ class HESSError(OPANError):
 ## end class HESSError
 
 
-class SYMMError(OPANError):
+class SYMMError(OpanError):
     """Error relating to :mod:`opan.utils.symm` submodule functions.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -346,10 +346,10 @@ class SYMMError(OPANError):
 ## end class SYMMError
 
 
-class REPOError(OPANError):
+class REPOError(OpanError):
     """Error relating to HDF5 repository interactions.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -368,17 +368,17 @@ class REPOError(OPANError):
 ## end class REPOError
 
 
-class ANHARMError(OPANError):
+class ANHARMError(OpanError):
     """Error relating to :class:`opan.anharm.OPAN_ANHARM` actions.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
 
     """
 
-    #: OPAN_REPO conflict -- no repo bound when assignment attempted,
+    #: OpanAnharmRepo conflict -- no repo bound when assignment attempted,
     #: or attempt made to bind new repo when one already bound
     repo = 'repo'
 
@@ -389,10 +389,10 @@ class ANHARMError(OPANError):
 ## end class ANHARMError
 
 
-class INERTIAError(OPANError):
+class INERTIAError(OpanError):
     """Error relating to :mod:`opan.utils.inertia` submodule functions.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
@@ -412,10 +412,10 @@ class INERTIAError(OPANError):
 ## end class INERTIAError
 
 
-class VECTORError(OPANError):
+class VECTORError(OpanError):
     """Error relating to :mod:`opan.utils.vector` submodule functions.
 
-    See the :class:`OPANError` documentation for more information on
+    See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
     **Typecodes**
