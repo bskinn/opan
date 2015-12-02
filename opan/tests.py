@@ -123,25 +123,25 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
     # Testing errors related to file parsing of a known-good ENGRAD file
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
 
         # Set up the directory
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the file
-        with open(self.file_name, 'w') as f:
-            f.write(self.file_text_good)
+        with open(cls.file_name, 'w') as f:
+            f.write(cls.file_text_good)
 
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         import os
 
         # Delete the engrad file
-        os.remove(self.file_name)
+        os.remove(cls.file_name)
 
         # Remove the working directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def setUp(self):
         # Load the object
@@ -194,29 +194,29 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
     # Ensuring importing a non-ENGRAD file throws the right errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.bad_block_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.bad_block_substs[bname]))
+        for bname in cls.bad_block_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.bad_block_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any engrad files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                            self.bad_block_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                            cls.bad_block_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_ENGRAD_MissingBlockNumAts(self):
 
@@ -258,30 +258,30 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
     #  the right errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.trunc_block_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.trunc_block_substs[bname]))
+        for bname in cls.trunc_block_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.trunc_block_substs[bname]))
 
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any engrad files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                        self.trunc_block_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                        cls.trunc_block_substs.keys()]
 
         # Try to remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_ENGRAD_TruncatedBlockGrad(self):
 
@@ -306,30 +306,30 @@ class TestORCAEngradBadData(SuperORCAEngrad):
     # Ensuring files with valid formatting but invalid data raise errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
         # Create the test directory
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for dname in self.bad_data_substs.keys():
-            with open(self.file_name + dname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.bad_data_substs[dname]))
+        for dname in cls.bad_data_substs.keys():
+            with open(cls.file_name + dname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.bad_data_substs[dname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Tear down test directory and remove files
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in
-                                            self.bad_data_substs.keys()]
+        [os.remove(cls.file_name + dname) for dname in
+                                            cls.bad_data_substs.keys()]
 
         # Remove the test directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
 
     def test_ENGRAD_BadDataAtomicNum(self):
@@ -1200,24 +1200,24 @@ class TestORCAHessKnownGood(SuperORCAHess):
     # Testing errors related to file parsing of a known-good HESS file
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the file
-        with open(self.file_name, 'w') as f:
-            f.write(self.file_text_good)
+        with open(cls.file_name, 'w') as f:
+            f.write(cls.file_text_good)
 
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         import os
 
         # Delete the hess file
-        os.remove(self.file_name)
+        os.remove(cls.file_name)
 
         # Remove the test directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def setUp(self):
         # Load the object
@@ -1361,29 +1361,29 @@ class TestORCAHessMissingBlocks(SuperORCAHess):
 
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.bad_block_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.bad_block_substs[bname]))
+        for bname in cls.bad_block_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.bad_block_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any .hess files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                            self.bad_block_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                            cls.bad_block_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_HESS_MissingBlockHess(self):
 
@@ -1500,29 +1500,29 @@ class TestORCAHessTruncatedBlocks(SuperORCAHess):
     #       right errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.trunc_block_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.trunc_block_substs[bname]))
+        for bname in cls.trunc_block_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.trunc_block_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any engrad files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                            self.trunc_block_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                            cls.trunc_block_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_HESS_TruncatedBlocksHess(self):
 
@@ -1627,29 +1627,29 @@ class TestORCAHessBadData(SuperORCAHess):
     #  invalid content raises the appropriate errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.bad_data_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.bad_data_substs[bname]))
+        for bname in cls.bad_data_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.bad_data_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any engrad files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in
-                                            self.bad_data_substs.keys()]
+        [os.remove(cls.file_name + dname) for dname in
+                                            cls.bad_data_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_HESS_BadDataHessDim(self):
 
@@ -1778,29 +1778,29 @@ class TestORCAHessAltData(SuperORCAHess):
     #  invalid content raises the appropriate errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.alt_data_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.alt_data_substs[bname]))
+        for bname in cls.alt_data_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.alt_data_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any engrad files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + dname) for dname in
-                                            self.alt_data_substs.keys()]
+        [os.remove(cls.file_name + dname) for dname in
+                                            cls.alt_data_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def setUp(self):
         # Long messages
@@ -2095,23 +2095,23 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
     #  the correct geometric parameters, etc.
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add the good file
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the file
-        with open(self.file_name, 'w') as f:
-            f.write(self.file_text_good)
+        with open(cls.file_name, 'w') as f:
+            f.write(cls.file_text_good)
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         import os
 
         # Delete the xyz file
-        os.remove(self.file_name)
+        os.remove(cls.file_name)
 
         # Remove the test directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def setUp(self):
         # Load the object
@@ -2198,29 +2198,29 @@ class TestOPANXYZAltFileData(SuperOPANXYZ):
     #  (primarily if elements are specified by atomic number).
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add alternate-g files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.alt_file_data_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.alt_file_data_substs[bname]))
+        for bname in cls.alt_file_data_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.alt_file_data_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any created files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                            self.alt_file_data_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                            cls.alt_file_data_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_XYZ_AltFileDataFirstCuAtomnum(self):
 
@@ -2325,29 +2325,29 @@ class TestOPANXYZBadFileData(SuperOPANXYZ):
     #  invalid content raises the appropriate errors
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add munged files
 
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the files
-        for bname in self.bad_file_data_substs.keys():
-            with open(self.file_name + bname, 'w') as f:
-                f.write(self.file_text_good
-                                    .replace(*self.bad_file_data_substs[bname]))
+        for bname in cls.bad_file_data_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.bad_file_data_substs[bname]))
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         # Remove any created files and try to remove the temp directory
 
         import os
 
         # Try to remove the files
-        [os.remove(self.file_name + bname) for bname in
-                                            self.bad_file_data_substs.keys()]
+        [os.remove(cls.file_name + bname) for bname in
+                                            cls.bad_file_data_substs.keys()]
 
         # Remove the directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_XYZ_BadFileDataFileStart(self):
         # File without a number-of-atoms spec at the very start should throw
@@ -2496,23 +2496,23 @@ class TestOPANXYZBadUsage(SuperOPANXYZ):
     #  otherwise exhibit the correct problems.
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # Set up the directory and add the good file
-        setUpTestDir(self.testdir)
+        setUpTestDir(cls.testdir)
 
         # Write the file
-        with open(self.file_name, 'w') as f:
-            f.write(self.file_text_good)
+        with open(cls.file_name, 'w') as f:
+            f.write(cls.file_text_good)
 
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(cls):
         import os
 
         # Delete the xyz file
-        os.remove(self.file_name)
+        os.remove(cls.file_name)
 
         # Remove the test directory
-        tearDownTestDir(self.testdir)
+        tearDownTestDir(cls.testdir)
 
     def test_XYZ_BadUsageBadInitParams(self):
         # Calling without 'path' or both 'atom_syms' and 'coords'
@@ -2601,7 +2601,7 @@ class SuperOPANUtilsInertia(object):
 
     # Common setUpClass method
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
 
         # Imports
         import os
@@ -2609,12 +2609,12 @@ class SuperOPANUtilsInertia(object):
         from opan.hess import OrcaHess as HESS
 
         # Attach class objects
-        basename = os.path.join(self.filedir, self.fname)
-        self.xyz = XYZ(path=basename + '.xyz')
-        self.hess = HESS(basename + '.hess')
+        basename = os.path.join(cls.filedir, cls.fname)
+        cls.xyz = XYZ(path=basename + '.xyz')
+        cls.hess = HESS(basename + '.hess')
 
         # Always long messages
-        self.longMessage = True
+        cls.longMessage = True
 
     def test_ctr_mass(self):
         import opan.utils.inertia as oui
