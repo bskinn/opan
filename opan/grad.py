@@ -287,8 +287,7 @@ class OrcaEngrad(object):
                 # Atomic number
                 # Check for valid number
                 at_num = scast(line_mch.group("at"), np.int_)
-                if not (at_num >= CIC.Min_Atomic_Num and
-                            at_num <= CIC.Max_Atomic_Num):
+                if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
                     raise(GRADError(GRADError.geomblock,
                             "Atom #" + str(atom_count) +
                             " is an unsupported element",
@@ -313,8 +312,7 @@ class OrcaEngrad(object):
 
                 # Now check whether the successfully converted atomic
                 #  number is in the valid range (should be a redundant check.)
-                if not (at_num >= CIC.Min_Atomic_Num and
-                            at_num <= CIC.Max_Atomic_Num):
+                if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
                     raise(GRADError(GRADError.geomblock,
                             "Atom #" + str(atom_count) +
                             " is an unsupported element",

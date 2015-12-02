@@ -259,17 +259,15 @@ class OpanXYZ(object):
         ## end if
 
         # Proof the atoms list
-        if not all( (atom_syms[i].upper() in atomNum) \
+        if not all( (atom_syms[i].upper() in atomNum)
                                 for i in range(atom_syms.shape[0]) ):
             # Invalid atoms specified
-            raise(ValueError("Invalid atoms specified: " + str( \
-                    [(j, atom_syms[j]) for j in \
-                        [i for i, valid in \
-                            enumerate(map( \
-                                        lambda k: k in atomNum, \
-                                        atom_syms)) \
-                            if not valid \
-                        ] \
+            raise(ValueError("Invalid atoms specified: " + str(
+                    [(j, atom_syms[j]) for j in
+                        (i for (i, valid) in
+                            enumerate(map(lambda k: k in atomNum, atom_syms))
+                            if not valid
+                        )
                     ] )))
         ## end if
 
@@ -411,8 +409,8 @@ class OpanXYZ(object):
                         # Atomic number
                         # Check for valid number
                         at_num = scast(line_mch.group("el"), np.int_)
-                        if not (at_num >= CIC.Min_Atomic_Num and
-                                    at_num <= CIC.Max_Atomic_Num):
+                        if not (CIC.Min_Atomic_Num <= at_num
+                                                    <= CIC.Max_Atomic_Num):
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #" + str(self.num_geoms) +
                                     ", atom #" + str(atom_count) +
@@ -447,8 +445,8 @@ class OpanXYZ(object):
                         # Atomic number; don't need safe cast; must trap for
                         #  a bad atomic number
                         at_num = scast(line_mch.group("el"), np.int_)
-                        if not (at_num >= CIC.Min_Atomic_Num and
-                                    at_num <= CIC.Max_Atomic_Num):
+                        if not (CIC.Min_Atomic_Num <= at_num
+                                                    <= CIC.Max_Atomic_Num):
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #" + str(self.num_geoms) +
                                     ", atom #" + str(atom_count) +
@@ -635,11 +633,11 @@ class OpanXYZ(object):
         #  three when they are used as an index and thus give non-intuitive
         #  errors in subsequent code.
         # Complain if at_1 is invalid
-        if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
+        if not (-self.num_atoms <= at_1 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
 
         # Complain if at_2 is invalid
-        if at_2 < -self.num_atoms or at_2 >= self.num_atoms:
+        if not (-self.num_atoms <= at_2 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
 
         # Should never be necessary (save for badly erroneous calling code),
@@ -774,15 +772,15 @@ class OpanXYZ(object):
         #  three when they are used as an index and thus give non-intuitive
         #  errors in later code.
         # Complain if at_1 is invalid
-        if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
+        if not(-self.num_atoms <= at_1 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
 
         # Complain if at_2 is invalid
-        if at_2 < -self.num_atoms or at_2 >= self.num_atoms:
+        if not(-self.num_atoms <= at_2 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
 
         # Complain if at_3 is invalid
-        if at_3 < -self.num_atoms or at_3 >= self.num_atoms:
+        if not(-self.num_atoms <= at_3 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_3' (" + str(at_3) + ")"))
 
         # Should never be necessary (save for badly erroneous calling code),
@@ -951,6 +949,25 @@ class OpanXYZ(object):
         from .utils import safe_cast as scast
         from .error import XYZError
         from .const import PRM
+
+        # The below errors are explicitly thrown since they are multiplied by
+        #  three when they are used as an index and thus give non-intuitive
+        #  errors in later code.
+        # Complain if at_1 is invalid
+        if not(-self.num_atoms <= at_1 < self.num_atoms):
+            raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
+
+        # Complain if at_2 is invalid
+        if not(-self.num_atoms <= at_2 < self.num_atoms):
+            raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
+
+        # Complain if at_3 is invalid
+        if not(-self.num_atoms <= at_3 < self.num_atoms):
+            raise(IndexError("Invalid index for 'at_3' (" + str(at_3) + ")"))
+
+        # Complain if at_4 is invalid
+        if not(-self.num_atoms <= at_4 < self.num_atoms):
+            raise(IndexError("Invalid index for 'at_4' (" + str(at_4) + ")"))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce the at_x to their floor() values.  This is again

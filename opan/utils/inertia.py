@@ -627,14 +627,14 @@ def _fadnOv(vec, geom):
 
     # Iterate over reshaped geometry
     for disp in geom.reshape((geom.shape[0]/3, 3)):
-        # See if the displacement is nonzero
-        if spla.norm(disp) >= PRM.Zero_Vec_Tol:
-            # See if it's not orthonormal
-            if not onchk(np.column_stack((disp / spla.norm(disp),
-                                                vec / spla.norm(vec))))[0]:
-                # This is the displacement you are looking for
-                out_vec = disp / spla.norm(disp)
-                return out_vec
+        # See if the displacement is nonzero and not orthonormal. Trailing
+        #  [0] index is to retrieve only the success/fail bool.
+        if spla.norm(disp) >= PRM.Zero_Vec_Tol and not onchk(
+                np.column_stack((disp / spla.norm(disp),
+                vec / spla.norm(vec))))[0]:
+            # This is the displacement you are looking for
+            out_vec = disp / spla.norm(disp)
+            return out_vec
             ## end if
         ## end if
     ## next disp
@@ -694,13 +694,12 @@ def _fadnPv(vec, geom):
 
     # Iterate over reshaped geometry
     for disp in geom.reshape((geom.shape[0]/3, 3)):
-        # See if the displacement is nonzero
-        if spla.norm(disp) >= PRM.Zero_Vec_Tol:
-            # See if it's nonparallel to the ref vec
-            if not parchk(disp.reshape(3), vec):
-                # This is the displacement you are looking for
-                out_vec = disp / spla.norm(disp)
-                break
+        # See if the displacement is nonzero and nonparallel to the ref vec
+        if spla.norm(disp) >= PRM.Zero_Vec_Tol and \
+                not parchk(disp.reshape(3), vec):
+            # This is the displacement you are looking for
+            out_vec = disp / spla.norm(disp)
+            break
             ## end if
         ## end if
     ## next disp
