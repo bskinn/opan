@@ -11,15 +11,17 @@ Welcome to opan!
 
 *Need to add notes about conventions*:
 
- * Upright sans-serif in equations when referring to code names
+ * Upright sans-serif in equations when referring to code variable names
+
+ * Roman (serif) text in equations when referring to code functions/methods
 
  * Italics in text when referring to mathematical symbols
 
- * Italics in text when referring to code names
+ * Italics in text when referring to code functions or names
 
  * N always refers to the number of atoms in the system of interest
 
- * Arbitrary integers repped as R and S
+ * Arbitrary integers represented as R, S, ...
 
  * [Others?]
 

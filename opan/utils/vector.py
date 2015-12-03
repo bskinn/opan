@@ -275,8 +275,8 @@ def parallel_check(vec1, vec2):
     Returns
     -------
     bool
-        ``True`` if (anti-)parallel to within :data:`opan.const.PRM.
-        Non_Parallel_Tol` degrees.  ``False`` otherwise.
+        ``True`` if (anti-)parallel to within
+        :data:`opan.const.PRM.Non_Parallel_Tol` degrees.  ``False`` otherwise.
 
     """
 
@@ -310,21 +310,26 @@ def parallel_check(vec1, vec2):
 
 @_arraysqueeze(0,1)
 def proj(vec, vec_onto):
-    """ Vector projection
+    """ Vector projection.
 
-    Calculated as vec_onto * dot(vec, vec_onto) / dot(vec_onto, vec_onto)
+    Calculated as:
+
+    .. math::
+
+         \\mathsf{vec\\_onto} * \\frac{\\mathsf{vec}\\cdot\\mathsf{vec\\_onto}}
+         {\\mathsf{vec\\_onto}\\cdot\\mathsf{vec\\_onto}}
 
     Parameters
     ----------
-    vec      : length-N np.float_
+    vec      : length-R ``np.float_``
         Vector to project
-    vec_onto : length-N np.float_
-        Vector onto which vec is to be projected
+    vec_onto : length-R ``np.float_``
+        Vector onto which `vec` is to be projected
 
     Returns
     -------
-    proj_vec : length-N np.float_
-        Projection of vec onto vec_onto
+    length-R ``np.float_``
+        Projection of `vec` onto `vec_onto`
     """
 
     # Imports
@@ -351,21 +356,27 @@ def proj(vec, vec_onto):
 
 @_arraysqueeze(0,1)
 def rej(vec, vec_onto):
-    """ Vector rejection
+    """ Vector rejection.
 
-    Calculated as vec - proj(vec, vec_onto).
+    Calculated by subtracting from `vec` the projection of `vec` onto
+    `vec_onto`:
+
+    .. math::
+
+        \\mathsf{vec} - \\mathrm{proj}\\left(\\mathsf{vec},
+        \\ \\mathsf{vec\\_onto}\\right)
 
     Parameters
     ----------
-    vec      : length-N np.float_
+    vec      : length-R ``np.float_``
         Vector to reject
-    vec_onto : length-N np.float_
-        Vector onto which vec is to be rejected
+    vec_onto : length-R ``np.float_``
+        Vector onto which `vec` is to be rejected
 
     Returns
     -------
-    rej_vec : length-N np.float_
-        Rejection of vec onto vec_onto
+    length-R ``np.float_``
+        Rejection of `vec` onto `vec_onto`
     """
 
     # Imports
@@ -380,22 +391,28 @@ def rej(vec, vec_onto):
 
 @_arraysqueeze(0,1)
 def vec_angle(vec1, vec2):
-    """ Angle between two N-dimensional vectors.
+    """ Angle between two R-dimensional vectors.
 
-    Angle calculated as arccos(dot(vec1, vec2) / norm(vec1) / norm(vec2)).
-    Should be valid for vectors in any dimension as long as they're equal.
-    Any dimension mismatch raises an error.
+    Angle calculated as:
+
+    .. math::
+
+        \\arccos\\left[
+        \\frac{\\mathsf{vec1}\cdot\\mathsf{vec2}}
+        {\\left\\|\\mathsf{vec1}\\right\\|
+            \\left\\|\\mathsf{vec2}\\right\\|}
+        \\right]
 
     Parameters
     ----------
-    vec1    : length-N np.array of np.float_
+    vec1    : length-R ``np.float_``
         First vector
-    vec2    : length-N np.array of np.float_
+    vec2    : length-R ``np.float_``
         Second vector
 
     Returns
     -------
-    angle   : np.float_
+    ``np.float_``
         Angle between the two vectors in degrees
 
     """
