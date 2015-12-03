@@ -32,7 +32,7 @@ from __future__ import absolute_import
 __all__ = ['repo']
 
 from . import *
-from .base import OrcaAnharm
+from .base import OpanAnharm
 
 
 

@@ -21,15 +21,15 @@
 """ #DOC: Docstring for anharm.base
 """
 
-class OrcaAnharm(object):
-    """ #DOC: OrcaAnharm class-level docstring
+class OpanAnharm(object):
+    """ #DOC: OpanAnharm class-level docstring
     """
 
     # Imports
     from ..const import EnumSoftware as _E_SW
 
     def __init__(self):
-        """ #DOC: OrcaAnharm.__init__ docstring (if needed)?
+        """ #DOC: OpanAnharm.__init__ docstring (if needed)?
         """
 
         # Declare the holding variables for the XYZ, GRAD, HESS
@@ -144,7 +144,7 @@ class OrcaAnharm(object):
 
     ## end def new_from_files
 
-## end class OrcaAnharm
+## end class OpanAnharm
 
 
 
