@@ -288,7 +288,7 @@ class OpanXYZ(object):
         self.atom_syms = map(str.upper, list(atom_syms))
 
         # Store the single geometry by bracketing with an array
-        self.geoms = [coords]
+        self.geoms = [coords / (1.0 if bohrs else PHYS.Ang_per_Bohr)]
 
         self.initialized = True
 
