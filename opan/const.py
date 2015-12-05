@@ -650,11 +650,11 @@ class UNITS(object):
     Dictionary keys are the enum values provided in the corresponding
     ``EU_xxxx`` class in this module (:mod:`opan.const`).
 
-    ================== ===================== =====================
-      Dictionary              Enum             Physical Quantity
-    ================== ===================== =====================
+    ================== =========================== =====================
+      Dictionary              Enum                  Physical Quantity
+    ================== =========================== =====================
      :attr:`rotConst`   :attr:`EnumUnitsRotConst`   Rotational constant
-    ================== ===================== =====================
+    ================== =========================== =====================
 
     """
 
