@@ -19,6 +19,25 @@
 #
 #-------------------------------------------------------------------------------
 
+""" Module implementing OpenBabel XYZ parsing and interpretation.
+
+The single class :class:`~opan.xyz.OpanXYZ` imports molecular geometries
+in the OpenBabel `XYZ format
+<http://openbabel.org/wiki/XYZ_(format)>`__ |extlink|, with
+the following variations:
+
+ * Coordinates of any precision will be read, not just the
+   math:`10.5` specified by OpenBabel
+
+ * Both atomic symbols and atomic numbers are valid
+
+ * Multiple geometries/frames are supported, but the number of atoms and
+   their sequence must be maintained in all geometries.
+
+[Initialization instructions here?]
+
+"""
+
 # Imports
 
 
