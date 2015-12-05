@@ -533,7 +533,7 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
     # Ensure units are valid
     if not units in EURC:
-        raise(ValueError("'" + str(units) + "' is not a valid units value"))
+        raise(ValueError("'{0}' is not a valid units value".format(units)))
     ## end if
 
     # Retrieve the moments, axes and top type. Geom and masses are proofed

@@ -262,7 +262,7 @@ class OpanXYZ(object):
         if not all( (atom_syms[i].upper() in atomNum)
                                 for i in range(atom_syms.shape[0]) ):
             # Invalid atoms specified
-            raise(ValueError("Invalid atoms specified: " + str(
+            raise(ValueError("Invalid atoms specified: {0}".format(
                     [(j, atom_syms[j]) for j in
                         (i for (i, valid) in
                             enumerate(map(lambda k: k in atomNum, atom_syms))
@@ -412,9 +412,9 @@ class OpanXYZ(object):
                         if not (CIC.Min_Atomic_Num <= at_num
                                                     <= CIC.Max_Atomic_Num):
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is an unsupported element",
+                                    "Geometry #{0}, atom #{1} is an \
+                                        unsupported element"
+                                        .format(self.num_geoms, atom_count),
                                      "XYZ file: " + XYZ_path))
                         ##end if
 

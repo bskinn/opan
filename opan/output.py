@@ -437,7 +437,7 @@ class OrcaOutput(object):
 
         # Confirm src_type is valid
         if not src_type == "file":
-            raise(ValueError("'" + str(src_type) + "' is invalid."))
+            raise(ValueError("'{0}' is invalid".format(src_type)))
         ##end if
 
         # Get the output data

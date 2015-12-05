@@ -104,7 +104,7 @@ class OpanAnharmRepo(object):
             self._repo = None
             self.fname = None
         else:
-            raise(TypeError("Invalid filename type: " + str(type(fname))))
+            raise(TypeError("Invalid filename type: {0}".format(type(fname))))
         ## end if
 
     ## end def __init__
@@ -126,7 +126,7 @@ class OpanAnharmRepo(object):
         else:
             raise(REPOError(REPOError.status, \
                     "Cannot close; no repository open", \
-                    "Last repo: " + str(self.fname) ))
+                    "Last repo: {0}".format(self.fname)))
         ## end if
 
     ## end def close
@@ -144,7 +144,7 @@ class OpanAnharmRepo(object):
         if not self._repo == None:
             raise(REPOError(REPOError.status, \
                     "Repository already open", \
-                    "File: " + str(self.fname) ))
+                    "File: {0}".format(self.fname)))
         ## end if
 
         # If string passed, try opening h5.File; otherwise complain
@@ -152,7 +152,7 @@ class OpanAnharmRepo(object):
             self.fname = fname
             self._repo = h5.File(fname)
         else:
-            raise(TypeError("Invalid filename type: " + str(type(fname))))
+            raise(TypeError("Invalid filename type: {0}".format(type(fname))))
         ## end if
 
         # Dirty/clean status will be as it was when repo was last closed
@@ -193,14 +193,14 @@ class OpanAnharmRepo(object):
 
         # Must be a valid disp direction
         if not disp in _E_DD:
-            raise(ValueError("'" + str(disp) + "' is not a valid " + \
-                    "displacement enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "displacement enum value".format(disp)))
         ## end if
 
         # Must be a valid repo data type
         if not datatype in EnumAnharmRepoData:
-            raise(ValueError("'" + str(datatype) + "' is not a valid " + \
-                    "data type enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "data type enum value".format(datatype)))
         ## end if
 
         # Get the appropriate geom group name
@@ -260,14 +260,14 @@ class OpanAnharmRepo(object):
 
         # Must be a valid disp direction
         if not disp in _E_DD:
-            raise(ValueError("'" + str(disp) + "' is not a valid " + \
-                    "displacement enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "displacement enum value".format(disp)))
         ## end if
 
         # Must be a valid data type
         if not datatype in EnumAnharmRepoData:
-            raise(ValueError("'" + str(datatype) + "' is not a valid " + \
-                    "repository data type enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "repository data type enum value".format(datatype)))
         ## end if
 
         # Get the appropriate geom group name
@@ -344,8 +344,8 @@ class OpanAnharmRepo(object):
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
-            raise(ValueError("'" + str(param) + "' is not a valid " + \
-                    "parameter enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "parameter enum value".format(param)))
         ## end if
 
         # Get the params group, complaining if repo not bound
@@ -398,8 +398,8 @@ class OpanAnharmRepo(object):
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
-            raise(ValueError("'" + str(param) + "' is not a valid " + \
-                    "parameter enum value"))
+            raise(ValueError("'{0}' is not a valid " + \
+                    "parameter enum value".format(param)))
         ## end if
 
         # Get the params group, complaining if repo not bound

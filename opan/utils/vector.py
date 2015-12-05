@@ -288,9 +288,9 @@ def parallel_check(vec1, vec2):
     par = False
 
     # Shape check
-    for v,n in zip([vec1, vec2], [1, 2]):
+    for n,v in enumerate([vec1, vec2]):
         if not len(v.shape) == 1:
-            raise(ValueError("Bad shape for vector #" + str(n)))
+            raise(ValueError("Bad shape for vector #{0}".format(n)))
         ## end if
     ## next v,n
     if not vec1.shape[0] == vec2.shape[0]:

@@ -289,9 +289,9 @@ class OrcaEngrad(object):
                 at_num = scast(line_mch.group("at"), np.int_)
                 if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
                     raise(GRADError(GRADError.geomblock,
-                            "Atom #" + str(atom_count) +
-                            " is an unsupported element",
-                             "ENGRAD file: " + self.ENGRAD_path))
+                            "Atom #{0} is an unsupported element"
+                                                        .format(atom_count),
+                             "ENGRAD file: {0}".format(self.ENGRAD_path)))
                 ##end if
 
                 # Tag on the new symbol
@@ -305,18 +305,18 @@ class OrcaEngrad(object):
                     at_num = atomNum[line_mch.group("at").upper()]
                 except KeyError:
                     raise(GRADError(GRADError.geomblock,
-                            "Atom #" + str(atom_count) +
-                            " is an unrecognized element",
-                             "ENGRAD file: " + ENGRAD_path))
+                            "Atom #{0} is an unrecognized element"
+                                                        .format(atom_count),
+                             "ENGRAD file: {0}".format(ENGRAD_path)))
                 ## end try
 
                 # Now check whether the successfully converted atomic
                 #  number is in the valid range (should be a redundant check.)
                 if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
                     raise(GRADError(GRADError.geomblock,
-                            "Atom #" + str(atom_count) +
-                            " is an unsupported element",
-                             "ENGRAD file: " + ENGRAD_path))
+                            "Atom #{0} is an unsupported element"
+                                                            .format(atom_count),
+                             "ENGRAD file: {0}".format(ENGRAD_path)))
                 ## end if
 
                 # Tag on the new symbol
@@ -333,7 +333,7 @@ class OrcaEngrad(object):
             self.geom_vec = np.concatenate(
                     (
                         self.geom_vec,
-                        [scast(line_mch.group("c" + str(i)), np.float_)
+                        [scast(line_mch.group("c{0}".format(i)), np.float_)
                                                         for i in range(1,4)]
                      ))
         ## next line_mch

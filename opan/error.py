@@ -149,14 +149,14 @@ class OpanError(Exception):
         ## end if
 
         # Quick RegEx to extract the name of the subclass.
-        self.subclass_name = re.search(self.__module__ + "\\.(?P<cls>\w+)'", \
+        self.subclass_name = re.search(self.__module__ + "\\.(?P<cls>\w+)'",
                     str(self.__class__), re.I).group("cls")
 
         # Check for valid typecode and throw a more descriptive error if
         #  invalid.
         if not tc in self.__class__:
-            raise(KeyError("Invalid " + self.subclass_name + \
-                                                " typecode: " + str(tc)))
+            raise(KeyError("Invalid {0} typecode: {1}"
+                                            .format(self.subclass_name, tc)))
         ## end if
 
         # Store error content
@@ -185,8 +185,8 @@ class OpanError(Exception):
         """
 
         # Store and return the descriptive string
-        retstr = "(" + str(self.tc) + ") " + str(self.msg) + \
-                (": " + str(self.src) if str(self.src) != "" else "")
+        retstr = "({0}) {1}".format(self.tc, self.msg) + (
+                            ": {0}".format(self.src) if self.src else "")
         return retstr
 
     ## end def __str__

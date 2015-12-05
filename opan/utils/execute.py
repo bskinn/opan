@@ -211,8 +211,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     # Complain if special tags used in subs
     if not set(SPECIALSUBS.keys()).isdisjoint(subs):
-        raise(KeyError("Redefinition of special tag(s) is forbidden:" +
-                str(list(set(SPECIALSUBS.keys()).intersection(subs)))))
+        raise(KeyError("Redefinition of special tag(s) is forbidden: {0}"
+                .format(list(set(SPECIALSUBS.keys()).intersection(subs)))))
     ## end if
 
     # Perform the replacement into the exec_cmd of the input and output

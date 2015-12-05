@@ -70,7 +70,7 @@ class arraysqueeze(object):
         # Check for integers and strings
         for arg in args:
             if not (isinstance(arg, int) or isinstance(arg, str)):
-                raise(ValueError("Invalid decorator argument: " + str(arg)))
+                raise(ValueError("Invalid decorator argument: {0}".format(arg)))
             ## end if
         ## next arg
 

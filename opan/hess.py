@@ -559,7 +559,7 @@ class OrcaHess(object):
                     # Loop to fill the row
                     for i in range(6):
                         # Store the element
-                        val = scast(m_line.group('e' + str(i)), np.float_)
+                        val = scast(m_line.group('e{0}'.format(i)), np.float_)
 
                         # Only store to matrix if a value actually retrieved.
                         #  This protects against the final three-column section
@@ -779,7 +779,8 @@ class OrcaHess(object):
 
             # Retrieve the derivatives
             self.dipders = np.array(
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                    [[scast(m.group("e{0}".format(i)), np.float_)
+                        for i in range(3)]
                         for m in self.p_dipder_line.finditer(
                                                     m_work.group("block")) ])
 
@@ -816,11 +817,12 @@ class OrcaHess(object):
 
             # Pull the blocks
             self.ir_comps = np.array(
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                    [[scast(m.group("e{0}".format(i)), np.float_)
+                        for i in range(3)]
                         for m in self.p_ir_line.finditer(
                                                     m_work.group("block")) ])
             self.ir_mags = np.array(
-                    [np.float_(m.group("mag"))
+                    [scast(m.group("mag"), np.float_)
                         for m in self.p_ir_line.finditer(
                                                     m_work.group("block")) ])
 
@@ -865,7 +867,8 @@ class OrcaHess(object):
 
             # Retrieve the derivatives
             self.polders = np.array(
-                    [[np.float_(m.group("e" + str(i))) for i in range(6)]
+                    [[scast(m.group("e{0}".format(i)), np.float_)
+                        for i in range(6)]
                         for m in self.p_polder_line.finditer(
                                                     m_work.group("block")) ])
 
@@ -946,7 +949,8 @@ class OrcaHess(object):
 
             # Retrieve the job list
             self.joblist = np.array(
-                    [[np.float_(m.group("e" + str(i))) for i in range(3)]
+                    [[scast(m.group("e{0}".format(i)), np.float_)
+                        for i in range(3)]
                         for m in self.p_jobs_line.finditer(
                                                     m_work.group("block")) ])
 

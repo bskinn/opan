@@ -93,7 +93,7 @@ def pack_tups(*args):
 
     # Print the input if in debug mode
     if _DEBUG: # pragma: no cover
-        print("args = " + str(args))
+        print("args = {0}".format(args))
 
     # Non-iterable subclass of str
     class StrNoIter(str):
@@ -128,7 +128,7 @@ def pack_tups(*args):
 
     # Dump the resulting tuples, if in debug mode
     if _DEBUG:  # pragma: no cover
-        print("tups = " + str(tups))
+        print("tups = {0}".format(tups))
     ## end if
 
     # Return the tuples
@@ -191,8 +191,8 @@ def safe_cast(invar, totype):
 
     # Check that the cast type matches
     if not isinstance(outvar, totype):
-        raise(TypeError("Result of cast to '" + str(totype) + \
-                    "' is type '" + str(type(outvar)) ))
+        raise(TypeError("Result of cast to '{0}' is '{1}'"
+                                            .format(totype, type(outvar))))
     ## end if
 
     # Success; return the cast value
@@ -217,7 +217,7 @@ def make_timestamp(el_time):
     Returns
     -------
     str
-        String timestamp in h/m/s format
+        String timestamp in #h #m #s format
     """
 
     # Calc hours
@@ -230,7 +230,7 @@ def make_timestamp(el_time):
     secs = el_time % 60.0
 
     # Construct timestamp string
-    stamp = str(int(hrs)) + 'h ' + str(int(mins)) + 'm ' + str(int(secs)) + 's'
+    stamp = "{0}h {1}m {2}s".format(int(hrs), int(mins), int(secs))
 
     # Return
     return stamp
