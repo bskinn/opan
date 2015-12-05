@@ -5,7 +5,6 @@ opan.xyz
 
 
 .. automodule:: opan.xyz
-   :members:
    :show-inheritance:
 
 
