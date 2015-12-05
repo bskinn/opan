@@ -415,7 +415,7 @@ class OpanXYZ(object):
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: " + XYZ_path))
+                                     "XYZ file: {0}".format(XYZ_path)))
                         ##end if
 
                         # Tag on the new symbol
@@ -428,10 +428,10 @@ class OpanXYZ(object):
                             at_num = atomNum[line_mch.group("el").upper()]
                         except KeyError:
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is an unrecognized element",
-                                     "XYZ file: " + XYZ_path))
+                                    "Geometry #{0}, atom #{1} is an \
+                                        unrecognized element"
+                                        .format(self.num_geoms, atom_count),
+                                     "XYZ file: {0}".format(XYZ_path)))
                         ## end try
 
                         # Tag on the new symbol
@@ -448,17 +448,17 @@ class OpanXYZ(object):
                         if not (CIC.Min_Atomic_Num <= at_num
                                                     <= CIC.Max_Atomic_Num):
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is an unsupported element",
-                                     "XYZ file: " + XYZ_path))
+                                    "Geometry #{0}, atom #{1} is an \
+                                        unsupported element"
+                                        .format(self.num_geoms, atom_count),
+                                     "XYZ file: {0}".format(XYZ_path)))
                         ## end if
                         if not atomSym[at_num] == self.atom_syms[atom_count]:
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is inconsistent with geometry #0",
-                                     "XYZ file: " + XYZ_path))
+                                    "Geometry #{0}, atom #{1} is inconsistent \
+                                        with geometry #0"
+                                        .format(self.num_geoms, atom_count),
+                                     "XYZ file: {0}".format(XYZ_path)))
                         ## end if
 
                     else:
@@ -469,19 +469,19 @@ class OpanXYZ(object):
                             at_num = atomNum[line_mch.group("el").upper()]
                         except KeyError:
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is an unrecognized element",
-                                     "XYZ file: " + XYZ_path))
+                                    "Geometry #{0}, atom #{1} is an \
+                                        unrecognized element"
+                                        .format(self.num_geoms, atom_count),
+                                     "XYZ file: {0}".format(XYZ_path)))
                         ## end try
                         # Confirm symbol matches the initial geometry
                         if not line_mch.group("el").upper() == \
                                                 self.atom_syms[atom_count]:
                             raise(XYZError(XYZError.xyzfile,
-                                    "Geometry #" + str(self.num_geoms) +
-                                    ", atom #" + str(atom_count) +
-                                    " is inconsistent with geometry #0",
-                                    "XYZ file: " + XYZ_path))
+                                    "Geometry #{0}, atom #{1} is inconsistent \
+                                        with geometry #0"
+                                        .format(self.num_geoms, atom_count),
+                                    "XYZ file: {0}".format(XYZ_path)))
                         ## end if
                     ## end if
                 ## end if
@@ -494,7 +494,7 @@ class OpanXYZ(object):
                 for c_str in range(1,4):
                     coord_vec = np.concatenate(
                             (coord_vec, [
-                        scast(line_mch.group("c" + str(c_str)), np.float_) /
+                        scast(line_mch.group("c{0}".format(c_str)), np.float_) /
                         (1.0 if bohrs else PHYS.Ang_per_Bohr)
                                         ]), axis=0)
                 ## next c_str
@@ -508,9 +508,9 @@ class OpanXYZ(object):
             #  number expected from self.num_atoms
             if not coord_vec.shape[0] == 3*self.num_atoms:
                 raise(XYZError(XYZError.xyzfile,
-                        "Geometry #" + str(self.num_geoms)+
-                        " atom count is inconsistent",
-                        "XYZ file: " + XYZ_path))
+                        "Geometry #{0} atom count is inconsistent"
+                            .format(self.num_geoms),
+                        "XYZ file: {0}".format(XYZ_path)))
             ## end if
 
             # Assemble the coordinates vector into the actual coordinates
@@ -634,11 +634,11 @@ class OpanXYZ(object):
         #  errors in subsequent code.
         # Complain if at_1 is invalid
         if not (-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
+            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
 
         # Complain if at_2 is invalid
         if not (-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
+            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce at_1 and at_2 to their floor() values.  This is again
@@ -705,9 +705,9 @@ class OpanXYZ(object):
 
         # Print the function inputs if debug mode is on
         if _DEBUG:  # pragma: no cover
-            print("g_nums = " + str(g_nums))
-            print("ats_1 = " + str(ats_1))
-            print("ats_2 = " + str(ats_2))
+            print("g_nums = {0}".format(g_nums))
+            print("ats_1 = {0}".format(ats_1))
+            print("ats_2 = {0}".format(ats_2))
         ## end if
 
         # Perform the None substitution
@@ -773,15 +773,15 @@ class OpanXYZ(object):
         #  errors in later code.
         # Complain if at_1 is invalid
         if not(-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
+            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
 
         # Complain if at_2 is invalid
         if not(-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
+            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
 
         # Complain if at_3 is invalid
         if not(-self.num_atoms <= at_3 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_3' (" + str(at_3) + ")"))
+            raise(IndexError("Invalid index for 'at_3' ({0})".format(at_3)))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce the at_x to their floor() values.  This is again
@@ -867,10 +867,10 @@ class OpanXYZ(object):
 
         # Print the function inputs if debug mode is on
         if _DEBUG:   # pragma: no cover
-            print("g_nums = " + str(g_nums))
-            print("ats_1 = " + str(ats_1))
-            print("ats_2 = " + str(ats_2))
-            print("ats_3 = " + str(ats_3))
+            print("g_nums = {0}".format(g_nums))
+            print("ats_1 = {0}".format(ats_1))
+            print("ats_2 = {0}".format(ats_2))
+            print("ats_3 = {0}".format(ats_3))
         ## end if
 
         # Perform the None substitution
@@ -955,19 +955,19 @@ class OpanXYZ(object):
         #  errors in later code.
         # Complain if at_1 is invalid
         if not(-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
+            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
 
         # Complain if at_2 is invalid
         if not(-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
+            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
 
         # Complain if at_3 is invalid
         if not(-self.num_atoms <= at_3 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_3' (" + str(at_3) + ")"))
+            raise(IndexError("Invalid index for 'at_3' ({0})".format(at_3)))
 
         # Complain if at_4 is invalid
         if not(-self.num_atoms <= at_4 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_4' (" + str(at_4) + ")"))
+            raise(IndexError("Invalid index for 'at_4' ({0})".format(at_4)))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce the at_x to their floor() values.  This is again
@@ -1006,7 +1006,7 @@ class OpanXYZ(object):
             #  formatting in the output.
             ats_pairs = [tuple(np.column_stack(np.triu_indices(4,1))[x])
                                         for x in range(6) if ats_test[x] == 1]
-            raise(ValueError("Duplicate atom indices: " + str(ats_pairs)))
+            raise(ValueError("Duplicate atom indices: {0}".format(ats_pairs)))
         ## end if
 
         # Check to ensure non-collinearity of the 1-2-3 and 2-3-4 atom trios
@@ -1020,10 +1020,10 @@ class OpanXYZ(object):
             if np.min([ang, 180.0 - ang]) < PRM.Non_Parallel_Tol:
                 # Too close; raise error
                 raise(XYZError(XYZError.dihed,
-                        "Angle " +
-                            str([(at_2, at_1, at_3), (at_3, at_2, at_4)][idx])
-                            + " is insufficiently nonlinear",
-                        "XYZ file: " + self.XYZ_path))
+                        "Angle {0} is insufficiently nonlinear"
+                            .format([(at_2, at_1, at_3),
+                            (at_3, at_2, at_4)][idx]),
+                        "XYZ file: {0}".format(self.XYZ_path)))
             ## end if
         ## next idx
 
@@ -1133,11 +1133,11 @@ class OpanXYZ(object):
 
         # Print the function inputs if debug mode is on
         if _DEBUG:   # pragma: no cover
-            print("g_nums = " + str(g_nums))
-            print("ats_1 = " + str(ats_1))
-            print("ats_2 = " + str(ats_2))
-            print("ats_3 = " + str(ats_3))
-            print("ats_4 = " + str(ats_4))
+            print("g_nums = {0}".format(g_nums))
+            print("ats_1 = {0}".format(ats_1))
+            print("ats_2 = {0}".format(ats_2))
+            print("ats_3 = {0}".format(ats_3))
+            print("ats_4 = {0}".format(ats_4))
         ## end if
 
         # Perform the None substitution
@@ -1196,11 +1196,11 @@ class OpanXYZ(object):
         #  errors.
         # Complain if at_1 is invalid
         if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
-            raise(IndexError("Invalid index for 'at_1' (" + str(at_1) + ")"))
+            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
 
         # Complain if at_2 is invalid
         if at_2 < -self.num_atoms or at_2 >= self.num_atoms:
-            raise(IndexError("Invalid index for 'at_2' (" + str(at_2) + ")"))
+            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce at_1 and at_2 to their floor() values.  This is again
@@ -1269,9 +1269,9 @@ class OpanXYZ(object):
 
         # Print the function inputs if debug mode is on
         if _DEBUG:  # pragma: no cover
-            print("g_nums = " + str(g_nums))
-            print("ats_1 = " + str(ats_1))
-            print("ats_2 = " + str(ats_2))
+            print("g_nums = {0}".format(g_nums))
+            print("ats_1 = {0}".format(ats_1))
+            print("ats_2 = {0}".format(ats_2))
         ## end if
 
         # Perform the None substitution
@@ -1332,16 +1332,16 @@ class OpanXYZ(object):
         # Error if more than one None; handle if exactly one; pass through if
         #  none.
         if np.count_nonzero(none_vals) > 1:
-            raise(ValueError("Multiple 'None' values [indices " + \
-                    str(tuple(np.nonzero(none_vals)[0])) + "] not supported"))
+            raise(ValueError("Multiple 'None' values [indices {0}] not \
+                    supported".format(tuple(np.nonzero(none_vals)[0]))))
         elif np.count_nonzero(none_vals) == 1:
             # Must be no iterables that are not strings. Thus, an element-wise
             #  test for iterability and an element-wise test for stringiness
             #  must give matching arrays
             if not all(np.equal(map(np.iterable, arglist), \
                                 map(lambda e: isinstance(e, str), arglist))):
-                raise(ValueError("'None' as parameter invalid with " + \
-                                                        "non-str iterables"))
+                raise(ValueError("'None' as parameter invalid with \
+                                                        non-str iterables"))
             ## end if
 
             # Parameters okay; replace the None with the appropriate range()
