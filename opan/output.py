@@ -422,7 +422,7 @@ class OrcaOutput(object):
 
         Raises
         ------
-        OUTPUTError : If indicated output is un-parseably malformed in some
+        OutputError : If indicated output is un-parseably malformed in some
                         fashion
         ValueError  : If 'src_type' is invalid
         """
@@ -432,7 +432,7 @@ class OrcaOutput(object):
         # Imports
         from .utils import pack_tups
         from .utils import safe_cast as scast
-        from .error import OUTPUTError
+        from .error import OutputError
         import numpy as np
 
         # Confirm src_type is valid

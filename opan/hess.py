@@ -466,7 +466,7 @@ class OrcaHess(object):
         geometry, Hessian block, frequencies, and normal modes must be present
         and will be retrieved; other blocks will be imported if present, or
         ignored if absent.  If malformed/inaccurate data is found in any
-        block that is present, some flavor of HESSError will be raised.
+        block that is present, some flavor of HessError will be raised.
 
 
         Parameters
@@ -476,7 +476,7 @@ class OrcaHess(object):
 
         Raises
         ------
-        HESSError   : If indicated Hessian file is malformed in some fashion
+        HessError   : If indicated Hessian file is malformed in some fashion
         KeyError    : If invalid atomic symbol appears in .hess file
         IOError     : If the indicated file does not exist or cannot be read
 
@@ -520,7 +520,7 @@ class OrcaHess(object):
             blockname   : str
                 Brief text description of the block being imported, if needed
                 for error reporting purposes
-            tc          : HESSError typecode
+            tc          : HessError typecode
                 Type of error to be thrown, if required
 
             Returns
@@ -535,7 +535,7 @@ class OrcaHess(object):
 
             # Confirm the anticipated matrix size matches 3*num_ats
             if not int(m_block.group("dim")) == 3*num_ats:
-                raise(HESSError(tc, blockname + " dimension " +
+                raise(HessError(tc, blockname + " dimension " +
                         "specification mismatched with geometry",
                         "HESS File: " + HESS_path))
             ## end if
@@ -586,7 +586,7 @@ class OrcaHess(object):
             #  a check against malformation of the HESS file, resulting in a
             #  reduced number of sections being retrieved.
             if not col_offset >= (3 * num_ats):
-                raise(HESSError(tc, "Insufficient number of " + blockname +
+                raise(HessError(tc, "Insufficient number of " + blockname +
                         " sections found",
                         "HESS File: " + HESS_path))
             ## end if
@@ -594,7 +594,7 @@ class OrcaHess(object):
             # Additional cross-check on number of rows imported
             if (rows_counter % (3*num_ats)) != 0:
                 # Not the right number of rows; complain
-                raise(HESSError(tc,
+                raise(HessError(tc,
                             blockname + " row count mismatch",
                             "HESS File: " + HESS_path))
             ## end if
@@ -606,7 +606,7 @@ class OrcaHess(object):
 
         # Imports
         import re, numpy as np
-        from .error import HESSError
+        from .error import HessError
         from .utils import safe_cast as scast
         from .const import atomNum, atomSym, PRM, DEF
 
@@ -627,32 +627,32 @@ class OrcaHess(object):
 
         # Check to ensure all required data blocks are found
         if not OrcaHess.p_at_block.search(self.in_str):
-            raise(HESSError(HESSError.at_block,
+            raise(HessError(HessError.at_block,
                     "Atom specification block not found",
                     "HESS File: " + HESS_path))
         ## end if
         if not OrcaHess.p_hess_block.search(self.in_str):
-            raise(HESSError(HESSError.hess_block,
+            raise(HessError(HessError.hess_block,
                     "Hessian block not found",
                     "HESS File: " + HESS_path))
         ## end if
         if not OrcaHess.p_freq_block.search(self.in_str):
-            raise(HESSError(HESSError.freq_block,
+            raise(HessError(HessError.freq_block,
                     "Frequencies block (cm**-1 units) not found",
                     "HESS File: " + HESS_path))
         ## end if
         if not OrcaHess.p_modes_block.search(self.in_str):
-            raise(HESSError(HESSError.modes_block,
+            raise(HessError(HessError.modes_block,
                     "Normal modes block not found",
                     "HESS File: " + HESS_path))
         ## end if
         if not OrcaHess.p_energy.search(self.in_str):
-            raise(HESSError(HESSError.energy,
+            raise(HessError(HessError.energy,
                     "Energy value not found",
                     "HESS File: " + HESS_path))
         ## end if
         if not OrcaHess.p_temp.search(self.in_str):
-            raise(HESSError(HESSError.temp,
+            raise(HessError(HessError.temp,
                     "'Actual temperature' value not found",
                     "HESS File: " + HESS_path))
         ## end if
@@ -701,7 +701,7 @@ class OrcaHess(object):
         #  number indicated in the HESS file. Checks of atomic masses
         #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
-            raise(HESSError(HESSError.at_block, "Atomic symbol dimension " +
+            raise(HessError(HessError.at_block, "Atomic symbol dimension " +
                     "mismatch with HESS atom specification",
                     "HESS File: " + HESS_path))
         ## end if
@@ -713,18 +713,18 @@ class OrcaHess(object):
         # Pull the Hessian
         self.hess = parse_multiblock(self.in_str, self.p_hess_block,
                 self.p_hess_sec, self.p_hess_line, self.num_ats,
-                "Hessian", HESSError.hess_block)
+                "Hessian", HessError.hess_block)
 
         # Pull the modes
         self.modes = parse_multiblock(self.in_str, self.p_modes_block,
                 self.p_modes_sec, self.p_modes_line, self.num_ats,
-                "modes", HESSError.modes_block)
+                "modes", HessError.modes_block)
 
         # Extra check of 'dim' vs 'dim2' on modes
         m_work = self.p_modes_block.search(self.in_str)
         if scast(m_work.group("dim"), np.int_) != \
                             scast(m_work.group("dim2"), np.int_):
-            raise(HESSError(HESSError.modes_block,
+            raise(HessError(HessError.modes_block,
                     "Normal mode block dimension specification mismatch",
                     "HESS File: " + self.HESS_path))
         ## end if
@@ -736,7 +736,7 @@ class OrcaHess(object):
         # Check that number of frequencies indicated in the block matches
         #  that expected from the number of atoms
         if 3*self.num_ats != scast(m_work.group("num"), np.int_):
-            raise(HESSError(HESSError.freq_block,
+            raise(HessError(HessError.freq_block,
                     "Count in frequencies block != 3 * number of atoms",
                     "HESS File: " + self.HESS_path))
         ## end if
@@ -748,7 +748,7 @@ class OrcaHess(object):
 
         # Proofread for proper size
         if not self.freqs.shape[0] == 3*self.num_ats:
-            raise(HESSError(HESSError.freq_block,
+            raise(HessError(HessError.freq_block,
                     "Number of frequencies != 3 * number of atoms",
                     "HESS File: " + self.HESS_path))
         ## end if
@@ -772,7 +772,7 @@ class OrcaHess(object):
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != scast(m_work.group("dim"), np.int_):
-                raise(HESSError(HESSError.dipder_block,
+                raise(HessError(HessError.dipder_block,
                         "Count in dipole derivatives block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -788,7 +788,7 @@ class OrcaHess(object):
             #  three, since any row not containing three numerical values will
             #  result in the block getting truncated, per the Regex constrution.
             if not self.dipders.shape[0] == 3*self.num_ats:
-                raise(HESSError(HESSError.dipder_block,
+                raise(HessError(HessError.dipder_block,
                         "Number of dipole derivative rows != " +
                                                     "3 * number of atoms",
                         "HESS File: " + self.HESS_path))
@@ -810,7 +810,7 @@ class OrcaHess(object):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.ir_block,
+                raise(HessError(HessError.ir_block,
                         "Count in IR spectrum block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -829,7 +829,7 @@ class OrcaHess(object):
             # Confirm length of ir_mags conforms. Shouldn't need to check both,
             #  since they both rely equally on p_ir_line.finditer.
             if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HESSError(HESSError.ir_block,
+                raise(HessError(HessError.ir_block,
                         "Number of IR spectrum rows != " +
                                                     "3 * number of atoms",
                         "HESS File: " + self.HESS_path))
@@ -843,7 +843,7 @@ class OrcaHess(object):
                                 m_work.group("block") )]),
                     rtol=0,
                     atol=DEF.HESS_IR_Match_Tol):
-                raise(HESSError(HESSError.ir_block,
+                raise(HessError(HessError.ir_block,
                         "Frequency mismatch between freq and IR blocks",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -859,7 +859,7 @@ class OrcaHess(object):
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.polder_block,
+                raise(HessError(HessError.polder_block,
                         "Count in polarizability derivatives block " +
                                                     "!= 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
@@ -876,7 +876,7 @@ class OrcaHess(object):
             #  six, since any row not containing six numerical values will
             #  result in the block getting truncated.
             if not self.polders.shape[0] == 3*self.num_ats:
-                raise(HESSError(HESSError.polder_block, \
+                raise(HessError(HessError.polder_block, \
                         "Number of polarizability derivative rows != " + \
                                                     "3 * number of atoms", \
                         "HESS File: " + self.HESS_path))
@@ -894,7 +894,7 @@ class OrcaHess(object):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.raman_block,
+                raise(HessError(HessError.raman_block,
                         "Count in Raman spectrum block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -912,7 +912,7 @@ class OrcaHess(object):
             # Confirm length of raman_acts conforms. Shouldn't need to check
             #  both, since they both rely equally on p_raman_line.finditer.
             if 3*self.num_ats != self.raman_acts.shape[0]:
-                raise(HESSError(HESSError.raman_block, \
+                raise(HessError(HessError.raman_block, \
                         "Number of Raman spectrum rows != " + \
                                                     "3 * number of atoms", \
                         "HESS File: " + self.HESS_path))
@@ -926,7 +926,7 @@ class OrcaHess(object):
                                 m_work.group("block")) ]),
                     rtol=0,
                     atol=DEF.HESS_IR_Match_Tol):
-                raise(HESSError(HESSError.raman_block,
+                raise(HessError(HessError.raman_block,
                         "Frequency mismatch between freq and Raman blocks",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -942,7 +942,7 @@ class OrcaHess(object):
             # Check that number of joblist rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.job_block,
+                raise(HessError(HessError.job_block,
                         "Count in job list block != 3 * # of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -958,7 +958,7 @@ class OrcaHess(object):
             #  three, since any row not containing three numerical values will
             #  result in the block getting truncated.
             if not self.joblist.shape[0] == self.num_ats:
-                raise(HESSError(HESSError.job_block,
+                raise(HessError(HessError.job_block,
                         "Number of job list rows != number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -978,7 +978,7 @@ class OrcaHess(object):
             # Check that number of eigenvalues indicated in the block matches
             #  that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HESSError(HESSError.eigval_block,
+                raise(HessError(HessError.eigval_block,
                         "Count in MWH eigenvalues block != 3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -990,7 +990,7 @@ class OrcaHess(object):
 
             # Proofread for proper size
             if not self.mwh_eigvals.shape[0] == 3*self.num_ats:
-                raise(HESSError(HESSError.eigval_block,
+                raise(HessError(HessError.eigval_block,
                         "Number of MWH eigenvalues != 3 * number of atoms",
                         "HESS File: " + self.HESS_path))
             ## end if
@@ -1008,12 +1008,12 @@ class OrcaHess(object):
             self.mwh_eigvecs = \
                     parse_multiblock(self.in_str, self.p_eigvecs_block,
                     self.p_eigvecs_sec, self.p_eigvecs_line, self.num_ats,
-                    "MWH eigenvectors", HESSError.eigvec_block)
+                    "MWH eigenvectors", HessError.eigvec_block)
 
             # Extra check of 'dim' vs 'dim2' on modes
             if scast(m_work.group("dim"), np.int_) != \
                                 scast(m_work.group("dim2"), np.int_):
-                raise(HESSError(HESSError.eigvec_block,
+                raise(HessError(HessError.eigvec_block,
                         "MWH eigenvectors dimension specification mismatch",
                         "HESS File: " + self.HESS_path))
             ## end if

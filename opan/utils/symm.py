@@ -425,7 +425,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
     from ..const import PRM, EnumTopType as ETT
     from itertools import combinations as nCr
     from collections import namedtuple
-    from ..error import SYMMError
+    from ..error import SymmError
 
     # Define the Axis class
     Axis = namedtuple('Axis', 'vector order refl')
@@ -540,7 +540,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
             # If nothing found here, raise exception
             if order < 2:
-                raise(SYMMError(SYMMError.notfound, \
+                raise(SymmError(SymmError.notfound, \
                         "Cubic point group not found in spherical top " +
                         "molecule.", "geom_find_group()"))
             ## end if

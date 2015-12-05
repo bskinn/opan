@@ -64,7 +64,7 @@ class OpanAnharm(object):
         from ..const import EnumDispDirection as E_DDir, EnumFileType as E_FT
         from ..const import _E_SW as E_SW
         from ..const import DEF
-        from ..error import ANHARMError as ANHErr
+        from ..error import AnharmError as ANHErr
 
 ##        # Store working directory for restore?
 ##        prev_dir = os.getcwd()

@@ -284,7 +284,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     import numpy as np
     from scipy import linalg as spla
     from ..const import PRM, EnumTopType as ETT
-    from ..error import INERTIAError, VECTORError
+    from ..error import InertiaError, VectorError
     from .vector import rej, parallel_check as prlchk
     from .vector import orthonorm_check as orthchk
 
@@ -308,7 +308,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     # Detect top type; start with error check
     if moments[0] < -PRM.Zero_Moment_Tol:  # pragma: no cover
         # Invalid moment; raise error. Should be impossible!
-        raise(INERTIAError(INERTIAError.neg_moment,
+        raise(InertiaError(InertiaError.neg_moment,
                     "Negative principal inertial moment", ""))
     elif moments[0] < PRM.Zero_Moment_Tol:
         # Zero first moment. Check whether others are too
@@ -337,7 +337,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
 
     # Check for nothing assigned (this should never occur!)
     if top is None:  # pragma: no cover
-        raise(INERTIAError(INERTIAError.top_type,
+        raise(InertiaError(InertiaError.top_type,
                     "Unrecognized molecular top type",""))
     ## end if
 
@@ -377,7 +377,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # Vectors should already be orthonormal; following error should
         #  never occur
         if not orthchk(vecs, tol=on_tol):  # pragma: no cover
-            raise(VECTORError(VECTORError.orthonorm,
+            raise(VectorError(VectorError.orthonorm,
                          "'eigh' produced non-orthonormal axes", ""))
         ## end if
 
@@ -409,9 +409,9 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         try:
             axes[:,2] = vecs[:,2] * np.sign(np.dot(vecs[:,2],
                                                     _fadnOv(vecs[:,2], geom)))
-        except INERTIAError as IE:
+        except InertiaError as IE:
             # Check that typecode is as expected for error from planar system.
-            if not IE.tc == INERTIAError.bad_geom:  # pragma: no cover
+            if not IE.tc == InertiaError.bad_geom:  # pragma: no cover
                 raise
             ## end if
 
@@ -471,7 +471,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
 
     # Reconfirm orthonormality. Again, the error should never occur.
     if not orthchk(axes, tol=on_tol): # pragma: no cover
-        raise(VECTORError(VECTORError.orthonorm,
+        raise(VectorError(VectorError.orthonorm,
                     "Axis conditioning broke orthonormality",""))
     ## end if
 
@@ -606,7 +606,7 @@ def _fadnOv(vec, geom):
     import numpy as np
     from scipy import linalg as spla
     from ..const import PRM
-    from ..error import INERTIAError
+    from ..error import InertiaError
     from .vector import orthonorm_check as onchk
 
     # Geom and vec must both be the right shape
@@ -640,7 +640,7 @@ def _fadnOv(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be atom, linear, or planar
-        raise(INERTIAError(INERTIAError.bad_geom,
+        raise(InertiaError(InertiaError.bad_geom,
                     "No suitable atomic displacement found", ""))
     ## end for disp
 
@@ -673,7 +673,7 @@ def _fadnPv(vec, geom):
     import numpy as np
     from scipy import linalg as spla
     from ..const import PRM
-    from ..error import INERTIAError
+    from ..error import InertiaError
     from .vector import parallel_check as parchk
 
     # Geom and vec must both be the right shape
@@ -705,7 +705,7 @@ def _fadnPv(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be a linear molecule?
-        raise(INERTIAError(INERTIAError.bad_geom,
+        raise(InertiaError(InertiaError.bad_geom,
                     "Linear molecule, no non-parallel displacement", ""))
     ## end for disp
 

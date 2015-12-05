@@ -36,26 +36,26 @@ several common features:
 
 :class:`OpanError` **Subclasses**
 
-    :class:`ANHARMError` -- Raised as a result of
-    :class:`~opan.anharm.OPAN_ANHARM` actions
+    :class:`AnharmError` -- Raised as a result of
+    :class:`~opan.anharm.base.OpanAnharm` actions
 
-    :class:`GRADError` -- Raised during parsing of or calculations using
+    :class:`GradError` -- Raised during parsing of or calculations using
     gradient data
 
-    :class:`HESSError` -- Raised during parsing of or calculations using
+    :class:`HessError` -- Raised during parsing of or calculations using
     Hessian data
 
-    :class:`INERTIAError` -- Raised by :mod:`opan.utils.inertia`
+    :class:`InertiaError` -- Raised by :mod:`opan.utils.inertia`
     submodule functions
 
-    :class:`OUTPUTError` -- Raised during parsing of or calculations using
+    :class:`OutputError` -- Raised during parsing of or calculations using
     output data
 
-    :class:`REPOError` -- Raised by HDF5 repository interactions
+    :class:`RepoError` -- Raised by HDF5 repository interactions
 
-    :class:`SYMMError` -- Raised by :mod:`opan.utils.symm` submodule functions
+    :class:`SymmError` -- Raised by :mod:`opan.utils.symm` submodule functions
 
-    :class:`VECTORError` -- Raised by :mod:`opan.utils.vector`
+    :class:`VectorError` -- Raised by :mod:`opan.utils.vector`
     submodule functions
 
     :class:`XYZError` -- Raised during parsing of or calculations using
@@ -234,7 +234,7 @@ class XYZError(OpanError):
 ## end class XYZError
 
 
-class GRADError(OpanError):
+class GradError(OpanError):
     """Error relating to parsing of or calculation from gradient data.
 
     Not all typecodes may be relevant for all software packages.
@@ -258,10 +258,10 @@ class GRADError(OpanError):
     #: Malformed or missing geometry block
     geomblock = 'geomblock'
 
-## end class ENGRADError
+## end class GradError
 
 
-class OUTPUTError(OpanError):
+class OutputError(OpanError):
     """Error relating to parsing of or calculation from output data.
 
     See the :class:`OpanError` documentation for more information on
@@ -273,10 +273,10 @@ class OUTPUTError(OpanError):
 
     """
 
-## end class OUTPUTError
+## end class OutputError
 
 
-class HESSError(OpanError):
+class HessError(OpanError):
     """Error relating to parsing of or calculation from Hessian data.
 
     Not all typecodes may be relevant for all software packages.
@@ -327,10 +327,10 @@ class HESSError(OpanError):
     #: Malformed or missing temperature value
     temp = "temp"
 
-## end class HESSError
+## end class HessError
 
 
-class SYMMError(OpanError):
+class SymmError(OpanError):
     """Error relating to :mod:`opan.utils.symm` submodule functions.
 
     See the :class:`OpanError` documentation for more information on
@@ -343,10 +343,10 @@ class SYMMError(OpanError):
     #: Symmetry element expected but not found
     notfound = 'notfound'
 
-## end class SYMMError
+## end class SymmError
 
 
-class REPOError(OpanError):
+class RepoError(OpanError):
     """Error relating to HDF5 repository interactions.
 
     See the :class:`OpanError` documentation for more information on
@@ -365,11 +365,11 @@ class REPOError(OpanError):
     #: Problem with a group in linked HDF5 :class:`h5py:File`
     group = 'group'
 
-## end class REPOError
+## end class RepoError
 
 
-class ANHARMError(OpanError):
-    """Error relating to :class:`opan.anharm.OPAN_ANHARM` actions.
+class AnharmError(OpanError):
+    """Error relating to :class:`~opan.anharm.base.OpanAnharm` actions.
 
     See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
@@ -382,14 +382,14 @@ class ANHARMError(OpanError):
     #: or attempt made to bind new repo when one already bound
     repo = 'repo'
 
-    #: OPAN_ANHARM internal variables in inappropriate state for the
-    #: requested operation
+    #: :class:`~opan.anharm.base.OpanAnharm` internal variables in
+    #: inappropriate state for the requested operation
     status = 'status'
 
-## end class ANHARMError
+## end class AnharmError
 
 
-class INERTIAError(OpanError):
+class InertiaError(OpanError):
     """Error relating to :mod:`opan.utils.inertia` submodule functions.
 
     See the :class:`OpanError` documentation for more information on
@@ -409,10 +409,10 @@ class INERTIAError(OpanError):
     #: calculation/manipulation
     bad_geom = 'bad_geom'
 
-## end class INERTIAError
+## end class InertiaError
 
 
-class VECTORError(OpanError):
+class VectorError(OpanError):
     """Error relating to :mod:`opan.utils.vector` submodule functions.
 
     See the :class:`OpanError` documentation for more information on
@@ -428,7 +428,7 @@ class VECTORError(OpanError):
     #: Vectors which should have been orthonormal were determined not to be
     orthonorm = 'orthonorm'
 
-## end class VECTORError
+## end class VectorError
 
 
 

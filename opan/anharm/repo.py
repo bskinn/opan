@@ -116,7 +116,7 @@ class OpanAnharmRepo(object):
 
         # Imports
         import h5py as h5
-        from ..error import REPOError
+        from ..error import RepoError
 
         # Close the repo if it's bound, and wipe link; else complain
         if self._repo != None:
@@ -124,7 +124,7 @@ class OpanAnharmRepo(object):
             self._repo = None
             # Leave self.fname defined for potential easy re-opening later on.
         else:
-            raise(REPOError(REPOError.status, \
+            raise(RepoError(RepoError.status, \
                     "Cannot close; no repository open", \
                     "Last repo: {0}".format(self.fname)))
         ## end if
@@ -138,11 +138,11 @@ class OpanAnharmRepo(object):
 
         # Imports
         import h5py as h5
-        from ..error import REPOError
+        from ..error import RepoError
 
         # If repo not None, complain
         if not self._repo == None:
-            raise(REPOError(REPOError.status, \
+            raise(RepoError(RepoError.status, \
                     "Repository already open", \
                     "File: {0}".format(self.fname)))
         ## end if
@@ -182,7 +182,7 @@ class OpanAnharmRepo(object):
 
         # Imports
         import h5py as h5
-        from ..error import REPOError as RErr
+        from ..error import RepoError as RErr
         from ..const import EnumDispDirection as _E_DD
         from ..const import EnumAnharmRepoData
 
@@ -251,7 +251,7 @@ class OpanAnharmRepo(object):
         import os
         from ..const import EnumDispDirection as _E_DD
         from ..const import EnumAnharmRepoData
-        from ..error import REPOError as RErr
+        from ..error import RepoError as RErr
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
@@ -313,7 +313,7 @@ class OpanAnharmRepo(object):
         """
 
         # Imports
-        from ..error import REPOError
+        from ..error import RepoError
 
         # Just try to get the data. Simply pass up all exceptions except for
         #  those if the group or data doesn't exist. DO re-raise a non-bound
@@ -322,7 +322,7 @@ class OpanAnharmRepo(object):
         retval = True
         try:
             self.get_data(datatype, mode, disp)
-        except REPOError as RErr:
+        except RepoError as RErr:
             if RErr.tc in (RErr.data, RErr.group):
                 retval = False
             ## end if
@@ -340,7 +340,7 @@ class OpanAnharmRepo(object):
 
         # Imports
         from ..const import EnumAnharmRepoParam
-        from ..error import REPOError as RErr
+        from ..error import RepoError as RErr
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
@@ -394,7 +394,7 @@ class OpanAnharmRepo(object):
         # Imports
         import os
         from ..const import EnumAnharmRepoParam
-        from ..error import REPOError as RErr
+        from ..error import RepoError as RErr
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
@@ -432,14 +432,14 @@ class OpanAnharmRepo(object):
         """
 
         # Imports
-        from ..error import REPOError
+        from ..error import RepoError
 
         # Try to get the param; pass along all errors, except 'data' error
-        #  from REPOError
+        #  from RepoError
         retval = True
         try:
             self.get_param(param)
-        except REPOError as RErr:
+        except RepoError as RErr:
             if RErr.tc == RErr.data:
                 retval = False
             ## end if
@@ -456,7 +456,7 @@ class OpanAnharmRepo(object):
         """
 
         # Imports
-        from ..error import REPOError as RErr
+        from ..error import RepoError as RErr
 
         # Get the return value from the dataset, complaining if repo not
         #  bound. Using 'require_dataset' since any repo w/o a defined

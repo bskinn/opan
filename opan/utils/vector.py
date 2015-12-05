@@ -94,7 +94,7 @@ def ortho_basis(normal, ref_vec=None):
     from scipy import linalg as spla
     from scipy import random as sprnd
     from ..const import PRM
-    from ..error import VECTORError
+    from ..error import VectorError
 
     # Internal parameters
     # Magnitude of the perturbation from 'normal' in constructing a random rv
@@ -144,7 +144,7 @@ def ortho_basis(normal, ref_vec=None):
         if parallel_check(nv, rv):
             # Essentially equal or opposite vectors, making them too nearly
             #  parallel.
-            raise(VECTORError(VECTORError.nonprl,
+            raise(VectorError(VectorError.nonprl,
                     "'normal' and ref_vec are too nearly parallel.", ""))
         ## end if
 
