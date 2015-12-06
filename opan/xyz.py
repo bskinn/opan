@@ -34,6 +34,44 @@ the following variations:
  * Multiple geometries/frames are supported, but the number of atoms and
    their sequence in the atoms list must be maintained in all geometries.
 
+**Contents**
+
+    :ref:`Class Variables <class-variables>`
+
+    :ref:`Instance Variables <instance-variables>`
+
+    :ref:`Methods <methods>`
+
+        All return values from a single indicated geometry.
+
+        :func:`~opan.xyz.OpanXYZ.Geom_single`
+
+        :func:`~opan.xyz.OpanXYZ.Displ_single` -- Displacement
+        between two atoms
+
+        :func:`~opan.xyz.OpanXYZ.Dist_single` -- Euclidean distance
+        between two atoms
+
+        :func:`~opan.xyz.OpanXYZ.Angle_single` -- Spanned angle of three
+        atoms (one central and two distal atoms)
+
+        :func:`~opan.xyz.OpanXYZ.Dihed_single` -- Dihedral angle
+        among four atoms
+
+    :ref:`Generators <generators>`
+
+        All yielded values are composited from an arbitrary set of geometry
+        and/or atom indices
+
+        :func:`~opan.xyz.OpanXYZ.Geom_iter`
+
+        :func:`~opan.xyz.OpanXYZ.Displ_iter`
+
+        :func:`~opan.xyz.OpanXYZ.Dist_iter`
+
+        :func:`~opan.xyz.OpanXYZ.Angle_iter`
+
+        :func:`~opan.xyz.OpanXYZ.Dihed_iter`
 
 .. autoclass:: OpanXYZ
 
@@ -92,6 +130,8 @@ class OpanXYZ(object):
     the program), and are stored in Angstrom units.
 
 
+    .. _class-variables:
+
     **Class Variables**
 
     .. autoattribute:: p_coords
@@ -102,6 +142,8 @@ class OpanXYZ(object):
 
     .. autoattribute:: LOAD_DATA_FLAG
 
+
+    .. _instance-variables:
 
     **Instance Variables**
 
@@ -118,72 +160,61 @@ class OpanXYZ(object):
         length-G `str` -- Text descriptions for each geometry
         included in a loaded file
 
+    .. attribute:: geoms
+
+        length-G `list` of length-3N ``np.float_`` -- Molecular
+        geometry/geometries read from file or passed to `coords` argument
+
+    .. attribute:: in_str
+
+        `str` -- Complete contents of the input file
+
+    .. attribute:: initialized
+
+        `bool` -- Flag for whether instance has already been constructed
+
+    .. attribute:: num_atoms
+
+        `int` -- Number of atoms per geometry, N
+
+    .. attribute:: num_geoms
+
+        `int` -- Number of geometries, G
+
     .. attribute:: XYZ_path
 
         `str` -- Full path to imported OpenBabel file
 
 
+    .. _methods:
+
+    **Methods**
+
+    .. automethod:: Geom_single(g_num)
+
+    .. automethod:: Displ_single(g_num, at_1, at_2)
+
+    .. automethod:: Dist_single(g_num, at_1, at_2)
+
+    .. automethod:: Angle_single(g_num, at_1, at_2, at_3)
+
+    .. automethod:: Dihed_single(g_num, at_1, at_2, at_3, at_4)
 
 
-    ----content breaks here----
+    .. _generators:
 
+    **Generators**
 
-    Instance Variables
+    .. automethod:: Geom_iter(g_nums)
 
+    .. automethod:: Displ_iter(g_nums, ats_1, ats_2)
 
-    descs       : str list, len(G)
-        Text descriptions for each geometry included in the file
-    geoms       : len(G) list of len(3N) np.arrays of np.float_
-        Molecular geometry/geometries, stored as a list of 3N-vectors
-    in_str      : str
-        Complete contents of input file
-    initialized : bool
-        Flag for whether instance has already been constructed
-    num_atoms   : int
-        Number of atoms per geometry, N
-    num_geoms   : int
-        Number of geometries found, G
+    .. automethod:: Dist_iter(g_nums, ats_1, ats_2)
 
-    Methods
-    xxx
-    Geom_single(g_num)
-        Return the length-3N np.array of geometry with index 'g_num'
-    Displ_single(g_num, at_1, at_2)
-        Return the vector displacement from at_1 toward at_2 as a length-3
-        np.array, in Bohr units
-    Dist_single(g_num, at_1, at_2)
-        Return the Euclidean distance between atoms with indices 'at_1' and
-        'at_2' for geometry 'g_num' in Bohr units
-    Angle_single(g_num, at_1, at_2, at_3)
-        Return the bond angle at_1 --> at_2 --> at_3 for geometry 'g_num' in
-        degrees. at_2 must be distinct from both at_1 and at_3.
-    Dihed_single(g_num, at_1, at_2, at_3, at_4)
-        Return the dihedral angle at_1 --> at_2 --> at_3 --> at_4 in degrees
-        for geometry 'g_num'. See the function docstring for more details and
-        restrictions on atom indices and structural parameters.
+    .. automethod:: Angle_iter(g_nums, ats_1, ats_2, ats_3)
 
-    Generators
-    xxx
-    == In all of the below, each parameter can either be an iterable of     ==
-    == indices or a single index. If more than one parameter is an iterable ==
-    == then they all must have the same length 'N'.  The generator will     ==
-    == iterate over each set of indices from 1 to N, taking each iterable   ==
-    == value once, and using any single-index parameters in each case.      ==
-    ==                                                                      ==
-    == Exactly one argument in these functions can also be specified as     ==
-    == None, in which case all other arguments must be non-iterables. In    ==
-    == this case, the None will be transformed into an iterable spanning    ==
-    == the full range of valid values for that argument.                    ==
-    Geom_iter(g_nums)
-        Iterate over the geometries specified by the indices 'g_nums'
-    Displ_iter(g_nums, ats_1, ats_2)
-        Iterate over a series of displacements.
-    Dist_iter(g_nums, ats_1, ats_2)
-        Iterate over a series of Euclidean distances
-    Angle_iter(g_nums, ats_1, ats_2, ats_3)
-        Iterate over a series of bond angles
-    Dihed_iter(g_nums, ats_1, ats_2, ats_3, ats_4)
-        Iterate over a series of dihedral angles
+    .. automethod:: Dihed_iter(g_nums, ats_1, ats_2, ats_3, ats_4)
+
 
     """
 
@@ -194,7 +225,7 @@ class OpanXYZ(object):
     # Class constants
     #: `str` -- Flag for irrelevant data in `atom_syms`/`coords`
     #: initialization mode.
-    LOAD_DATA_FLAG = "DATA"
+    LOAD_DATA_FLAG = "NOT FILE"
 
     # Define the RegEx to pull entire geometry blocks
     # re.M is required in order for the "^" at the start of the pattern

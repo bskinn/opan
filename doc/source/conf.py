@@ -46,6 +46,7 @@ extensions = [
 
 # napoleon configuration
 napoleon_google_docstring = False
+napoleon_use_rtype = False
 
 # Toggle for nitpicky link binds
 nitpicky = False
