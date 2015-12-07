@@ -44,34 +44,55 @@ the following variations:
 
         All return values from a single indicated geometry.
 
-        :func:`~opan.xyz.OpanXYZ.Geom_single`
+        :func:`~opan.xyz.OpanXYZ.geom_single`
 
-        :func:`~opan.xyz.OpanXYZ.Displ_single` -- Displacement
+        :func:`~opan.xyz.OpanXYZ.displ_single` -- Displacement
         between two atoms
 
-        :func:`~opan.xyz.OpanXYZ.Dist_single` -- Euclidean distance
+        :func:`~opan.xyz.OpanXYZ.dist_single` -- Euclidean distance
         between two atoms
 
-        :func:`~opan.xyz.OpanXYZ.Angle_single` -- Spanned angle of three
+        :func:`~opan.xyz.OpanXYZ.angle_single` -- Spanned angle of three
         atoms (one central and two distal atoms)
 
-        :func:`~opan.xyz.OpanXYZ.Dihed_single` -- Dihedral angle
+        :func:`~opan.xyz.OpanXYZ.dihed_single` -- Dihedral angle
         among four atoms
 
     :ref:`Generators <generators>`
 
         All yielded values are composited from an arbitrary set of geometry
-        and/or atom indices
+        and/or atom indices; indexing with negative values is supported.
 
-        :func:`~opan.xyz.OpanXYZ.Geom_iter`
+        Each parameter can either be a single index, or an iterable of
+        indices. If any iterables are passed, all must be the same length.
 
-        :func:`~opan.xyz.OpanXYZ.Displ_iter`
+        Additionally, a ``None`` value can be passed to a maximum of
+        one parameter, which will then be assigned the full 'natural' range
+        of that parameter (``range(G)`` for `g_nums` and ``range(N)`` for
+        `ats_#`).
 
-        :func:`~opan.xyz.OpanXYZ.Dist_iter`
+        If the optional parameter `invalid_error` is ``False`` (the
+        default), if :exc:`~exceptions.IndexError` or
+        :exc:`~exceptions.ValueError` is thrown in the course of
+        calculating a given value, it is ignored and a ``None`` value
+        is returned. If ``True``, then the errors are thrown as-is.
 
-        :func:`~opan.xyz.OpanXYZ.Angle_iter`
+        .. note::
 
-        :func:`~opan.xyz.OpanXYZ.Dihed_iter`
+            For :func:`~opan.xyz.OpanXYZ.angle_iter` and
+            :func:`~opan.xyz.OpanXYZ.dihed_iter`, using a ``None`` parameter
+            with ``invalid_error == True`` is **guaranteed** to raise an
+            error.
+
+        :func:`~opan.xyz.OpanXYZ.geom_iter` -- Geometries
+
+        :func:`~opan.xyz.OpanXYZ.displ_iter` -- Displacement vectors
+
+        :func:`~opan.xyz.OpanXYZ.dist_iter` -- Euclidean distances
+
+        :func:`~opan.xyz.OpanXYZ.angle_iter` -- Span angles
+
+        :func:`~opan.xyz.OpanXYZ.dihed_iter` -- Dihedral angles
 
 .. autoclass:: OpanXYZ
 
@@ -190,30 +211,30 @@ class OpanXYZ(object):
 
     **Methods**
 
-    .. automethod:: Geom_single(g_num)
+    .. automethod:: geom_single(g_num)
 
-    .. automethod:: Displ_single(g_num, at_1, at_2)
+    .. automethod:: displ_single(g_num, at_1, at_2)
 
-    .. automethod:: Dist_single(g_num, at_1, at_2)
+    .. automethod:: dist_single(g_num, at_1, at_2)
 
-    .. automethod:: Angle_single(g_num, at_1, at_2, at_3)
+    .. automethod:: angle_single(g_num, at_1, at_2, at_3)
 
-    .. automethod:: Dihed_single(g_num, at_1, at_2, at_3, at_4)
+    .. automethod:: dihed_single(g_num, at_1, at_2, at_3, at_4)
 
 
     .. _generators:
 
     **Generators**
 
-    .. automethod:: Geom_iter(g_nums)
+    .. automethod:: geom_iter(g_nums)
 
-    .. automethod:: Displ_iter(g_nums, ats_1, ats_2)
+    .. automethod:: displ_iter(g_nums, ats_1, ats_2)
 
-    .. automethod:: Dist_iter(g_nums, ats_1, ats_2)
+    .. automethod:: dist_iter(g_nums, ats_1, ats_2)
 
-    .. automethod:: Angle_iter(g_nums, ats_1, ats_2, ats_3)
+    .. automethod:: angle_iter(g_nums, ats_1, ats_2, ats_3)
 
-    .. automethod:: Dihed_iter(g_nums, ats_1, ats_2, ats_3, ats_4)
+    .. automethod:: dihed_iter(g_nums, ats_1, ats_2, ats_3, ats_4)
 
 
     """
@@ -319,7 +340,7 @@ class OpanXYZ(object):
         atom_syms   : squeezes to array of N strings
             Element symbols for the XYZ. Must be valid elements as defined in
             .const.atomNum.keys()
-        coords      : squeezes to array of 3N np.float_ castables
+        coords      : squeezes to array of 3N ``np.float_`` castables
             Coordinates for the geometry (x1, y1, z1, x2, y2, ...)
         bohrs       : bool, default True
             Units of coordinates
@@ -625,38 +646,47 @@ class OpanXYZ(object):
     ## end def _load_file
 
 
-    def Geom_single(self, g_num):
-        """ Retrieve a single geometry from the OpanXYZ instance.
+    def geom_single(self, g_num):
+        """ Retrieve a single geometry.
 
-        The atom coordinates are returned as a length-3N np.array,
-            with each atom's x/y/z coordinates returned together:
-            [A1x,A1y,A1z,A2x,A2y,A2z,...]
+        The atom coordinates are returned with each atom's
+        x/y/z coordinates grouped together::
+
+            [A1x, A1y, A1z, A2x, A2y, A2z, ...]
+
+        An alternate method to achieve the same effect is by simply
+        indexing into :attr:`~opan.xyz.OpanXYZ.geoms`::
+
+            >>> x = opan.xyz.OpanXYZ(path='...')
+            >>> x.geom_single(g_num)    # One way to do it
+            >>> x.geoms[g_num]          # Another way
 
         Parameters
         ----------
         g_num : int
-            Index of the desired geometry (base 0)
+            Index of the desired geometry
 
         Returns
         -------
-        geom : length-3N np.array
+        length-3N ``np.float_``
             Vector of the atomic coordinates for the geometry indicated
-            by 'g_num'
+            by `g_num`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_num is provided
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` is provided
         """
 
         # Just return the appropriate geometry vector
         geom = self.geoms[g_num]
         return geom
 
-    ## end def Geom_single
+    ## end def geom_single
 
 
-    def Geom_iter(self, g_nums):
-        """Iterator over selected geometries from the OpanXYZ instance.
+    def geom_iter(self, g_nums):
+        """Iterator over a subset of geometries.
 
         The indices of the geometries to be returned are indicated by an
             iterable of integers passed as g_nums.
@@ -688,12 +718,12 @@ class OpanXYZ(object):
 
         vals = pack_tups(g_nums)
         for val in vals:
-            yield self.Geom_single(val[0])
+            yield self.geom_single(val[0])
 
-    ## end def Geom_iter
+    ## end def geom_iter
 
 
-    def Dist_single(self, g_num, at_1, at_2):
+    def dist_single(self, g_num, at_1, at_2):
         """ Retrieve an interatomic distance from the OpanXYZ instance.
 
         Returns the interatomic distance between the two atoms at_1 and at_2
@@ -710,7 +740,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        dist : np.float_
+        dist : ``np.float_``
             Interatomic distance in Bohrs between atoms at_1 and at_2 from
             geometry g_num
 
@@ -747,17 +777,17 @@ class OpanXYZ(object):
         if at_1 == at_2:
             dist = 0.0
         else:
-            dist = scast( \
-                    spla.norm(self.Displ_single(g_num, at_1, at_2)), \
+            dist = scast(
+                    spla.norm(self.displ_single(g_num, at_1, at_2)),
                             np.float_)
         ## end if
 
         return dist
 
-    ## end def Dist_single
+    ## end def dist_single
 
 
-    def Dist_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
+    def dist_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over selected interatomic distances.
 
         Returns the interatomic distances between the two atom sets ats_1 and
@@ -789,7 +819,7 @@ class OpanXYZ(object):
 
         Raises
         ------
-        IndexError :  (via Dist_single) If any parameter value is out of range
+        IndexError :  (via dist_single) If any parameter value is out of range
         ValueError :  (via .utils.pack_tups) If all iterable objects are
             not the same length
         """
@@ -820,13 +850,13 @@ class OpanXYZ(object):
         #  was used, return None for any invalid indices instead of raising
         #  an exception.
         for tup in tups:
-            yield self._iter_return(tup, self.Dist_single, invalid_error)
+            yield self._iter_return(tup, self.dist_single, invalid_error)
         ## next tup
 
-    ## end def Dist_iter
+    ## end def dist_iter
 
 
-    def Angle_single(self, g_num, at_1, at_2, at_3):
+    def angle_single(self, g_num, at_1, at_2, at_3):
         """ Retrieve an atomic angle from the OpanXYZ instance.
 
         Returns the angle between three atoms at_1, at_2 and at_3
@@ -900,19 +930,19 @@ class OpanXYZ(object):
         ## end if
 
         # Store the displacement vectors from at_2 to at_1 and to at_3
-        # The np.float64 type should be retained through the Displ_single call.
-        vec_2_1 = self.Displ_single(g_num, at_2, at_1)
-        vec_2_3 = self.Displ_single(g_num, at_2, at_3)
+        # The np.float64 type should be retained through the displ_single call.
+        vec_2_1 = self.displ_single(g_num, at_2, at_1)
+        vec_2_3 = self.displ_single(g_num, at_2, at_3)
 
         # Compute and return the calculated angle, in degrees
         # v1 {dot} v2 == |v1||v2| * cos(theta)
         angle = vec_angle(vec_2_1, vec_2_3)
         return angle
 
-    ## end def Angle_single
+    ## end def angle_single
 
 
-    def Angle_iter(self, g_nums, ats_1, ats_2, ats_3, invalid_error=False):
+    def angle_iter(self, g_nums, ats_1, ats_2, ats_3, invalid_error=False):
         """ Iterator over selected atomic angles.
 
         Returns the atomic angles between three sets of atoms ats_1, ats_2
@@ -942,7 +972,7 @@ class OpanXYZ(object):
 
         Generates
         ---------
-        angle : np.float_
+        angle : ``np.float_``
             Atomic angle in degrees between atoms at_1-at_2-at_3, from
             geometry g_num
 
@@ -955,7 +985,7 @@ class OpanXYZ(object):
             not the same length
         """
         # Suitability of ats_n indices will be checked within the
-        #  self.Angle_single() calls and thus no check is needed here.
+        #  self.angle_single() calls and thus no check is needed here.
 
         # Import the tuple-generating function
         from .utils import pack_tups
@@ -985,13 +1015,13 @@ class OpanXYZ(object):
                 print(tup)
             ## end if
 
-            yield self._iter_return(tup, self.Angle_single, invalid_error)
+            yield self._iter_return(tup, self.angle_single, invalid_error)
         ## next tup
 
-    ## end def Angle_iter
+    ## end def angle_iter
 
 
-    def Dihed_single(self, g_num, at_1, at_2, at_3, at_4):
+    def dihed_single(self, g_num, at_1, at_2, at_3, at_4):
         """ Retrieve a dihedral/out-of-plane angle from the OpanXYZ instance.
 
         Returns the out-of-plane angle among four atoms at_1, at_2, at_3
@@ -1107,7 +1137,7 @@ class OpanXYZ(object):
         # Check to ensure non-collinearity of the 1-2-3 and 2-3-4 atom trios
         for idx in range(2):
             # Store the relevant angle
-            ang = self.Angle_single(g_num, [at_2, at_3][idx],
+            ang = self.angle_single(g_num, [at_2, at_3][idx],
                                          [at_1, at_2][idx],
                                          [at_3, at_4][idx])
 
@@ -1124,19 +1154,19 @@ class OpanXYZ(object):
 
         # Store normalized atomic displacement vector at_2 --> at_3 as that
         #  defining the projection plane
-        plane_norm = self.Displ_single(g_num, at_2, at_3)
+        plane_norm = self.displ_single(g_num, at_2, at_3)
         plane_norm /= spla.norm(plane_norm)
 
         # Retrieve the orthonormal basis in the projection plane, with the
         #  first vector being the normalized projection of the at_1 --> at_2
         #  displacement onto that plane
         on1, on2 = ortho_basis(plane_norm, \
-                            self.Displ_single(g_num, at_1, at_2))
+                            self.displ_single(g_num, at_1, at_2))
 
         # Project the at_3 --> at_4 displacement onto the plane
         #
         # Retrieve the "back-side" displacement vector
-        back_vec = self.Displ_single(g_num, at_3, at_4)
+        back_vec = self.displ_single(g_num, at_3, at_4)
 
         # Project onto the plane by subtracting out the plane_norm projection
         #  and re-normalize
@@ -1161,10 +1191,10 @@ class OpanXYZ(object):
         # Should be set to return the value
         return dihed
 
-    ## end Dihed_single
+    ## end dihed_single
 
 
-    def Dihed_iter(self, g_nums, ats_1, ats_2, ats_3, ats_4, \
+    def dihed_iter(self, g_nums, ats_1, ats_2, ats_3, ats_4, \
                                                     invalid_error=False):
         """ Iterator over selected dihedral angles.
 
@@ -1221,7 +1251,7 @@ class OpanXYZ(object):
             2-3-4) is too close to linearity for any group
         """
         # Suitability of ats_n indices will be checked within the
-        #  self.Dihed_single() calls and thus no check is needed here.
+        #  self.dihed_single() calls and thus no check is needed here.
 
         # Import the tuple-generating function
         from .utils import pack_tups
@@ -1248,37 +1278,39 @@ class OpanXYZ(object):
 
         # Construct the generator using the packed tuples.
         for tup in tups:
-            yield self._iter_return(tup, self.Dihed_single, invalid_error)
+            yield self._iter_return(tup, self.dihed_single, invalid_error)
         ## next tup
 
-    ## end def Dihed_iter
+    ## end def dihed_iter
 
 
-    def Displ_single(self, g_num, at_1, at_2):
-        """ Displacement vector between two atoms from an OpanXYZ instance.
+    def displ_single(self, g_num, at_1, at_2):
+        """ Displacement vector between two atoms.
 
-        Returns the displacement vector pointing from at_1 toward at_2 from the
-            indicated geometry.  If at_1 == at_2 the zero vector is returned.
+        Returns the displacement vector pointing from `at_1`
+        toward `at_2` from geometry `g_num`.
+        If `at_1` == `at_2` the zero vector is returned.
 
         Displacement vector is returned in units of Bohrs.
 
         Parameters
         ----------
         g_num   : int
-            Index of the desired geometry (base 0)
+            Index of the desired geometry
         at_1    : int
-            Index of the first atom (base 0)
+            Index of the first atom
         at_2    : int
-            Index of the second atom (base 0)
+            Index of the second atom
 
         Returns
         -------
-        displ : length-3 np.array of np.float_
-            Displacement vector from at_1 to at_2
+        length-3 ``np.float_``
+            Displacement vector from `at_1` to `at_2`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_num, or at_n is provided
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided
 
         """
 
@@ -1310,7 +1342,7 @@ class OpanXYZ(object):
         ## end if
 
         # Retrieve the geometry; np.float_ type should be retained
-        g = self.Geom_single(g_num)
+        g = self.geom_single(g_num)
 
         # Calculate the displacement vector and return
         displ = np.array([ g[i + 3*at_2] - g[i + 3*at_1] for i in range(3) ])
@@ -1318,16 +1350,16 @@ class OpanXYZ(object):
         # Return the displacement vector
         return displ
 
-    ## end def Displ_single
+    ## end def displ_single
 
 
-    def Displ_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
+    def displ_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over indicated displacement vectors.
 
         Returns the respective displacement vectors pointing from ats_1 toward
             ats_2 from the indicated geometries.
 
-        Raised errors are those of Displ_single. Displacements are in Bohrs.
+        Raised errors are those of displ_single. Displacements are in Bohrs.
 
         Any of ats_1, ats_2 and g_nums can be either a single index or an
             iterable. Alternatively, exactly one parameter can be None and
@@ -1382,10 +1414,10 @@ class OpanXYZ(object):
 
         # Construct the generator using the packed tuples.
         for tup in tups:
-            yield self._iter_return(tup, self.Displ_single, invalid_error)
+            yield self._iter_return(tup, self.displ_single, invalid_error)
         ## next tup
 
-    ## end def Displ_iter
+    ## end def displ_iter
 
 
     def _None_subst(self, *args):
@@ -1473,7 +1505,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        val     : np.float_ or None
+        val     : ``np.float_`` or ``None``
             Calculated value from fxn(*tup) call, or 'None' value indicating
             IndexError / ValueError
 

@@ -21,6 +21,8 @@ Welcome to opan!
 
  * N always refers to the number of atoms in the system of interest
 
+ * Where relevant, G refers to the number of geometries in an OpenBabel XYZ file
+
  * Arbitrary integers represented as R, S, ...
 
  * [Others?]

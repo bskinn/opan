@@ -2147,19 +2147,19 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                                 ", coordinate element #" + str(i))
 
     def test_XYZ_GoodFileDataDistances(self):
-        for t in zip(self.dist_Cu_O, self.xyz.Dist_iter(None, 0, 1),
+        for t in zip(self.dist_Cu_O, self.xyz.dist_iter(None, 0, 1),
                                         range(self.dist_Cu_O.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-5,
                         msg="Cu-O distance mismatch at geom #" + str(t[2]) +
                         ": " + str(t[0:2]))
-        for t in zip(self.dist_O_H1, self.xyz.Dist_iter(None, 1, 2),
+        for t in zip(self.dist_O_H1, self.xyz.dist_iter(None, 1, 2),
                                         range(self.dist_O_H1.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-5,
                         msg="O-H1 distance mismatch at geom #" + str(t[2]) +
                         ": " + str(t[0:2]))
 
     def test_XYZ_GoodFileDataAngles(self):
-        for t in zip(self.angle_Cu_O_H1, self.xyz.Angle_iter(None, 0, 1, 2),
+        for t in zip(self.angle_Cu_O_H1, self.xyz.angle_iter(None, 0, 1, 2),
                                         range(self.angle_Cu_O_H1.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-2,
                         msg="Cu-O-H1 angle mismatch at geom #" + str(t[2]) +
@@ -2167,7 +2167,7 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
 
     def test_XYZ_GoodFileDataDihedrals(self):
         for t in zip(self.dihed_H2_O_Cu_H1,
-                                    self.xyz.Dihed_iter(None, 3, 1, 0, 2),
+                                    self.xyz.dihed_iter(None, 3, 1, 0, 2),
                                     range(self.dihed_H2_O_Cu_H1.shape[0])):
             self.assertAlmostEqual(t[0], t[1], delta=1e-2,
                         msg="H2-Cu-O-H1 dihedral mismatch at geom #" +
@@ -2179,7 +2179,7 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
 
         idxs = [1,4,8]
         for t in zip(np.array(self.geoms)[idxs],
-                        self.xyz.Geom_iter(idxs),
+                        self.xyz.geom_iter(idxs),
                         range(len(idxs))
                     ):
             for i in range(t[0].shape[0]):
@@ -2187,7 +2187,7 @@ class TestOPANXYZGoodFileData(SuperOPANXYZ):
                         msg="Geometry #" + str(t[2]) + \
                                 ", coordinate element #" + str(i))
 
-    #TEST: Displ_iter call (Dist_iter only calls Displ_single)
+    #TEST: displ_iter call (dist_iter only calls displ_single)
 
 ## end class TestOPANXYZGoodData
 
@@ -2287,7 +2287,7 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
     def test_XYZ_GoodDirectDataIterO1Dist(self):
         for tup in zip(
                     self.good_direct_O1Dist,
-                    self.xyz.Dist_iter(0,1,None),
+                    self.xyz.dist_iter(0,1,None),
                     range(self.good_direct_O1Dist.shape[0])
                         ):
             self.assertAlmostEqual(tup[0], tup[1], delta=1e-5,
@@ -2298,7 +2298,7 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
     def test_XYZ_GoodDirectDataIterCuO1Angle(self):
         for tup in zip(
                     self.good_direct_CuO1Angle,
-                    self.xyz.Angle_iter(0,0,1,None),
+                    self.xyz.angle_iter(0,0,1,None),
                     range(self.good_direct_CuO1Angle.shape[0])
                         ):
             self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
@@ -2309,7 +2309,7 @@ class TestOPANXYZGoodDirectData(SuperOPANXYZ):
     def test_XYZ_GoodDirectDataIterDihed(self):
         for tup in zip(
                     self.good_direct_Dihed,
-                    self.xyz.Dihed_iter(0,None, 1,0,2),
+                    self.xyz.dihed_iter(0,None, 1,0,2),
                     range(self.good_direct_Dihed.shape[0])
                         ):
             self.assertAlmostEqual(tup[0], tup[1], delta=5e-3,
@@ -2852,7 +2852,7 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
         import numpy as np
         from opan.error import InertiaError as INErr
         assertErrorAndTypecode(self, INErr, fP , INErr.bad_geom,
-                            self.xyz.Displ_single(0,0,1),
+                            self.xyz.displ_single(0,0,1),
                             cg(self.xyz.geoms[0], self.hess.atom_masses))
 
 ## end class TestOPANUtilsInertiaLinear
