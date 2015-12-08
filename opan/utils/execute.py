@@ -42,22 +42,22 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     """Executes |orca| on a dynamically constructed input file.
 
     .. warning:: Function is still under active development! Execution with
-        `wait_to_complete` == ``True`` should be robust, however.
+        `wait_to_complete` == |True| should be robust, however.
 
     **Execution**
 
-    Generates an ORCA input file dynamically from information passed into the
+    Generates an |orca| input file dynamically from information passed into the
     various arguments, performs the run, and returns with exit info and
     computation results *(in some fashion; still under development)*.
     Any required resources (GBW,
     XYZ, etc.) MUST already be present in `work_dir`. No check for pre-existing
     files of the same base name is made; any such will be overwritten.
 
-    ORCA MUST be called using a wrapper script; this function does not
-    implement the redirection necessary to send output from a direct ORCA call
+    |orca| MUST be called using a wrapper script; this function does not
+    implement the redirection necessary to send output from a direct |orca| call
     to a file on disk.
 
-    If `wait_to_complete` is ``True``, the :func:`subprocess.call` syntax will
+    If `wait_to_complete` is |True|, the :func:`subprocess.call` syntax will
     be used and the function will not return until execution of the
     wrapper script completes.
     If False, *[indicate what will be returned if not waiting]*.
@@ -65,16 +65,16 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     *#!DOC: execute_orca: The different output modes, depending on waiting
     or not.*
 
-    The command to call ORCA must be specified in the parameter list syntax of
+    The command to call |orca| must be specified in the parameter list syntax of
     the `args` argument to the :class:`subprocess.Popen` constructor.
     The implementation is flexible and general, to allow interface with local
     scripts for, e.g., submission to a job queue in a shared-resource
     environment.
 
-    Valid ORCA input syntax of the resulting text is NOT checked before calling
-    ORCA.
+    Valid |orca| input syntax of the resulting text is NOT checked
+    before calling |orca|.
 
-    No mechanism is implemented to detect hangs of ORCA. Periodic manual
+    No mechanism is implemented to detect hangs of |orca|. Periodic manual
     oversight is recommended.
 
     **Template Substitution**
@@ -89,9 +89,9 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     and ``sim_name + '.' + out_ext``, respectively, in the input template and
     in all elements of
     `exec_cmd` before executing the call. In the special case of
-    `inp_ext` == ``None``, the **INP** tag will be replaced with just
+    `inp_ext` == |None|, the **INP** tag will be replaced with just
     `sim_name` (no extension), and similarly for **OUT** if
-    `out_ext` == ``None``. The tag **NAME** will be replaced just with
+    `out_ext` == |None|. The tag **NAME** will be replaced just with
     `sim_name` in all cases.
 
     `inp_ext` and `out_ext` must be different, to avoid collisions.
@@ -100,16 +100,16 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     The information returned depends on the value of `wait_to_complete`:
 
-    If `wait_to_complete` == ``True``:
+    If `wait_to_complete` == |True|:
 
         A `tuple` of objects is returned, with elements of type ::
 
             (OrcaOutput, OpanXYZ, OrcaEngrad, OrcaHess)
 
         These objects contain the corresponding results from the computation,
-        if the latter exist, or ``None`` if they are missing.
+        if the latter exist, or |None| if they are missing.
 
-    If `wait_to_complete` == ``False``:
+    If `wait_to_complete` == |False|:
 
         **TBD**, but current intention is to return the PID of the spawned
         subprocess.
@@ -128,7 +128,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         resource files (.gbw, .xyz, etc.) required for the calculation.
 
     exec_cmd : list of str
-        Sequence of strings defining the ORCA execution call in the syntax of
+        Sequence of strings defining the |orca| execution call in the syntax of
         the :class:`~subprocess.Popen` constructor. This call must
         be to a local script; stream redirection of the forked process
         is not supported in this function.

@@ -68,7 +68,7 @@ def ortho_basis(normal, ref_vec=None):
         to `normal`.
     ref_vec  : length-3 ``np.float_``, optional
         If specified, `on1` will be the normalized projection of `ref_vec`
-        onto the plane perpendicular to `normal`. Default is ``None``.
+        onto the plane perpendicular to `normal`. Default is |None|.
 
     Returns
     -------
@@ -189,7 +189,7 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 
     report : bool, optional
         Whether to record and return vectors / vector pairs failing the
-        orthonormality condition. Default is ``False``.
+        orthonormality condition. Default is |False|.
 
     Returns
     -------
@@ -197,19 +197,19 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
         Indicates whether column vectors of `a` are orthonormal to within
         tolerance `tol`.
 
-    n_fail : list of `int` or ``None``
-        If `report` == ``True``: A list of indices of column vectors
+    n_fail : list of `int` or |None|
+        If `report` == |True|: A list of indices of column vectors
         failing the normality condition, or an empty list if all vectors
         are normalized.
 
-        If `report` == ``False``: ``None``
+        If `report` == |False|: |None|
 
-    o_fail : list of 2-tuples of `int` or ``None``
-        If `report` == ``True``: A list of 2-tuples of indices of
+    o_fail : list of 2-tuples of `int` or |None|
+        If `report` == |True|: A list of 2-tuples of indices of
         column vectors failing the orthogonality condition, or an
         empty list if all vectors are orthogonal.
 
-        If `report` == ``False``: ``None``
+        If `report` == |False|: |None|
 
     """
 
@@ -275,8 +275,8 @@ def parallel_check(vec1, vec2):
     Returns
     -------
     bool
-        ``True`` if (anti-)parallel to within
-        :data:`opan.const.PRM.Non_Parallel_Tol` degrees.  ``False`` otherwise.
+        |True| if (anti-)parallel to within
+        :data:`opan.const.PRM.Non_Parallel_Tol` degrees.  |False| otherwise.
 
     """
 

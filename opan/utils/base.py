@@ -245,7 +245,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     Cartesian coordinates are considered consistent with the input
     coords if each component matches to within `tol`.  If coords or
     atoms vectors are passed that are of mismatched lengths, a
-    ``False`` value is returned.
+    |False| value is returned.
 
     Both coords vectors must be three times the length of the atoms vectors
     or a :exc:`~exceptions.ValueError` is raised.
@@ -273,17 +273,17 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     Returns
     -------
     match  : bool
-        Whether input coords and atoms match (\ ``True``\ ) or
-        not (\ ``False``\ )
+        Whether input coords and atoms match (\ |True|\ ) or
+        not (\ |False|\ )
 
-    fail_type  : `str` or ``None``
+    fail_type  : `str` or |None|
         Type of check failure
 
-        If `match` == ``True``:
+        If `match` == |True|:
 
-            Returns ``None``
+            Returns |None|
 
-        If `match` == ``False``:
+        If `match` == |False|:
 
             A string code describing the reason for the failed match:
 
@@ -297,25 +297,25 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
 
                 **#TODO:** ``opan.utils.check_geom``: Convert ``fail_type`` to Enum
 
-    fail_loc   : length-3N `bool` or length-N `bool` or ``None``
+    fail_loc   : length-3N `bool` or length-N `bool` or |None|
         Mismatched elements
 
-        If `match` == ``True``:
+        If `match` == |True|:
 
-            Returns ``None``
+            Returns |None|
 
-        If `match` == ``False``:
+        If `match` == |False|:
 
             For "array-level" problems such as a dimension mismatch, a
-            ``None`` value is returned.
+            |None| value is returned.
 
             For "element-level" problems, an ``np.array`` vector is returned
             indicating positions of mismatch in either `coords` or `atoms`,
             depending on the value of `fail_type`.
 
-                ``True`` elements indicate **MATCHING** values
+                |True| elements indicate **MATCHING** values
 
-                ``False`` elements mark **MISMATCHES**
+                |False| elements mark **MISMATCHES**
 
     Raises
     ------
@@ -488,8 +488,8 @@ def iterable(y):
     Returns
     -------
     bool
-      Returns ``True`` if the object has an iterator method or is a sequence,
-      and ``False`` otherwise.
+      Returns |True| if the object has an iterator method or is a sequence,
+      and |False| otherwise.
 
     Examples
     --------

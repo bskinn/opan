@@ -218,7 +218,7 @@ class XYZError(OpanError):
 
     #: Inconsistent geometry in an OpenBabel XYZ file
     #:
-    #: * ORCA -- `.xyz` or `.trj`
+    #: * |orca| -- `.xyz` or `.trj`
     xyzfile = 'xyzfile'
 
     #: Object already initialized (overwrite not supported)

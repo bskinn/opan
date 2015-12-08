@@ -34,6 +34,7 @@ Contents:
 
    api/index
    userguide/index
+   software
    dependencies
    units
    references

@@ -247,7 +247,7 @@ class EnumSoftware(OpanEnum):
 
     """
 
-    #: The `ORCA <http://orcaforum.cec.mpg.de>`_ |external link| program package
+    #: The |orca| program package
     ORCA = 'ORCA'
 
 ## end class EnumSoftware
@@ -468,16 +468,16 @@ class DEF(object):
     #: Acceptable deviation from Kronecker delta for orthonormality testing
     Orthonorm_Tol = 1e-8
 
-    #: Max precision of HESS geometries (currently ORCA-specific)
+    #: Max precision of HESS geometries (currently |orca|-specific)
     HESS_Coord_Match_Tol = 1e-6
 
-    #: Max precision of freqs in IR spectrum block (currently ORCA-specific)
+    #: Max precision of freqs in IR spectrum block (currently |orca|-specific)
     HESS_IR_Match_Tol = 1e-2
 
-    #: Max precision of GRAD geometries (currently ORCA-specific)
+    #: Max precision of GRAD geometries (currently |orca|-specific)
     GRAD_Coord_Match_Tol = 1e-7
 
-    #: Max tolerable deviation between XYZ geoms (currently ORCA-specific)
+    #: Max tolerable deviation between XYZ geoms (currently |orca|-specific)
     XYZ_Coord_Match_Tol = 1e-12
 
     # Required quality of coordinate match for symmetry detection
@@ -528,7 +528,7 @@ class PRM(object):
     #: vector; dimensionless or units of :math:`\mathrm{B}`
     Zero_Vec_Tol = 1e-6
 
-    #: Trap value for aberrantly large dipole  derivative values in ORCA
+    #: Trap value for aberrantly large dipole  derivative values in |orca|
     #: if dipoles are not calculated in a NUMFREQ run
     Max_Sane_DipDer = 100
 
