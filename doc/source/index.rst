@@ -32,10 +32,10 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   api/index
-   userguide/index
+   API <api/index>
+   User Guide <userguide/index>
    software
-   dependencies
+   Package Dependencies <dependencies>
    units
    references
 

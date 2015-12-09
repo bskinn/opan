@@ -73,9 +73,9 @@ the following variations:
 
         If the optional parameter `invalid_error` is |False| (the
         default), if :exc:`~exceptions.IndexError` or
-        :exc:`~exceptions.ValueError` is thrown in the course of
+        :exc:`~exceptions.ValueError` is raised in the course of
         calculating a given value, it is ignored and a |None| value
-        is returned. If |True|, then the errors are thrown as-is.
+        is returned. If |True|, then the errors are raised as-is.
 
         .. note::
 
@@ -93,6 +93,11 @@ the following variations:
         :func:`~opan.xyz.OpanXYZ.angle_iter` -- Span angles
 
         :func:`~opan.xyz.OpanXYZ.dihed_iter` -- Dihedral angles
+
+
+|
+
+**Class Definition**
 
 .. autoclass:: OpanXYZ
 
@@ -698,28 +703,38 @@ class OpanXYZ(object):
         """Iterator over a subset of geometries.
 
         The indices of the geometries to be returned are indicated by an
-            iterable of integers passed as g_nums.
+        iterable of `int`\\ s passed as `g_nums`.
 
-        Each set of atom coordinates is returned as a numpy.matrix column
-            vector, with each atom's x/y/z coordinates returned together:
-            [A1x,A1y,A1z,A2x,A2y,A2z,...]
+        As with :meth:`geom_single`, each geometry is returned as a
+        length-3N ``np.float_`` with each atom's x/y/z coordinates
+        grouped together::
+
+            [A1x, A1y, A1z, A2x, A2y, A2z, ...]
+
+        In order to use NumPy `slicing or advanced indexing
+        <http://docs.scipy.org/doc/numpy-1.10.0/reference/
+        arrays.indexing.html>`_, :data:`geoms` must first be
+        explicitly converted to :obj:`numpy.ndarray`, e.g.::
+
+            >>> x = opan.xyz.OpanXYZ(path='...')
+            >>> np.array(x.geoms)[[2,6,9]]
 
         Parameters
         ----------
-        g_nums : (N) iterable int
-            Indices of the desired geometries for iteration (base 0)
+        g_nums : length-R iterable of `int`
+            Indices of the desired geometries
 
-        Generates
-        ---------
-        geom : length-3N np.arrays
-            Length-3N vectors of the atomic coordinates for each geometry
-            indicated by 'g_nums'
+        Yields
+        ------
+        length-3N ``np.float_``
+            Vectors of the atomic coordinates for each geometry
+            indicated in `g_nums`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) entry of g_nums is provided
-        ValueError :  (via .utils.pack_tups) If all iterable objects are
-            not the same length
+        ~exceptions.IndexError
+            If an item in `g_nums` is invalid (out of range)
+
         """
         # Using the custom coded pack_tups to not have to care whether the
         #  input is iterable
@@ -867,35 +882,40 @@ class OpanXYZ(object):
 
 
     def angle_single(self, g_num, at_1, at_2, at_3):
-        """ Retrieve an atomic angle from the OpanXYZ instance.
+        """ Spanning angle among three atoms.
 
-        Returns the angle between three atoms at_1, at_2 and at_3
-            from geometry g_num in degrees, with at_2 the central atom.
-
-        The indices at_1 and at_3 can be the same (yielding a trivial zero
-            angle), but at_2 must be different from both at_1 and at_3.
+        The indices `at_1` and `at_3` can be the same (yielding a
+        trivial zero angle), but `at_2` must be different from
+        both `at_1` and `at_3`.
 
         Parameters
         ----------
         g_num : int
-            Index of the desired geometry (base 0)
+            Index of the desired geometry
+
         at_1 : int
-            Index of the first atom (base 0)
+            Index of the first atom
+
         at_2 : int
-            Index of the second atom (base 0)
+            Index of the second atom
+
         at_3 : int
-            Index of the third atom (base 0)
+            Index of the third atom
 
         Returns
         -------
-        angle : np.float64
-            Atomic angle in degrees between atoms at_1-at_2-at_3, from
-            geometry g_num
+        ``np.float_``
+            Spanning angle in degrees between `at_1`-`at_2`-`at_3`, from
+            geometry `g_num`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_num, or at_n is provided
-        ValueError : If at_2 is equal to either at_1 or at_3
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided
+
+        ~exceptions.ValueError
+            If `at_2` is equal to either `at_1` or `at_3`
+
         """
 
         # Imports
@@ -1032,50 +1052,62 @@ class OpanXYZ(object):
 
 
     def dihed_single(self, g_num, at_1, at_2, at_3, at_4):
-        """ Retrieve a dihedral/out-of-plane angle from the OpanXYZ instance.
+        """ Dihedral/out-of-plane angle among four atoms.
 
-        Returns the out-of-plane angle among four atoms at_1, at_2, at_3
-            and at_4 from geometry g_num, in degrees.  The reference plane
-            is spanned by at_1, at_2 and at_3. The out-of-plane angle is
-            defined such that a positive angle represents a counter-clockwise
-            rotation of the projected at_3-to-at_4 vector with respect to the
-            reference plane when looking from at_3 toward at_2.  Zero rotation
-            corresponds to occlusion of at_1 and at_4; that is, the case when
-            the respective normalized projections of at_1 --> at_2 and
-            at_3 --> at_4 onto the reference plane are ANTI-PARALLEL.
+        Returns the out-of-plane angle among four atoms from geometry
+        `g_num`, in degrees.  The reference plane
+        is spanned by `at_1`, `at_2` and `at_3`. The out-of-plane angle is
+        defined such that a positive angle represents a counter-clockwise
+        rotation of the projected `at_3`\\ :math:`\\rightarrow`\\ `at_4`
+        vector with respect to the
+        reference plane when looking from `at_3` toward `at_2`.
+        Zero rotation corresponds to occlusion of `at_1` and `at_4`;
+        that is, the case where
+        the respective projections of `at_1`
+        :math:`\\rightarrow`\\ `at_2` and
+        `at_3`\\ :math:`\\rightarrow`\\ `at_4` onto the reference
+        plane are ANTI-PARALLEL. **Pull the above to User Guide eventually**
 
         All four atom indices must be distinct. Both of the atom trios 1-2-3
-            and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend
-            angle different from 0 or 180 degrees by at least
-            PRM.Non_Parallel_Tol
+        and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend
+        angle different from 0 or 180 degrees by at least
+        :data:`PRM.Non_Pagrallel_Tol <opan.const.PRM.Non_Parallel_Tol>`.
 
         Parameters
         ----------
         g_num   : int
-            Index of the desired geometry (base 0)
+            Index of the desired geometry
+
         at_1    : int
-            Index of the first atom (base 0)
+            Index of the first atom
+
         at_2    : int
-            Index of the second atom (base 0)
+            Index of the second atom
+
         at_3    : int
-            Index of the third atom (base 0)
+            Index of the third atom
+
         at_4    : int
-            Index of the fourth atom (base 0)
+            Index of the fourth atom
 
         Returns
         -------
-        dihed : np.float_
-            Out-of-plane/dihedral angle in degrees for the indicated atoms,
-            drawn from geometry g_num
+        ``np.float_``
+            Out-of-plane/dihedral angle in degrees for the indicated `at_#`,
+            drawn from geometry `g_num`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_num, or at_n is provided
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided
 
-        ValueError : If any indices at_n are equal
+        ~exceptions.ValueError
+            If any indices `at_#` are equal
 
-        XYZError   : (typecode dihed) If either of the atom trios (1-2-3 or
-            2-3-4) is too close to linearity
+        ~opan.error.XYZError
+            (typecode :data:`~opan.error.XYZError.dihed`) If either
+            of the atom trios (1-2-3 or 2-3-4) is too close to linearity
+
         """
         # library imports
         import numpy as np
@@ -1334,11 +1366,11 @@ class OpanXYZ(object):
         #  three when they are used as an index and thus give non-intuitive
         #  errors.
         # Complain if at_1 is invalid
-        if at_1 < -self.num_atoms or at_1 >= self.num_atoms:
+        if not (-self.num_atoms <= at_1 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
 
         # Complain if at_2 is invalid
-        if at_2 < -self.num_atoms or at_2 >= self.num_atoms:
+        if not (-self.num_atoms <= at_2 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
 
         # Should never be necessary (save for badly erroneous calling code),
