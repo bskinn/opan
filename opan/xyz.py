@@ -58,15 +58,21 @@ the following variations:
         :func:`~opan.xyz.OpanXYZ.dihed_single` -- Dihedral angle
         among four atoms
 
+    .. _toc-generators:
+
     :ref:`Generators <generators>`
 
         All yielded values are composited from an arbitrary set of geometry
         and/or atom indices; indexing with negative values is supported.
 
         Each parameter can either be a single index, or an iterable of
-        indices. If any iterables are passed, all must be the same length.
+        indices. If any iterables are passed, all must be the same length R,
+        and a total of R values will be returned, one
+        for each set of elements across the iterables.  (This behavior
+        is similar to Python's :func:`zip` builtin.)  Single values are
+        used as provided for all values returned.
 
-        Additionally, a |None| value can be passed to a maximum of
+        As an additional option, a |None| value can be passed to exactly
         one parameter, which will then be assigned the full 'natural' range
         of that parameter (``range(G)`` for `g_nums` and ``range(N)`` for
         `ats_#`).
@@ -815,38 +821,42 @@ class OpanXYZ(object):
     def dist_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over selected interatomic distances.
 
-        Returns the interatomic distances between the two atom sets ats_1 and
-            ats_2 from geometries g_nums in Bohrs.
+        Distances are in Bohrs as with :meth:`dist_single`.
 
-        Any of ats_1, ats_2 and g_nums can be either a single index or an
-            iterable; any iterables must all be the same length.
-            Alternatively, exactly one parameter can be None and all other
-            parameters single indices, in which case the full valid range of
-            the `None` parameter is used.
+        See `above <toc-generators_>`_ for more information on
+        calling options.
 
         Parameters
         ----------
-        g_nums : int or iterable int or None
-            Index/indices of the desired geometry/geometries (base 0)
-        ats_1 : int or iterable int or None
-            Index/indices of the first atom(s) (base 0)
-        ats_2 : int or iterable int or None
-            Index/indices of the second atom(s) (base 0)
-        invalid_error  : bool, default False
-            If False, 'None' values are returned for results corresponding to
-            invalid indices. If True, exceptions are raised per normal.
+        g_nums : |int| or length-R iterable int or |None|
+            Index/indices of the desired geometry/geometries
 
-        Returns
-        -------
-        dist : np.float64 (generator)
-            Interatomic distance in Bohrs between each atom pair of ats_1 and
-            ats_2 from the corresponding geometries of g_nums.
+        ats_1 : |int| or iterable int or |None|
+            Index/indices of the first atom(s)
+
+        ats_2 : |int| or iterable int or |None|
+            Index/indices of the second atom(s)
+
+        invalid_error  : bool
+            If |False| (the default), |None| values are returned for
+            results corresponding to invalid indices. If |True|,
+            exceptions are raised per normal.
+
+        Yields
+        ------
+        ``np.float_``
+            Interatomic distance in Bohrs between each atom pair of
+            `ats_1` and `ats_2` from the corresponding geometries
+            of `g_nums`.
 
         Raises
         ------
-        IndexError :  (via dist_single) If any parameter value is out of range
-        ValueError :  (via .utils.pack_tups) If all iterable objects are
-            not the same length
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided.
+
+        ~exceptions.ValueError
+            If all iterable objects are not the same length.
+
         """
 
         # Imports
@@ -975,44 +985,48 @@ class OpanXYZ(object):
     def angle_iter(self, g_nums, ats_1, ats_2, ats_3, invalid_error=False):
         """ Iterator over selected atomic angles.
 
-        Returns the atomic angles between three sets of atoms ats_1, ats_2
-            and ats_3 from geometries g_nums in degrees, with ats_2 as the
-            central atoms.
+        Angles are in degrees as with :meth:`angle_single`.
 
-        The various index pairs in ats_1 and ats_3 can be the same (yielding
-            trivial zero angles), but each ats_2 must be different from both
-            of the corresponding ats_1 and ats_3 values.
-            Alternatively, exactly one parameter can be None and all other
-            parameters single indices, in which case the full valid range of
-            the `None` parameter is used.
+        See `above <toc-generators_>`_ for more information on
+        calling options.
 
         Parameters
         ----------
-        g_nums : int or iterable int
-            Index of the desired geometry (base 0)
-        ats_1  : int or iterable int
-            Index of the first atom (base 0)
-        ats_2  : int or iterable int
-            Index of the second atom (base 0)
-        ats_3  : int or iterable int
-            Index of the third atom (base 0)
-        invalid_error  : bool, default False
-            If False, 'None' values are returned for results corresponding to
-            invalid indices. If True, exceptions are raised like normal.
+        g_nums : |int| or iterable int or |None|
+            Index of the desired geometry
 
-        Generates
-        ---------
-        angle : ``np.float_``
-            Atomic angle in degrees between atoms at_1-at_2-at_3, from
-            geometry g_num
+        ats_1  : |int| or iterable int or |None|
+            Index of the first atom
+
+        ats_2  : |int| or iterable int or |None|
+            Index of the second atom
+
+        ats_3  : |int| or iterable int or |None|
+            Index of the third atom
+
+        invalid_error  : bool
+            If |False| (the default), |None| values are returned for
+            results corresponding to invalid indices. If |True|,
+            exceptions are raised per normal.
+
+        Yields
+        ------
+        ``np.float_``
+            Spanning angles in degrees between corresponding |br|
+            `ats_1`-`ats_2`-`ats_3`, from geometry/geometries `g_nums`
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_num, or at_n is provided
-        ValueError : If any ats_2 is equal to either the corresponding ats_1
-            or ats_3
-        ValueError :  (via .utils.pack_tups) If all iterable objects are
-            not the same length
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided.
+
+        ~exceptions.ValueError
+            If all iterable objects are not the same length.
+
+        ~exceptions.ValueError
+            If any `ats_2` element is equal to either the corresponding `ats_1`
+            or `ats_3` element.
+
         """
         # Suitability of ats_n indices will be checked within the
         #  self.angle_single() calls and thus no check is needed here.
@@ -1071,7 +1085,7 @@ class OpanXYZ(object):
         All four atom indices must be distinct. Both of the atom trios 1-2-3
         and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend
         angle different from 0 or 180 degrees by at least
-        :data:`PRM.Non_Pagrallel_Tol <opan.const.PRM.Non_Parallel_Tol>`.
+        :data:`PRM.Non_Parallel_Tol <opan.const.PRM.Non_Parallel_Tol>`.
 
         Parameters
         ----------
@@ -1240,57 +1254,57 @@ class OpanXYZ(object):
                                                     invalid_error=False):
         """ Iterator over selected dihedral angles.
 
-        Returns the out-of-plane angle among each group of four atoms ats_1,
-            ats_2, ats_3 and ats_4 from the corresponding geometries g_nums,
-            in degrees.  The reference planes are spanned by the ats_1, ats_2
-            and ats_3. The out-of-plane angles are defined such that a positive
-            angle represents a counter-clockwise rotation of the projected
-            at_3 --> at_4 vector with respect to the reference plane when
-            looking from at_3 toward at_2.  Zero rotation corresponds to
-            occlusion of at_1 and at_4; that is, the case when the respective
-            normalized projections of at_1 --> at_2 and at_3 --> at_4 onto
-            the reference plane are ANTI-PARALLEL.
+        Angles are in degrees as with :meth:`dihed_single`.
 
-        All four atom indices must be distinct in each corresponding group.
-            Both of the atom trios 1-2-3 and 2-3-4 must be sufficiently
-            nonlinear, as diagnosed by a bend angle different from 0 or 180
-            degrees by at least PRM.Non_Parallel_Tol.
-
-        Alternatively, exactly one parameter can be None and all other
-            parameters single indices, in which case the full valid range of
-            the `None` parameter is used.
+        See `above <toc-generators_>`_ for more information on
+        calling options.
 
 
         Parameters
         ----------
-        g_nums   : int or iterable int
-            Indices of the desired geometry (base 0)
-        ats_1    : int or iterable int
-            Indices of the first atoms (base 0)
-        ats_2    : int or iterable int
-            Indices of the second atoms (base 0)
-        ats_3    : int or iterable int
-            Indices of the third atoms (base 0)
-        ats_4    : int or iterable int
-            Indices of the fourth atoms (base 0)
-        invalid_error  : bool, default False
-            If False, 'None' values are returned for results corresponding to
-            invalid indices. If True, exceptions are raised per normal.
+        g_nums   : |int| or iterable int or |None|
+            Indices of the desired geometry
 
-        Returns
-        -------
-        dihed : np.float64 generator
-            Out-of-plane/dihedral angles in degrees for the indicated atoms,
-            drawn from g_nums
+        ats_1    : |int| or iterable int or |None|
+            Indices of the first atoms
+
+        ats_2    : |int| or iterable int or |None|
+            Indices of the second atoms
+
+        ats_3    : |int| or iterable int or |None|
+            Indices of the third atoms
+
+        ats_4    : |int| or iterable int or |None|
+            Indices of the fourth atoms
+
+        invalid_error  : bool
+            If |False| (the default), |None| values are returned for
+            results corresponding to invalid indices. If |True|,
+            exceptions are raised per normal.
+
+        Yields
+        ------
+        ``np.float_``
+            Out-of-plane/dihedral angles in degrees for the indicated
+            atom sets `ats_1`-`ats_2`-`ats_3`-`ats_4`, drawn from
+            the respective `g_nums`.
 
         Raises
         ------
-        IndexError : If an invalid (out-of-range) g_nums, or ats_n is provided
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided.
 
-        ValueError : If any indices ats_n are equal within a group
+        ~exceptions.ValueError
+            If all iterable objects are not the same length.
 
-        XYZError   : (typecode dihed) If either of the atom trios (1-2-3 or
-            2-3-4) is too close to linearity for any group
+        ~exceptions.ValueError
+            If any corresponding `ats_#` indices are equal.
+
+        ~opan.error.XYZError
+            (typecode :data:`~opan.error.XYZError.dihed`\\ ) If either
+            of the atom trios (1-2-3 or
+            2-3-4) is too close to linearity for any group of `ats_#`
+
         """
         # Suitability of ats_n indices will be checked within the
         #  self.dihed_single() calls and thus no check is needed here.
@@ -1400,38 +1414,41 @@ class OpanXYZ(object):
     def displ_iter(self, g_nums, ats_1, ats_2, invalid_error=False):
         """ Iterator over indicated displacement vectors.
 
-        Returns the respective displacement vectors pointing from ats_1 toward
-            ats_2 from the indicated geometries.
+        Displacements are in Bohrs as with :meth:`displ_single`.
 
-        Raised errors are those of displ_single. Displacements are in Bohrs.
-
-        Any of ats_1, ats_2 and g_nums can be either a single index or an
-            iterable. Alternatively, exactly one parameter can be None and
-            all other parameters single indices, in which case the full
-            valid range of the `None` parameter is used.
+        See `above <toc-generators_>`_ for more information on
+        calling options.
 
         Parameters
         ----------
-        g_nums : int or iterable int
-            Index/indices of the desired geometry/geometries (base 0)
-        ats_1 : int or iterable int
-            Index/indices of the first atom(s) (base 0)
-        ats_2 : int or iterable int
-            Index/indices of the second atom(s) (base 0)
-        invalid_error  : bool, default False
-            If False, 'None' values are returned for results corresponding to
-            invalid indices. If True, exceptions are raised per normal.
+        g_nums : |int| or length-R iterable int or |None|
+            Index/indices of the desired geometry/geometries
 
-        Returns
-        -------
-        displ : np.float64 (generator)
-            Displacement vector in Bohrs between each atom pair of ats_1 and
-            ats_2 from the corresponding geometries of g_nums.
+        ats_1 : |int| or length-R iterable int or |None|
+            Index/indices of the first atom(s)
+
+        ats_2 : |int| or length-R iterable int or |None|
+            Index/indices of the second atom(s)
+
+        invalid_error  : bool
+            If |False| (the default), |None| values are returned for
+            results corresponding to invalid indices. If |True|,
+            exceptions are raised per normal.
+
+        Yields
+        ------
+        ``np.float_``
+            Displacement vector in Bohrs between each atom pair of |br|
+            `ats_1` :math:`\\rightarrow` `ats_2` from the corresponding
+            geometries of `g_nums`.
 
         Raises
         ------
-        ValueError :  (via orca_utils.pack_tups) If all iterable objects are
-            not the same length
+        ~exceptions.IndexError
+            If an invalid (out-of-range) `g_num` or `at_#` is provided.
+
+        ~exceptions.ValueError
+            If all iterable objects are not the same length.
 
         """
 
