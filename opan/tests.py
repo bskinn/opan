@@ -150,7 +150,7 @@ class TestORCAEngradKnownGood(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         # Create the object
-        self.oe = OrcaEngrad(self.file_name)
+        self.oe = OrcaEngrad(path=self.file_name)
 
         # Enable long messages
         self.longMessage = True
@@ -224,7 +224,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.numats, self.file_name + self.names.numats)
+                    GradError.numats, path=(self.file_name + self.names.numats))
 
     def test_ENGRAD_MissingBlockEnergy(self):
 
@@ -232,7 +232,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.en, self.file_name + self.names.energy)
+                    GradError.en, path=(self.file_name + self.names.energy))
 
     def test_ENGRAD_MissingBlockGrad(self):
 
@@ -240,7 +240,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.gradblock, self.file_name + self.names.grad)
+                GradError.gradblock, path=(self.file_name + self.names.grad))
 
     def test_ENGRAD_MissingBlockGeom(self):
 
@@ -248,7 +248,7 @@ class TestORCAEngradMissingBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.geomblock, self.file_name + self.names.geom)
+                GradError.geomblock, path=(self.file_name + self.names.geom))
 
 ## end def TestORCAEngradMissingBlocks
 
@@ -289,7 +289,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.gradblock, self.file_name + self.names.grad)
+                GradError.gradblock, path=(self.file_name + self.names.grad))
 
     def test_ENGRAD_TruncatedBlockGeom(self):
 
@@ -297,7 +297,7 @@ class TestORCAEngradTruncatedBlocks(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.geomblock, self.file_name + self.names.geom)
+                GradError.geomblock, path=(self.file_name + self.names.geom))
 
 ## end class TestORCAEngradTruncatedBlocks
 
@@ -337,16 +337,16 @@ class TestORCAEngradBadData(SuperORCAEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.geomblock, self.file_name
-                                        + self.names.atomicnum)
+                    GradError.geomblock, path=(self.file_name
+                                        + self.names.atomicnum))
 
     def test_ENGRAD_BadDataNumAtoms(self):
         from opan.error import GradError
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.gradblock, self.file_name
-                                        + self.names.numats)
+                    GradError.gradblock, path=(self.file_name
+                                        + self.names.numats))
 
 ## end class TestORCAEngradBadData
 
@@ -360,10 +360,10 @@ class TestORCAEngradLiveData(SuperORCAEngrad):
         from opan.error import GradError
 
         for fname in os.listdir(self.resourcedir):
-            if fname[:9] == "test_orca" and fname[-6:] == "engrad":
+            if fname.startswith("test_orca") and fname.endswith("engrad"):
                 print("\nTesting file '" + fname + "' ... ")
                 try:
-                    OrcaEngrad(os.path.join(self.resourcedir, fname))
+                    OrcaEngrad(path=os.path.join(self.resourcedir, fname))
                 except (IOError, GradError) as e: # pragma: no cover
                     self.longMessage = True
                     self.fail("Load of test file '" + str(fname) +
@@ -1836,7 +1836,7 @@ class TestORCAHessLiveData(SuperORCAHess):
         from opan.error import HessError
 
         for fname in os.listdir(self.resourcedir):
-            if fname[:9] == "test_orca" and fname[-4:] == "hess":
+            if fname.startswith("test_orca") and fname.endswith("hess"):
                 print("\nTesting file '" + fname + "' ....")
                 try:
                     OrcaHess(os.path.join(self.resourcedir, fname))
