@@ -267,6 +267,9 @@ class GradError(OpanError):
     #: Missing or invalid atom symbols
     badatom = 'badatom'
 
+    #: Object already initialized (overwrite not supported)
+    overwrite = 'overwrite'
+
 ## end class GradError
 
 

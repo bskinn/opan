@@ -24,7 +24,11 @@
 
 .. autoclass:: SuperOpanGrad
 
-.. autoclass:: OrcaEngrad
+|
+
+**Subclasses**
+
+.. autoclass:: OrcaEngrad(path='...')
 
 """
 
@@ -40,7 +44,7 @@ _DEBUG = False
 #  all specific grad classes inherit from it.
 
 class SuperOpanGrad(object):
-    """ Abstract superclass of all gradient import classes.
+    """ Abstract superclass of gradient import classes.
 
     #DOC: SuperOpanGrad docstring
 
@@ -75,7 +79,7 @@ class SuperOpanGrad(object):
         self._load(**kwargs)
 
         # Proofread the gradient
-        try:
+        try:    # pragma: no cover
             # Ensure the right datatype
             if not np.issubdtype(self.gradient.dtype, np.float):
                 raise(GradError(GradError.badgrad,
@@ -83,8 +87,7 @@ class SuperOpanGrad(object):
                         "{0} with args {1}".format(
                                 self.__class__, str(kwargs))))
             ## end if
-
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # self.gradient or self.gradient.dtype not present
             try:
                 self.gradient
@@ -348,6 +351,15 @@ class OrcaEngrad(SuperOpanGrad):
         from .utils import safe_cast as scast
         import numpy as np
 
+        # Check if instantiated; complain if so
+        try:
+            if self.initialized:
+                raise(GradError(GradError.overwrite,
+                            "Cannot overwrite existing OrcaEngrad", ""))
+        except AttributeError:
+            pass
+        ## end try
+
         # Prime the initialization flag
         self.initialized = False
 
@@ -366,30 +378,30 @@ class OrcaEngrad(SuperOpanGrad):
         if not OrcaEngrad.p_numats.search(self.in_str):
             raise(GradError(GradError.numats,
                     "Number of atoms specification not found",
-                    "ENGRAD File: " + engrad_path))
+                    "ENGRAD File: {0}".format(engrad_path)))
         ## end if
         if not OrcaEngrad.p_en.search(self.in_str):
             raise(GradError(GradError.en,
                     "Energy specification not found",
-                    "ENGRAD File: " + engrad_path))
+                    "ENGRAD File: {0}".format(engrad_path)))
         ## end if
         if not OrcaEngrad.p_gradblock.search(self.in_str):
             raise(GradError(GradError.gradblock,
                     "Gradient data block not found",
-                    "ENGRAD File: " + engrad_path))
+                    "ENGRAD File: {0}".format(engrad_path)))
         ## end if
         if not OrcaEngrad.p_atblock.search(self.in_str):
             raise(GradError(GradError.geomblock,
                     "Geometry data block not found",
-                    "ENGRAD File: " + engrad_path))
+                    "ENGRAD File: {0}".format(engrad_path)))
         ## end if
 
         # Retrieve the number of atoms
-        self.num_ats = np.int_(OrcaEngrad.p_numats.search(self.in_str) \
+        self.num_ats = np.int_(OrcaEngrad.p_numats.search(self.in_str)
                             .group("num"))
 
         # Retrieve the energy
-        self.energy = np.float_(OrcaEngrad.p_en.search(self.in_str) \
+        self.energy = np.float_(OrcaEngrad.p_en.search(self.in_str)
                             .group("en"))
 
         # Retrieve the gradient and store numerically. Raise an error if
@@ -399,7 +411,7 @@ class OrcaEngrad(SuperOpanGrad):
         if not len(grad_str.splitlines()) == 3 * self.num_ats:
             raise(GradError(GradError.gradblock,
                     "Gradient block size mismatch with number of atoms",
-                    "ENGRAD File: " + engrad_path))
+                    "ENGRAD File: {0}".format(engrad_path)))
         ## end if
         self.gradient = np.array(grad_str.splitlines(), dtype=np.float_)
 
@@ -409,8 +421,8 @@ class OrcaEngrad(SuperOpanGrad):
         # Confirm the correct number of atoms
         if not len(OrcaEngrad.p_atline.findall(geom_str)) ==  self.num_ats:
             raise(GradError(GradError.geomblock,
-                    "Inconsistent number of atom coordinates in " +
-                    "geometry block", "ENGRAD file" + self.engrad_path))
+                    "Inconsistent number of atom coordinates in \
+                    geometry block", "ENGRAD File: {0}".format(engrad_path)))
         ## end if
 
         # Initialize the atom symbols list
@@ -469,10 +481,6 @@ class OrcaEngrad(SuperOpanGrad):
             # Append the three coordinates of the current atom to the
             #  temp coordinates vector. Unit conversion not needed since
             #  ENGRAD files report coordinates in Bohrs.
-            # Working in Bohrs is desired because they are atomic units
-            #  and thus are part of the internal unit definition of the
-            #  Hartree. Much of ORCA also works natively in Bohrs, at least
-            #  internally.
             self.geom_vec = np.concatenate(
                     (
                         self.geom_vec,
@@ -489,5 +497,5 @@ class OrcaEngrad(SuperOpanGrad):
 ## end def OrcaEngrad
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("Module not executable")
