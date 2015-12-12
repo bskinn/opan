@@ -258,6 +258,15 @@ class GradError(OpanError):
     #: Malformed or missing geometry block
     geomblock = 'geomblock'
 
+    #: Missing or invalid gradient data
+    badgrad = 'badgrad'
+
+    #: Missing or invalid coordinates
+    badcoord = 'badcoord'
+
+    #: Missing or invalid atom symbols
+    badatom = 'badatom'
+
 ## end class GradError
 
 

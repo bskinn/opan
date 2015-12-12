@@ -97,6 +97,7 @@ def pack_tups(*args):
 
     # Non-iterable subclass of str
     class StrNoIter(str):
+        """ Non-iterable subclass of `str`. """
         def __iter__(self):
             raise(NotImplementedError("Non-iterable string"))
         ## end def __iter__

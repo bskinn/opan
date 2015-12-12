@@ -871,7 +871,7 @@ class OpanXYZ(object):
         ## end if
 
         # Perform the None substitution
-        arglist = self._None_subst(g_nums, ats_1, ats_2)
+        arglist = self._none_subst(g_nums, ats_1, ats_2)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(*arglist)
@@ -1043,7 +1043,7 @@ class OpanXYZ(object):
         ## end if
 
         # Perform the None substitution
-        arglist = self._None_subst(g_nums, ats_1, ats_2, ats_3)
+        arglist = self._none_subst(g_nums, ats_1, ats_2, ats_3)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(*arglist)
@@ -1322,7 +1322,7 @@ class OpanXYZ(object):
         ## end if
 
         # Perform the None substitution
-        arglist = self._None_subst(g_nums, ats_1, ats_2, ats_3, ats_4)
+        arglist = self._none_subst(g_nums, ats_1, ats_2, ats_3, ats_4)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(*arglist)
@@ -1463,7 +1463,7 @@ class OpanXYZ(object):
         ## end if
 
         # Perform the None substitution
-        arglist = self._None_subst(g_nums, ats_1, ats_2)
+        arglist = self._none_subst(g_nums, ats_1, ats_2)
 
         # Expand/pack the tuples from the inputs
         tups = pack_tups(*arglist)
@@ -1481,7 +1481,7 @@ class OpanXYZ(object):
     ## end def displ_iter
 
 
-    def _None_subst(self, *args):
+    def _none_subst(self, *args):
         """ Helper function to insert full ranges for 'None' for X_iter methods.
 
         Custom method, specifically tailored, taking in the arguments from
@@ -1542,7 +1542,7 @@ class OpanXYZ(object):
         # Return the arguments list and the none-found value
         return arglist
 
-    ## end def _None_subst
+    ## end def _none_subst
 
 
     @staticmethod

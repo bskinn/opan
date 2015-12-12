@@ -760,11 +760,9 @@ def make_nd_vec(v, nd=None, t=None, norm=False):
     ## end if
 
     # If indicated, confirm dimensionality
-    if nd:
-        if not out_v.shape[0] == nd:
-            raise(ValueError("'v' dimension is " + str(out_v.shape[0]) + \
-                    ", not " + str(nd)))
-        ## end if
+    if nd and not out_v.shape[0] == nd:
+        raise(ValueError("'v' dimension is " + str(out_v.shape[0]) +
+                ", not " + str(nd)))
     ## end if
 
     # Normalize, if indicated

@@ -2745,8 +2745,8 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
 
 
     def test_UtilsInertiaBadGeomShape(self):
-        from opan.utils.inertia import ctr_mass as cm, _fadnOv as fO, \
-                                                        _fadnPv as fP
+        from opan.utils.inertia import ctr_mass as cm, _fadn_orth as fO, \
+                                                        _fadn_par as fP
         import numpy as np
         self.assertRaises(ValueError, cm, np.array([[1,1],[1,1]]),
                                                     self.hess.atom_masses)
@@ -2772,13 +2772,13 @@ class TestOPANUtilsInertiaAsymm(SuperOPANUtilsInertia, unittest.TestCase):
                                                 self.hess.atom_masses[:-2])
 
     def test_UtilsInertiaBadRefVecShape(self):
-        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        from opan.utils.inertia import _fadn_orth as fO, _fadn_par as fP
         import numpy as np
         self.assertRaises(ValueError, fO, [1,2,3,4], self.xyz.geoms[0])
         self.assertRaises(ValueError, fP, [1,2,3,4], self.xyz.geoms[0])
 
     def test_UtilsInertiaBadRefVecNorm(self):
-        from opan.utils.inertia import _fadnOv as fO, _fadnPv as fP
+        from opan.utils.inertia import _fadn_orth as fO, _fadn_par as fP
         import numpy as np
         self.assertRaises(ValueError, fO, [1e-7, 0, 1e-9], self.xyz.geoms[0])
         self.assertRaises(ValueError, fP, [1e-7, 0, 1e-9], self.xyz.geoms[0])
@@ -2848,7 +2848,7 @@ class TestOPANUtilsInertiaLinear(SuperOPANUtilsInertia, unittest.TestCase):
                                     1.550924404326e-03, 1.550924404326e-03])
 
     def test_UtilsInertiaLinearNoNonParallelVec(self):
-        from opan.utils.inertia import _fadnPv as fP, ctr_geom as cg
+        from opan.utils.inertia import _fadn_par as fP, ctr_geom as cg
         import numpy as np
         from opan.error import InertiaError as INErr
         assertErrorAndTypecode(self, INErr, fP , INErr.bad_geom,

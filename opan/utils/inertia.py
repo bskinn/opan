@@ -387,8 +387,8 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # Orient first two axes to have positive dot products with their
         #  respective first non-zero, non-orthogonal atomic displacements.
         #  Possibly fragile to some sort of highly unusual geometry.
-        axes[:,0] *= np.sign(np.dot(vecs[:,0], _fadnOv(vecs[:,0], geom)))
-        axes[:,1] *= np.sign(np.dot(vecs[:,1], _fadnOv(vecs[:,1], geom)))
+        axes[:,0] *= np.sign(np.dot(vecs[:,0], _fadn_orth(vecs[:,0], geom)))
+        axes[:,1] *= np.sign(np.dot(vecs[:,1], _fadn_orth(vecs[:,1], geom)))
 
         # Orient the third axis such that a3 = a1 {cross} a2
         axes[:,2] *= np.sign(np.dot(axes[:,2], np.cross(axes[:,0], axes[:,1])))
@@ -396,19 +396,19 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     elif top == ETT.SymmOblate:
         # First axis is taken as the normalized rejection of the first
         #  non-(anti)parallel atomic displacement onto the third eigenvector.
-        axes[:,0] = rej(_fadnPv(vecs[:,2], geom), vecs[:,2])
+        axes[:,0] = rej(_fadn_par(vecs[:,2], geom), vecs[:,2])
         axes[:,0] /= spla.norm(axes[:,0])
 
         # Try to take the third axis directionality as that giving a positive
         #  dot product with the first non-orthogonal atomic displacement.
-        # A planar system will cause an error in the _fadnOv call, that
+        # A planar system will cause an error in the _fadn_orth call, that
         #  is trapped here.
         # If planar, take the third axis as the normalized cross product
         #  of the first and second nonzero atomic displacements.
 
         try:
             axes[:,2] = vecs[:,2] * np.sign(np.dot(vecs[:,2],
-                                                    _fadnOv(vecs[:,2], geom)))
+                                                    _fadn_orth(vecs[:,2], geom)))
         except InertiaError as IE:
             # Check that typecode is as expected for error from planar system.
             if not IE.tc == InertiaError.bad_geom:  # pragma: no cover
@@ -441,11 +441,11 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # First (non-degenerate) axis is just taken to have a positive dot
         #  product with its first non-orthogonal nonzero displacement
         axes[:,0] = vecs[:,0] * np.sign(np.dot(vecs[:,0],
-                                                    _fadnOv(vecs[:,0], geom)))
+                                                    _fadn_orth(vecs[:,0], geom)))
 
         # Second (first degenerate) axis is the normalized rejection of the
         #  first non-parallel displacement onto the first axis
-        axes[:,1] = rej(_fadnPv(axes[:,0], geom), axes[:,0])
+        axes[:,1] = rej(_fadn_par(axes[:,0], geom), axes[:,0])
         axes[:,1] /= spla.norm(axes[:,1])
 
         # Third (second degenerate) axis is just the first axis crossed with
@@ -461,7 +461,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
 
         # Second axis is the normalized rejection onto the first axis of the
         #  first nonzero non-parallel displacement from that first axis
-        axes[:,1] = rej(_fadnPv(axes[:,0], geom), axes[:,0])
+        axes[:,1] = rej(_fadn_par(axes[:,0], geom), axes[:,0])
         axes[:,1] /= spla.norm(axes[:,1])
 
         # Third axis is the first crossed with the second
@@ -581,7 +581,7 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
 
 @_arraysqueeze(0,1)
-def _fadnOv(vec, geom):
+def _fadn_orth(vec, geom):
     """First non-zero Atomic Displacement Non-Orthogonal to Vec
 
     Utility function to identify the first atomic displacement in a geometry
@@ -644,11 +644,11 @@ def _fadnOv(vec, geom):
                     "No suitable atomic displacement found", ""))
     ## end for disp
 
-## end def _fadnOv
+## end def _fadn_orth
 
 
 @_arraysqueeze(0,1)
-def _fadnPv(vec, geom):
+def _fadn_par(vec, geom):
     """First non-zero Atomic Displacement that is Non-Parallel with Vec
 
     Utility function to identify the first atomic displacement in a geometry
@@ -712,7 +712,7 @@ def _fadnPv(vec, geom):
     # Return the resulting vector
     return out_vec
 
-## end def _fadnPv
+## end def _fadn_par
 
 
 
