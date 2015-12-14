@@ -38,6 +38,8 @@ rotational constants, principal moments/axes, etc.)
 
 **Functions**
 
+.. autofunction:: opan.utils.base.assert_npfloatarray
+
 .. autofunction:: opan.utils.base.check_geom(c1,a1,c2,a2[,tol])
 
 .. autofunction:: opan.utils.base.delta_fxn(a,b)
@@ -63,6 +65,7 @@ __all__ = ['decorate', 'execute', 'inertia', 'symm', 'vector']
 from . import *
 from .base import check_geom, delta_fxn, make_timestamp, pack_tups
 from .base import safe_cast, template_subst, iterable
+from .base import assert_npfloatarray
 
 
 

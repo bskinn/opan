@@ -78,31 +78,32 @@ class SuperOpanGrad(object):
         #  wholesale
         self._load(**kwargs)
 
-        # Proofread the gradient
-        try:    # pragma: no cover
-            # Ensure the right datatype
-            if not np.issubdtype(self.gradient.dtype, np.float):
-                raise(GradError(GradError.badgrad,
-                        "Gradient is not an np.array of np.float",
-                        "{0} with args {1}".format(
-                                self.__class__, str(kwargs))))
-            ## end if
-        except AttributeError:  # pragma: no cover
-            # self.gradient or self.gradient.dtype not present
-            try:
-                self.gradient
-            except AttributeError:
-                raise(GradError(GradError.badgrad,
-                        "Gradient attribute not defined",
-                        "{0} with args {1}".format(
-                            self.__class__, str(kwargs))))
-            else:
-                raise(GradError(GradError.badgrad,
-                        "Gradient is not an np.array",
-                        "{0} with args {1}".format(
-                                self.__class__, str(kwargs))))
-            ## end try
-        ## end try
+        # Proofread types for gradient and geometry
+##        for (g,s,t) in zip([self.gradient
+##            try:    # pragma: no cover
+##                # Ensure the right datatype
+##                if not np.issubdtype(self.gradient.dtype, np.float):
+##                    raise(GradError(GradError.badgrad,
+##                            "Gradient is not an np.array of np.float",
+##                            "{0} with args {1}".format(
+##                                    self.__class__, str(kwargs))))
+##                ## end if
+##            except AttributeError:  # pragma: no cover
+##                # self.gradient or self.gradient.dtype not present
+##                try:
+##                    self.gradient
+##                except AttributeError:
+##                    raise(GradError(GradError.badgrad,
+##                            "Gradient attribute not defined",
+##                            "{0} with args {1}".format(
+##                                self.__class__, str(kwargs))))
+##                else:
+##                    raise(GradError(GradError.badgrad,
+##                            "Gradient is not an np.array",
+##                            "{0} with args {1}".format(
+##                                    self.__class__, str(kwargs))))
+##                ## end try
+##            ## end try
 
 
     ## end def __init__
@@ -165,6 +166,47 @@ class SuperOpanGrad(object):
         return result
 
     ## end def check_geom
+
+##    def _check_npfloatarray(self, varname, varstr, tc):
+##        """ Helper method for np.array/np.float type checking."""
+##
+##        # Imports
+##        import numpy as np
+##        from .error import GradError
+##
+##        try:    # pragma: no cover
+##            var = getattr(self, varname)
+##        except AttributeError:
+##            raise(GradError(tc,
+##                        "{0} attribute not defined".format(varstr),
+##                        "{0} with args {1}".format(
+##                            self.__class__, str(kwargs))))
+##
+##
+##
+##            # Ensure the right datatype
+##            if not np.issubdtype(self.gradient.dtype, np.float):
+##                raise(GradError(GradError.badgrad,
+##                        "Gradient is not an np.array of np.float",
+##                        "{0} with args {1}".format(
+##                                self.__class__, str(kwargs))))
+##            ## end if
+##        except AttributeError:  # pragma: no cover
+##            # self.gradient or self.gradient.dtype not present
+##            try:
+##                self.gradient
+##            except AttributeError:
+##                raise(GradError(GradError.badgrad,
+##                        "Gradient attribute not defined",
+##                        "{0} with args {1}".format(
+##                            self.__class__, str(kwargs))))
+##            else:
+##                raise(GradError(GradError.badgrad,
+##                        "Gradient is not an np.array",
+##                        "{0} with args {1}".format(
+##                                self.__class__, str(kwargs))))
+##            ## end try
+##        ## end try
 
 ## end class SuperOpanGrad
 
@@ -352,24 +394,15 @@ class OrcaEngrad(SuperOpanGrad):
         import numpy as np
 
         # Check if instantiated; complain if so
-        try:
-            if self.initialized:
-                raise(GradError(GradError.overwrite,
-                            "Cannot overwrite existing OrcaEngrad", ""))
-        except AttributeError:
-            pass
-        ## end try
+        if 'initialized' in dir(self):
+            raise(GradError(GradError.overwrite,
+                    "Cannot overwrite contents of existing OrcaEngrad", ""))
+        ## end if
 
-        # Prime the initialization flag
-        self.initialized = False
-
+        # Retrieve the file target
         engrad_path = kwargs['path']
 
         # Open file, read contents, close stream
-        # No particular exception handling; that will be the responsibility
-        #  of the calling routine.
-        # May want to add a check for text file format; but, really, a check
-        #  for expected-information-not-found will likely cover such a case.
         with open(engrad_path,'rU') as in_fl:
             self.engrad_path = engrad_path
             self.in_str = in_fl.read()

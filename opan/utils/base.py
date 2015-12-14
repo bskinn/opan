@@ -510,6 +510,83 @@ def iterable(y):
 ## end def iterable
 
 
+def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
+    """ Assert a value is an :class:`np.array <numpy.ndarray>` of ``np.float``.
+
+    Pass |None| to `varname` if `obj` itself is to be checked.
+    Otherwise, `varname` is the string name of the attribute of `obj` to
+    check.  In either case, `desc` is a string description of the
+    object to be checked, for use in raising of exceptions.
+
+    Raises the exception `exc` with typecode `tc` if the indicated
+    object is determined not to be an `np.array`, with a dtype
+    that inherits from `np.float`.
+
+    Intended primarily to serve as an early check for
+    proper implementation of subclasses of
+    :class:`~opan.grad.SuperOpanGrad` and
+    :class:`~opan.hess.SuperOpanHess`. Early type-checking of key
+    attributes will hopefully avoid confusing bugs downstream.
+
+    Parameters
+    ----------
+    obj
+        Object to be checked, or object with attribute to be checked.
+
+    varname : str or |None|
+        Name of the attribute of `obj` to be type-checked. |None|
+        indicates to check `obj` itself.
+
+    desc : str
+        Description of the object being checked to be used in any
+        raised exceptions.
+
+    exc
+        Subclass of :class:`~opan.error.OpanError` to be raised on
+        a failed typecheck.
+
+    tc
+        Typecode of `exc` to be raised on a failed typecheck.
+
+    errsrc : str
+        String description of the source of the data leading to a
+        failed typecheck.
+
+    Returns
+    -------
+    (none)
+
+    """
+
+    # Imports
+    import numpy as np
+    # RESUME: Check first for varname is None. Entire fxn needs rework.
+    # Try to get the variable to be typechecked
+    try:    # pragma: no cover
+        var = getattr(obj, varname)
+    except AttributeError:
+        raise(exc(tc, "{0} attribute not defined".format(varstr), errsrc))
+    ## end try
+
+    # Try to pull the np datatype off of it
+    try:
+        dt = var.dtype
+    except AttributeError:
+        raise(exc(tc, "{0} is not an np.array".format(varstr),
+                    "{0} with args {1}".format(obj.__class__, str(argdict))))
+    ## end try
+
+    # Confirm datatype
+    if not np.issubdtype(dt, np.float):
+                raise(GradError(GradError.badgrad,
+                        "Gradient is not an np.array of np.float",
+                        "{0} with args {1}".format(
+                                self.__class__, str(kwargs))))
+
+## end def assert_npfloatarray
+
+
+
 if __name__ == '__main__': # pragma: no cover
     print("Module not executable.")
 

@@ -379,7 +379,7 @@ class OpanXYZ(object):
 
         # Gripe if already initialized
         if 'initialized' in dir(self):
-            raise(XYZError(XYZError.overwrite, \
+            raise(XYZError(XYZError.overwrite,
                     "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
 
