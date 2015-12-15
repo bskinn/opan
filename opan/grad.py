@@ -66,7 +66,8 @@ class SuperOpanGrad(object):
         """
 
         # Imports
-        from .error import GradError
+        from .error import GradError as GErr
+        from .utils import assert_npfloatarray as a_npfa
         import numpy as np
 
         # Check for abstract base class
@@ -79,32 +80,13 @@ class SuperOpanGrad(object):
         self._load(**kwargs)
 
         # Proofread types for gradient and geometry
-##        for (g,s,t) in zip([self.gradient
-##            try:    # pragma: no cover
-##                # Ensure the right datatype
-##                if not np.issubdtype(self.gradient.dtype, np.float):
-##                    raise(GradError(GradError.badgrad,
-##                            "Gradient is not an np.array of np.float",
-##                            "{0} with args {1}".format(
-##                                    self.__class__, str(kwargs))))
-##                ## end if
-##            except AttributeError:  # pragma: no cover
-##                # self.gradient or self.gradient.dtype not present
-##                try:
-##                    self.gradient
-##                except AttributeError:
-##                    raise(GradError(GradError.badgrad,
-##                            "Gradient attribute not defined",
-##                            "{0} with args {1}".format(
-##                                self.__class__, str(kwargs))))
-##                else:
-##                    raise(GradError(GradError.badgrad,
-##                            "Gradient is not an np.array",
-##                            "{0} with args {1}".format(
-##                                    self.__class__, str(kwargs))))
-##                ## end try
-##            ## end try
+        a_npfa(self, 'gradient', 'gradient', GErr, GErr.badgrad,
+                "{0} with args {1}".format(self.__class__, str(kwargs)))
+        a_npfa(self, 'geom', 'geometry', GErr, GErr.badgeom,
+                "{0} with args {1}".format(self.__class__, str(kwargs)))
+        #RESUME: gradient & geometry shapes
 
+        # Ensure atomic symbols length matches & they're all valid
 
     ## end def __init__
 
@@ -160,53 +142,12 @@ class SuperOpanGrad(object):
         from .utils import check_geom as ucg
 
         # Wrapper call
-        result = ucg(self.geom_vec, self.atom_syms, coords, atoms, tol=tol)
+        result = ucg(self.geom, self.atom_syms, coords, atoms, tol=tol)
 
         # Return result
         return result
 
     ## end def check_geom
-
-##    def _check_npfloatarray(self, varname, varstr, tc):
-##        """ Helper method for np.array/np.float type checking."""
-##
-##        # Imports
-##        import numpy as np
-##        from .error import GradError
-##
-##        try:    # pragma: no cover
-##            var = getattr(self, varname)
-##        except AttributeError:
-##            raise(GradError(tc,
-##                        "{0} attribute not defined".format(varstr),
-##                        "{0} with args {1}".format(
-##                            self.__class__, str(kwargs))))
-##
-##
-##
-##            # Ensure the right datatype
-##            if not np.issubdtype(self.gradient.dtype, np.float):
-##                raise(GradError(GradError.badgrad,
-##                        "Gradient is not an np.array of np.float",
-##                        "{0} with args {1}".format(
-##                                self.__class__, str(kwargs))))
-##            ## end if
-##        except AttributeError:  # pragma: no cover
-##            # self.gradient or self.gradient.dtype not present
-##            try:
-##                self.gradient
-##            except AttributeError:
-##                raise(GradError(GradError.badgrad,
-##                        "Gradient attribute not defined",
-##                        "{0} with args {1}".format(
-##                            self.__class__, str(kwargs))))
-##            else:
-##                raise(GradError(GradError.badgrad,
-##                        "Gradient is not an np.array",
-##                        "{0} with args {1}".format(
-##                                self.__class__, str(kwargs))))
-##            ## end try
-##        ## end try
 
 ## end class SuperOpanGrad
 
@@ -465,7 +406,7 @@ class OrcaEngrad(SuperOpanGrad):
         #  ID vector.
         # Init the atom counter and the coordinates vector
         atom_count = 0
-        self.geom_vec = np.zeros((0,), dtype=np.float_)
+        self.geom = np.zeros((0,), dtype=np.float_)
 
         # Iterate over the atom spec lines and store element and coordinates
         for line_mch in OrcaEngrad.p_atline.finditer(geom_str):
@@ -514,9 +455,9 @@ class OrcaEngrad(SuperOpanGrad):
             # Append the three coordinates of the current atom to the
             #  temp coordinates vector. Unit conversion not needed since
             #  ENGRAD files report coordinates in Bohrs.
-            self.geom_vec = np.concatenate(
+            self.geom = np.concatenate(
                     (
-                        self.geom_vec,
+                        self.geom,
                         [scast(line_mch.group("c{0}".format(i)), np.float_)
                                                         for i in range(1,4)]
                      ))

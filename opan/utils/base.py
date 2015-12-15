@@ -560,28 +560,33 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
 
     # Imports
     import numpy as np
-    # RESUME: Check first for varname is None. Entire fxn needs rework.
-    # Try to get the variable to be typechecked
-    try:    # pragma: no cover
-        var = getattr(obj, varname)
-    except AttributeError:
-        raise(exc(tc, "{0} attribute not defined".format(varstr), errsrc))
-    ## end try
 
-    # Try to pull the np datatype off of it
+    # Check for whether member or object is to be checked
+    if varname is None:
+        var = obj
+    else:
+        # Try to get the variable to be typechecked
+        try:
+            var = getattr(obj, varname)
+        except AttributeError:
+            raise(exc(tc, "Attribute '{0}' not defined in '{1}'"
+                    .format(varname, obj), errsrc))
+        ## end try
+    ## end if
+
+    # Try to pull the np dtype off of it
     try:
         dt = var.dtype
     except AttributeError:
-        raise(exc(tc, "{0} is not an np.array".format(varstr),
-                    "{0} with args {1}".format(obj.__class__, str(argdict))))
+        raise(exc(tc, "'{0}' is not an np.array (lacks a 'dtype' member)"
+                    .format(desc), errsrc))
     ## end try
 
-    # Confirm datatype
+    # Confirm dtype inherits from np.float
     if not np.issubdtype(dt, np.float):
-                raise(GradError(GradError.badgrad,
-                        "Gradient is not an np.array of np.float",
-                        "{0} with args {1}".format(
-                                self.__class__, str(kwargs))))
+        raise(exc(tc, "'{0}' is not an np.array of np.float".format(desc),
+                errsrc))
+    ## end if
 
 ## end def assert_npfloatarray
 

@@ -261,8 +261,8 @@ class GradError(OpanError):
     #: Missing or invalid gradient data
     badgrad = 'badgrad'
 
-    #: Missing or invalid coordinates
-    badcoord = 'badcoord'
+    #: Missing or invalid geometry data
+    badgeom = 'badgeom'
 
     #: Missing or invalid atom symbols
     badatom = 'badatom'

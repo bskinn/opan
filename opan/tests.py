@@ -1449,8 +1449,8 @@ class TestOrcaEngradKnownGood(SuperOrcaEngrad):
         self.assertAlmostEqual(self.energy, self.oe.energy, delta=1e-12)
 
     def test_ENGRAD_KnownGoodGeom(self):
-        for i in range(self.oe.geom_vec.shape[0]):
-            self.assertAlmostEqual(self.oe.geom_vec[i],
+        for i in range(self.oe.geom.shape[0]):
+            self.assertAlmostEqual(self.oe.geom[i],
                         self.geom[i], delta=1e-7,
                         msg="Coordinate index " + str(i))
 
@@ -1460,7 +1460,7 @@ class TestOrcaEngradKnownGood(SuperOrcaEngrad):
             self.assertTrue(self.oe.initialized)
 
     def test_ENGRAD_KnownGoodCheckGeomMatches(self):
-        self.assertTrue(self.oe.check_geom(self.oe.geom_vec, self.oe.atom_syms))
+        self.assertTrue(self.oe.check_geom(self.oe.geom, self.oe.atom_syms))
 
 ## end class TestOrcaEngradKnownGood
 
