@@ -1454,11 +1454,6 @@ class TestOrcaEngradKnownGood(SuperOrcaEngrad):
                         self.geom[i], delta=1e-7,
                         msg="Coordinate index " + str(i))
 
-    def test_ENGRAD_KnownGoodInitFlagDefined(self):
-        self.assertTrue('initialized' in self.oe.__dict__)
-        if 'initialized' in self.oe.__dict__:
-            self.assertTrue(self.oe.initialized)
-
     def test_ENGRAD_KnownGoodCheckGeomMatches(self):
         self.assertTrue(self.oe.check_geom(self.oe.geom, self.oe.atom_syms))
 

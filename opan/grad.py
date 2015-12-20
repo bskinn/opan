@@ -20,7 +20,21 @@
 
 """ Module implementing imports of gradient data from external computations.
 
-[Superclass yadda, with subclasses for each software package supported.]
+The abstract superclass :class:`SuperOpanGrad` defines a common initializer
+and common method(s) that are to be used by subclasses designed to import
+gradient data from external computational packages.  The import for each
+external software should have its own subclass.
+
+Units of the gradient as stored should always be Hartrees per Bohr
+:math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`.
+
+Implemented subclasses are:
+
+:class:`OrcaEngrad` -- Imports '.engrad' files from |orca|
+
+|
+
+**Superclass**
 
 .. autoclass:: SuperOpanGrad
 
@@ -29,6 +43,7 @@
 **Subclasses**
 
 .. autoclass:: OrcaEngrad(path='...')
+    :members:
 
 """
 
@@ -46,7 +61,19 @@ _DEBUG = False
 class SuperOpanGrad(object):
     """ Abstract superclass of gradient import classes.
 
-    #DOC: SuperOpanGrad docstring
+    Performs the following actions:
+
+    1.  Ensures that the abstract superclass is not being instantiated,
+        but instead a subclass.
+    2.  Calls the ``_load()`` method on the subclass, passing all `kwargs`
+        through unmodified.
+    3.  Typechecks the ``self.gradient``, ``self.geom``, and
+        ``self.atom_syms`` required members for existence, proper data type,
+        and properly matched lengths.
+
+    |
+
+    **Methods**
 
     .. automethod:: check_geom(coords, atoms[, tol])
 
@@ -57,17 +84,12 @@ class SuperOpanGrad(object):
 
     def __init__(self, **kwargs):
         """ Conformity-checking initalizer for gradient data loader classes.
-
-        #DOC: SuperOpanGrad.__init__ docstring -- must confirm not trying to
-        instantiate the superclass, then call the _load method (assumes
-        present), then proofread the resulting data. Docstring must list
-        the attributes that a properly constructed subclass must contain.
-
         """
 
         # Imports
         from .error import GradError as GErr
         from .utils import assert_npfloatarray as a_npfa
+        from .const import atomNum
         import numpy as np
 
         # Check for abstract base class
@@ -79,63 +101,92 @@ class SuperOpanGrad(object):
         #  wholesale
         self._load(**kwargs)
 
+        # Define common error source string
+        srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
+
+        # All proofreading here is excluded from coverage because
+        #  all of these should be handled at the subclass level for ORCA.
+
         # Proofread types for gradient and geometry
-        a_npfa(self, 'gradient', 'gradient', GErr, GErr.badgrad,
-                "{0} with args {1}".format(self.__class__, str(kwargs)))
-        a_npfa(self, 'geom', 'geometry', GErr, GErr.badgeom,
-                "{0} with args {1}".format(self.__class__, str(kwargs)))
-        #RESUME: gradient & geometry shapes
+        a_npfa(self, 'gradient', 'gradient', GErr, GErr.badgrad, srcstr)
+        a_npfa(self, 'geom', 'geometry', GErr, GErr.badgeom, srcstr)
+
+        # Gradient and geometry shape
+        if (len(self.gradient.shape) != 1 or
+                                    self.gradient.shape[0] % 3 != 0):
+            raise(GErr(GErr.badgrad, # pragma: no cover
+                        "Gradient is not a length-3N vector", srcstr))
+        ## end if
+        if self.gradient.shape != self.geom.shape:
+            raise(GErr(GErr.badgeom, # pragma: no cover
+                        "Geometry shape does not match gradient shape", srcstr))
 
         # Ensure atomic symbols length matches & they're all valid
+        if not hasattr(self, 'atom_syms'): # pragma: no cover
+            raise(GErr(GErr.badatom, "Atoms list not found", srcstr))
+        ## end if
+        if 3*len(self.atom_syms) != self.gradient.shape[0]: # pragma: no cover
+            raise(GErr(GErr.badatom, "Atoms list is not length-N", srcstr))
+        ## end if
+        if not all(map(lambda v: v in atomNum, self.atom_syms)):
+            raise(GErr(GErr.badatom,    # pragma: no cover
+                    "Invalid atoms in list: {0}".format(self.atom_syms),
+                    srcstr))
+        ## end if
 
     ## end def __init__
 
 
     def check_geom(self, coords, atoms, tol=_DEF.GRAD_Coord_Match_Tol):
-        """ Check for consistency of ENGRAD geometry with input coords/atoms.
+        """ Check for consistency of gradient geometry with input coords/atoms.
 
-        ENGRAD cartesian coordinates are considered consistent with the input
-            coords if each component matches to within 'tol' (default value
-            specified by orca_const.DEF.ENGRAD_Coord_Match_Tol).  If coords or
-            atoms vectors are passed that are of different length than those
-            stored in the OrcaEngrad instance, a False value is returned.
-
-        The coords vector must be three times the length of the atoms vector
-            or a ValueError is raised.
+        The cartesian coordinates associated with a gradient object
+        are considered consistent with the input `coords` if each
+        component matches to within `tol`.  If
+        `coords` or `atoms` vectors are passed that are of different
+        length than those stored in the instance, a |False| value is
+        returned, rather than an exception raised.
 
         Parameters
         ----------
-        coords : length-3N np.float_
+        coords : length-3N ``np.float_``
             Vector of stacked 'lab-frame' Cartesian coordinates
-        atoms  : length-N string or int
+
+        atoms  : length-N str or int
             Vector of atom symbols or atomic numbers
+
         tol    : float, optional
-            Tolerance for acceptable deviation of each geometry coordinate
-            from that in the OrcaEngrad instance to still be considered
-            matching
+            Tolerance for acceptable deviation of each passed geometry
+            coordinate  from that in the instance to still be considered
+            matching. Default value is
+            :data:`DEF.GRAD_Coord_Match_Tol
+            <opan.const.DEF.GRAD_Coord_Match_Tol>`
 
         Returns
         -------
         match  : bool
-            Whether input coords and atoms match those in the OrcaEngrad
-            instance (True) or not (False)
-        fail_type  : string
-            If match == False, a string description code for the reason
+            Whether input `coords` and `atoms` match those in the
+            instance (|True|) or not (|False|)
+
+        fail_type  : str
+            If `match` == |False|, a string description code for the reason
             for the failed match:
-                coord_dim_mismatch  : Mismatch in coordinate vector sizes
-                atom_dim_mismatch   : Mismatch in atom symbol vector sizes
-                coord_mismatch      : Mismatch in one or more coordinates
-                atom_mismatch       : Mismatch in one or more atoms
-                #DOC: Propagate info when mismatch code converted to Enum
+            coord_dim_mismatch  : Mismatch in coordinate vector sizes
+            atom_dim_mismatch   : Mismatch in atom symbol vector sizes
+            coord_mismatch      : Mismatch in one or more coordinates
+            atom_mismatch       : Mismatch in one or more atoms
+            #DOC: Propagate info when mismatch code converted to Enum
+
         fail_loc   : length-3N bool or length-N bool
-            np.array vector indicating positions of mismatch in
-            either coords or atoms, depending on the value of fail_type.
-            True elements indicate corresponding *MATCHING* values; False
-            elements mark *MISMATCHES*.
+            np.array indicating positions of mismatch in
+            either `coords` or `atoms`, depending on the value of `fail_type`.
+            |True| elements indicate corresponding **MATCHING** values;
+            |False| elements mark **MISMATCHES**.
 
         Raises
         ------
-        ValueError : If len(coords) != 3 * len(atoms)
+        ~exceptions.ValueError
+            If ``len(coords) != 3 * len(atoms)``
         """
 
         # Import(s)
@@ -163,152 +214,156 @@ class OrcaEngrad(SuperOpanGrad):
     of atoms, the geometry, and the atom IDs.  For |orca|, the precision of the
     geometry is inferior to that in an XYZ file.
 
-    'N' in the below documentation refers to the number of atoms present in the
-    geometry contained within the ENGRAD.
 
-    Units of the gradient are Hartrees per Bohr (Eh/B)
+    |
 
+    **Class Variables**
 
-    Instantiation
-    -------------
-    __init__(engrad_path)
-        Constructor for an OrcaEngrad drawing data from an ENGRAD file on disk.
+    .. class:: Pat
 
-    Class Variables
-    ---------------
-    p_atblock   : re.compile() pattern
-        RegEx for the entire block of atom ID & geom data.
-    p_atline    : re.compile() pattern
-        RegEx for extracting single lines from the atom ID & geom block.
-    p_en        : re.compile() pattern
-        RegEx for pulling E_el from the ENGRAD file
-    p_gradblock : re.compile() pattern
-        RegEx for the gradient data block
-    p_numats    : re.compile() pattern
-        RegEx to retrieve the 'number of atoms' field from an
-        |orca| ENGRAD file.
+        :func:`re.compile` patterns for data parsing.
 
+        |
 
-    Instance Variables
-    ------------------
+        .. attribute:: atblock
+
+            Captures the entire block of atom ID & geometry data.
+
+        .. attribute:: atline
+
+            Extracts single lines from the atom ID / geometry block.
+
+        .. attribute:: energy
+
+            Captures the electronic energy.
+
+        .. attribute:: gradblock
+
+            Captures the gradient data block.
+
+        .. attribute:: numats
+
+            Retrieves the stand-along 'number of atoms' field.
+
+    |
+
+    **Instance Variables**
+
     atom_syms   : length-N list of str
         Uppercased atomic symbols for the atoms in the system.
+
     energy      : float
-        Single-point energy for the geometry as reported within the ENGRAD
-        file.
-    geom_vec    : length-3N np.array of np.float_
-        Vector of the atom coordinates in Bohr.
-    gradient    : length-3N np.array of np.float_
-        Vector of the Cartesian gradient in Eh/Bohr.
-    in_str      : string
-        Complete text of the ENGRAD file read in to generate the OrcaEngrad
-        instance.
-    initialized : boolean
-        Flag for whether initialization of the OrcaEngrad instance was
-        successful. (May not ever actually be used..? Holdover from VBA.)
+        Single-point energy for the geometry.
+
+    geom        : length-3N ``np.float_``
+        Vector of the atom coordinates in :math:`\\mathrm B`.
+
+    gradient    : length-3N ``np.float_``
+        Vector of the Cartesian gradient in
+        :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
+
+    in_str      : str
+        Complete text of the ENGRAD file read in to generate the
+        :class:`OrcaEngrad` instance.
+
     num_ats     : int
         Number of atoms in the geometry ('N')
-
-    Methods
-    -------
-    check_geom(coords, atoms[, tol])
-        Checks vectors of atom coordinates and identities for consistency
-        with the geometry and atom identities stored within the instance of
-        OrcaEngrad.
-
-    Generators
-    ----------
-    (none)
 
     """
 
     # Imports
-    import re as _re
 
+    # Various class-level RegEx patterns, wrapped in a class
+    class Pat(object):
+        # Imports
+        import re as _re
 
-    # Various class-level RegEx patterns
-    # Number of atoms -- NOT multilined. This may be a bit heavy-handed, as it
-    #  will break if the .engrad file format is changed very much, but such a
-    #  breakage will be a *feature*, not a bug, since it will prompt
-    #  re-evaluation of the code to ensure the data is being read/parsed
-    #  appropriately.
-    p_numats = _re.compile("""
-    \\#.*                   # Key text is in a comment block
-    Number\\ of\\ atoms     # Find the key text
-    .*\\n                   # All else from key text line, to newline
-    \\#.*\\n                # Another comment line w/pound
-    [ ]*                    # Series of possible spaces
-    (?P<num>\\d+)           # Actual number of atoms
-    .*\\n                   # All else to newline
-    \\#                     # Pound to start the next line
-    """, _re.I | _re.X)
+        # Number of atoms -- NOT multilined. This may be a bit
+        #  heavy-handed, as it will break if the .engrad file format
+        #  is changed very much, but such a breakage will be a
+        #  *feature*, not a bug, since it will prompt re-evaluation
+        #  of the code to ensure the data is being read/parsed
+        #  appropriately.
+        numats = _re.compile("""
+        \\#.*                   # Key text is in a comment block
+        Number\\ of\\ atoms     # Find the key text
+        .*\\n                   # All else from key text line, to newline
+        \\#.*\\n                # Another comment line w/pound
+        [ ]*                    # Series of possible spaces
+        (?P<num>\\d+)           # Actual number of atoms
+        .*\\n                   # All else to newline
+        \\#                     # Pound to start the next line
+        """, _re.I | _re.X)
 
-    # Energy of associated geometry -- also NOT multilined. Also heavy-handed,
-    #  but again this will assist in forcing review of the code if future
-    #  ORCA versions change the ENGRAD file formatting
-    p_en = _re.compile("""
-    \\#.*                               # Key text is in a comment block
-    current\\ total\\ energy\\ in\\ Eh  # Key text
-    .*\\n                               # Clear to newline
-    \\#.*\\n                            # Blank comment line
-    [ ]*                                # Series of spaces
-    (?P<en>[-]?[0-9]+\\.[0-9]+)         # Energy value
-    .*\\n                               # Clear to newline
-    \\#                                 # Pound to start the next line
-    """, _re.I | _re.X)
+        # Energy of associated geometry -- also NOT multilined.
+        #  Also heavy-handed, but again this will assist in
+        #  forcing review of the code if future
+        #  ORCA versions change the ENGRAD file formatting
+        energy = _re.compile("""
+        \\#.*                               # Key text is in a comment block
+        current\\ total\\ energy\\ in\\ Eh  # Key text
+        .*\\n                               # Clear to newline
+        \\#.*\\n                            # Blank comment line
+        [ ]*                                # Series of spaces
+        (?P<en>[-]?[0-9]+\\.[0-9]+)         # Energy value
+        .*\\n                               # Clear to newline
+        \\#                                 # Pound to start the next line
+        """, _re.I | _re.X)
 
-    # Gradient block
-    p_gradblock = _re.compile("""
-    \\#.*                               # Key text is in a comment block
-    in\\ Eh/bohr                        # Key text
-    .*\\n                               # Clear to newline
-    \\#.*\\n                            # Blank comment line
-    (?P<block>                          # Retrieving the whole grad block here
-        ([ ]*[0-9.-]+[ ]*\\n)+          # Grad block entries
-    )                                   # Close the whole grad block
-    \\#                                 # Pound to signify end of block
-    """, _re.I | _re.X)
+        # Gradient block
+        gradblock = _re.compile("""
+        \\#.*                           # Key text is in a comment block
+        in\\ Eh/bohr                    # Key text
+        .*\\n                           # Clear to newline
+        \\#.*\\n                        # Blank comment line
+        (?P<block>                      # Retrieving the whole grad block here
+            ([ ]*[0-9.-]+[ ]*\\n)+      # Grad block entries
+        )                               # Close the whole grad block
+        \\#                             # Pound to signify end of block
+        """, _re.I | _re.X)
 
-    # Should probably consider going ahead and storing the indicated geometry.
-    #  Would want a cross-check that yes, the geometry for which the gradient
-    #  is stored DOES actually match that expected by the broader computation.
-    # Should not need the same level of detailed retrieval as put into
-    #  xyz, though -- just a function to confirm within some specified
-    #  tolerance that a passed-in geometry is consistent with the geometry
-    #  found in the ENGRAD file
-    p_atblock = _re.compile("""
-    \\#.*                               # Key text is in a comment block
-    coordinates\\ in\\ Bohr             # Key text
-    .*\\n                               # Clear to newline
-    \\#.*                               # Blank comment line
-    (?P<block>                          # Retrieving the whole geometry block
-        (                               # Open group for each line
-            \\n                         # Start each line with newline
-            [ \\t]*                     # Leading whitespace
-            ([a-z]+|\\d+)+              # Atomic symbol or number
-            (                           # Group for coordinates
-                [ \\t]+                 # Whitespace
-                [0-9.-]+                # Coordinate (no sci notation assumed)
-            ){3}                        # Three coordinates each
-            [ \\t]*                     # Optional whitespace
-        )+                              # Whatever number of atoms
-    )                                   # Close the geometry block
-    """, _re.M | _re.I | _re.X)
+        # Should probably consider going ahead and storing the indicated geometry.
+        #  Would want a cross-check that yes, the geometry for which the gradient
+        #  is stored DOES actually match that expected by the broader computation.
+        # Should not need the same level of detailed retrieval as put into
+        #  xyz, though -- just a function to confirm within some specified
+        #  tolerance that a passed-in geometry is consistent with the geometry
+        #  found in the ENGRAD file
+        atblock = _re.compile("""
+        \\#.*                           # Key text is in a comment block
+        coordinates\\ in\\ Bohr         # Key text
+        .*\\n                           # Clear to newline
+        \\#.*                           # Blank comment line
+        (?P<block>                      # Retrieving the whole geometry block
+            (                           # Open group for each line
+                \\n                     # Start each line with newline
+                [ \\t]*                 # Leading whitespace
+                ([a-z]+|\\d+)+          # Atomic symbol or number
+                (                       # Group for coordinates
+                    [ \\t]+             # Whitespace
+                    [0-9.-]+            # Coordinate (no sci notation assumed)
+                ){3}                    # Three coordinates each
+                [ \\t]*                 # Optional whitespace
+            )+                          # Whatever number of atoms
+        )                               # Close the geometry block
+        """, _re.M | _re.I | _re.X)
 
-    # Separate Regex to retrieve the individual lines of the geometry block
-    #  for subsequent parsing and storage/comparison. Not using multiline
-    #  because trapping newlines seems to suffice.
-    p_atline = _re.compile("""
-    \\n                                 # Start of each line is a newline
-    [ \\t]*                             # Leading whitespace
-    (?P<at>([a-z]+|\\d+)+)              # Atomic symbol or number
-    [ \\t]+                             # Whitespace
-    (?P<c1>[0-9.-]+)                    # First coordinate
-    [ \\t]+                             # Whitespace
-    (?P<c2>[0-9.-]+)                    # Second coordinate
-    [ \\t]+                             # Whitespace
-    (?P<c3>[0-9.-]+)                    # Third coordinate
-    """, _re.I | _re.X)
+        # Separate Regex to retrieve the individual lines of the geometry block
+        #  for subsequent parsing and storage/comparison. Not using multiline
+        #  because trapping newlines seems to suffice.
+        atline = _re.compile("""
+        \\n                                 # Start of each line is a newline
+        [ \\t]*                             # Leading whitespace
+        (?P<at>([a-z]+|\\d+)+)              # Atomic symbol or number
+        [ \\t]+                             # Whitespace
+        (?P<c1>[0-9.-]+)                    # First coordinate
+        [ \\t]+                             # Whitespace
+        (?P<c2>[0-9.-]+)                    # Second coordinate
+        [ \\t]+                             # Whitespace
+        (?P<c3>[0-9.-]+)                    # Third coordinate
+        """, _re.I | _re.X)
+
+    ## end class Pat
 
     def _load(self, **kwargs):
         """ Initialize OrcaEngrad gradient object from .engrad file
@@ -319,13 +374,16 @@ class OrcaEngrad(SuperOpanGrad):
 
         Parameters
         ----------
-        path : string
+        path : str
             Complete path to the .engrad file to be read.
 
         Raises
         ------
-        GradError : If indicated gradient file is malformed in some fashion
-        IOError     : If the indicated file does not exist or cannot be read
+        ~opan.error.GradError
+            If indicated gradient file is malformed in some fashion
+        ~exceptions.IOError
+            If the indicated file does not exist or cannot be read
+
         """
 
         # Imports
@@ -335,7 +393,7 @@ class OrcaEngrad(SuperOpanGrad):
         import numpy as np
 
         # Check if instantiated; complain if so
-        if 'initialized' in dir(self):
+        if 'engrad_path' in dir(self):
             raise(GradError(GradError.overwrite,
                     "Cannot overwrite contents of existing OrcaEngrad", ""))
         ## end if
@@ -349,39 +407,37 @@ class OrcaEngrad(SuperOpanGrad):
             self.in_str = in_fl.read()
 
         # Check to ensure all relevant data blocks are found
-        if not OrcaEngrad.p_numats.search(self.in_str):
+        if not self.Pat.numats.search(self.in_str):
             raise(GradError(GradError.numats,
                     "Number of atoms specification not found",
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
-        if not OrcaEngrad.p_en.search(self.in_str):
+        if not self.Pat.energy.search(self.in_str):
             raise(GradError(GradError.en,
                     "Energy specification not found",
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
-        if not OrcaEngrad.p_gradblock.search(self.in_str):
+        if not self.Pat.gradblock.search(self.in_str):
             raise(GradError(GradError.gradblock,
                     "Gradient data block not found",
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
-        if not OrcaEngrad.p_atblock.search(self.in_str):
+        if not self.Pat.atblock.search(self.in_str):
             raise(GradError(GradError.geomblock,
                     "Geometry data block not found",
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
 
         # Retrieve the number of atoms
-        self.num_ats = np.int_(OrcaEngrad.p_numats.search(self.in_str)
-                            .group("num"))
+        self.num_ats = np.int_(self.Pat.numats.search(self.in_str).group("num"))
 
         # Retrieve the energy
-        self.energy = np.float_(OrcaEngrad.p_en.search(self.in_str)
-                            .group("en"))
+        self.energy = np.float_(self.Pat.energy.search(self.in_str).group("en"))
 
         # Retrieve the gradient and store numerically. Raise an error if
         #  the number of gradient elements is not equal to three times the
         #  number of atoms.
-        grad_str = OrcaEngrad.p_gradblock.search(self.in_str).group("block")
+        grad_str = self.Pat.gradblock.search(self.in_str).group("block")
         if not len(grad_str.splitlines()) == 3 * self.num_ats:
             raise(GradError(GradError.gradblock,
                     "Gradient block size mismatch with number of atoms",
@@ -390,10 +446,10 @@ class OrcaEngrad(SuperOpanGrad):
         self.gradient = np.array(grad_str.splitlines(), dtype=np.float_)
 
         # Pull and store the geometry block
-        geom_str = OrcaEngrad.p_atblock.search(self.in_str).group("block")
+        geom_str = self.Pat.atblock.search(self.in_str).group("block")
 
         # Confirm the correct number of atoms
-        if not len(OrcaEngrad.p_atline.findall(geom_str)) ==  self.num_ats:
+        if not len(self.Pat.atline.findall(geom_str)) ==  self.num_ats:
             raise(GradError(GradError.geomblock,
                     "Inconsistent number of atom coordinates in \
                     geometry block", "ENGRAD File: {0}".format(engrad_path)))
@@ -409,7 +465,7 @@ class OrcaEngrad(SuperOpanGrad):
         self.geom = np.zeros((0,), dtype=np.float_)
 
         # Iterate over the atom spec lines and store element and coordinates
-        for line_mch in OrcaEngrad.p_atline.finditer(geom_str):
+        for line_mch in self.Pat.atline.finditer(geom_str):
             # Populate the atom symbols list; have to check for
             #  whether it's an atomic number or an element symbol
             if str.isdigit(line_mch.group("at")):
@@ -462,9 +518,6 @@ class OrcaEngrad(SuperOpanGrad):
                                                         for i in range(1,4)]
                      ))
         ## next line_mch
-
-        # Set the initialization flag
-        self.initialized = True
 
     ## end def __init__
 
