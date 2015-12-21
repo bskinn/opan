@@ -6,7 +6,8 @@ Dreams one day to be an automated system for driving VPT2 anharmonic
  packages.
  
 Starting with v0.4, this project strives to follow [Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html)
-  and [PEP 440](https://www.python.org/dev/peps/pep-0440).
+  and [PEP 440](https://www.python.org/dev/peps/pep-0440), with PEP 440 taking priority.  Thus, some elements of
+  SemVer v2.0.0 may not be reflected in the official version numbers of the project.
 
 Documentation can be found at [Read the Docs](https://www.readthedocs.org): [![Documentation Status](https://readthedocs.org/projects/opan/badge/?version=latest)](http://opan.readthedocs.org/en/latest/?badge=latest)
 

@@ -21,16 +21,77 @@
 """ Module implementing imports of gradient data from external computations.
 
 The abstract superclass :class:`SuperOpanGrad` defines a common initializer
-and common method(s) that are to be used by subclasses designed to import
-gradient data from external computational packages.  The import for each
-external software should have its own subclass.
+and common method(s) that for use by subclasses importing
+gradient data from external computational packages.
 
-Units of the gradient as stored should always be Hartrees per Bohr
-:math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`.
+|
 
-Implemented subclasses are:
+**Implemented Subclasses**
 
 :class:`OrcaEngrad` -- Imports '.engrad' files from |orca|
+
+|
+
+**Requirements**
+
+ *  The import for each external software package SHOULD have
+    its own subclass.
+
+ *  Each subclass MUST implement a ``_load(**kwargs)`` method as the
+    entry point for import of gradient data.
+
+ *  The gradient data MUST be stored:
+
+    *   In the instance member ``self.gradient``
+
+    *   As a one-dimensional ``np.array``
+
+    *   With `dtype` descended from ``np.float``
+
+    *   In units of Hartrees per Bohr
+        :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`
+
+    *   With elements ordered as:
+
+    .. math::
+
+        \\left[
+        \\frac{\\partial E}{\\partial x_1},
+        \\frac{\\partial E}{\\partial y_1},
+        \\frac{\\partial E}{\\partial z_1},
+        \\frac{\\partial E}{\\partial x_2},
+        \\frac{\\partial E}{\\partial y_2},
+        \\dots
+        \\frac{\\partial E}{\\partial y_N},
+        \\frac{\\partial E}{\\partial z_N},
+        \\right]
+
+ *  The geometry data MUST be stored:
+
+    *   In the instance member ``self.geom``
+
+    *   As a one-dimensional ``np.array``
+
+    *   With `dtype` descended from ``np.float``
+
+    *   In units of Bohrs :math:`\\left(\\mathrm B\\right)`
+
+    *   With elements ordered as:
+
+    .. math::
+
+        \\left[x_1, y_1, z_1, x_2, y_2, \\dots, y_N, z_N\\right]
+
+ *  The atoms list MUST be stored:
+
+    *   In the instance member ``self.atom_syms``
+
+    *   As a `list` of `str`, with each atom specified by an ALL-CAPS
+        atomic symbol (:data:`opan.const.atomSym` may be helpful)
+
+ *  Subclasses MAY define an unlimited number of class and/or
+    instance variables in addition to those defined above, of
+    unrestricted type.
 
 |
 
@@ -44,6 +105,7 @@ Implemented subclasses are:
 
 .. autoclass:: OrcaEngrad(path='...')
     :members:
+
 
 """
 
@@ -70,6 +132,12 @@ class SuperOpanGrad(object):
     3.  Typechecks the ``self.gradient``, ``self.geom``, and
         ``self.atom_syms`` required members for existence, proper data type,
         and properly matched lengths.
+
+    The checks performed in step 3 are primarily for design-time member
+    and type enforcement during development of subclasses for new
+    external software packages, rather than run-time data checking.
+    It is RECOMMENDED to include robust data validity checking inside
+    each subclass, rather than relying on these tests.
 
     |
 
@@ -124,6 +192,9 @@ class SuperOpanGrad(object):
         # Ensure atomic symbols length matches & they're all valid
         if not hasattr(self, 'atom_syms'): # pragma: no cover
             raise(GErr(GErr.badatom, "Atoms list not found", srcstr))
+        ## end if
+        if type(self.atom_syms) is not type(range(3)):
+            raise(GErr(GErr.badatom, "Atoms list is not a list", srcstr))
         ## end if
         if 3*len(self.atom_syms) != self.gradient.shape[0]: # pragma: no cover
             raise(GErr(GErr.badatom, "Atoms list is not length-N", srcstr))
@@ -249,25 +320,27 @@ class OrcaEngrad(SuperOpanGrad):
 
     **Instance Variables**
 
-    atom_syms   : length-N list of str
-        Uppercased atomic symbols for the atoms in the system.
+    atom_syms
+        length-N `list` of `str` -- Uppercased atomic symbols
+        for the atoms in the system.
 
-    energy      : float
-        Single-point energy for the geometry.
+    energy
+        float -- Single-point energy for the geometry.
 
-    geom        : length-3N ``np.float_``
-        Vector of the atom coordinates in :math:`\\mathrm B`.
+    geom
+        length-3N ``np.float_`` -- Vector of the atom coordinates
+        in :math:`\\mathrm B`.
 
-    gradient    : length-3N ``np.float_``
-        Vector of the Cartesian gradient in
+    gradient
+        length-3N ``np.float_`` -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
-    in_str      : str
-        Complete text of the ENGRAD file read in to generate the
-        :class:`OrcaEngrad` instance.
+    in_str
+        `str` -- Complete text of the ENGRAD file read in
+        to generate the :class:`OrcaEngrad` instance.
 
-    num_ats     : int
-        Number of atoms in the geometry ('N')
+    num_ats
+        `int` --  Number of atoms in the geometry ('N')
 
     """
 

@@ -25,6 +25,9 @@ Welcome to opan!
 
  * Arbitrary integers represented as R, S, ...
 
+ * Where included, capitalized instructions [add list] are to be interpreted in
+   accordance with `RFC 2119 <http://tools.ietf.org/html/rfc2119>`__
+
  * [Others?]
 
 Contents:
