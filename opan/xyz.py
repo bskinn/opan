@@ -359,7 +359,7 @@ class OpanXYZ(object):
         ----------
         atom_syms   : squeezes to array of N strings
             Element symbols for the XYZ. Must be valid elements as defined in
-            .const.atomNum.keys()
+            .const.atom_num.keys()
         coords      : squeezes to array of 3N ``np.float_`` castables
             Coordinates for the geometry (x1, y1, z1, x2, y2, ...)
         bohrs       : bool, default True
@@ -374,7 +374,7 @@ class OpanXYZ(object):
 
         # Imports
         import numpy as np
-        from .const import atomNum
+        from .const import atom_num
         from .error import XYZError
 
         # Gripe if already initialized
@@ -395,13 +395,13 @@ class OpanXYZ(object):
         ## end if
 
         # Proof the atoms list
-        if not all( (atom_syms[i].upper() in atomNum)
+        if not all( (atom_syms[i].upper() in atom_num)
                                 for i in range(atom_syms.shape[0]) ):
             # Invalid atoms specified
             raise(ValueError("Invalid atoms specified: {0}".format(
                     [(j, atom_syms[j]) for j in
                         (i for (i, valid) in
-                            enumerate(map(lambda k: k in atomNum, atom_syms))
+                            enumerate(map(lambda k: k in atom_num, atom_syms))
                             if not valid
                         )
                     ] )))
@@ -454,7 +454,7 @@ class OpanXYZ(object):
 
         # Imports
         import numpy as np
-        from .const import CIC, PHYS, atomNum, atomSym
+        from .const import CIC, PHYS, atom_num, atom_sym
         from .error import XYZError
         from .utils import safe_cast as scast
 
@@ -555,13 +555,13 @@ class OpanXYZ(object):
                         ##end if
 
                         # Tag on the new symbol
-                        self.atom_syms.append(atomSym[at_num])
+                        self.atom_syms.append(atom_sym[at_num])
                     else:
                         # Element symbol; store as all caps
                         # Check for valid element, first by catching if the
                         #  specified element string is even valid
                         try:
-                            at_num = atomNum[line_mch.group("el").upper()]
+                            at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #{0}, atom #{1} is an \
@@ -589,7 +589,7 @@ class OpanXYZ(object):
                                         .format(self.num_geoms, atom_count),
                                      "XYZ file: {0}".format(XYZ_path)))
                         ## end if
-                        if not atomSym[at_num] == self.atom_syms[atom_count]:
+                        if not atom_sym[at_num] == self.atom_syms[atom_count]:
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #{0}, atom #{1} is inconsistent \
                                         with geometry #0"
@@ -602,7 +602,7 @@ class OpanXYZ(object):
                         # Check for valid element, first by catching if the
                         #  specified element string is even valid
                         try:
-                            at_num = atomNum[line_mch.group("el").upper()]
+                            at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #{0}, atom #{1} is an \

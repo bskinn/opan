@@ -87,7 +87,7 @@ gradient data from external computational packages.
     *   In the instance member ``self.atom_syms``
 
     *   As a `list` of `str`, with each atom specified by an ALL-CAPS
-        atomic symbol (:data:`opan.const.atomSym` may be helpful)
+        atomic symbol (:data:`opan.const.atom_sym` may be helpful)
 
  *  Subclasses MAY define an unlimited number of class and/or
     instance variables in addition to those defined above, of
@@ -157,7 +157,7 @@ class SuperOpanGrad(object):
         # Imports
         from .error import GradError as GErr
         from .utils import assert_npfloatarray as a_npfa
-        from .const import atomNum
+        from .const import atom_num
         import numpy as np
 
         # Check for abstract base class
@@ -199,7 +199,7 @@ class SuperOpanGrad(object):
         if 3*len(self.atom_syms) != self.gradient.shape[0]: # pragma: no cover
             raise(GErr(GErr.badatom, "Atoms list is not length-N", srcstr))
         ## end if
-        if not all(map(lambda v: v in atomNum, self.atom_syms)):
+        if not all(map(lambda v: v in atom_num, self.atom_syms)):
             raise(GErr(GErr.badatom,    # pragma: no cover
                     "Invalid atoms in list: {0}".format(self.atom_syms),
                     srcstr))
@@ -460,7 +460,7 @@ class OrcaEngrad(SuperOpanGrad):
         """
 
         # Imports
-        from .const import CIC, atomSym, atomNum
+        from .const import CIC, atom_sym, atom_num
         from .error import GradError
         from .utils import safe_cast as scast
         import numpy as np
@@ -486,7 +486,7 @@ class OrcaEngrad(SuperOpanGrad):
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
         if not self.Pat.energy.search(self.in_str):
-            raise(GradError(GradError.en,
+            raise(GradError(GradError.energy,
                     "Energy specification not found",
                     "ENGRAD File: {0}".format(engrad_path)))
         ## end if
@@ -553,14 +553,14 @@ class OrcaEngrad(SuperOpanGrad):
                 ##end if
 
                 # Tag on the new symbol
-                self.atom_syms.append(atomSym[at_num])
+                self.atom_syms.append(atom_sym[at_num])
 
             else:
                 # Element symbol; store as all caps
                 # Check for valid element, first by catching if the
                 #  specified element string is even valid
                 try:
-                    at_num = atomNum[line_mch.group("at").upper()]
+                    at_num = atom_num[line_mch.group("at").upper()]
                 except KeyError:
                     raise(GradError(GradError.geomblock,
                             "Atom #{0} is an unrecognized element"

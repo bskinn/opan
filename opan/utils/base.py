@@ -329,7 +329,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     """
 
     # Import(s)
-    from ..const import atomNum
+    from ..const import atom_num
     import numpy as np
 
     # Initialize return value to success condition
@@ -388,14 +388,14 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
     ## end if
 
     #** Element-wise check for atoms match. Quietly convert both input and
-    #  instance atom arrays to atomNums to allow np.equals comparison.
+    #  instance atom arrays to atom_nums to allow np.equals comparison.
     if np.issubdtype(a1.dtype, np.dtype('str')):
         # Presume atomic symbol data and attempt conversion
-        a1 = np.array([atomNum[e] for e in a1])
+        a1 = np.array([atom_num[e] for e in a1])
     ## end if
     if np.issubdtype(a2.dtype, np.dtype('str')):
         # Presume atomic symbol data and attempt conversion
-        a2 = np.array([atomNum[e] for e in a2])
+        a2 = np.array([atom_num[e] for e in a2])
     ## end if
     fail_loc = np.equal(a1, a2)
 

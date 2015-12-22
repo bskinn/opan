@@ -1502,7 +1502,7 @@ class TestOrcaEngradMissingBlocks(SuperOrcaEngrad):
         from opan.grad import OrcaEngrad
 
         assertErrorAndTypecode(self, GradError, OrcaEngrad,
-                    GradError.en, path=(self.file_name + self.names.energy))
+                    GradError.energy, path=(self.file_name + self.names.energy))
 
     def test_ENGRAD_MissingBlockGrad(self):
 

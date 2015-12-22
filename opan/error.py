@@ -250,7 +250,7 @@ class GradError(OpanError):
     numats = 'numats'
 
     #: Energy value not found
-    en = 'en'
+    energy = 'energy'
 
     #: Malformed or missing gradient block
     gradblock = 'gradblock'
@@ -258,13 +258,16 @@ class GradError(OpanError):
     #: Malformed or missing geometry block
     geomblock = 'geomblock'
 
-    #: Missing or invalid gradient data
+    #: Missing or invalid gradient data; SHOULD only be used by
+    #: :class:`~opan.grad.SuperOpanGrad`
     badgrad = 'badgrad'
 
-    #: Missing or invalid geometry data
+    #: Missing or invalid geometry data; SHOULD only be used by
+    #: :class:`~opan.grad.SuperOpanGrad`
     badgeom = 'badgeom'
 
-    #: Missing or invalid atom symbols
+    #: Missing or invalid atom symbols; SHOULD only be used by
+    #: :class:`~opan.grad.SuperOpanGrad`
     badatom = 'badatom'
 
     #: Object already initialized (overwrite not supported)

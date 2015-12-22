@@ -608,7 +608,7 @@ class OrcaHess(object):
         import re, numpy as np
         from .error import HessError
         from .utils import safe_cast as scast
-        from .const import atomNum, atomSym, PRM, DEF
+        from .const import atom_num, atom_sym, PRM, DEF
 
         # Set the initialization flag (possibly unnecessary...)
         self.initialized = False
@@ -680,14 +680,14 @@ class OrcaHess(object):
             except ValueError, TypeError:
                 # Nope, must be letters. Check if valid by poking it into the
                 #  dict. If not valid, should raise another error.
-                num = atomNum[m.group('el').upper()]
+                num = atom_num[m.group('el').upper()]
             ## end try
 
             # If this point is reached, either it's cast ok to an int,
-            #  or the string has been passed through the atomNum dict and
-            #  is a valid element symbol. SO, convert back to atomSym and
+            #  or the string has been passed through the atom_num dict and
+            #  is a valid element symbol. SO, convert back to atom_sym and
             #  store - this will also check for an invalid int entry
-            self.atom_syms.append(atomSym[num])
+            self.atom_syms.append(atom_sym[num])
 
             # Parse the atomic weight; should be a simple append?
             self.atom_masses.append(scast(m.group("mass"), np.float_))

@@ -28,12 +28,12 @@ Attributes
 ----------
 infty : str
     Infinity symbol as Unicode string
-atomNum : dict
+atom_num : dict
     Atomic number lookup from element symbol
 
-    .. note:: Keys for `atomNum` are **all uppercase** (e.g., 'AR' for argon)
+    .. note:: Keys for `atom_num` are **all uppercase** (e.g., 'AR' for argon)
 
-atomSym : dict
+atom_sym : dict
     Element symbol lookup from atomic number, returned as **all uppercase**
 
 
@@ -680,9 +680,9 @@ class UNITS(object):
 ## end class UNITS
 
 
-#TODO:(?) const: do atomNum/Sym need to handle ghost atoms / charges?
-# Must use str.upper() when retrieving values from atomNum dictionary
-atomNum = {"H": 1, "HE": 2, "LI": 3, "BE": 4, "B": 5, "C": 6, "N": 7, "O": 8,
+#TODO:(?) const: do atom_num/Sym need to handle ghost atoms / charges?
+# Must use str.upper() when retrieving values from atom_num dictionary
+atom_num = {"H": 1, "HE": 2, "LI": 3, "BE": 4, "B": 5, "C": 6, "N": 7, "O": 8,
      "F": 9, "NE": 10, "NA": 11, "MG": 12, "AL": 13, "SI": 14, "P": 15,
      "S": 16, "CL": 17, "AR": 18, "K": 19, "CA": 20, "SC": 21, "TI": 22,
      "V": 23, "CR": 24, "MN": 25, "FE": 26, "CO": 27, "NI": 28, "CU": 29,
@@ -698,7 +698,7 @@ atomNum = {"H": 1, "HE": 2, "LI": 3, "BE": 4, "B": 5, "C": 6, "N": 7, "O": 8,
      "NP": 93, "PU": 94, "AM": 95, "CM": 96, "BK": 97, "CF": 98, "ES": 99,
      "FM": 100, "MD": 101, "NO": 102, "LR": 103}
 
-atomSym = {1: 'H', 2: 'HE', 3: 'LI', 4: 'BE', 5: 'B', 6: 'C', 7: 'N',
+atom_sym = {1: 'H', 2: 'HE', 3: 'LI', 4: 'BE', 5: 'B', 6: 'C', 7: 'N',
     8: 'O', 9: 'F', 10: 'NE', 11: 'NA', 12: 'MG', 13: 'AL', 14: 'SI',
     15: 'P', 16: 'S', 17: 'CL', 18: 'AR', 19: 'K', 20: 'CA', 21: 'SC',
     22: 'TI', 23: 'V', 24: 'CR', 25: 'MN', 26: 'FE', 27: 'CO', 28: 'NI',
