@@ -18,6 +18,146 @@
 #
 #-------------------------------------------------------------------------------
 
+""" Module implementing imports of Hessian data from external computations.
+
+The abstract superclass :class:`SuperOpanHess` defines a common initializer
+and common method(s) that for use by subclasses importing
+Hessian data from external computational packages.
+
+|
+
+**Implemented Subclasses**
+
+:class:`OrcaHess` -- Imports '.hess' files from |orca|
+
+|
+
+**Requirements**
+
+ *  The import for each external software package SHOULD have
+    its own subclass.
+
+ *  Each subclass MUST implement a ``_load(**kwargs)`` method as the
+    entry point for import of Hessian data.
+
+ *  The Hessian data MUST be stored:
+
+    *   In the instance member ``self.hess``
+
+    *   As a two-dimensional ``np.array``
+
+    *   With `dtype` descended from ``np.float``
+
+    *   In units of Hartrees per Bohr-squared
+        :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B^2}\\right)`
+
+    *   With elements ordered as:
+
+    .. math::
+
+        \\left[
+        \\begin{array}{ccccccc}
+            \\frac{\\partial^2 E}{\\partial x_1^2} &
+                \\frac{\\partial^2 E}{\\partial x_1\\partial y_1} &
+                \\frac{\\partial^2 E}{\\partial x_1\\partial z_1} &
+                \\frac{\\partial^2 E}{\\partial x_1\\partial x_2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial x_1\\partial y_N} &
+                \\frac{\\partial^2 E}{\\partial x_1\\partial z_N} \\\\
+            \\frac{\\partial^2 E}{\\partial y_1\\partial x_1} &
+                \\frac{\\partial^2 E}{\\partial y_1^2} &
+                \\frac{\\partial^2 E}{\\partial y_1\\partial z_1} &
+                \\frac{\\partial^2 E}{\\partial y_1\\partial x_2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial y_1\\partial y_N} &
+                \\frac{\\partial^2 E}{\\partial y_1\\partial z_N} \\\\
+            \\frac{\\partial^2 E}{\\partial z_1\\partial x_1} &
+                \\frac{\\partial^2 E}{\\partial z_1\\partial y_1} &
+                \\frac{\\partial^2 E}{\\partial z_1^2} &
+                \\frac{\\partial^2 E}{\\partial z_1\\partial x_2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial z_1\\partial y_N} &
+                \\frac{\\partial^2 E}{\\partial z_1\\partial z_N} \\\\
+            \\frac{\\partial^2 E}{\\partial x_2\\partial x_1} &
+                \\frac{\\partial^2 E}{\\partial x_2\\partial y_1} &
+                \\frac{\\partial^2 E}{\\partial x_2\\partial z_1} &
+                \\frac{\\partial^2 E}{\\partial x_2^2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial x_2\\partial y_N} &
+                \\frac{\\partial^2 E}{\\partial x_2\\partial z_N} \\\\
+            \\vdots & \\vdots & \\vdots & \\vdots & \\ddots &
+                \\vdots & \\vdots \\\\
+            \\frac{\\partial^2 E}{\\partial y_N\\partial x_1} &
+                \\frac{\\partial^2 E}{\\partial y_N\\partial y_1} &
+                \\frac{\\partial^2 E}{\\partial y_N\\partial z_1} &
+                \\frac{\\partial^2 E}{\\partial y_N\\partial x_2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial y_N^2} &
+                \\frac{\\partial^2 E}{\\partial y_N\\partial z_N} \\\\
+            \\frac{\\partial^2 E}{\\partial z_N\\partial x_1} &
+                \\frac{\\partial^2 E}{\\partial z_N\\partial y_1} &
+                \\frac{\\partial^2 E}{\\partial z_N\\partial z_1} &
+                \\frac{\\partial^2 E}{\\partial z_N\\partial x_2} &
+                \\dots &
+                \\frac{\\partial^2 E}{\\partial z_N\\partial y_N} &
+                \\frac{\\partial^2 E}{\\partial z_N^2} \\\\
+        \\end{array}
+        \\right]
+
+    .. note::
+
+        The Hessian is elsewhere assumed to be symmetric
+        (real-Hermitian), and thus MUST be returned as such here.
+        Symmetric character is **NOT** explicitly checked, however!
+
+ *  The geometry data MUST be stored:
+
+    *   In the instance member ``self.geom``
+
+    *   As a one-dimensional ``np.array``
+
+    *   With `dtype` descended from ``np.float``
+
+    *   In units of Bohrs :math:`\\left(\\mathrm B\\right)`
+
+    *   With elements ordered as:
+
+    .. math::
+
+        \\left[
+        \\begin{array}{cccccccc}
+            x_1 & y_1 & z_1 & x_2 & y_2 & \\dots & y_N & z_N \\\\
+        \\end{array}
+        \\right]
+
+ *  The atoms list MUST be stored:
+
+    *   In the instance member ``self.atom_syms``
+
+    *   As a `list` of `str`, with each atom specified by an ALL-CAPS
+        atomic symbol (:data:`opan.const.atom_sym` may be helpful)
+
+ *  Subclasses MAY define an unlimited number of class and/or
+    instance variables in addition to those defined above, of
+    unrestricted type.
+
+|
+
+**Superclass**
+
+.. autoclass:: SuperOpanHess
+
+|
+
+**Subclasses**
+
+.. autoclass:: OrcaHess(path='...')
+    :members:
+
+
+"""
+
+
 # Imports
 
 
