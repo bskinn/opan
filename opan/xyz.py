@@ -379,7 +379,7 @@ class OpanXYZ(object):
 
         # Gripe if already initialized
         if 'initialized' in dir(self):
-            raise(XYZError(XYZError.overwrite,
+            raise(XYZError(XYZError.OVERWRITE,
                     "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
 
@@ -460,7 +460,7 @@ class OpanXYZ(object):
 
         # Complain if already initialized
         if 'initialized' in dir(self):
-            raise(XYZError(XYZError.overwrite, \
+            raise(XYZError(XYZError.OVERWRITE, \
                     "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
 
@@ -476,7 +476,7 @@ class OpanXYZ(object):
         # Check to ensure at least one geom match; else raise some sort of
         #  error
         if not OpanXYZ.p_geom.search(self.in_str):
-            raise(XYZError(XYZError.xyzfile,
+            raise(XYZError(XYZError.XYZFILE,
                     "No valid geometry found",
                     "XYZ file: " + XYZ_path))
         ## end if
@@ -494,7 +494,7 @@ class OpanXYZ(object):
             self.num_atoms = scast(OpanXYZ.p_geom.match(self.in_str)
                                             .group("num"), np.int_)
         except AttributeError:
-            raise(XYZError(XYZError.xyzfile,
+            raise(XYZError(XYZError.XYZFILE,
                     "No geometry block found at start of file",
                     "XYZ file: " + XYZ_path))
         ## end try
@@ -523,7 +523,7 @@ class OpanXYZ(object):
             # Check that the number of atoms is consistent with the spec
             #  found in the first geometry block
             if not scast(mch.group("num"), np.int_) == self.num_atoms:
-                raise(XYZError(XYZError.xyzfile,
+                raise(XYZError(XYZError.XYZFILE,
                         "Non-constant number of atoms in multiple geometry",
                         "XYZ file: " + XYZ_path))
             ## end if
@@ -547,7 +547,7 @@ class OpanXYZ(object):
                         at_num = scast(line_mch.group("el"), np.int_)
                         if not (CIC.MIN_ATOMIC_NUM <= at_num
                                                     <= CIC.MAX_ATOMIC_NUM):
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
                                         .format(self.num_geoms, atom_count),
@@ -563,7 +563,7 @@ class OpanXYZ(object):
                         try:
                             at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unrecognized element"
                                         .format(self.num_geoms, atom_count),
@@ -583,14 +583,14 @@ class OpanXYZ(object):
                         at_num = scast(line_mch.group("el"), np.int_)
                         if not (CIC.MIN_ATOMIC_NUM <= at_num
                                                     <= CIC.MAX_ATOMIC_NUM):
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
                                         .format(self.num_geoms, atom_count),
                                      "XYZ file: {0}".format(XYZ_path)))
                         ## end if
                         if not atom_sym[at_num] == self.atom_syms[atom_count]:
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is inconsistent \
                                         with geometry #0"
                                         .format(self.num_geoms, atom_count),
@@ -604,7 +604,7 @@ class OpanXYZ(object):
                         try:
                             at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unrecognized element"
                                         .format(self.num_geoms, atom_count),
@@ -613,7 +613,7 @@ class OpanXYZ(object):
                         # Confirm symbol matches the initial geometry
                         if not line_mch.group("el").upper() == \
                                                 self.atom_syms[atom_count]:
-                            raise(XYZError(XYZError.xyzfile,
+                            raise(XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is inconsistent \
                                         with geometry #0"
                                         .format(self.num_geoms, atom_count),
@@ -643,7 +643,7 @@ class OpanXYZ(object):
             # Confirm that number of imported coordinates matches the
             #  number expected from self.num_atoms
             if not coord_vec.shape[0] == 3*self.num_atoms:
-                raise(XYZError(XYZError.xyzfile,
+                raise(XYZError(XYZError.XYZFILE,
                         "Geometry #{0} atom count is inconsistent"
                             .format(self.num_geoms),
                         "XYZ file: {0}".format(XYZ_path)))
@@ -1119,7 +1119,7 @@ class OpanXYZ(object):
             If any indices `at_#` are equal
 
         ~opan.error.XYZError
-            (typecode :data:`~opan.error.XYZError.dihed`) If either
+            (typecode :data:`~opan.error.XYZError.DIHED`) If either
             of the atom trios (1-2-3 or 2-3-4) is too close to linearity
 
         """
@@ -1200,7 +1200,7 @@ class OpanXYZ(object):
             # Check for whether angle is too close to zero or 180 degrees
             if np.min([ang, 180.0 - ang]) < PRM.NON_PARALLEL_TOL:
                 # Too close; raise error
-                raise(XYZError(XYZError.dihed,
+                raise(XYZError(XYZError.DIHED,
                         "Angle {0} is insufficiently nonlinear"
                             .format([(at_2, at_1, at_3),
                             (at_3, at_2, at_4)][idx]),
@@ -1301,7 +1301,7 @@ class OpanXYZ(object):
             If any corresponding `ats_#` indices are equal.
 
         ~opan.error.XYZError
-            (typecode :data:`~opan.error.XYZError.dihed`\\ ) If either
+            (typecode :data:`~opan.error.XYZError.DIHED`\\ ) If either
             of the atom trios (1-2-3 or
             2-3-4) is too close to linearity for any group of `ats_#`
 

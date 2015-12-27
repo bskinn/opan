@@ -308,7 +308,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
     # Detect top type; start with error check
     if moments[0] < -PRM.ZERO_MOMENT_TOL:  # pragma: no cover
         # Invalid moment; raise error. Should be impossible!
-        raise(InertiaError(InertiaError.neg_moment,
+        raise(InertiaError(InertiaError.NEG_MOMENT,
                     "Negative principal inertial moment", ""))
     elif moments[0] < PRM.ZERO_MOMENT_TOL:
         # Zero first moment. Check whether others are too
@@ -337,7 +337,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
     # Check for nothing assigned (this should never occur!)
     if top is None:  # pragma: no cover
-        raise(InertiaError(InertiaError.top_type,
+        raise(InertiaError(InertiaError.TOP_TYPE,
                     "Unrecognized molecular top type",""))
     ## end if
 
@@ -377,7 +377,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
         # Vectors should already be orthonormal; following error should
         #  never occur
         if not orthchk(vecs, tol=on_tol):  # pragma: no cover
-            raise(VectorError(VectorError.orthonorm,
+            raise(VectorError(VectorError.ORTHONORM,
                          "'eigh' produced non-orthonormal axes", ""))
         ## end if
 
@@ -411,7 +411,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
                                                     _fadn_orth(vecs[:,2], geom)))
         except InertiaError as IE:
             # Check that typecode is as expected for error from planar system.
-            if not IE.tc == InertiaError.bad_geom:  # pragma: no cover
+            if not IE.tc == InertiaError.BAD_GEOM:  # pragma: no cover
                 raise
             ## end if
 
@@ -471,7 +471,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
     # Reconfirm orthonormality. Again, the error should never occur.
     if not orthchk(axes, tol=on_tol): # pragma: no cover
-        raise(VectorError(VectorError.orthonorm,
+        raise(VectorError(VectorError.ORTHONORM,
                     "Axis conditioning broke orthonormality",""))
     ## end if
 
@@ -640,7 +640,7 @@ def _fadn_orth(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be atom, linear, or planar
-        raise(InertiaError(InertiaError.bad_geom,
+        raise(InertiaError(InertiaError.BAD_GEOM,
                     "No suitable atomic displacement found", ""))
     ## end for disp
 
@@ -705,7 +705,7 @@ def _fadn_par(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be a linear molecule?
-        raise(InertiaError(InertiaError.bad_geom,
+        raise(InertiaError(InertiaError.BAD_GEOM,
                     "Linear molecule, no non-parallel displacement", ""))
     ## end for disp
 

@@ -124,7 +124,7 @@ class OpanAnharmRepo(object):
             self._repo = None
             # Leave self.fname defined for potential easy re-opening later on.
         else:
-            raise(RepoError(RepoError.status, \
+            raise(RepoError(RepoError.STATUS, \
                     "Cannot close; no repository open", \
                     "Last repo: {0}".format(self.fname)))
         ## end if
@@ -142,7 +142,7 @@ class OpanAnharmRepo(object):
 
         # If repo not None, complain
         if not self._repo == None:
-            raise(RepoError(RepoError.status, \
+            raise(RepoError(RepoError.STATUS, \
                     "Repository already open", \
                     "File: {0}".format(self.fname)))
         ## end if
@@ -215,7 +215,7 @@ class OpanAnharmRepo(object):
             grp = self._repo.require_group(grpname)
         except AttributeError:
             # Presume repo not open/attached
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS, \
                         "Cannot store; no repository open", ""))
         ## end try
 
@@ -226,7 +226,7 @@ class OpanAnharmRepo(object):
             if clobber:
                 grp.pop(datatype)
             else:
-                raise(RErr(RErr.data, \
+                raise(RErr(RErr.DATA, \
                         "Dataset to be stored exists and clobber == False", \
                         self._repo.filename))
             ## end if
@@ -282,13 +282,13 @@ class OpanAnharmRepo(object):
         try:
             grp = self._repo.get(grpname)
         except AttributeError:
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS,
                         "Cannot load; no repository open", ""))
         ## end try
 
         # If succeeded, check if group not found
         if grp is None:
-            raise(RErr(RErr.group, \
+            raise(RErr(RErr.GROUP,
                     "Group '" + grpname + "' not found", \
                     self.fname))
         ## end if
@@ -297,7 +297,7 @@ class OpanAnharmRepo(object):
         try:
             out_data = grp.get(datatype).value
         except AttributeError:
-            raise(RErr(RErr.data, \
+            raise(RErr(RErr.DATA, \
                     "Dataset '" + datatype + "' not found", \
                     self.fname))
         ## end try
@@ -323,7 +323,7 @@ class OpanAnharmRepo(object):
         try:
             self.get_data(datatype, mode, disp)
         except RepoError as RErr:
-            if RErr.tc in (RErr.data, RErr.group):
+            if RErr.tc in (RErr.DATA, RErr.GROUP):
                 retval = False
             ## end if
         ## end try
@@ -352,13 +352,13 @@ class OpanAnharmRepo(object):
         try:
             grp = self._repo.require_group(self.G_param)
         except AttributeError:
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS,
                         "Cannot store; no repository open", ""))
         ## end try
 
         # If succeeded, check if group not found
         if grp is None:
-            raise(RErr(RErr.group, \
+            raise(RErr(RErr.GROUP,
                     "Parameters group not found", \
                     self.fname))
         ## end if
@@ -370,7 +370,7 @@ class OpanAnharmRepo(object):
             if clobber:
                 grp.pop(param)
             else:
-                raise(RErr(RErr.data, \
+                raise(RErr(RErr.DATA,
                         "Parameter to be stored exists and clobber == False", \
                         self._repo.filename))
             ## end if
@@ -406,7 +406,7 @@ class OpanAnharmRepo(object):
         try:
             grp = self._repo.require_group(self.G_param)
         except AttributeError:
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS,
                         "Cannot load; no repository open", ""))
         ## end try
 
@@ -415,7 +415,7 @@ class OpanAnharmRepo(object):
         try:
             out_param = grp.get(param).value
         except AttributeError:
-            raise(RErr(RErr.data, \
+            raise(RErr(RErr.DATA,
                     "Parameter '" + param + "' not found", \
                     self.fname))
         ## end try
@@ -440,7 +440,7 @@ class OpanAnharmRepo(object):
         try:
             self.get_param(param)
         except RepoError as RErr:
-            if RErr.tc == RErr.data:
+            if RErr.tc == RErr.DATA:
                 retval = False
             ## end if
         ## end try
@@ -465,7 +465,7 @@ class OpanAnharmRepo(object):
             retval = self._repo.require_dataset(self.N_dirty, \
                                 shape=(), dtype=bool, data=True).value
         except AttributeError:
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS, \
                         "Cannot report dirty status; no repository open", ""))
         ## end try
 
@@ -490,7 +490,7 @@ class OpanAnharmRepo(object):
             dset = self._repo.require_dataset(self.N_dirty, \
                                 shape=(), dtype=bool)
         except AttributeError:
-            raise(RErr(RErr.status, \
+            raise(RErr(RErr.STATUS, \
                         "Cannot set dirty status; no repository open", ""))
         ## end try
 

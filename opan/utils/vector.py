@@ -144,7 +144,7 @@ def ortho_basis(normal, ref_vec=None):
         if parallel_check(nv, rv):
             # Essentially equal or opposite vectors, making them too nearly
             #  parallel.
-            raise(VectorError(VectorError.nonprl,
+            raise(VectorError(VectorError.NONPRL,
                     "'normal' and ref_vec are too nearly parallel.", ""))
         ## end if
 

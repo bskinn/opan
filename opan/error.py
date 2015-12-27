@@ -133,7 +133,7 @@ class OpanError(Exception):
 
             **Example:**
 
-            >>> 'xyzfile' in opan.error.XYZError
+            >>> 'XYZFILE' in opan.error.XYZError
             True
 
     """
@@ -219,17 +219,17 @@ class XYZError(OpanError):
     #: Inconsistent geometry in an OpenBabel XYZ file
     #:
     #: * |orca| -- `.xyz` or `.trj`
-    xyzfile = 'xyzfile'
+    XYZFILE = 'XYZFILE'
 
     #: Object already initialized (overwrite not supported)
-    overwrite = 'overwrite'
+    OVERWRITE = 'OVERWRITE'
 
     #: Dihedral angle calculation requested for a set of atoms containing
     #: an insufficiently nonlinear trio of atoms
-    dihed = 'dihed'
+    DIHED = 'DIHED'
 
     #: Insufficient non-parallel character in some manner of calculation
-    nonprl = 'nonprl'
+    NONPRL = 'NONPRL'
 
 ## end class XYZError
 
@@ -247,31 +247,31 @@ class GradError(OpanError):
     """
 
     #: Invalid number-of-atoms specification, or specification not found
-    numats = 'numats'
+    NUMATS = 'NUMATS'
 
     #: Energy value not found
-    energy = 'energy'
+    ENERGY = 'ENERGY'
 
     #: Malformed or missing gradient block
-    gradblock = 'gradblock'
+    GRADBLOCK = 'GRADBLOCK'
 
     #: Malformed or missing geometry block
-    geomblock = 'geomblock'
+    GEOMBLOCK = 'GEOMBLOCK'
 
     #: Missing or invalid gradient data; SHOULD only be used by
     #: :class:`~opan.grad.SuperOpanGrad`
-    badgrad = 'badgrad'
+    BADGRAD = 'BADGRAD'
 
     #: Missing or invalid geometry data; SHOULD only be used by
     #: :class:`~opan.grad.SuperOpanGrad`
-    badgeom = 'badgeom'
+    BADGEOM = 'BADGEOM'
 
     #: Missing or invalid atom symbols; SHOULD only be used by
     #: :class:`~opan.grad.SuperOpanGrad`
-    badatom = 'badatom'
+    BADATOM = 'BADATOM'
 
     #: Object already initialized (overwrite not supported)
-    overwrite = 'overwrite'
+    OVERWRITE = 'OVERWRITE'
 
 ## end class GradError
 
@@ -304,43 +304,43 @@ class HessError(OpanError):
     """
 
     #: Malformed or missing atom/geometry specification block
-    at_block = "at_block"
+    AT_BLOCK = "AT_BLOCK"
 
     #: Malformed or missing Hessian block
-    hess_block = "hess_block"
+    HESS_BLOCK = "HESS_BLOCK"
 
     #: Malformed or missing frequencies block
-    freq_block = "freq_block"
+    FREQ_BLOCK = "FREQ_BLOCK"
 
     #: Malformed or missing normal modes block
-    modes_block = "modes_block"
+    MODES_BLOCK = "MODES_BLOCK"
 
     #: Malformed dipole derivatives block
-    dipder_block = "dipder_block"
+    DIPDER_BLOCK = "DIPDER_BLOCK"
 
     #: Malformed IR spectrum block
-    ir_block = "ir_block"
+    IR_BLOCK = "IR_BLOCK"
 
     #: Malformed polarizability derivatives block
-    polder_block = "polder_block"
+    POLDER_BLOCK = "POLDER_BLOCK"
 
     #: Malformed Raman spectrum block
-    raman_block = "raman_block"
+    RAMAN_BLOCK = "RAMAN_BLOCK"
 
     #: Malformed job list block
-    job_block = "job_block"
+    JOB_BLOCK = "JOB_BLOCK"
 
     #: Malformed mass-weighted-Hessian eigenvalues block
-    eigval_block = "eigval_block"
+    EIGVAL_BLOCK = "EIGVAL_BLOCK"
 
     #: Malformed mass-weighted-Hessian eigenvectors block
-    eigvec_block = "eigvec_block"
+    EIGVEC_BLOCK = "EIGVEC_BLOCK"
 
     #: Malformed or missing energy value
-    energy = "energy"
+    ENERGY = "ENERGY"
 
     #: Malformed or missing temperature value
-    temp = "temp"
+    TEMP = "TEMP"
 
 ## end class HessError
 
@@ -356,7 +356,7 @@ class SymmError(OpanError):
     """
 
     #: Symmetry element expected but not found
-    notfound = 'notfound'
+    NOTFOUND = 'NOTFOUND'
 
 ## end class SymmError
 
@@ -372,13 +372,13 @@ class RepoError(OpanError):
     """
 
     #: HDF5 repo in improper status for requested operation
-    status = 'status'
+    STATUS = 'STATUS'
 
     #: Problem with a dataset in linked HDF5 :class:`h5py:File`
-    data = 'data'
+    DATA = 'DATA'
 
     #: Problem with a group in linked HDF5 :class:`h5py:File`
-    group = 'group'
+    GROUP = 'GROUP'
 
 ## end class RepoError
 
@@ -395,11 +395,11 @@ class AnharmError(OpanError):
 
     #: OpanAnharmRepo conflict -- no repo bound when assignment attempted,
     #: or attempt made to bind new repo when one already bound
-    repo = 'repo'
+    REPO = 'REPO'
 
     #: :class:`~opan.anharm.base.OpanAnharm` internal variables in
     #: inappropriate state for the requested operation
-    status = 'status'
+    STATUS = 'STATUS'
 
 ## end class AnharmError
 
@@ -415,14 +415,14 @@ class InertiaError(OpanError):
     """
 
     #: A negative principal inertial moment was computed
-    neg_moment = 'neg_moment'
+    NEG_MOMENT = 'NEG_MOMENT'
 
     #: No valid molecular top type was identified
-    top_type = 'top_type'
+    TOP_TYPE = 'TOP_TYPE'
 
     #: A geometry being parsed was unsuitable for a particular type of
     #: calculation/manipulation
-    bad_geom = 'bad_geom'
+    BAD_GEOM = 'BAD_GEOM'
 
 ## end class InertiaError
 
@@ -438,10 +438,10 @@ class VectorError(OpanError):
     """
 
     #: Insufficient non-parallel character in some manner of calculation
-    nonprl = 'nonprl'
+    NONPRL = 'NONPRL'
 
     #: Vectors which should have been orthonormal were determined not to be
-    orthonorm = 'orthonorm'
+    ORTHONORM = 'ORTHONORM'
 
 ## end class VectorError
 

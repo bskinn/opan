@@ -71,22 +71,22 @@ class OpanAnharm(object):
 
         # Complain if anything is already bound
         if not self.w_xyz == None:
-            raise(ANHErr(ANHErr.status, \
+            raise(ANHErr(ANHErr.STATUS, \
                     "XYZ object is already bound", \
                     ""))
         ## end if
         if not self.w_grad == None:
-            raise(ANHErr(ANHErr.status, \
+            raise(ANHErr(ANHErr.STATUS, \
                     "GRAD object is already bound", \
                     ""))
         ## end if
         if not self.w_hess == None:
-            raise(ANHErr(ANHErr.status, \
+            raise(ANHErr(ANHErr.STATUS, \
                     "HESS object is already bound", \
                     ""))
         ## end if
         if not self.repo == None:
-            raise(ANHErr(ANHErr.status, \
+            raise(ANHErr(ANHErr.STATUS, \
                     "Repository object is already bound", \
                     ""))
         ## end if

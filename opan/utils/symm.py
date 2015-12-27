@@ -540,7 +540,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
             # If nothing found here, raise exception
             if order < 2:
-                raise(SymmError(SymmError.notfound, \
+                raise(SymmError(SymmError.NOTFOUND, \
                         "Cubic point group not found in spherical top " +
                         "molecule.", "geom_find_group()"))
             ## end if
