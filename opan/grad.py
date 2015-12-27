@@ -56,14 +56,16 @@ gradient data from external computational packages.
     .. math::
 
         \\left[
-        \\frac{\\partial E}{\\partial x_1},
-        \\frac{\\partial E}{\\partial y_1},
-        \\frac{\\partial E}{\\partial z_1},
-        \\frac{\\partial E}{\\partial x_2},
-        \\frac{\\partial E}{\\partial y_2},
-        \\dots
-        \\frac{\\partial E}{\\partial y_N},
-        \\frac{\\partial E}{\\partial z_N},
+        \\begin{array}{cccccccc}
+        \\frac{\\partial E}{\\partial x_1} &
+        \\frac{\\partial E}{\\partial y_1} &
+        \\frac{\\partial E}{\\partial z_1} &
+        \\frac{\\partial E}{\\partial x_2} &
+        \\frac{\\partial E}{\\partial y_2} &
+        \\dots &
+        \\frac{\\partial E}{\\partial y_N} &
+        \\frac{\\partial E}{\\partial z_N} \\\\
+        \\end{array}
         \\right]
 
  *  The geometry data MUST be stored:
@@ -80,7 +82,11 @@ gradient data from external computational packages.
 
     .. math::
 
-        \\left[x_1, y_1, z_1, x_2, y_2, \\dots, y_N, z_N\\right]
+        \\left[
+        \\begin{array}{cccccccc}
+            x_1 & y_1 & z_1 & x_2 & y_2 & \\dots & y_N & z_N \\\\
+        \\end{array}
+        \\right]
 
  *  The atoms list MUST be stored:
 
