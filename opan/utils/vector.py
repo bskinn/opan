@@ -167,7 +167,7 @@ def ortho_basis(normal, ref_vec=None):
 ## end def ortho_basis
 
 
-def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
+def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
     """Checks orthonormality of the column vectors of a matrix.
 
     If a one-dimensional np.array is passed to `a`, it is treated as a single
@@ -185,7 +185,7 @@ def orthonorm_check(a, tol=_DEF.Orthonorm_Tol, report=False):
 
     tol : ``np.float_``, optional
         Tolerance for deviation of dot products from one or zero. Default
-        value is :data:`opan.const.DEF.Orthonorm_Tol`.
+        value is :data:`opan.const.DEF.ORTHONORM_TOL`.
 
     report : bool, optional
         Whether to record and return vectors / vector pairs failing the
@@ -276,7 +276,7 @@ def parallel_check(vec1, vec2):
     -------
     bool
         |True| if (anti-)parallel to within
-        :data:`opan.const.PRM.Non_Parallel_Tol` degrees.  |False| otherwise.
+        :data:`opan.const.PRM.NON_PARALLEL_TOL` degrees.  |False| otherwise.
 
     """
 
@@ -299,7 +299,7 @@ def parallel_check(vec1, vec2):
 
     # Check for (anti-)parallel character and return
     angle = vec_angle(vec1, vec2)
-    if min([abs(angle), abs(angle - 180.)]) < PRM.Non_Parallel_Tol:
+    if min([abs(angle), abs(angle - 180.)]) < PRM.NON_PARALLEL_TOL:
         par = True
     ## end if
 
@@ -434,10 +434,10 @@ def vec_angle(vec1, vec2):
     ## end if
 
     # Check magnitudes
-    if spla.norm(vec1) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec1) < PRM.ZERO_VEC_TOL:
         raise(ValueError("'vec1' norm is too small"))
     ## end if
-    if spla.norm(vec2) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec2) < PRM.ZERO_VEC_TOL:
         raise(ValueError("'vec2' norm is too small"))
     ## end if
 

@@ -80,9 +80,9 @@ class OpanAnharmRepo(object):
 
     # dict for translating DispDir enum to direction code
     dircode = {
-                _E_DD.Negative: 'n',
-                _E_DD.NoDisp: 'o',
-                _E_DD.Positive: 'p'
+                _E_DD.NEGATIVE: 'n',
+                _E_DD.NO_DISP: 'o',
+                _E_DD.POSITIVE: 'p'
                 }
 
 
@@ -204,7 +204,7 @@ class OpanAnharmRepo(object):
         ## end if
 
         # Get the appropriate geom group name
-        if disp == _E_DD.NoDisp:
+        if disp == _E_DD.NO_DISP:
             grpname = self.G_geom_ref
         else:
             grpname = self.F_mode_fmt % (mode, self.dircode[disp])
@@ -271,7 +271,7 @@ class OpanAnharmRepo(object):
         ## end if
 
         # Get the appropriate geom group name
-        if disp == _E_DD.NoDisp:
+        if disp == _E_DD.NO_DISP:
             grpname = self.G_geom_ref
         else:
             grpname = self.F_mode_fmt % \

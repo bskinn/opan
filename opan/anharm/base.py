@@ -98,10 +98,10 @@ class OpanAnharm(object):
                 basename + osp.extsep + xyz_ext) )
         self.w_grad = OE( osp.join(basepath, \
                 basename + osp.extsep + engrad_ext), \
-                0, E_DDir.NoDisp, 0.0 )
+                0, E_DDir.NO_DISP, 0.0 )
         self.w_hess = OH( osp.join(basepath, \
                 basename + osp.extsep + hess_ext), \
-                0, E_DDir.NoDisp, 0.0 )
+                0, E_DDir.NO_DISP, 0.0 )
 
         # Only accept new repos for now
         if not isinstance(repo, str):

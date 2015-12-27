@@ -918,15 +918,15 @@ class SuperOpanUtilsInertia(object):
         import opan.utils.inertia as oui
         from opan.const import PRM, EnumUnitsRotConst as EURC
         rc = oui.rot_consts(self.xyz.geoms[0], self.hess.atom_masses,
-                                                            EURC.InvInertia)
+                                                            EURC.INV_INERTIA)
         for i in range(rc.shape[0]):
-            if rc[i] >= 1/(2.0*PRM.Zero_Moment_Tol):
+            if rc[i] >= 1/(2.0*PRM.ZERO_MOMENT_TOL):
                 self.assertAlmostEqual(self.rc[i], rc[i],
                         delta=1.0,
                         msg="Rotational constant index '" + str(i) + "'")
             else:
                 self.assertAlmostEqual(self.rc[i] / rc[i], 1.0,
-                        delta=PRM.Equal_Moment_Tol,
+                        delta=PRM.EQUAL_MOMENT_TOL,
                         msg="Rotational constant index '" + str(i) + "'")
 
     def test_toptype(self):
@@ -958,17 +958,17 @@ class TestOpanUtilsInertiaAsymm(SuperOpanUtilsInertia, unittest.TestCase):
     axes = np.array([[  8.16492638e-01,  -5.77355846e-01,   6.07765301e-15],
                 [ -5.21610191e-01,  -7.37657520e-01,  -4.28700585e-01],
                 [  2.47512789e-01,   3.50030872e-01,  -9.03446627e-01]])
-    top = EnumTopType.Asymmetrical
+    top = EnumTopType.ASYMM
     rc = np.array([ 0.207065592447,  0.120144860861,  0.076030171231])
 
-    rc_units = {EURC.AngFreqAtomic: np.array([  1.135920230159e-04,   6.590905634729e-05,   4.170862410476e-05]),
-         EURC.AngFreqSeconds: np.array([  4.696050231566e+12,   2.724770904719e+12,   1.724291800473e+12]),
-         EURC.CyclicFreqAtomic: np.array([  1.807873195879e-05,   1.048975211219e-05,   6.638133695834e-06]),
-         EURC.CyclicFreqHz: np.array([  7.473996073616e+11,   4.336607582790e+11,   2.744295633781e+11]),
-         EURC.CyclicFreqMHz: np.array([ 747399.60736156872 ,  433660.758279046626,  274429.563378054823]),
-         EURC.InvInertia: np.array([ 0.207065592447,  0.120144860861,  0.076030171231]),
-         EURC.WaveNumAtomic: np.array([  1.318826101078e-07,   7.652173233680e-08,   4.842454659134e-08]),
-         EURC.WaveNumCM: np.array([ 24.922201369646,  14.460511669382,   9.150913076387])}
+    rc_units = {EURC.ANGFREQ_ATOMIC: np.array([  1.135920230159e-04,   6.590905634729e-05,   4.170862410476e-05]),
+         EURC.ANGFREQ_SECS: np.array([  4.696050231566e+12,   2.724770904719e+12,   1.724291800473e+12]),
+         EURC.CYCFREQ_ATOMIC: np.array([  1.807873195879e-05,   1.048975211219e-05,   6.638133695834e-06]),
+         EURC.CYCFREQ_HZ: np.array([  7.473996073616e+11,   4.336607582790e+11,   2.744295633781e+11]),
+         EURC.CYCFREQ_MHZ: np.array([ 747399.60736156872 ,  433660.758279046626,  274429.563378054823]),
+         EURC.INV_INERTIA: np.array([ 0.207065592447,  0.120144860861,  0.076030171231]),
+         EURC.WAVENUM_ATOMIC: np.array([  1.318826101078e-07,   7.652173233680e-08,   4.842454659134e-08]),
+         EURC.WAVENUM_CM: np.array([ 24.922201369646,  14.460511669382,   9.150913076387])}
 
 
     def test_UtilsInertiaBadGeomShape(self):
@@ -1043,8 +1043,8 @@ class TestOpanUtilsInertiaAtom(SuperOpanUtilsInertia, unittest.TestCase):
     i_tensor = np.zeros((3,3))
     moments = np.zeros((3,))
     axes = np.eye(3)
-    top = EnumTopType.Atom
-    rc = np.repeat(1.0/(2.0*PRM.Zero_Moment_Tol), 3)
+    top = EnumTopType.ATOM
+    rc = np.repeat(1.0/(2.0*PRM.ZERO_MOMENT_TOL), 3)
 
 ## end class TestOpanUtilsInertiaAtom
 
@@ -1070,8 +1070,8 @@ class TestOpanUtilsInertiaLinear(SuperOpanUtilsInertia, unittest.TestCase):
     axes = np.array([[ -1.00000000e+00,   2.49655671e-10,  -3.91982518e-09],
                    [  2.49655671e-10,   1.00000000e+00,   0.00000000e+00],
                    [  3.91982518e-09,  -9.78606588e-19,  -1.00000000e+00]])
-    top = EnumTopType.Linear
-    rc = np.array([1.0/(2.0*PRM.Equal_Moment_Tol),
+    top = EnumTopType.LINEAR
+    rc = np.array([1.0/(2.0*PRM.EQUAL_MOMENT_TOL),
                                     1.550924404326e-03, 1.550924404326e-03])
 
     def test_UtilsInertiaLinearNoNonParallelVec(self):
@@ -1107,7 +1107,7 @@ class TestOpanUtilsInertiaSymmProl(SuperOpanUtilsInertia, unittest.TestCase):
     axes = np.array([[ -5.77350269e-01,  -4.08248290e-01,  -7.07106781e-01],
                        [ -5.77350269e-01,  -4.08248291e-01,   7.07106781e-01],
                        [ -5.77350269e-01,   8.16496581e-01,   2.78286699e-10]])
-    top = EnumTopType.SymmProlate
+    top = EnumTopType.SYMM_PROL
     rc = np.array([ 0.043002710352,  0.003555101671,  0.003555101671])
 
 ## end class TestOpanUtilsInertiaSymmProl
@@ -1134,7 +1134,7 @@ class TestOpanUtilsInertiaSymmObl(SuperOpanUtilsInertia, unittest.TestCase):
     axes = np.array([[-0.941357532609, -0.052449650272, -0.333309210773],
                    [ 0.334894464181, -0.024822665809, -0.94192862422 ],
                    [ 0.041130203771, -0.998315015137,  0.040932100963]])
-    top = EnumTopType.SymmOblate
+    top = EnumTopType.SYMM_OBL
     rc = np.array([ 0.078154470132,  0.078148511783,  0.05242517071 ])
 
 ## end class TestOpanUtilsInertiaSymmObl
@@ -1170,7 +1170,7 @@ class TestOpanUtilsInertiaPlanar(SuperOpanUtilsInertia, unittest.TestCase):
     axes = np.array([[ 1.,  0.,  0.],
                        [ 0.,  1.,  0.],
                        [ 0.,  0.,  1.]])
-    top = EnumTopType.SymmOblate
+    top = EnumTopType.SYMM_OBL
     rc = np.array([ 0.002909145427,  0.002909145427,  0.001454572714])
 
 ## end class TestOpanUtilsInertiaPlanar
@@ -1202,7 +1202,7 @@ class TestOpanUtilsInertiaSpher(SuperOpanUtilsInertia, unittest.TestCase):
             [[  5.773502691632e-01,  -4.082482905123e-01,   7.071067811802e-01],
            [  5.773502692095e-01,  -4.082482904247e-01,  -7.071067811929e-01],
            [  5.773502691962e-01,   8.164965809231e-01,   6.946399011554e-11]])
-    top = EnumTopType.Spherical
+    top = EnumTopType.SPHERICAL
     rc = np.array([ 0.044492290811,  0.044492290809,  0.044492290806])
 
 ## end class TestOpanUtilsInertiaSpher
@@ -1216,7 +1216,7 @@ class TestOpanEnumValueCheck(unittest.TestCase):
         from opan.const import EnumDispDirection as EDD
 
         # Representative value in a representative Enum
-        self.assertTrue(EDD.Negative in EDD)
+        self.assertTrue(EDD.NEGATIVE in EDD)
 
 
 # =============================  OpanError  ================================= #

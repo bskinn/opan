@@ -236,7 +236,7 @@ def inertia_tensor(geom, masses):
 
 
 @_arraysqueeze(1)  # geom reassigned to ctr_geom before use, so untreated.
-def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
+def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
     """Principal axes and moments of inertia for the indicated geometry.
 
     Calculated by :func:`scipy.linalg.eigh`, since the moment of inertia tensor
@@ -262,7 +262,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     on_tol   : ``np.float_``, optional
         Tolerance for deviation from unity/zero for principal axis dot products
         within which axes are considered orthonormal. Default is
-        :data:`opan.const.DEF.Orthonorm_Tol`.
+        :data:`opan.const.DEF.ORTHONORM_TOL`.
 
     Returns
     -------
@@ -306,31 +306,31 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     top = None
 
     # Detect top type; start with error check
-    if moments[0] < -PRM.Zero_Moment_Tol:  # pragma: no cover
+    if moments[0] < -PRM.ZERO_MOMENT_TOL:  # pragma: no cover
         # Invalid moment; raise error. Should be impossible!
         raise(InertiaError(InertiaError.neg_moment,
                     "Negative principal inertial moment", ""))
-    elif moments[0] < PRM.Zero_Moment_Tol:
+    elif moments[0] < PRM.ZERO_MOMENT_TOL:
         # Zero first moment. Check whether others are too
-        if all(moments < PRM.Zero_Moment_Tol):
-            top = ETT.Atom
+        if all(moments < PRM.ZERO_MOMENT_TOL):
+            top = ETT.ATOM
         else:
-            top = ETT.Linear
+            top = ETT.LINEAR
         ## end if
     else:
-        if abs((moments[1] / moments[0]) - 1.0) < PRM.Equal_Moment_Tol:
+        if abs((moments[1] / moments[0]) - 1.0) < PRM.EQUAL_MOMENT_TOL:
             # Spherical or oblate symmetrical
-            if abs((moments[2] / moments[1]) - 1.0) < PRM.Equal_Moment_Tol:
-                top = ETT.Spherical
+            if abs((moments[2] / moments[1]) - 1.0) < PRM.EQUAL_MOMENT_TOL:
+                top = ETT.SPHERICAL
             else:
-                top = ETT.SymmOblate
+                top = ETT.SYMM_OBL
             ## end if
         else:
             # Prolate symmetrical or Asymmetric
-            if abs((moments[2] / moments[1]) - 1.0) < PRM.Equal_Moment_Tol:
-                top = ETT.SymmProlate
+            if abs((moments[2] / moments[1]) - 1.0) < PRM.EQUAL_MOMENT_TOL:
+                top = ETT.SYMM_PROL
             else:
-                top = ETT.Asymmetrical
+                top = ETT.ASYMM
             ## end if
         ## end if
     ## end if
@@ -345,14 +345,14 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
     axes = np.zeros((3,3))
 
     # Define the axes depending on the top type
-    if top == ETT.Atom:
+    if top == ETT.ATOM:
         # Just use the coordinate axes
         axes = np.identity(3, dtype=np.float_)
 
-    elif top == ETT.Linear:
+    elif top == ETT.LINEAR:
         # Zero-moment (molecular) axis always pointed toward the first atom,
         #  or the second if the first is at center-of-mass
-        if spla.norm(geom[0:3]) >= PRM.Zero_Vec_Tol:
+        if spla.norm(geom[0:3]) >= PRM.ZERO_VEC_TOL:
             axes[:,0] = geom[0:3] / spla.norm(geom[0:3])
         else:  # pragma: no cover (assume alt case ok)
             axes[:,0] = geom[3:6] / spla.norm(geom[3:6])
@@ -373,7 +373,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # Third axis is the first crossed with the second
         axes[:,2] = np.cross(axes[:,0], axes[:,1])
 
-    elif top == ETT.Asymmetrical:
+    elif top == ETT.ASYMM:
         # Vectors should already be orthonormal; following error should
         #  never occur
         if not orthchk(vecs, tol=on_tol):  # pragma: no cover
@@ -393,7 +393,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # Orient the third axis such that a3 = a1 {cross} a2
         axes[:,2] *= np.sign(np.dot(axes[:,2], np.cross(axes[:,0], axes[:,1])))
 
-    elif top == ETT.SymmOblate:
+    elif top == ETT.SYMM_OBL:
         # First axis is taken as the normalized rejection of the first
         #  non-(anti)parallel atomic displacement onto the third eigenvector.
         axes[:,0] = rej(_fadn_par(vecs[:,2], geom), vecs[:,2])
@@ -416,10 +416,10 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
             ## end if
 
             # Select the appropriate displacements to define the third axis
-            if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol:
+            if spla.norm(geom[0:3]) < PRM.ZERO_VEC_TOL:
                 # First displacement is zero
                 axes[:,2] = np.cross(geom[3:6], geom[6:9]) # pragma: no cover
-            elif spla.norm(geom[3:6]) < PRM.Zero_Vec_Tol:
+            elif spla.norm(geom[3:6]) < PRM.ZERO_VEC_TOL:
                 # Second displacement is zero
                 axes[:,2] = np.cross(geom[0:3], geom[6:9]) # pragma: no cover
             else:
@@ -435,7 +435,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         # Second axis is the third axis crossed with the first
         axes[:,1] = np.cross(axes[:,2], axes[:,0])
 
-    elif top == ETT.SymmProlate:
+    elif top == ETT.SYMM_PROL:
         # Special case of prolate symmetric is linear, which is separately
         #  detected and already addressed.
         # First (non-degenerate) axis is just taken to have a positive dot
@@ -452,10 +452,10 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
         #  the second.
         axes[:,2] = np.cross(axes[:,0], axes[:,1])
 
-    elif top == ETT.Spherical:
+    elif top == ETT.SPHERICAL:
         # No preferred orientation -- ALL vectors are degenerate axes
         # First axis is the first nonzero displacement, normalized
-        axes[:,0] = geom[3:6] if spla.norm(geom[0:3]) < PRM.Zero_Vec_Tol \
+        axes[:,0] = geom[3:6] if spla.norm(geom[0:3]) < PRM.ZERO_VEC_TOL \
                                                                 else geom[0:3]
         axes[:,0] /= spla.norm(axes[:,0])
 
@@ -481,7 +481,7 @@ def principals(geom, masses, on_tol=_DEF.Orthonorm_Tol):
 ##end def principals
 
 
-def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
+def rot_consts(geom, masses, units=_EURC.INV_INERTIA, on_tol=_DEF.ORTHONORM_TOL):
     """Rotational constants for a given molecular system.
 
     Calculates the rotational constants for the provided system with numerical
@@ -491,7 +491,7 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
     If the system is linear or a single atom, the effectively-zero principal
     moments of inertia will be assigned values of
-    :data:`opan.const.PRM.Zero_Moment_Tol`
+    :data:`opan.const.PRM.ZERO_MOMENT_TOL`
     before transformation into the appropriate rotational constant units.
 
     The moments of inertia are always sorted in increasing order as
@@ -512,13 +512,13 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
 
     units    : :class:`~opan.const.EnumUnitsRotConst`, optional
         Enum value indicating the desired units of the output rotational
-        constants. Default is :data:`~opan.const.EnumUnitsRotConst.InvInertia`
+        constants. Default is :data:`~opan.const.EnumUnitsRotConst.INV_INERTIA`
         :math:`\\left(1\\over \\mathrm{uB^2}\\right)`
 
     on_tol   : ``np.float_``, optional
         Tolerance for deviation from unity/zero for principal axis dot products
         within which axes are considered orthonormal. Default is
-        :data:`opan.const.DEF.Orthonorm_Tol`
+        :data:`opan.const.DEF.ORTHONORM_TOL`
 
     Returns
     -------
@@ -541,35 +541,35 @@ def rot_consts(geom, masses, units=_EURC.InvInertia, on_tol=_DEF.Orthonorm_Tol):
     mom, ax, top = principals(geom, masses, on_tol)
 
     # Check for special cases
-    if top == ETT.Atom:
+    if top == ETT.ATOM:
         # All moments are zero; set to zero-moment threshold
-        mom = np.repeat(PRM.Zero_Moment_Tol, 3)
-    elif top == ETT.Linear:
+        mom = np.repeat(PRM.ZERO_MOMENT_TOL, 3)
+    elif top == ETT.LINEAR:
         # First moment is zero; set to zero-moment threshold
-        mom[0] = PRM.Zero_Moment_Tol
+        mom[0] = PRM.ZERO_MOMENT_TOL
     ## end if
 
     # Calculate the values in the indicated units
-    if units == EURC.InvInertia:            # 1/(amu*B^2)
+    if units == EURC.INV_INERTIA:            # 1/(amu*B^2)
         rc = 1.0 / (2.0 * mom)
-    elif units == EURC.AngFreqAtomic:       # 1/Ta
-        rc = PHYS.Planck_bar / (2.0 * mom * PHYS.me_per_amu)
-    elif units == EURC.AngFreqSeconds:      # 1/s
-        rc = PHYS.Planck_bar / (2.0 * mom * PHYS.me_per_amu) / PHYS.sec_per_Ta
-    elif units == EURC.CyclicFreqAtomic:    # cyc/Ta
-        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu)
-    elif units == EURC.CyclicFreqHz:        # cyc/s
-        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu) / \
-                                                            PHYS.sec_per_Ta
-    elif units == EURC.CyclicFreqMHz:       # Mcyc/s
-        rc = PHYS.Planck_bar / (4.0 * np.pi * mom * PHYS.me_per_amu) / \
-                                                    PHYS.sec_per_Ta / 1.0e6
-    elif units == EURC.WaveNumAtomic:       # cyc/B
-        rc = PHYS.Planck / (mom * PHYS.me_per_amu) / \
-            (8.0 * np.pi**2.0 * PHYS.light_speed)
-    elif units == EURC.WaveNumCM:           # cyc/cm
-        rc = PHYS.Planck / (mom * PHYS.me_per_amu) / \
-            (8.0 * np.pi**2.0 * PHYS.light_speed * PHYS.Ang_per_Bohr) * 1.0e8
+    elif units == EURC.ANGFREQ_ATOMIC:       # 1/Ta
+        rc = PHYS.PLANCK_BAR / (2.0 * mom * PHYS.ME_PER_AMU)
+    elif units == EURC.ANGFREQ_SECS:      # 1/s
+        rc = PHYS.PLANCK_BAR / (2.0 * mom * PHYS.ME_PER_AMU) / PHYS.SEC_PER_TA
+    elif units == EURC.CYCFREQ_ATOMIC:    # cyc/Ta
+        rc = PHYS.PLANCK_BAR / (4.0 * np.pi * mom * PHYS.ME_PER_AMU)
+    elif units == EURC.CYCFREQ_HZ:        # cyc/s
+        rc = PHYS.PLANCK_BAR / (4.0 * np.pi * mom * PHYS.ME_PER_AMU) / \
+                                                            PHYS.SEC_PER_TA
+    elif units == EURC.CYCFREQ_MHZ:       # Mcyc/s
+        rc = PHYS.PLANCK_BAR / (4.0 * np.pi * mom * PHYS.ME_PER_AMU) / \
+                                                    PHYS.SEC_PER_TA / 1.0e6
+    elif units == EURC.WAVENUM_ATOMIC:       # cyc/B
+        rc = PHYS.PLANCK / (mom * PHYS.ME_PER_AMU) / \
+            (8.0 * np.pi**2.0 * PHYS.LIGHT_SPEED)
+    elif units == EURC.WAVENUM_CM:           # cyc/cm
+        rc = PHYS.PLANCK / (mom * PHYS.ME_PER_AMU) / \
+            (8.0 * np.pi**2.0 * PHYS.LIGHT_SPEED * PHYS.ANG_PER_BOHR) * 1.0e8
     else:               # pragma: no cover -- Valid units; not implemented
         raise(NotImplementedError("Units conversion not yet implemented."))
     ## end if
@@ -618,7 +618,7 @@ def _fadn_orth(vec, geom):
     ## end if
 
     # vec must not be the zero vector
-    if spla.norm(vec) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec) < PRM.ZERO_VEC_TOL:
         raise(ValueError("Reference vector norm is too small"))
     ## end if
 
@@ -629,7 +629,7 @@ def _fadn_orth(vec, geom):
     for disp in geom.reshape((geom.shape[0]/3, 3)):
         # See if the displacement is nonzero and not orthonormal. Trailing
         #  [0] index is to retrieve only the success/fail bool.
-        if spla.norm(disp) >= PRM.Zero_Vec_Tol and not onchk(
+        if spla.norm(disp) >= PRM.ZERO_VEC_TOL and not onchk(
                 np.column_stack((disp / spla.norm(disp),
                 vec / spla.norm(vec))))[0]:
             # This is the displacement you are looking for
@@ -685,7 +685,7 @@ def _fadn_par(vec, geom):
     ## end if
 
     # vec must not be the zero vector
-    if spla.norm(vec) < PRM.Zero_Vec_Tol:
+    if spla.norm(vec) < PRM.ZERO_VEC_TOL:
         raise(ValueError("Reference vector norm is too small"))
     ## end if
 
@@ -695,7 +695,7 @@ def _fadn_par(vec, geom):
     # Iterate over reshaped geometry
     for disp in geom.reshape((geom.shape[0]/3, 3)):
         # See if the displacement is nonzero and nonparallel to the ref vec
-        if spla.norm(disp) >= PRM.Zero_Vec_Tol and \
+        if spla.norm(disp) >= PRM.ZERO_VEC_TOL and \
                 not parchk(disp.reshape(3), vec):
             # This is the displacement you are looking for
             out_vec = disp / spla.norm(disp)

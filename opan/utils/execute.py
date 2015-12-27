@@ -35,8 +35,8 @@ from ..const import DEF as _DEF, EnumSoftware as _E_SW, EnumFileType as _E_FT
 
 def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
             sim_name="orcarun", \
-            inp_ext=_DEF.File_Extensions[_E_SW.ORCA][_E_FT.inputfile], \
-            out_ext=_DEF.File_Extensions[_E_SW.ORCA][_E_FT.output], \
+            inp_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.INPUTFILE], \
+            out_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.OUTPUT], \
             wait_to_complete=True, \
             bohrs=False):
     """Executes |orca| on a dynamically constructed input file.

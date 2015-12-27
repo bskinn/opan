@@ -303,8 +303,8 @@ def geom_symm_match(g, atwts, ax, theta, do_refl):
 
 
 def geom_find_rotsymm(g, atwts, ax, improp, \
-        nmax=_DEF.Symm_Match_nMax, \
-        tol=_DEF.Symm_Match_Tol):
+        nmax=_DEF.SYMM_MATCH_NMAX, \
+        tol=_DEF.SYMM_MATCH_TOL):
     """ Identify highest-order symmetry for a geometry on a given axis.
 
     Regular and improper axes possible.
@@ -348,8 +348,8 @@ def geom_find_rotsymm(g, atwts, ax, improp, \
 
 
 def geom_check_axis(g, atwts, ax, \
-        nmax=_DEF.Symm_Match_nMax, \
-        tol=_DEF.Symm_Match_Tol):
+        nmax=_DEF.SYMM_MATCH_NMAX, \
+        tol=_DEF.SYMM_MATCH_TOL):
     """ [Get max proper order and reflection for an axis]
 
     #!DOC: Complete geom_parse_axis docstring
@@ -373,10 +373,10 @@ def geom_check_axis(g, atwts, ax, \
 
 
 def geom_find_group(g, atwts, pr_ax, mom, tt, \
-        nmax=_DEF.Symm_Match_nMax, \
-        tol=_DEF.Symm_Match_Tol, \
-        dig=_DEF.Symm_AtWt_Round_Digits,
-        avmax=_DEF.Symm_Avg_Max):
+        nmax=_DEF.SYMM_MATCH_NMAX, \
+        tol=_DEF.SYMM_MATCH_TOL, \
+        dig=_DEF.SYMM_ATWT_ROUND_DIGITS,
+        avmax=_DEF.SYMM_AVG_MAX):
     """ [Find all(?) proper rotation axes (n > 1) and reflection planes.]
 
     #!DOC: Complete geom_find_axes docstring INCLUDING NEW HEADER LINE
@@ -432,7 +432,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
     # First, look for linear; exploit the top type, as linear should never
     #  be mis-attributed
-    if tt == ETT.Linear:
+    if tt == ETT.LINEAR:
         # Check for plane of symmetry; if there, D*h; if not, C*v
         #!TODO: Once symmetry element reporting structure is established,
         #  revise here to report the molecular axis as the symmetry element.
@@ -450,7 +450,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
     ## end if
 
     # Then, check for an atom
-    if tt == ETT.Atom:
+    if tt == ETT.ATOM:
         # Simple return
         group= "Kh"
         symm_fac = 1
@@ -473,7 +473,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
     g_coord = g.reshape((g.shape[0] // 3, 3))
 
     # Handle Spherical case
-    if tt == ETT.Spherical:
+    if tt == ETT.SPHERICAL:
         # Build the list of atom midpoint axes
         ax_midpts = []
         for atwt in np.unique(atwts):
@@ -505,7 +505,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
             ax = g_coord[i,:]
 
             # Only check if norm is large enough
-            if spla.norm(ax) > PRM.Zero_Vec_Tol:
+            if spla.norm(ax) > PRM.ZERO_VEC_TOL:
                 order, refl = geom_check_axis(g, atwts, ax, nmax, \
                                                                     tol)
             ## end if
@@ -529,7 +529,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
                 ax = ax_midpts[i,:]
 
                 # Only check if norm is large enough
-                if spla.norm(ax) > PRM.Zero_Vec_Tol:
+                if spla.norm(ax) > PRM.ZERO_VEC_TOL:
                     order, refl = geom_check_axis(g, atwts, ax, \
                                                                 nmax, tol)
                 ## end if
@@ -618,7 +618,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 ##                v1 = ax_list[:,i]
 ##                v2 = ax_list[:,j]
 ##                if 1 - np.abs(np.dot(v1, v2) / spla.norm(v1) / spla.norm(v2)) \
-##                                                    < PRM.Non_Parallel_Tol:
+##                                                    < PRM.NON_PARALLEL_TOL:
 ##                    # Strip the duplicate vector
 ##                    ax_list = np.column_stack((
 ##                            [ax_list[:,c] for c in \
@@ -643,7 +643,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 ##            v = ax_list[:,i]
 ##
 ##            # Check magnitude
-##            if spla.norm(v) < PRM.Zero_Vec_Tol:
+##            if spla.norm(v) < PRM.ZERO_VEC_TOL:
 ##                # Strip if too small of magnitude
 ##                ax_list = np.column_stack((
 ##                        [ax_list[:,c] for c in \
@@ -696,7 +696,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
 
 def g_subset(g, atwts, atwt, \
-            digits=_DEF.Symm_AtWt_Round_Digits):
+            digits=_DEF.SYMM_ATWT_ROUND_DIGITS):
     """ Extract a subset of a geometry matching a desired atom.
 
     #!DOC: Complete g_subset docstring
@@ -793,7 +793,7 @@ def mtx_refl(nv, reps=1):
     from ..const import PRM
 
     # Ensure |nv| is large enough for confident directionality
-    if spla.norm(nv) < PRM.Zero_Vec_Tol:
+    if spla.norm(nv) < PRM.ZERO_VEC_TOL:
         raise(ValueError("Norm of 'nv' is too small."))
     ## end if
 
@@ -849,7 +849,7 @@ def mtx_rot(ax, theta, reps=1):
     from ..const import PRM
 
     # Ensure |ax| is large enough for confident directionality
-    if spla.norm(ax) < PRM.Zero_Vec_Tol:
+    if spla.norm(ax) < PRM.ZERO_VEC_TOL:
         raise(ValueError("Norm of 'ax' is too small."))
     ## end if
 

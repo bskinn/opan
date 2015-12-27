@@ -424,7 +424,7 @@ class OpanXYZ(object):
         self.atom_syms = map(str.upper, list(atom_syms))
 
         # Store the single geometry by bracketing with an array
-        self.geoms = [coords / (1.0 if bohrs else PHYS.Ang_per_Bohr)]
+        self.geoms = [coords / (1.0 if bohrs else PHYS.ANG_PER_BOHR)]
 
         self.initialized = True
 
@@ -545,8 +545,8 @@ class OpanXYZ(object):
                         # Atomic number
                         # Check for valid number
                         at_num = scast(line_mch.group("el"), np.int_)
-                        if not (CIC.Min_Atomic_Num <= at_num
-                                                    <= CIC.Max_Atomic_Num):
+                        if not (CIC.MIN_ATOMIC_NUM <= at_num
+                                                    <= CIC.MAX_ATOMIC_NUM):
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
@@ -581,8 +581,8 @@ class OpanXYZ(object):
                         # Atomic number; don't need safe cast; must trap for
                         #  a bad atomic number
                         at_num = scast(line_mch.group("el"), np.int_)
-                        if not (CIC.Min_Atomic_Num <= at_num
-                                                    <= CIC.Max_Atomic_Num):
+                        if not (CIC.MIN_ATOMIC_NUM <= at_num
+                                                    <= CIC.MAX_ATOMIC_NUM):
                             raise(XYZError(XYZError.xyzfile,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
@@ -631,7 +631,7 @@ class OpanXYZ(object):
                     coord_vec = np.concatenate(
                             (coord_vec, [
                         scast(line_mch.group("c{0}".format(c_str)), np.float_) /
-                        (1.0 if bohrs else PHYS.Ang_per_Bohr)
+                        (1.0 if bohrs else PHYS.ANG_PER_BOHR)
                                         ]), axis=0)
                 ## next c_str
 
@@ -1085,7 +1085,7 @@ class OpanXYZ(object):
         All four atom indices must be distinct. Both of the atom trios 1-2-3
         and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend
         angle different from 0 or 180 degrees by at least
-        :data:`PRM.Non_Parallel_Tol <opan.const.PRM.Non_Parallel_Tol>`.
+        :data:`PRM.NON_PARALLEL_TOL <opan.const.PRM.NON_PARALLEL_TOL>`.
 
         Parameters
         ----------
@@ -1198,7 +1198,7 @@ class OpanXYZ(object):
                                          [at_3, at_4][idx])
 
             # Check for whether angle is too close to zero or 180 degrees
-            if np.min([ang, 180.0 - ang]) < PRM.Non_Parallel_Tol:
+            if np.min([ang, 180.0 - ang]) < PRM.NON_PARALLEL_TOL:
                 # Too close; raise error
                 raise(XYZError(XYZError.dihed,
                         "Angle {0} is insufficiently nonlinear"

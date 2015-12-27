@@ -131,7 +131,7 @@ class OpanEnum(object):
 
             **Example:**
 
-            >>> 'NoDisp' in EnumDispDirection
+            >>> 'NO_DISP' in EnumDispDirection
             True
 
     """
@@ -159,13 +159,13 @@ class EnumDispDirection(OpanEnum):
 
     """
     #: Positive displacement along a particular normal mode
-    Positive = 'Positive'
+    POSITIVE = 'POSITIVE'
 
     #: Non-displaced geometry
-    NoDisp = 'NoDisp'
+    NO_DISP = 'NO_DISP'
 
     #: Negative displacement along a particular normal mode
-    Negative = 'Negative'
+    NEGATIVE = 'NEGATIVE'
 
 ## end class EnumDispDirection
 
@@ -178,7 +178,7 @@ class EnumMassPertType(OpanEnum):
     inertial degeneracy sufficiently to allow VPT2 computation using a lower-
     symmetry formalism; and (b), in the case of linear molecules, introduce
     an artificial 'directional preference' to the masses of the atoms
-    (:attr:`ByCoord` enum value) to break the intrinsic degeneracy
+    (:attr:`BY_COORD` enum value) to break the intrinsic degeneracy
     of the bending modes.
 
     **Enum Values**
@@ -186,15 +186,15 @@ class EnumMassPertType(OpanEnum):
     """
 
     #: Atomic masses are used without modification
-    NoPerturb = 'NoPerturb'
+    NO_PERTURB = 'NO_PERTURB'
 
     #: Atomic masses are perturbed atom-by-atom in an isotropic fashion
-    ByAtom = 'ByAtom'
+    BY_ATOM = 'BY_ATOM'
 
     #: Atomic masses are perturbed anisotropically, where the
     #: perturbation factor for each atom's mass varies slightly in the
     #: x-, y-, and z-directions
-    ByCoord = 'ByCoord'
+    BY_COORD = 'BY_COORD'
 
 ## end class EnumMassPertType
 
@@ -206,9 +206,9 @@ class EnumTopType(OpanEnum):
     associated with a particular geometry.
 
     Inertial moments with magnitudes less than
-    :attr:`opan.const.PRM.Zero_Moment_Tol` are taken as zero. Nonzero moments
+    :attr:`opan.const.PRM.ZERO_MOMENT_TOL` are taken as zero. Nonzero moments
     by this metric are considered to be equal if their ratio differs from
-    unity by less than :attr:`opan.const.PRM.Equal_Moment_Tol`.  See
+    unity by less than :attr:`opan.const.PRM.EQUAL_MOMENT_TOL`.  See
     :func:`opan.utils.inertia.principals` and the other functions defined
     in :mod:`opan.utils.inertia` for more details.
 
@@ -217,22 +217,22 @@ class EnumTopType(OpanEnum):
     """
 
     #: Three zero principal inertial moments
-    Atom = 'Atom'
+    ATOM = 'ATOM'
 
     #: One zero and two equal non-zero moments
-    Linear = 'Linear'
+    LINEAR = 'LINEAR'
 
     #: Three equal, non-zero moments
-    Spherical = 'Spherical'
+    SPHERICAL = 'SPHERICAL'
 
     #: Three non-zero moments; largest two equal
-    SymmProlate = 'SymmProlate'
+    SYMM_PROL = 'SYMM_PROL'
 
     #: Three non-zero moments; smallest two equal
-    SymmOblate = 'SymmOblate'
+    SYMM_OBL = 'SYMM_OBL'
 
     #: Three unique non-zero moments
-    Asymmetrical = 'Asymmetrical'
+    ASYMM = 'ASYMM'
 
 ## end class EnumTopType
 
@@ -263,19 +263,19 @@ class EnumFileType(OpanEnum):
     #: XYZ atomic coordinates, assumed to follow the `Open Babel XYZ
     #: specification <http://openbabel.org/docs/2.3.0/FileFormats/
     #: XYZ_cartesian_coordinates_format.html>`_ |external link|
-    xyz = 'xyz'
+    XYZ = 'XYZ'
 
     #: Files containing nuclear gradient information
-    grad = 'grad'
+    GRAD = 'GRAD'
 
     #: Files containing nuclear Hessian information
-    hess = 'hess'
+    HESS = 'HESS'
 
     #: Files containing computational output
-    output = 'output'
+    OUTPUT = 'OUTPUT'
 
     #: Input files for defining computations
-    inputfile = 'inputfile'
+    INPUTFILE = 'INPUTFILE'
 
 ## end class EnumFileType
 
@@ -292,16 +292,16 @@ class EnumAnharmRepoData(OpanEnum):
     """
 
     #: Energy value at the given displacement
-    en = 'en'
+    ENERGY = 'ENERGY'
 
     #: Geometry at the given displacement (max precision available)
-    geom = 'geom'
+    GEOM = 'GEOM'
 
     #: Cartesian gradient vector
-    grad = 'grad'
+    GRAD = 'GRAD'
 
     #: Cartesian Hessian matrix
-    hess = 'hess'
+    HESS = 'HESS'
 
 ## end class EnumAnharmRepoData
 
@@ -318,25 +318,25 @@ class EnumAnharmRepoParam(OpanEnum):
     """
 
     #: Length-`N` vector of all-caps atomic symbols
-    atoms = 'atoms'
+    ATOMS = 'ATOMS'
 
     #: Displacement increment in :math:`\mathrm{B}\ \mathrm{u^{1/2}}`.
     #: Note that these are *not* atomic units, which would instead be
     #: :math:`\mathrm{B}\ \mathrm{m_e^{1/2}}`.
-    increment = 'increment'
+    INCREMENT = 'INCREMENT'
 
     #: Cartesian center of mass of system, *with perturbations applied*,
     #: if any
-    ctr_mass = 'ctr_mass'
+    CTR_MASS = 'CTR_MASS'
 
     #: Reference values of atomic masses (unperturbed)
-    ref_masses = 'ref_masses'
+    REF_MASSES = 'REF_MASSES'
 
     #: :class:`opan.const.EnumMassPertType` indicating perturbation type
-    pert_mode = 'pert_mode'
+    PERT_MODE = 'PERT_MODE'
 
     #: Length-`3*N` vector of perturbation factors (all should be ~1)
-    pert_vec = 'pert_vec'
+    PERT_VEC = 'PERT_VEC'
 
 ## end class EnumAnharmRepoParam
 
@@ -360,33 +360,33 @@ class EnumUnitsRotConst(OpanEnum):
     #: Inverse moment of inertia, :math:`\frac{1}{\mathrm{u\ B^2}}`. Note that
     #: the mass units here are *not* atomic units, which would require
     #: :math:`\frac{1}{\mathrm{m_e\ B^2}}`.
-    InvInertia = 'InvInertia'
+    INV_INERTIA = 'INV_INERTIA'
 
     #: Angular frequency in atomic units, :math:`\frac{1}{\mathrm{T_a}}`
-    AngFreqAtomic = 'AngFreqAtomic'
+    ANGFREQ_ATOMIC = 'ANGFREQ_ATOMIC'
 
     #: Angular frequency in SI units, :math:`\frac{1}{\mathrm s}`
     #: (**NOT** :math:`\mathrm{Hz}`!)
-    AngFreqSeconds = 'AngFreqSeconds'
+    ANGFREQ_SECS = 'ANGFREQ_SECS'
 
     #: Cyclic frequency in atomic units,
     #: :math:`\frac{\mathrm{cyc}}{\mathrm{T_a}}`
-    CyclicFreqAtomic = 'CyclicFreqAtomic'
+    CYCFREQ_ATOMIC = 'CYCFREQ_ATOMIC'
 
     #: Cyclic frequency in :math:`\mathrm{Hz}`,
     #: :math:`\frac{\mathrm{cyc}}{\mathrm s}`
-    CyclicFreqHz = 'CyclicFreqHz'
+    CYCFREQ_HZ = 'CYCFREQ_HZ'
 
     #: Cyclic frequency in :math:`\mathrm{MHz}`,
     #: millions of :math:`\frac{\mathrm{cyc}}{\mathrm s}`
-    CyclicFreqMHz = 'CyclicFreqMHz'
+    CYCFREQ_MHZ = 'CYCFREQ_MHZ'
 
     #: Wavenumbers in atomic units, :math:`\frac{\mathrm{cyc}}{\mathrm{B}}`
-    WaveNumAtomic = 'WaveNumAtomic'
+    WAVENUM_ATOMIC = 'WAVENUM_ATOMIC'
 
     #: Wavenumbers in conventional units,
     #: :math:`\frac{\mathrm{cyc}}{\mathrm{cm}}`
-    WaveNumCM = 'WaveNumCM'
+    WAVENUM_CM = 'WAVENUM_CM'
 
 ## end class EnumUnitsRotConst
 
@@ -404,10 +404,10 @@ class CIC(object):
     """
 
     #: Maximum atomic number supported
-    Max_Atomic_Num = 103
+    MAX_ATOMIC_NUM = 103
 
     #: Minimum atomic number supported
-    Min_Atomic_Num = 1
+    MIN_ATOMIC_NUM = 1
 
 ## end class CIC
 
@@ -425,31 +425,31 @@ class PHYS(object):
 
     #: Angstroms per Bohr radius (source: `NIST <http://physics.nist.gov/
     #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |external link|)
-    Ang_per_Bohr = 0.52917721067
+    ANG_PER_BOHR = 0.52917721067
 
     #: Electron mass per unified atomic mass unit (source: `NIST
     #: <http://physics.nist.gov/cgi-bin/cuu/Value?meu|
     #: search_for=electron+mass>`__ |external link|)
-    me_per_amu = 1822.8885
+    ME_PER_AMU = 1822.8885
 
     #: Seconds per atomic time unit (source: `NIST <http://physics.nist.gov/
     #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |external link|)
-    sec_per_Ta = 2.4188843265e-17
+    SEC_PER_TA = 2.4188843265e-17
 
     #: Speed of light in atomic units, :math:`\frac{B}{T_a}`. Calculated from
     #: the `NIST <http://physics.nist.gov/cgi-bin/cuu/Value
     #: ?c|search_for=speed+of+light>`__ |external link| value for the speed of
     #: light in vacuum, :math:`2.99792458e8\ \frac{m}{s}`, using
-    #: :attr:`Ang_per_Bohr` and :attr:`sec_per_Ta` as conversion factors
-    light_speed = 137.036
+    #: :attr:`ANG_PER_BOHR` and :attr:`SEC_PER_TA` as conversion factors
+    LIGHT_SPEED = 137.036
 
     #: Standard Planck constant, equal to :math:`2\pi` in atomic units of
     #: :math:`\frac{\mathrm{E_h\ T_a}}{\mathrm{cyc}}`
-    Planck = 2 * _np.pi
+    PLANCK = 2 * _np.pi
 
     #: Reduced Planck constant, unity by definition in the atomic units
     #: of :math:`\mathrm{E_h\ T_a}`
-    Planck_bar = 1
+    PLANCK_BAR = 1
 
 ## end class PHYS
 
@@ -461,52 +461,52 @@ class DEF(object):
     from .const import EnumSoftware as _E_SW, EnumFileType as _E_FT
 
     #: Relative magnitude of atomic mass perturbations
-    Mass_Perturbation_Magnitude = 1e-4
+    MASS_PERT_MAG = 1e-4
 
     #Moment_Tol = 1e-4
 
     #: Acceptable deviation from Kronecker delta for orthonormality testing
-    Orthonorm_Tol = 1e-8
+    ORTHONORM_TOL = 1e-8
 
     #: Max precision of HESS geometries (currently |orca|-specific)
-    HESS_Coord_Match_Tol = 1e-6
+    HESS_COORD_MATCH_TOL = 1e-6
 
     #: Max precision of freqs in IR spectrum block (currently |orca|-specific)
-    HESS_IR_Match_Tol = 1e-2
+    HESS_IR_MATCH_TOL = 1e-2
 
     #: Max precision of GRAD geometries (currently |orca|-specific)
-    GRAD_Coord_Match_Tol = 1e-7
+    GRAD_COORD_MATCH_TOL = 1e-7
 
     #: Max tolerable deviation between XYZ geoms (currently |orca|-specific)
-    XYZ_Coord_Match_Tol = 1e-12
+    XYZ_COORD_MATCH_TOL = 1e-12
 
     # Required quality of coordinate match for symmetry detection
-    Symm_Match_Tol = 1e-3
+    SYMM_MATCH_TOL = 1e-3
 
     # Tolerance for deviation in searching for neighbor axes in cubic
-    # symmetry groups -- value is in radians, and equals 1.5 degrees
-    Symm_Axis_Match_Tol = 0.026179939
+    # symmetry groups -- value is in **radians**, and equals 1.5 degrees
+    SYMM_AXIS_MATCH_TOL = 0.026179939
 
     # Rounding atomic masses to avoid precision errors in atom matching
-    Symm_AtWt_Round_Digits = 4
+    SYMM_ATWT_ROUND_DIGITS = 4
 
     # Initial order of rotational symmetry to test for (conservative)
-    Symm_Match_nMax = 10
+    SYMM_MATCH_NMAX = 10
 
     # Maximum order of atom averaging when looking for possible axes of
     # rotational symmetry
-    Symm_Avg_Max = 2
+    SYMM_AVG_MAX = 2
 
     #: Dictionary of dictionaries of file extensions for geom, gradient,
     #: and hessian files from the various softwares.
-    #: Access as `File_Extensions`\ [\ `EnumSoftware`\ ][\ `EnumFileType`\ ]
-    File_Extensions = {
+    #: Access as `FILE_EXTS`\ [\ `EnumSoftware`\ ][\ `EnumFileType`\ ]
+    FILE_EXTS = {
             _E_SW.ORCA :
-                { _E_FT.grad : 'engrad',
-                    _E_FT.hess : 'hess',
-                    _E_FT.xyz : 'xyz',
-                    _E_FT.output : 'out',
-                    _E_FT.inputfile : 'txt'
+                { _E_FT.GRAD : 'engrad',
+                    _E_FT.HESS : 'hess',
+                    _E_FT.XYZ : 'XYZ',
+                    _E_FT.OUTPUT : 'out',
+                    _E_FT.INPUTFILE : 'txt'
                     }
             }
 
@@ -522,23 +522,23 @@ class PRM(object):
 
     #: Minimum angle deviation (degrees) required for two vectors to be
     #: considered non-parallel
-    Non_Parallel_Tol = 1e-3
+    NON_PARALLEL_TOL = 1e-3
 
     #: Vector magnitude below which a vector is considered equal to the zero
     #: vector; dimensionless or units of :math:`\mathrm{B}`
-    Zero_Vec_Tol = 1e-6
+    ZERO_VEC_TOL = 1e-6
 
     #: Trap value for aberrantly large dipole  derivative values in |orca|
     #: if dipoles are not calculated in a NUMFREQ run
-    Max_Sane_DipDer = 100
+    MAX_SANE_DIPDER = 100
 
     #: Minimum deviation-ratio from unity below which two principal inertial
     #: moments are considered equal
-    Equal_Moment_Tol = 1e-3
+    EQUAL_MOMENT_TOL = 1e-3
 
     #: Threshold value below which moments are  considered equal to zero;
     #: units of :math:`\mathrm{u\ B^2}`
-    Zero_Moment_Tol = 1e-3
+    ZERO_MOMENT_TOL = 1e-3
 
 ## end class PRM
 
@@ -629,16 +629,16 @@ class UNINIT(object):
 
     # Empty doc comments trigger inclusion in the documentation
     #:
-    Unsigned_Long = -1
+    UNSIGNED_LONG = -1
 
     #:
-    Unsigned_Double = -1.0
+    UNSIGNED_DOUBLE = -1.0
 
     #:
-    Signed_Long = 1234567890
+    SIGNED_LONG = 1234567890
 
     #:
-    Signed_Double = 1234567890.12345
+    SIGNED_DOUBLE = 1234567890.12345
 
 ## end class UNINIT
 
@@ -667,14 +667,14 @@ class UNITS(object):
 
     #:
     rotConst = {
-            _EUrc.InvInertia :        "1/(amu*B^2)",
-            _EUrc.AngFreqAtomic :     "1/Ta",
-            _EUrc.AngFreqSeconds :    "1/s",
-            _EUrc.CyclicFreqAtomic :  "cyc/Ta",
-            _EUrc.CyclicFreqHz :      "cyc/s",
-            _EUrc.CyclicFreqMHz :     "MHz",
-            _EUrc.WaveNumAtomic :     "cyc/B",
-            _EUrc.WaveNumCM :         "cyc/cm"
+            _EUrc.INV_INERTIA :        "1/(amu*B^2)",
+            _EUrc.ANGFREQ_ATOMIC :     "1/Ta",
+            _EUrc.ANGFREQ_SECS :    "1/s",
+            _EUrc.CYCFREQ_ATOMIC :  "cyc/Ta",
+            _EUrc.CYCFREQ_HZ :      "cyc/s",
+            _EUrc.CYCFREQ_MHZ :     "MHz",
+            _EUrc.WAVENUM_ATOMIC :     "cyc/B",
+            _EUrc.WAVENUM_CM :         "cyc/cm"
                 }
 
 ## end class UNITS

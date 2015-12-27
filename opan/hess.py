@@ -795,7 +795,7 @@ class OrcaHess(object):
             ## end if
 
             # If max-absolute element is too big, overwrite with None
-            if np.max(np.abs(self.dipders)) > PRM.Max_Sane_DipDer:
+            if np.max(np.abs(self.dipders)) > PRM.MAX_SANE_DIPDER:
                 self.dipders = None
             ## end if
         ## end if
@@ -842,7 +842,7 @@ class OrcaHess(object):
                                 for m in self.p_ir_line.finditer(
                                 m_work.group("block") )]),
                     rtol=0,
-                    atol=DEF.HESS_IR_Match_Tol):
+                    atol=DEF.HESS_IR_MATCH_TOL):
                 raise(HessError(HessError.ir_block,
                         "Frequency mismatch between freq and IR blocks",
                         "HESS File: " + self.HESS_path))
@@ -925,7 +925,7 @@ class OrcaHess(object):
                                 for m in self.p_raman_line.finditer(
                                 m_work.group("block")) ]),
                     rtol=0,
-                    atol=DEF.HESS_IR_Match_Tol):
+                    atol=DEF.HESS_IR_MATCH_TOL):
                 raise(HessError(HessError.raman_block,
                         "Frequency mismatch between freq and Raman blocks",
                         "HESS File: " + self.HESS_path))
@@ -1026,12 +1026,12 @@ class OrcaHess(object):
     ## end def __init__
 
 
-    def check_geom(self, coords, atoms, tol=_DEF.HESS_Coord_Match_Tol):
+    def check_geom(self, coords, atoms, tol=_DEF.HESS_COORD_MATCH_TOL):
         """ Check for consistency of HESS geometry with input coords/atoms.
 
         HESS cartesian coordinates are considered consistent with the input
             coords if each component matches to within 'tol' (default value
-            specified by orca_const.DEF.HESS_Coord_Match_Tol).  If coords or
+            specified by orca_const.DEF.HESS_COORD_MATCH_TOL).  If coords or
             atoms vectors are passed that are of different length than those
             stored in the OrcaEngrad instance, a False value is returned.
 

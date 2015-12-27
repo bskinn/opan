@@ -240,7 +240,7 @@ def make_timestamp(el_time):
 
 
 @_arraysqueeze(0,1,2,3)
-def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
+def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     """ Check for consistency of two geometries and atom symbol lists
 
     Cartesian coordinates are considered consistent with the input
@@ -269,7 +269,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_Coord_Match_Tol):
         Tolerance for acceptable deviation of each geometry coordinate
         from that in the reference instance to still be considered
         matching. Default value is specified by
-        :attr:`opan.const.DEF.XYZ_Coord_Match_Tol`)
+        :attr:`opan.const.DEF.XYZ_COORD_MATCH_TOL`)
 
     Returns
     -------

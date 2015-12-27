@@ -208,7 +208,7 @@ class SuperOpanGrad(object):
     ## end def __init__
 
 
-    def check_geom(self, coords, atoms, tol=_DEF.GRAD_Coord_Match_Tol):
+    def check_geom(self, coords, atoms, tol=_DEF.GRAD_COORD_MATCH_TOL):
         """ Check for consistency of gradient geometry with input coords/atoms.
 
         The cartesian coordinates associated with a gradient object
@@ -230,8 +230,8 @@ class SuperOpanGrad(object):
             Tolerance for acceptable deviation of each passed geometry
             coordinate  from that in the instance to still be considered
             matching. Default value is
-            :data:`DEF.GRAD_Coord_Match_Tol
-            <opan.const.DEF.GRAD_Coord_Match_Tol>`
+            :data:`DEF.GRAD_COORD_MATCH_TOL
+            <opan.const.DEF.GRAD_COORD_MATCH_TOL>`
 
         Returns
         -------
@@ -545,7 +545,7 @@ class OrcaEngrad(SuperOpanGrad):
                 # Atomic number
                 # Check for valid number
                 at_num = scast(line_mch.group("at"), np.int_)
-                if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
+                if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
                     raise(GradError(GradError.geomblock,
                             "Atom #{0} is an unsupported element"
                                                         .format(atom_count),
@@ -570,7 +570,7 @@ class OrcaEngrad(SuperOpanGrad):
 
                 # Now check whether the successfully converted atomic
                 #  number is in the valid range (should be a redundant check.)
-                if not (CIC.Min_Atomic_Num <= at_num <= CIC.Max_Atomic_Num):
+                if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
                     raise(GradError(GradError.geomblock,
                             "Atom #{0} is an unsupported element"
                                                             .format(atom_count),
