@@ -342,6 +342,21 @@ class HessError(OpanError):
     #: Malformed or missing temperature value
     TEMP = "TEMP"
 
+    #: Missing or invalid Hessian data; SHOULD only be used by
+    #: :class:`~opan.hess.SuperOpanHess`
+    BADHESS = 'BADHESS'
+
+    #: Missing or invalid geometry data; SHOULD only be used by
+    #: :class:`~opan.hess.SuperOpanHess`
+    BADGEOM = 'BADGEOM'
+
+    #: Missing or invalid atom symbols; SHOULD only be used by
+    #: :class:`~opan.hess.SuperOpanHess`
+    BADATOM = 'BADATOM'
+
+    #: Object already initialized (overwrite not supported)
+    OVERWRITE = 'OVERWRITE'
+
 ## end class HessError
 
 

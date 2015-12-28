@@ -838,7 +838,7 @@ class SuperOpanUtilsInertia(object):
         # Attach class objects
         basename = os.path.join(cls.filedir, cls.fname)
         cls.xyz = XYZ(path=basename + '.xyz')
-        cls.hess = HESS(basename + '.hess')
+        cls.hess = HESS(path=basename + '.hess')
 
         # Always long messages
         cls.longMessage = True
@@ -1292,6 +1292,18 @@ class TestSuperOpanGrad(unittest.TestCase):
         self.assertRaises(NotImplementedError, SuperOpanGrad)
 
 ## end class TestSuperOpanGrad
+
+
+# =========================  SuperOpanGrad  ================================= #
+
+class TestSuperOpanHess(unittest.TestCase):
+
+    def test_SuperOpanHessIsAbstract(self):
+        from opan.hess import SuperOpanHess
+
+        self.assertRaises(NotImplementedError, SuperOpanHess)
+
+## end class TestSuperOpanHess
 
 
 # =============================   ORCA   ==================================== #
@@ -2484,7 +2496,7 @@ class TestOrcaHessKnownGood(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         # Create the object
-        self.oh = OrcaHess(self.file_name)
+        self.oh = OrcaHess(path=self.file_name)
 
         # Enable long messages
         self.longMessage = True
@@ -2532,11 +2544,6 @@ class TestOrcaHessKnownGood(SuperOrcaHess):
             self.assertAlmostEqual(self.oh.freqs[i],
                         self.freqs[i], delta=1e-6,
                         msg="Frequency index " + str(i))
-
-    def test_HESS_KnownGoodInitFlagDefined(self):
-        self.assertTrue('initialized' in self.oh.__dict__)
-        if 'initialized' in self.oh.__dict__:
-            self.assertTrue(self.oh.initialized)
 
     def test_HESS_KnownGoodModes(self):
         self.assertEqual(self.oh.modes.shape, self.modes.shape)
@@ -2649,8 +2656,8 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.HESS_BLOCK, self.file_name +
-                    self.names.hess)
+                    HessError.HESS_BLOCK, path=(self.file_name +
+                    self.names.hess))
 
     def test_HESS_MissingBlockGeom(self):
 
@@ -2658,8 +2665,8 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.AT_BLOCK, self.file_name +
-                    self.names.geom)
+                    HessError.AT_BLOCK, path=(self.file_name +
+                    self.names.geom))
 
     def test_HESS_MissingBlockEnergy(self):
 
@@ -2667,8 +2674,8 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.ENERGY, self.file_name +
-                    self.names.energy)
+                    HessError.ENERGY, path=(self.file_name +
+                    self.names.energy))
 
     def test_HESS_MissingBlockTemp(self):
 
@@ -2676,8 +2683,8 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.TEMP, self.file_name +
-                    self.names.temp)
+                    HessError.TEMP, path=(self.file_name +
+                    self.names.temp))
 
     def test_HESS_MissingBlockFreqs(self):
 
@@ -2685,8 +2692,8 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.FREQ_BLOCK, self.file_name +
-                    self.names.freqs)
+                    HessError.FREQ_BLOCK, path=(self.file_name +
+                    self.names.freqs))
 
     def test_HESS_MissingBlockModes(self):
 
@@ -2694,21 +2701,21 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.MODES_BLOCK, self.file_name +
-                    self.names.modes)
+                    HessError.MODES_BLOCK, path=(self.file_name +
+                    self.names.modes))
 
     def test_HESS_MissingBlockDipders(self):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name +
-                                            self.names.dipders).dipders)
+        self.assertIsNone(OrcaHess(path=(self.file_name +
+                                            self.names.dipders)).dipders)
 
     def test_HESS_MissingBlockIRSpectrum(self):
 
         from opan.hess import OrcaHess
 
-        h = OrcaHess(self.file_name + self.names.ir)
+        h = OrcaHess(path=(self.file_name + self.names.ir))
 
         self.assertIsNone(h.ir_comps)
         self.assertIsNone(h.ir_mags)
@@ -2717,14 +2724,14 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name +
-                                            self.names.polders).polders)
+        self.assertIsNone(OrcaHess(path=(self.file_name +
+                                            self.names.polders)).polders)
 
     def test_HESS_MissingBlockRamanSpectrum(self):
 
         from opan.hess import OrcaHess
 
-        h = OrcaHess(self.file_name + self.names.raman)
+        h = OrcaHess(path=(self.file_name + self.names.raman))
 
         self.assertIsNone(h.raman_acts)
         self.assertIsNone(h.raman_depols)
@@ -2733,22 +2740,22 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name +
-                                            self.names.joblist).joblist)
+        self.assertIsNone(OrcaHess(path=(self.file_name +
+                                            self.names.joblist)).joblist)
 
     def test_HESS_MissingBlockMWHEigvals(self):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name +
-                                        self.names.mwh_eigvals).mwh_eigvals)
+        self.assertIsNone(OrcaHess(path=(self.file_name +
+                                        self.names.mwh_eigvals)).mwh_eigvals)
 
     def test_HESS_MissingBlockMWHEigvecs(self):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name +
-                                        self.names.mwh_eigvecs).mwh_eigvecs)
+        self.assertIsNone(OrcaHess(path=(self.file_name +
+                                        self.names.mwh_eigvecs)).mwh_eigvecs)
 
 ## end class TestOrcaHessMissingBlocks
 
@@ -2789,11 +2796,12 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
 
         # 'Early' (non-final section) truncation
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.HESS_BLOCK, self.file_name + self.names.hess)
+                    HessError.HESS_BLOCK, path=(self.file_name +
+                    self.names.hess))
         # 'Late' (final section) truncation
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.HESS_BLOCK,
-                    self.file_name + self.names.hess + self.names.suffix_dim2)
+                    HessError.HESS_BLOCK, path=(self.file_name +
+                    self.names.hess + self.names.suffix_dim2))
 
     def test_HESS_TruncatedBlocksGeom(self):
 
@@ -2801,7 +2809,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.AT_BLOCK, self.file_name + self.names.geom)
+                    HessError.AT_BLOCK, path=(self.file_name + self.names.geom))
 
     def test_HESS_TruncatedBlocksFreqs(self):
 
@@ -2809,7 +2817,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.FREQ_BLOCK, self.file_name + self.names.freqs)
+                    HessError.FREQ_BLOCK, path=(self.file_name +
+                    self.names.freqs))
 
     def test_HESS_TruncatedBlocksModes(self):
 
@@ -2817,7 +2826,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.MODES_BLOCK, self.file_name + self.names.modes)
+                    HessError.MODES_BLOCK, path=(self.file_name +
+                    self.names.modes))
 
     def test_HESS_TruncatedBlocksDipders(self):
 
@@ -2825,7 +2835,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.DIPDER_BLOCK, self.file_name + self.names.dipders)
+                    HessError.DIPDER_BLOCK, path=(self.file_name +
+                    self.names.dipders))
 
     def test_HESS_TruncatedBlocksIRSpectrum(self):
 
@@ -2833,7 +2844,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.IR_BLOCK, self.file_name + self.names.ir)
+                    HessError.IR_BLOCK, path=(self.file_name + self.names.ir))
 
     def test_HESS_TruncatedBlocksPolders(self):
 
@@ -2841,7 +2852,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.POLDER_BLOCK, self.file_name + self.names.polders)
+                    HessError.POLDER_BLOCK, path=(self.file_name +
+                    self.names.polders))
 
     def test_HESS_TruncatedBlocksRamanSpectrum(self):
 
@@ -2849,7 +2861,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.RAMAN_BLOCK, self.file_name + self.names.raman)
+                    HessError.RAMAN_BLOCK, path=(self.file_name +
+                    self.names.raman))
 
     def test_HESS_TruncatedBlocksJobList(self):
 
@@ -2857,7 +2870,8 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.JOB_BLOCK, self.file_name + self.names.joblist)
+                    HessError.JOB_BLOCK, path=(self.file_name +
+                    self.names.joblist))
 
     def test_HESS_TruncatedBlocksMWHEigvals(self):
 
@@ -2866,7 +2880,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
                     HessError.EIGVAL_BLOCK,
-                    self.file_name + self.names.mwh_eigvals)
+                    path=(self.file_name + self.names.mwh_eigvals))
 
     def test_HESS_TruncatedBlocksMWHEigvecs(self):
 
@@ -2875,7 +2889,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
                     HessError.EIGVEC_BLOCK,
-                    self.file_name + self.names.mwh_eigvecs)
+                    path=(self.file_name + self.names.mwh_eigvecs))
 
 ## end class TestOrcaHessTruncatedBlocks
 
@@ -2915,7 +2929,8 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.HESS_BLOCK, self.file_name + self.names.hess)
+                    HessError.HESS_BLOCK, path=(self.file_name +
+                    self.names.hess))
 
     def test_HESS_BadDataFreqDim(self):
 
@@ -2923,7 +2938,8 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.FREQ_BLOCK, self.file_name + self.names.freqs)
+                    HessError.FREQ_BLOCK, path=(self.file_name +
+                    self.names.freqs))
 
     def test_HESS_BadDataAtomSym(self):
 
@@ -2931,7 +2947,7 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         self.assertRaises(KeyError, OrcaHess,
-                                    self.file_name + self.names.atsym)
+                                    path=(self.file_name + self.names.atsym))
 
     def test_HESS_BadDataNormalModes(self):
 
@@ -2940,11 +2956,12 @@ class TestOrcaHessBadData(SuperOrcaHess):
 
         # First dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.MODES_BLOCK, self.file_name + self.names.modes)
+                    HessError.MODES_BLOCK, path=(self.file_name +
+                    self.names.modes))
         # Second dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.MODES_BLOCK,
-                    self.file_name + self.names.modes + self.names.suffix_dim2)
+                    HessError.MODES_BLOCK, path=(self.file_name +
+                    self.names.modes + self.names.suffix_dim2))
 
     def test_HESS_BadDataDipdersDim(self):
 
@@ -2952,14 +2969,15 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.DIPDER_BLOCK, self.file_name + self.names.dipders)
+                    HessError.DIPDER_BLOCK, path=(self.file_name +
+                    self.names.dipders))
 
     def test_HESS_BadDataDipdersTooBig(self):
 
         from opan.hess import OrcaHess
 
-        self.assertIsNone(OrcaHess(self.file_name + self.names.dipders +
-                        self.names.suffix_badval).dipders)
+        self.assertIsNone(OrcaHess(path=(self.file_name + self.names.dipders +
+                        self.names.suffix_badval)).dipders)
 
     def test_HESS_BadDataIRSpectrum(self):
 
@@ -2968,11 +2986,11 @@ class TestOrcaHessBadData(SuperOrcaHess):
 
         # Bad dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.IR_BLOCK, self.file_name + self.names.ir)
+                    HessError.IR_BLOCK, path=(self.file_name + self.names.ir))
         # Mismatched frequency
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.IR_BLOCK,
-                    self.file_name + self.names.ir + self.names.suffix_badfreq)
+                    HessError.IR_BLOCK, path=(self.file_name +
+                    self.names.ir + self.names.suffix_badfreq))
 
     def test_HESS_BadDataPoldersDim(self):
 
@@ -2980,7 +2998,8 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.POLDER_BLOCK, self.file_name + self.names.polders)
+                    HessError.POLDER_BLOCK, path=(self.file_name +
+                    self.names.polders))
 
     def test_HESS_BadDataRamanSpectrum(self):
 
@@ -2989,12 +3008,12 @@ class TestOrcaHessBadData(SuperOrcaHess):
 
         # Bad dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.RAMAN_BLOCK, self.file_name + self.names.raman)
+                    HessError.RAMAN_BLOCK, path=(self.file_name +
+                    self.names.raman))
         # Mismatched frequency
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.RAMAN_BLOCK,
-                    self.file_name + self.names.raman +
-                                                self.names.suffix_badfreq)
+                    HessError.RAMAN_BLOCK, path=(self.file_name +
+                    self.names.raman + self.names.suffix_badfreq))
 
     def test_HESS_BadDataJobListDim(self):
 
@@ -3002,7 +3021,8 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.hess import OrcaHess
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.JOB_BLOCK, self.file_name + self.names.joblist)
+                    HessError.JOB_BLOCK, path=(self.file_name +
+                    self.names.joblist))
 
     def test_HESS_BadDataMWHEigvalsDim(self):
 
@@ -3011,7 +3031,7 @@ class TestOrcaHessBadData(SuperOrcaHess):
 
         assertErrorAndTypecode(self, HessError, OrcaHess,
                     HessError.EIGVAL_BLOCK,
-                    self.file_name + self.names.mwh_eigvals)
+                    path=(self.file_name + self.names.mwh_eigvals))
 
     def test_HESS_BadDataMWHEigvecs(self):
 
@@ -3021,14 +3041,56 @@ class TestOrcaHessBadData(SuperOrcaHess):
         # First dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
                     HessError.EIGVEC_BLOCK,
-                    self.file_name + self.names.mwh_eigvecs)
+                    path=(self.file_name + self.names.mwh_eigvecs))
         # Second dimension
         assertErrorAndTypecode(self, HessError, OrcaHess,
-                    HessError.EIGVEC_BLOCK,
-                    self.file_name + self.names.mwh_eigvecs +
-                            self.names.suffix_dim2)
+                    HessError.EIGVEC_BLOCK, path=(self.file_name +
+                    self.names.mwh_eigvecs + self.names.suffix_dim2))
 
 ## end class TestOrcaHessBadData
+
+
+class TestOrcaHessBadUsage(SuperOrcaHess):
+
+    @classmethod
+    def setUpClass(cls):
+
+        # Set up the directory
+        setUpTestDir(cls.testdir)
+
+        # Write the file
+        with open(cls.file_name, 'w') as f:
+            f.write(cls.file_text_good)
+
+
+    @classmethod
+    def tearDownClass(cls):
+        import os
+
+        # Delete the engrad file
+        os.remove(cls.file_name)
+
+        # Remove the working directory
+        tearDownTestDir(cls.testdir)
+
+    def setUp(self):
+        # Load the object
+
+        # Imports
+        from opan.hess import OrcaHess
+
+        # Create the object
+        self.oh = OrcaHess(path=self.file_name)
+
+        # Enable long messages
+        self.longMessage = True
+
+    def test_HESS_BadUsageOverwrite(self):
+        from opan.error import HessError
+        assertErrorAndTypecode(self, HessError, self.oh._load,
+                                HessError.OVERWRITE, path=self.oh.hess_path)
+
+## end class TestOrcaHessBadUsage
 
 
 class TestOrcaHessAltData(SuperOrcaHess):
@@ -3068,7 +3130,7 @@ class TestOrcaHessAltData(SuperOrcaHess):
 
         from opan.hess import OrcaHess
 
-        h = OrcaHess(self.file_name + self.names.joblist)
+        h = OrcaHess(path=(self.file_name + self.names.joblist))
 
         self.assertEqual(h.joblist.shape,
                         self.alt_data_values[self.names.joblist].shape)
@@ -3097,7 +3159,7 @@ class TestOrcaHessLiveData(SuperOrcaHess):
             if fname.startswith("test_orca") and fname.endswith("hess"):
                 print("\nTesting file '" + fname + "' ....")
                 try:
-                    OrcaHess(os.path.join(self.resourcedir, fname))
+                    OrcaHess(path=(os.path.join(self.resourcedir, fname)))
                 except (IOError, HessError) as e: # pragma: no cover
                     self.fail("Load of test file '" + str(fname) +
                             "' failed:\n" + str(e))

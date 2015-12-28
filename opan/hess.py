@@ -51,7 +51,7 @@ Hessian data from external computational packages.
     *   In units of Hartrees per Bohr-squared
         :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B^2}\\right)`
 
-    *   With elements ordered as:
+    *   With elements arranged as:
 
     .. math::
 
@@ -165,7 +165,144 @@ Hessian data from external computational packages.
 _DEBUG = False
 
 
-class OrcaHess(object):
+
+class SuperOpanHess(object):
+    """ Abstract superclass of Hessian import classes.
+
+    Performs the following actions:
+
+    1.  Ensures that the abstract superclass is not being instantiated,
+        but instead a subclass.
+    2.  Calls the ``_load()`` method on the subclass, passing all `kwargs`
+        through unmodified.
+    3.  Typechecks the ``self.hess``, ``self.geom``, and
+        ``self.atom_syms`` required members for existence, proper data type,
+        and properly matched lengths/dimensions.
+
+    The checks performed in step 3 are primarily for design-time member
+    and type enforcement during development of subclasses for new
+    external software packages, rather than run-time data checking.
+    It is RECOMMENDED to include robust data validity checking inside
+    each subclass, rather than relying on these tests.
+
+    |
+
+    **Methods**
+
+    .. automethod:: check_geom(coords, atoms[, tol])
+
+    """
+
+    # Imports
+    from .const import DEF as _DEF
+
+    def __init__(self, **kwargs):
+        """ Conformity-checking initalizer for Hessian data loader classes.
+        """
+
+        # Imports
+        from .error import HessError as HErr
+        from .utils import assert_npfloatarray as a_npfa
+        from .const import atom_num
+        import numpy as np
+
+        # Check for abstract base class
+        if type(self) == SuperOpanHess:
+            raise(NotImplementedError("SuperOpanHess base class is abstract"))
+        ## end if
+
+        # Call the subclass _load method, passing in the keyword arguments
+        #  wholesale
+        self._load(**kwargs)
+
+        # Define common error source string
+        srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
+
+        # All proofreading here is excluded from coverage because
+        #  all of these should be handled at the subclass level for ORCA.
+
+        # Proofread types for Hessian and geometry
+        a_npfa(self, 'hess', 'Hessian', HErr, HErr.BADHESS, srcstr)
+        a_npfa(self, 'geom', 'geometry', HErr, HErr.BADGEOM, srcstr)
+
+        # Hessian and geometry shape
+        if (len(self.hess.shape) != 2 or
+                            self.hess.shape[0] % 3 != 0 or
+                            self.hess.shape[0] != self.hess.shape[1]):
+            raise(HErr(HErr.BADHESS, # pragma: no cover
+                        "Hessian is not a 3N x 3N matrix", srcstr))
+        ## end if
+        if self.geom.shape != (self.hess.shape[0],):
+            raise(HErr(HErr.BADGEOM, # pragma: no cover
+                        "Geometry shape does not match Hessian shape", srcstr))
+
+        # Ensure atomic symbols length matches & they're all valid
+        if not hasattr(self, 'atom_syms'): # pragma: no cover
+            raise(HErr(HErr.BADATOM, "Atoms list not found", srcstr))
+        ## end if
+        if type(self.atom_syms) is not type(range(3)): # pragma: no cover
+            raise(HErr(HErr.BADATOM, "Atoms list is not a list", srcstr))
+        ## end if
+        if 3*len(self.atom_syms) != self.hess.shape[0]: # pragma: no cover
+            raise(HErr(HErr.BADATOM, "Atoms list is not length-N", srcstr))
+        ## end if
+        if not all(map(lambda v: v in atom_num, self.atom_syms)):
+            raise(HErr(HErr.BADATOM,    # pragma: no cover
+                    "Invalid atoms in list: {0}".format(self.atom_syms),
+                    srcstr))
+        ## end if
+
+    ## end def __init__
+
+
+    def check_geom(self, coords, atoms, tol=_DEF.HESS_COORD_MATCH_TOL):
+        """ Check for consistency of Hessian geometry with input coords/atoms.
+
+        The cartesian coordinates associated with a Hessian object
+        are considered consistent with the input `coords` and `atoms`
+        if each component matches to within `tol` and all atoms
+        are identical.  If
+        `coords` or `atoms` vectors are passed that are of different
+        length than those stored in the instance, a |False| value is
+        returned, rather than an exception raised.
+
+        Parameters
+        ----------
+        coords : length-3N ``np.float_``
+            Vector of stacked 'lab-frame' Cartesian coordinates
+
+        atoms  : length-N `str` or `int`
+            Vector of atom symbols or atomic numbers
+
+        tol    : float, optional
+            Tolerance for acceptable deviation of each passed geometry
+            coordinate  from that in the instance to still be considered
+            matching. Default value is
+            :data:`DEF.HESS_COORD_MATCH_TOL
+            <opan.const.DEF.HESS_COORD_MATCH_TOL>`
+
+
+        See :func:`opan.utils.check_geom <opan.utils.base.check_geom>` for
+        details on return values and exceptions raised.
+
+        """
+
+        # Import(s)
+        from .utils import check_geom as ucg
+
+        # Wrapper call
+        result = ucg(self.geom, self.atom_syms, coords, atoms, tol=tol)
+
+        # Return result
+        return result
+
+    ## end def check_geom
+
+## end class SuperOpanHess
+
+
+
+class OrcaHess(SuperOpanHess):
     """ Container for HESS data generated by |orca|.
 
     Information contained includes the Hessian matrix, the number of atoms,
@@ -193,7 +330,7 @@ class OrcaHess(object):
 
     Instantiation
     -------------
-    __init__(HESS_path)
+    __init__(hess_path)
         Constructor for an OrcaHess, drawing data from a HESS file on disk.
 
     Class Variables
@@ -256,12 +393,10 @@ class OrcaHess(object):
         Column vector of geometry [x1, y1, z1, x2, y2, ...]
     hess            : 3N x 3N np.float_
         Cartesian Hessian matrix
-    HESS_path       : str
+    hess_path       : str
         Complete path/filename from which the Hessian data was retrieved
     joblist         : N x 3 bool
         Completion status for each displacement in calculation of the Hessian
-    initialized     : bool
-        Flag for whether self has been initialized--possibly obsolete
     in_str          : str
         Complete contents of the imported HESS file
     ir_comps        : 3N x 3 np.float_
@@ -599,7 +734,7 @@ class OrcaHess(object):
     ## End Regex definitions
 
 
-    def __init__(self, HESS_path):
+    def _load(self, **kwargs):
         """ Initialize OrcaHess Hessian object from .hess file
 
         Searches indicated file for data blocks within the .hess file.  The
@@ -611,7 +746,7 @@ class OrcaHess(object):
 
         Parameters
         ----------
-        HESS_path : string
+        hess_path : string
             Complete path to the .hess file to be read.
 
         Raises
@@ -677,7 +812,7 @@ class OrcaHess(object):
             if not int(m_block.group("dim")) == 3*num_ats:
                 raise(HessError(tc, blockname + " dimension " +
                         "specification mismatched with geometry",
-                        "HESS File: " + HESS_path))
+                        "HESS File: " + hess_path))
             ## end if
 
             # Initialize the working matrix
@@ -728,7 +863,7 @@ class OrcaHess(object):
             if not col_offset >= (3 * num_ats):
                 raise(HessError(tc, "Insufficient number of " + blockname +
                         " sections found",
-                        "HESS File: " + HESS_path))
+                        "HESS File: " + hess_path))
             ## end if
 
             # Additional cross-check on number of rows imported
@@ -736,7 +871,7 @@ class OrcaHess(object):
                 # Not the right number of rows; complain
                 raise(HessError(tc,
                             blockname + " row count mismatch",
-                            "HESS File: " + HESS_path))
+                            "HESS File: " + hess_path))
             ## end if
 
             # Return the working matrix
@@ -750,51 +885,48 @@ class OrcaHess(object):
         from .utils import safe_cast as scast
         from .const import atom_num, atom_sym, PRM, DEF
 
-        # Set the initialization flag (possibly unnecessary...)
-        self.initialized = False
+        # Check if instantiated; complain if so
+        if 'hess_path' in dir(self):
+            raise(HessError(HessError.OVERWRITE,
+                    "Cannot overwrite contents of existing OrcaHess", ""))
+        ## end if
+
+        # Retrieve the file target and store
+        hess_path = kwargs['path']
+        self.hess_path = hess_path
 
         # Open file, read contents, close stream
-        # No particular exception handling; that will be the responsibility
-        #  of the calling routine.
-        # May want to add a check for text file format; but, really, a check
-        #  for expected-information-not-found will likely cover such a case.
-        with open(HESS_path,'rU') as in_fl:
+        with open(hess_path,'rU') as in_fl:
             self.in_str = in_fl.read()
         ## end with
 
-        # Store the path used to retrieve the data
-        self.HESS_path = HESS_path
+        # Store the source string
+        srcstr = "HESS File: {0}".format(hess_path)
 
         # Check to ensure all required data blocks are found
         if not OrcaHess.p_at_block.search(self.in_str):
             raise(HessError(HessError.AT_BLOCK,
-                    "Atom specification block not found",
-                    "HESS File: " + HESS_path))
+                    "Atom specification block not found", srcstr))
         ## end if
         if not OrcaHess.p_hess_block.search(self.in_str):
             raise(HessError(HessError.HESS_BLOCK,
-                    "Hessian block not found",
-                    "HESS File: " + HESS_path))
+                    "Hessian block not found", srcstr))
         ## end if
         if not OrcaHess.p_freq_block.search(self.in_str):
             raise(HessError(HessError.FREQ_BLOCK,
-                    "Frequencies block (cm**-1 units) not found",
-                    "HESS File: " + HESS_path))
+                    "Frequencies block (cm**-1 units) not found", srcstr))
         ## end if
         if not OrcaHess.p_modes_block.search(self.in_str):
             raise(HessError(HessError.MODES_BLOCK,
-                    "Normal modes block not found",
-                    "HESS File: " + HESS_path))
+                    "Normal modes block not found", srcstr))
         ## end if
         if not OrcaHess.p_energy.search(self.in_str):
             raise(HessError(HessError.ENERGY,
-                    "Energy value not found",
-                    "HESS File: " + HESS_path))
+                    "Energy value not found", srcstr))
         ## end if
         if not OrcaHess.p_temp.search(self.in_str):
             raise(HessError(HessError.TEMP,
-                    "'Actual temperature' value not found",
-                    "HESS File: " + HESS_path))
+                    "'Actual temperature' value not found", srcstr))
         ## end if
 
 
@@ -842,8 +974,7 @@ class OrcaHess(object):
         #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
             raise(HessError(HessError.AT_BLOCK, "Atomic symbol dimension " +
-                    "mismatch with HESS atom specification",
-                    "HESS File: " + HESS_path))
+                    "mismatch with HESS atom specification", srcstr))
         ## end if
 
         # Convert geometry to numpy storage form
@@ -866,7 +997,7 @@ class OrcaHess(object):
                             scast(m_work.group("dim2"), np.int_):
             raise(HessError(HessError.MODES_BLOCK,
                     "Normal mode block dimension specification mismatch",
-                    "HESS File: " + self.HESS_path))
+                    srcstr))
         ## end if
 
         #=== Frequencies ===#
@@ -878,7 +1009,7 @@ class OrcaHess(object):
         if 3*self.num_ats != scast(m_work.group("num"), np.int_):
             raise(HessError(HessError.FREQ_BLOCK,
                     "Count in frequencies block != 3 * number of atoms",
-                    "HESS File: " + self.HESS_path))
+                    srcstr))
         ## end if
 
         # Retrieve the frequencies
@@ -889,8 +1020,7 @@ class OrcaHess(object):
         # Proofread for proper size
         if not self.freqs.shape[0] == 3*self.num_ats:
             raise(HessError(HessError.FREQ_BLOCK,
-                    "Number of frequencies != 3 * number of atoms",
-                    "HESS File: " + self.HESS_path))
+                    "Number of frequencies != 3 * number of atoms", srcstr))
         ## end if
 
 
@@ -914,7 +1044,7 @@ class OrcaHess(object):
             if 3*self.num_ats != scast(m_work.group("dim"), np.int_):
                 raise(HessError(HessError.DIPDER_BLOCK,
                         "Count in dipole derivatives block != 3 * # of atoms",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
 
             # Retrieve the derivatives
@@ -929,9 +1059,8 @@ class OrcaHess(object):
             #  result in the block getting truncated, per the Regex constrution.
             if not self.dipders.shape[0] == 3*self.num_ats:
                 raise(HessError(HessError.DIPDER_BLOCK,
-                        "Number of dipole derivative rows != " +
-                                                    "3 * number of atoms",
-                        "HESS File: " + self.HESS_path))
+                        "Number of dipole derivative rows != \
+                        3 * number of atoms", srcstr))
             ## end if
 
             # If max-absolute element is too big, overwrite with None
@@ -952,7 +1081,7 @@ class OrcaHess(object):
             if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HessError(HessError.IR_BLOCK,
                         "Count in IR spectrum block != 3 * # of atoms",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
 
             # Pull the blocks
@@ -970,9 +1099,8 @@ class OrcaHess(object):
             #  since they both rely equally on p_ir_line.finditer.
             if 3*self.num_ats != self.ir_mags.shape[0]:
                 raise(HessError(HessError.IR_BLOCK,
-                        "Number of IR spectrum rows != " +
-                                                    "3 * number of atoms",
-                        "HESS File: " + self.HESS_path))
+                        "Number of IR spectrum rows != \
+                        3 * number of atoms", srcstr))
             ## end if
 
             # Confirm match of all frequencies with those reported separately
@@ -985,7 +1113,7 @@ class OrcaHess(object):
                     atol=DEF.HESS_IR_MATCH_TOL):
                 raise(HessError(HessError.IR_BLOCK,
                         "Frequency mismatch between freq and IR blocks",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
         ## end if
 
@@ -1000,9 +1128,8 @@ class OrcaHess(object):
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HessError(HessError.POLDER_BLOCK,
-                        "Count in polarizability derivatives block " +
-                                                    "!= 3 * # of atoms",
-                        "HESS File: " + self.HESS_path))
+                        "Count in polarizability derivatives block \
+                        != 3 * # of atoms", srcstr))
             ## end if
 
             # Retrieve the derivatives
@@ -1017,9 +1144,8 @@ class OrcaHess(object):
             #  result in the block getting truncated.
             if not self.polders.shape[0] == 3*self.num_ats:
                 raise(HessError(HessError.POLDER_BLOCK,
-                        "Number of polarizability derivative rows != " + \
-                                                    "3 * number of atoms", \
-                        "HESS File: " + self.HESS_path))
+                        "Number of polarizability derivative rows != \
+                        3 * number of atoms", srcstr))
             ## end if
         ## end if
 
@@ -1036,7 +1162,7 @@ class OrcaHess(object):
             if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HessError(HessError.RAMAN_BLOCK,
                         "Count in Raman spectrum block != 3 * # of atoms",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
 
             # Pull the blocks
@@ -1053,9 +1179,8 @@ class OrcaHess(object):
             #  both, since they both rely equally on p_raman_line.finditer.
             if 3*self.num_ats != self.raman_acts.shape[0]:
                 raise(HessError(HessError.RAMAN_BLOCK, \
-                        "Number of Raman spectrum rows != " + \
-                                                    "3 * number of atoms", \
-                        "HESS File: " + self.HESS_path))
+                        "Number of Raman spectrum rows != \
+                        3 * number of atoms", srcstr))
             ## end if
 
             # Confirm match of all frequencies with those reported separately
@@ -1068,7 +1193,7 @@ class OrcaHess(object):
                     atol=DEF.HESS_IR_MATCH_TOL):
                 raise(HessError(HessError.RAMAN_BLOCK,
                         "Frequency mismatch between freq and Raman blocks",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
         ## end if
 
@@ -1083,8 +1208,7 @@ class OrcaHess(object):
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HessError(HessError.JOB_BLOCK,
-                        "Count in job list block != 3 * # of atoms",
-                        "HESS File: " + self.HESS_path))
+                        "Count in job list block != 3 * # of atoms", srcstr))
             ## end if
 
             # Retrieve the job list
@@ -1099,8 +1223,7 @@ class OrcaHess(object):
             #  result in the block getting truncated.
             if not self.joblist.shape[0] == self.num_ats:
                 raise(HessError(HessError.JOB_BLOCK,
-                        "Number of job list rows != number of atoms",
-                        "HESS File: " + self.HESS_path))
+                        "Number of job list rows != number of atoms", srcstr))
             ## end if
 
             # Convert to boolean
@@ -1120,7 +1243,7 @@ class OrcaHess(object):
             if 3*self.num_ats != np.int_(m_work.group("dim")):
                 raise(HessError(HessError.EIGVAL_BLOCK,
                         "Count in MWH eigenvalues block != 3 * number of atoms",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
 
             # Retrieve the eigenvalues
@@ -1132,7 +1255,7 @@ class OrcaHess(object):
             if not self.mwh_eigvals.shape[0] == 3*self.num_ats:
                 raise(HessError(HessError.EIGVAL_BLOCK,
                         "Number of MWH eigenvalues != 3 * number of atoms",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
 
         ## end if
@@ -1155,74 +1278,13 @@ class OrcaHess(object):
                                 scast(m_work.group("dim2"), np.int_):
                 raise(HessError(HessError.EIGVEC_BLOCK,
                         "MWH eigenvectors dimension specification mismatch",
-                        "HESS File: " + self.HESS_path))
+                        srcstr))
             ## end if
         ## end if
 
-
-        # Set initialization flag; probably unnecessary?
-        self.initialized = True
-
     ## end def __init__
 
-
-    def check_geom(self, coords, atoms, tol=_DEF.HESS_COORD_MATCH_TOL):
-        """ Check for consistency of HESS geometry with input coords/atoms.
-
-        HESS cartesian coordinates are considered consistent with the input
-            coords if each component matches to within 'tol' (default value
-            specified by orca_const.DEF.HESS_COORD_MATCH_TOL).  If coords or
-            atoms vectors are passed that are of different length than those
-            stored in the OrcaEngrad instance, a False value is returned.
-
-        The coords vector must be three times the length of the atoms vector
-            or a ValueError is raised.
-
-        Parameters
-        ----------
-        coords : length-3N np.float_
-            Vector of stacked 'lab-frame' Cartesian coordinates
-        atoms  : length-N string or int
-            Vector of atom symbols or atomic numbers
-        tol    : float, optional
-            Tolerance for acceptable deviation of each geometry coordinate
-            from that in the OrcaHess instance to still be considered
-            matching
-
-        Returns
-        -------
-        match  : bool
-            Whether input coords and atoms match those in the OrcaEngrad
-            instance (True) or not (False)
-        fail_type  : string
-            If match == False, a string description code for the reason
-            for the failed match:
-                coord_dim_mismatch  : Mismatch in coordinate vector sizes
-                atom_dim_mismatch   : Mismatch in atom symbol vector sizes
-                coord_mismatch      : Mismatch in one or more coordinates
-                atom_mismatch       : Mismatch in one or more atoms
-                #DOC: Propagate info when mismatch code converted to Enum
-        fail_loc   : length-3N bool or length-N bool
-            np.array vector indicating positions of mismatch in
-            either coords or atoms, depending on the value of fail_type.
-            True elements indicate corresponding *MATCHING* values; False
-            elements mark *MISMATCHES*.
-
-        Raises
-        ------
-        ValueError : If len(coords) != 3 * len(atoms)
-        """
-
-        # Import(s)
-        from .utils import check_geom as ucg
-
-        # Wrapper call
-        result = ucg(self.geom, self.atom_syms, coords, atoms, tol=tol)
-
-        # Return result
-        return result
-
-    ## end def check_geom
+## end class OrcaHess
 
 
 if __name__ == '__main__':  # pragma: no cover

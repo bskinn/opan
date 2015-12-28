@@ -123,8 +123,6 @@ gradient data from external computational packages.
 _DEBUG = False
 
 
-#TODO: Make abstract ENGRAD superclass and put check_geom into it; then make
-#  all specific grad classes inherit from it.
 
 class SuperOpanGrad(object):
     """ Abstract superclass of gradient import classes.
@@ -199,7 +197,7 @@ class SuperOpanGrad(object):
         if not hasattr(self, 'atom_syms'): # pragma: no cover
             raise(GErr(GErr.BADATOM, "Atoms list not found", srcstr))
         ## end if
-        if type(self.atom_syms) is not type(range(3)):
+        if type(self.atom_syms) is not type(range(3)): # pragma: no cover
             raise(GErr(GErr.BADATOM, "Atoms list is not a list", srcstr))
         ## end if
         if 3*len(self.atom_syms) != self.gradient.shape[0]: # pragma: no cover
@@ -239,31 +237,10 @@ class SuperOpanGrad(object):
             :data:`DEF.GRAD_COORD_MATCH_TOL
             <opan.const.DEF.GRAD_COORD_MATCH_TOL>`
 
-        Returns
-        -------
-        match  : bool
-            Whether input `coords` and `atoms` match those in the
-            instance (|True|) or not (|False|)
 
-        fail_type  : str
-            If `match` == |False|, a string description code for the reason
-            for the failed match:
-            coord_dim_mismatch  : Mismatch in coordinate vector sizes
-            atom_dim_mismatch   : Mismatch in atom symbol vector sizes
-            coord_mismatch      : Mismatch in one or more coordinates
-            atom_mismatch       : Mismatch in one or more atoms
-            #DOC: Propagate info when mismatch code converted to Enum
+        See :func:`opan.utils.check_geom <opan.utils.base.check_geom>` for
+        details on return values and exceptions raised.
 
-        fail_loc   : length-3N bool or length-N bool
-            np.array indicating positions of mismatch in
-            either `coords` or `atoms`, depending on the value of `fail_type`.
-            |True| elements indicate corresponding **MATCHING** values;
-            |False| elements mark **MISMATCHES**.
-
-        Raises
-        ------
-        ~exceptions.ValueError
-            If ``len(coords) != 3 * len(atoms)``
         """
 
         # Import(s)
@@ -484,27 +461,27 @@ class OrcaEngrad(SuperOpanGrad):
         with open(engrad_path,'rU') as in_fl:
             self.engrad_path = engrad_path
             self.in_str = in_fl.read()
+        ## end with
+
+        # Store source string
+        srcstr = "ENGRAD File: {0}".format(engrad_path)
 
         # Check to ensure all relevant data blocks are found
         if not self.Pat.numats.search(self.in_str):
             raise(GradError(GradError.NUMATS,
-                    "Number of atoms specification not found",
-                    "ENGRAD File: {0}".format(engrad_path)))
+                    "Number of atoms specification not found", srcstr))
         ## end if
         if not self.Pat.energy.search(self.in_str):
             raise(GradError(GradError.ENERGY,
-                    "Energy specification not found",
-                    "ENGRAD File: {0}".format(engrad_path)))
+                    "Energy specification not found", srcstr))
         ## end if
         if not self.Pat.gradblock.search(self.in_str):
             raise(GradError(GradError.GRADBLOCK,
-                    "Gradient data block not found",
-                    "ENGRAD File: {0}".format(engrad_path)))
+                    "Gradient data block not found", srcstr))
         ## end if
         if not self.Pat.atblock.search(self.in_str):
             raise(GradError(GradError.GEOMBLOCK,
-                    "Geometry data block not found",
-                    "ENGRAD File: {0}".format(engrad_path)))
+                    "Geometry data block not found", srcstr))
         ## end if
 
         # Retrieve the number of atoms
@@ -520,7 +497,7 @@ class OrcaEngrad(SuperOpanGrad):
         if not len(grad_str.splitlines()) == 3 * self.num_ats:
             raise(GradError(GradError.GRADBLOCK,
                     "Gradient block size mismatch with number of atoms",
-                    "ENGRAD File: {0}".format(engrad_path)))
+                    srcstr))
         ## end if
         self.gradient = np.array(grad_str.splitlines(), dtype=np.float_)
 
@@ -531,7 +508,7 @@ class OrcaEngrad(SuperOpanGrad):
         if not len(self.Pat.atline.findall(geom_str)) ==  self.num_ats:
             raise(GradError(GradError.GEOMBLOCK,
                     "Inconsistent number of atom coordinates in \
-                    geometry block", "ENGRAD File: {0}".format(engrad_path)))
+                    geometry block", srcstr))
         ## end if
 
         # Initialize the atom symbols list
@@ -554,8 +531,7 @@ class OrcaEngrad(SuperOpanGrad):
                 if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
                     raise(GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unsupported element"
-                                                        .format(atom_count),
-                             "ENGRAD file: {0}".format(self.engrad_path)))
+                            .format(atom_count), srcstr))
                 ##end if
 
                 # Tag on the new symbol
@@ -570,8 +546,7 @@ class OrcaEngrad(SuperOpanGrad):
                 except KeyError:
                     raise(GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unrecognized element"
-                                                        .format(atom_count),
-                            "ENGRAD file: {0}".format(engrad_path)))
+                            .format(atom_count), srcstr))
                 ## end try
 
                 # Now check whether the successfully converted atomic
@@ -579,8 +554,7 @@ class OrcaEngrad(SuperOpanGrad):
                 if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
                     raise(GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unsupported element"
-                                                            .format(atom_count),
-                             "ENGRAD file: {0}".format(engrad_path)))
+                            .format(atom_count), srcstr))
                 ## end if
 
                 # Tag on the new symbol
