@@ -110,7 +110,6 @@ gradient data from external computational packages.
 **Subclasses**
 
 .. autoclass:: OrcaEngrad(path='...')
-    :members:
 
 
 """
@@ -329,8 +328,9 @@ class OrcaEngrad(SuperOpanGrad):
 
     # Imports
 
-    # Various class-level RegEx patterns, wrapped in a class
     class Pat(object):
+        """ Various class-level RegEx patterns, wrapped in a class. """
+
         # Imports
         import re as _re
 
