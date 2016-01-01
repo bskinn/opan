@@ -1,5 +1,6 @@
 .. Breakout of the various units used in opan
 
+.. _units-header:
 
 Units of Measure
 ===================

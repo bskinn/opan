@@ -323,7 +323,7 @@ class OrcaHess(SuperOpanHess):
     The precision of the geometry is less than that reported in an .xyz file,
     and thus should **not** be used for generation of subsequent computations.
 
-    Output :doc:`units </units>`:
+    Output :ref:`units <units-header>`:
 
          *  Hessian : Hartrees per Bohr-squared
             :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm{B}^2}\\right)`
@@ -350,47 +350,89 @@ class OrcaHess(SuperOpanHess):
 
     **Class Variables**
 
-    re.compile() patterns:
+    .. class:: Pat
 
-    p_at_block: Entire block of atom ID & weight, and geom data.
-    p_at_line: Individual lines within the atom specification block
+        :func:`re.compile` patterns for data parsing.
 
-    p_dipder_block: Dipole derivatives block
-    p_dipder_line: Individual lines in the dipole derivatives block
+        |
 
-    p_eigvals_block: Mass-weighted Hessian eigenvalues block
-    p_eigvals_line: Individual lines of the eigenvalues block
+        .. attribute:: at_block
 
-    p_eigvecs_block: Mass-weighted Hessian eigenvectors block
-    p_eigvecs_sec: Sections of the eigenvectors block
-    p_eigvecs_line: Individual lines of a section of the eigenvectors block
+            Captures the entire block of atom IDs & weights, as
+            well as the geometry data.
 
-    p_energy: The energy reported in the .hess file
+        .. attribute:: at_line
 
-    p_freq_block: Entire vibrational frequencies block (cm**-1 units)
-    p_freq_line: Individual lines of the frequencies block
+            Retrieves individual lines within the atom / geometry
+            specification block.
 
-    p_jobs_block: Entire job list block
-    p_jobs_line: Individual lines of the job list block
+        .. attribute:: dipder_block
 
-    p_hess_block: Entire Hessian block
-    p_hess_sec: Full-height, 3- or 6-column section of the Hessian
-    p_hess_line: Single line within a Hessian section
+            Captures the entire dipole derivatives block.
 
-    p_ir_block: Full IR spectrum block
-    p_ir_line: Individual IR spectrum lines
+        .. attribute:: dipder_line
 
-    p_modes_block: Entire modes block
-    p_modes_sec: Full-height, 3- or 6-column section of the modes block
-    p_modes_line: Single line within a modes block section
+            Retrieves individual lines in the dipole derivatives block.
 
-    p_polder_block: Polarizability derivatives block
-    p_polder_line: Individual lines in the polarizability derivatives block
+        .. attribute:: eigvals_block
 
-    p_raman_block: Entire Raman spectrum block
-    p_raman_line: Individual lines in the Raman block
+            Captures the entire mass-weighted Hessian eigenvalues block.
 
-    p_temp: The 'actual temperature' field (may be meaningless?)
+        .. attribute:: eigvals_line
+
+            Retrieves individual lines of the mass-weighted
+            hessian eigenvalues block.
+
+        .. attribute:: eigvecs_block
+
+            Captures the entire set of mass-weighted Hessian
+            eigenvectors blocks.
+
+        .. attribute:: eigvecs_sec
+
+            Extracts sections (individual blocks) of the mass-weighted
+            Hessian eigenvectors blocks.
+
+        .. attribute:: eigvecs_line
+
+            Retrieves individual lines of a mass-weighted
+            Hessian eigenvectors block.
+
+        .. attribute:: energy
+
+            Retrieves the energy reported in the .hess file.
+
+        .. attribute:: freq_block
+
+            Captures the entire vibrational frequencies block.
+
+        .. attribute:: freq_line
+
+            Retrieves individual lines of the frequencies block.
+
+        p_jobs_block: Entire job list block
+        p_jobs_line: Individual lines of the job list block
+
+        p_hess_block: Entire Hessian block
+        p_hess_sec: Full-height, 3- or 6-column section of the Hessian
+        p_hess_line: Single line within a Hessian section
+
+        p_ir_block: Full IR spectrum block
+        p_ir_line: Individual IR spectrum lines
+
+        p_modes_block: Entire modes block
+        p_modes_sec: Full-height, 3- or 6-column section of the modes block
+        p_modes_line: Single line within a modes block section
+
+        p_polder_block: Polarizability derivatives block
+        p_polder_line: Individual lines in the polarizability derivatives block
+
+        p_raman_block: Entire Raman spectrum block
+        p_raman_line: Individual lines in the Raman block
+
+        p_temp: The 'actual temperature' field (may be meaningless?)
+
+    |
 
     **Instance Variables**
 
