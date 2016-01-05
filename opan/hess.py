@@ -410,12 +410,26 @@ class OrcaHess(SuperOpanHess):
 
             Retrieves individual lines of the frequencies block.
 
-        p_jobs_block: Entire job list block
-        p_jobs_line: Individual lines of the job list block
+        .. attribute:: jobs_block
 
-        p_hess_block: Entire Hessian block
-        p_hess_sec: Full-height, 3- or 6-column section of the Hessian
-        p_hess_line: Single line within a Hessian section
+            Captures the entire job list block.
+
+        .. attribute:: jobs_line
+
+            Retrieves individual lines of the job list block.
+
+        .. attribute:: hess_block
+
+            Captures the entire set of Hessian blocks.
+
+        .. attribute:: hess_sec
+
+            Extracts full-height, 3- or 6-column sections (individual
+            blocks) of the set of Hessian blocks.
+
+        .. attribute:: hess_line
+
+            Retrieves individual lines within a Hessian block.
 
         p_ir_block: Full IR spectrum block
         p_ir_line: Individual IR spectrum lines
