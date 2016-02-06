@@ -15,8 +15,8 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   API <api/index>
    User Guide <userguide/index>
+   API <api/index>
    conventions
    software
    Package Dependencies <dependencies>

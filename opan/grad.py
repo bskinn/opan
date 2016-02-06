@@ -302,26 +302,32 @@ class OrcaEngrad(SuperOpanGrad):
 
     **Instance Variables**
 
-    atom_syms
+    .. attribute:: OrcaEngrad.atom_syms
+
         length-N `list` of `str` -- Uppercased atomic symbols
         for the atoms in the system.
 
-    energy
-        float -- Single-point energy for the geometry.
+    .. attribute:: OrcaEngrad.energy
 
-    geom
+        `float` -- Single-point energy for the geometry.
+
+    .. attribute:: OrcaEngrad.geom
+
         length-3N ``np.float_`` -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
-    gradient
+    .. attribute:: OrcaEngrad.gradient
+
         length-3N ``np.float_`` -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
-    in_str
+    .. attribute:: OrcaEngrad.in_str
+
         `str` -- Complete text of the ENGRAD file read in
         to generate the :class:`OrcaEngrad` instance.
 
-    num_ats
+    .. attribute:: OrcaEngrad.num_ats
+
         `int` --  Number of atoms in the geometry ('N')
 
     """

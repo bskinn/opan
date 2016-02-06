@@ -342,7 +342,7 @@ class OrcaHess(SuperOpanHess):
          *  Polarizability derivatives : (???)
 
          *  Eigenvalues of the mass-weighted Hessian :
-            :math:`\\frac{\\mathrm{E_h}}{\\mathrm{uB^2}}`
+            :math:`\\frac{\\mathrm{E_h}}{\\mathrm{u\,B^2}}`
 
          *  Eigenvectors of the mass-weighted Hessian : (dimensionless)
 
@@ -410,14 +410,6 @@ class OrcaHess(SuperOpanHess):
 
             Retrieves individual lines of the frequencies block.
 
-        .. attribute:: jobs_block
-
-            Captures the entire job list block.
-
-        .. attribute:: jobs_line
-
-            Retrieves individual lines of the job list block.
-
         .. attribute:: hess_block
 
             Captures the entire set of Hessian blocks.
@@ -431,27 +423,67 @@ class OrcaHess(SuperOpanHess):
 
             Retrieves individual lines within a Hessian block.
 
-        p_ir_block: Full IR spectrum block
-        p_ir_line: Individual IR spectrum lines
+        .. attribute:: jobs_block
 
-        p_modes_block: Entire modes block
-        p_modes_sec: Full-height, 3- or 6-column section of the modes block
-        p_modes_line: Single line within a modes block section
+            Captures the entire job list block.
 
-        p_polder_block: Polarizability derivatives block
-        p_polder_line: Individual lines in the polarizability derivatives block
+        .. attribute:: jobs_line
 
-        p_raman_block: Entire Raman spectrum block
-        p_raman_line: Individual lines in the Raman block
+            Retrieves individual lines of the job list block.
 
-        p_temp: The 'actual temperature' field (may be meaningless?)
+        .. attribute:: ir_block
+
+            Captures the entire IR spectrum block
+
+        .. attribute:: ir_line
+
+            Retrieves individual lines of the IR spectrum block
+
+        .. attribute:: modes_block
+
+            Captures the entire set of (weighted, column-normalized)
+            normal modes blocks
+
+        .. attribute:: modes_sec
+
+            Extracts full-height, 3- or 6-column sections (individual
+            blocks) of the set of normal modes blocks
+
+        .. attribute:: modes_line
+
+            Retrieves individual lines within a normal modes block
+
+        .. attribute:: polder_block
+
+            Captures the polarizability derivatives block
+
+        .. attribute:: polder_line
+
+            Retrieves individual lines in the polarizability
+            derivatives block
+
+        .. attribute:: raman_block
+
+            Captures the Raman spectrum block
+
+        .. attribute:: raman_line
+
+            Retrieves individual lines in the Raman spectrum block
+
+        .. attribute:: temp
+
+            Retrieves the 'actual temperature' field (sometimes
+            is spuriously zero)
 
     |
 
     **Instance Variables**
 
-    atom_masses     : length-N list of ``np.float_``
-        List of atom masses as reported in HESS
+    .. attribute:: OrcaHess.atom_masses
+
+        length-N list of ``np.float_`` --
+        List of atom masses as reported in the .hess file
+
     atom_syms       : length-N list of str
         List of uppercase atomic symbols
     dipders         : 3N x 3 ``p.float_``
