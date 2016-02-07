@@ -124,15 +124,21 @@ rst_epilog = """
 .. |None| replace:: :obj:`None`
 .. |True| replace:: :obj:`True`
 .. |False| replace:: :obj:`False`
-.. |npfloat| replace:: `np.float\\_ <http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html>`__
-.. |int| replace:: `int <https://docs.python.org/2.7/library/functions.html#int>`__
-.. |float| replace:: `float <https://docs.python.org/2.7/library/functions.html#float>`__
+.. |npfloat| replace:: `np.float_`
+.. |int| replace:: `int`
+.. |float| replace:: `float`
+.. |str| replace:: `str`
 .. |br| raw:: html
 
     <br />
 
 
 """
+
+# Not-great replacements for the epilog
+# .. |npfloat| replace:: `np.float\\_ <http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html>`__
+#.. |int| replace:: `int <https://docs.python.org/2.7/library/functions.html#int>`__
+#.. |float| replace:: `float <https://docs.python.org/2.7/library/functions.html#float>`__
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False

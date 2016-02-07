@@ -133,7 +133,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         be to a local script; stream redirection of the forked process
         is not supported in this function.
 
-    subs    : `dict` of `str`, optional
+    subs    : `dict` of |str|, optional
         Substitutions to be performed in the template (see *Template
         Substitution*, above).
 
@@ -154,7 +154,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     Returns
     -------
-    `tuple` of objects or `int` PID
+    `tuple` of objects or |int| PID
         Varies depending on `wait_to_complete`; see *Return Values* above
 
 

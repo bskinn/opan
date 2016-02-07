@@ -21,7 +21,7 @@
 """ Module implementing imports of Hessian data from external computations.
 
 The abstract superclass :class:`SuperOpanHess` defines a common initializer
-and common method(s) that for use by subclasses importing
+and common method(s)  for use by subclasses importing
 Hessian data from external computational packages.
 
 |
@@ -134,7 +134,7 @@ Hessian data from external computational packages.
 
     *   In the instance member ``self.atom_syms``
 
-    *   As a `list` of `str`, with each atom specified by an ALL-CAPS
+    *   As a `list` of |str|, with each atom specified by an ALL-CAPS
         atomic symbol (:data:`opan.const.atom_sym` may be helpful)
 
  *  Subclasses MAY define an unlimited number of class and/or
@@ -267,10 +267,10 @@ class SuperOpanHess(object):
 
         Parameters
         ----------
-        coords : length-3N ``np.float_``
+        coords : length-3N |npfloat|
             Vector of stacked 'lab-frame' Cartesian coordinates
 
-        atoms  : length-N `str` or `int`
+        atoms  : length-N |str| or |int|
             Vector of atom symbols or atomic numbers
 
         tol    : float, optional
@@ -481,46 +481,93 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.atom_masses
 
-        length-N list of ``np.float_`` --
+        length-N list of |npfloat| --
         List of atom masses as reported in the .hess file
 
-    atom_syms       : length-N list of str
+    .. attribute:: OrcaHess.atom_syms
+
+        length-N list of |str| --
         List of uppercase atomic symbols
-    dipders         : 3N x 3 ``p.float_``
+
+    .. attribute:: OrcaHess.dipders
+
+        3N x 3 |npfloat| --
         Matrix of dipole derivatives
-    energy          : float
-        Energy reported in the Hessian file
-    freqs           : length-3N ``np.float_``
-        Vibrational frequencies (cm**-1) as reported in the Hessian file
-    geom            : length-3N ``np.float_``
-        Column vector of geometry [x1, y1, z1, x2, y2, ...]
-    hess            : 3N x 3N ``np.float_``
+
+    .. attribute:: OrcaHess.energy
+
+        |float| -- Electronic energy reported in the Hessian file
+
+    .. attribute:: OrcaHess.freqs
+
+        length-3N |npfloat| --
+        Vibrational frequencies in
+        :math:`\\mathrm{cyc\\over cm}`,
+        as reported in the Hessian file
+
+    .. attribute:: OrcaHess.geom
+
+        length-3N |npfloat| --
+        Geometry vector
+
+    .. attribute:: OrcaHess.hess
+
+        3N x 3N |npfloat| --
         Cartesian Hessian matrix
-    hess_path       : str
+
+    .. attribute:: OrcaHess.hess_path
+
+        |str| --
         Complete path/filename from which the Hessian data was retrieved
-    joblist         : N x 3 bool
+
+    .. attribute:: OrcaHess.joblist
+
+        N x 3 `bool` --
         Completion status for each displacement in calculation of the Hessian
-    in_str          : str
-        Complete contents of the imported HESS file
-    ir_comps        : 3N x 3 ``np.float_``
-        (Tx, Ty, Tz) components of the transition dipole for each normal mode
-    ir_mags         : length-3N ``np.float_``
-        T**2 values (squared-magnitudes) of the transition dipole for each mode
-    modes           : 3N x 3N ``np.float_``
-        Rotation- and translation-purified vibrational normal modes,
-        with each mode (column vector) individually normalized by |orca|.
-    mwh_eigvals     : length-3N ``np.float_``
-        Eigenvalues of the mass-weighted Hessian
-    mwh_eigvecs     : 3N x 3N ``np.float_``
-        Eigenvectors of the mass-weighted Hessian (as column vectors: the
-        eigenvector of eigenvalue 'i' would be 'mwh_eigvecs[:,i]')
+
+    .. attribute:: OrcaHess.in_str
+
+        |str| -- Complete contents of the imported .hess file
+
+    .. attribute:: OrcaHess.ir_comps
+
+        3N x 3 |npfloat| --
+        :math:`\\left(T_x, T_y, T_z\\right)`
+        components of the transition dipole for each normal mode
+
+    .. attribute:: OrcaHess.ir_mags
+
+        length-3N |npfloat| --
+        :math:`T^2` values (squared-magnitudes) of the
+        transition dipole for each mode
+
+    .. attribute:: OrcaHess.modes
+
+        3N x 3N |npfloat| --
+        Rotation- and translation-purified, mass-weighted
+        vibrational normal modes,
+        with each mode (column vector) separately normalized by |orca|.
+
+    .. attribute:: OrcaHess.mwh_eigvals
+
+        length-3N |npfloat| --
+        Eigenvalues of the mass-weighted Hessian, in
+        :math:`\\mathrm{E_h \\over u\\,B^2}`
+
+    .. attribute:: OrcaHess.mwh_eigvecs
+
+        3N x 3N |npfloat| --
+        Eigenvectors of the mass-weighted Hessian, as column vectors: the
+        eigenvector of eigenvalue :math:`i` would be retrieved with
+        :samp:`mwh_eigvecs[:,{i}]`
+
     num_ats         : int
         Number of atoms in the system
-    polders         : 3N x 6 ``np.float_``
+    polders         : 3N x 6 |npfloat|
         Matrix of Cartesian polarizability derivatives
-    raman_acts      : length-3N ``np.float_``
+    raman_acts      : length-3N |npfloat|
         Vector of Raman activities
-    raman_depols    : length-3N ``np.float_``
+    raman_depols    : length-3N |npfloat|
         Vector of Raman depolarization factors
     temp            : float
         "Actual temperature" reported in the .hess file. May be meaningless.

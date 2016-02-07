@@ -38,13 +38,13 @@ class arraysqueeze(object):
     arguments according to integer indices passed, and to any keyword arguments
     according to any strings passed.
 
-    Each `int` argument passed instructs the decorator to convert the
+    Each |int| argument passed instructs the decorator to convert the
     corresponding positional argument in the function definition.
 
-    Each `str` argument passed instructs the decorator to convert the
+    Each |str| argument passed instructs the decorator to convert the
     corresponding keyword argument.
 
-    `str` parameters corresponding to keyword arguments absent in a
+    |str| parameters corresponding to keyword arguments absent in a
     particular function call and positional/optional argument indices
     beyond the range of the actual `\*args` of the decorated
     function are ignored.
@@ -53,7 +53,7 @@ class arraysqueeze(object):
 
     Arguments
     ---------
-    \*args : `int` or `str`
+    \*args : |int| or |str|
         Arguments to convert to squeezed np.arrays.
 
 

@@ -92,7 +92,7 @@ gradient data from external computational packages.
 
     *   In the instance member ``self.atom_syms``
 
-    *   As a `list` of `str`, with each atom specified by an ALL-CAPS
+    *   As a `list` of |str|, with each atom specified by an ALL-CAPS
         atomic symbol (:data:`opan.const.atom_sym` may be helpful)
 
  *  Subclasses MAY define an unlimited number of class and/or
@@ -223,10 +223,10 @@ class SuperOpanGrad(object):
 
         Parameters
         ----------
-        coords : length-3N ``np.float_``
+        coords : length-3N |npfloat|
             Vector of stacked 'lab-frame' Cartesian coordinates
 
-        atoms  : length-N str or int
+        atoms  : length-N |str| or |int|
             Vector of atom symbols or atomic numbers
 
         tol    : float, optional
@@ -304,31 +304,31 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.atom_syms
 
-        length-N `list` of `str` -- Uppercased atomic symbols
+        length-N `list` of |str| -- Uppercased atomic symbols
         for the atoms in the system.
 
     .. attribute:: OrcaEngrad.energy
 
-        `float` -- Single-point energy for the geometry.
+        |float| -- Single-point energy for the geometry.
 
     .. attribute:: OrcaEngrad.geom
 
-        length-3N ``np.float_`` -- Vector of the atom coordinates
+        length-3N |npfloat| -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
     .. attribute:: OrcaEngrad.gradient
 
-        length-3N ``np.float_`` -- Vector of the Cartesian gradient in
+        length-3N |npfloat| -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
     .. attribute:: OrcaEngrad.in_str
 
-        `str` -- Complete text of the ENGRAD file read in
+        |str| -- Complete text of the ENGRAD file read in
         to generate the :class:`OrcaEngrad` instance.
 
     .. attribute:: OrcaEngrad.num_ats
 
-        `int` --  Number of atoms in the geometry ('N')
+        |int| --  Number of atoms in the geometry ('N')
 
     """
 

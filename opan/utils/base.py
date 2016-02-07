@@ -49,9 +49,9 @@ def pack_tups(*args):
     be the same length.
 
     The input arguments are parsed such that bare strings are treated as
-    **NON-ITERABLE**, through the use of a local subclass of `str` that
+    **NON-ITERABLE**, through the use of a local subclass of |str| that
     cripples the ``__iter__`` method. Any strings passed are returned
-    in the packed tuples as standard, **ITERABLE** instances of `str`, however.
+    in the packed tuples as standard, **ITERABLE** instances of |str|, however.
 
     The order of the input arguments is retained within each output tuple.
 
@@ -97,7 +97,7 @@ def pack_tups(*args):
 
     # Non-iterable subclass of str
     class StrNoIter(str):
-        """ Non-iterable subclass of `str`. """
+        """ Non-iterable subclass of |str|. """
         def __iter__(self):
             raise(NotImplementedError("Non-iterable string"))
         ## end def __iter__
@@ -212,7 +212,7 @@ def make_timestamp(el_time):
 
     Parameters
     ----------
-    el_time : `int` or `float`
+    el_time : |int| or |float|
         Time interval in seconds to be converted to h/m/s format
 
     Returns
@@ -253,16 +253,16 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
     Parameters
     ----------
-    c1      : length-3N ``np.float_``
+    c1      : length-3N |npfloat|
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
 
-    a1      : length-N `str` or `int`
+    a1      : length-N |str| or |int|
         Vector of first set of atom symbols or atomic numbers
 
-    c2      : length-3N ``np.float_``
+    c2      : length-3N |npfloat|
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
 
-    a2      : length-N `str` or `int`
+    a2      : length-N |str| or |int|
         Vector of second set of atom symbols or atomic numbers
 
     tol    : float, optional
@@ -277,7 +277,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         Whether input coords and atoms match (\ |True|\ ) or
         not (\ |False|\ )
 
-    fail_type  : `str` or |None|
+    fail_type  : |str| or |None|
         Type of check failure
 
         If `match` == |True|:
@@ -437,15 +437,15 @@ def template_subst(template, subs, delims=('<', '>')):
 
     Parameters
     ----------
-    template : `str`
+    template : |str|
         Template containing tags delimited by `subs_delims`,
         with tag names and substitution contents provided in `subs`
 
-    subs    : `dict` of `str`
+    subs    : `dict` of |str|
         Each item's key and value are the tag name and corresponding content to
         be substituted into the provided template.
 
-    delims : iterable of `str`
+    delims : iterable of |str|
         Iterable containing the 'open' and 'close' strings used to mark tags
         in the template, which are drawn from elements zero and one,
         respectively. Any elements beyond these are ignored.
@@ -533,7 +533,7 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     obj
         Object to be checked, or object with attribute to be checked.
 
-    varname : str or |None|
+    varname : |str| or |None|
         Name of the attribute of `obj` to be type-checked. |None|
         indicates to check `obj` itself.
 

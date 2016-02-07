@@ -72,7 +72,7 @@ class OrcaOutput(object):
             SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
             SPINCONT.DEV    : Deviation (calc - ideal)
 
-    str constants for keys of above 'dict struct' variables are also defined,
+    |str| constants for keys of above 'dict struct' variables are also defined,
         as class variables.  For example, to retrieve the Regex pattern for
         locating the vibrational entropy contribution, the following syntax
         can be used:

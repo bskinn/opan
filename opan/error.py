@@ -78,7 +78,7 @@ class OpanError(Exception):
     :class:`OpanError` is an abstract superclass of any custom errors defined
     under the OpenAnharmonic umbrella. It defines all common methods shared
     among the various subtype error classes, such that the only contents that
-    must be declared by a subclass are `str` class variables with contents
+    must be declared by a subclass are |str| class variables with contents
     identical to their names.  These are recognized by the
     :meth:`~OpanError.__metaclass__.__iter__`
     defined in :class:`~OpanError.__metaclass__` as being the
