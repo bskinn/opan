@@ -223,10 +223,10 @@ class SuperOpanGrad(object):
 
         Parameters
         ----------
-        coords : length-3N |npfloat|
+        coords : length-3N |npfloat|_
             Vector of stacked 'lab-frame' Cartesian coordinates
 
-        atoms  : length-N |str| or |int|
+        atoms  : length-N |str| or |int|_
             Vector of atom symbols or atomic numbers
 
         tol    : float, optional
@@ -313,12 +313,12 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.geom
 
-        length-3N |npfloat| -- Vector of the atom coordinates
+        length-3N |npfloat|_ -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
     .. attribute:: OrcaEngrad.gradient
 
-        length-3N |npfloat| -- Vector of the Cartesian gradient in
+        length-3N |npfloat|_ -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
     .. attribute:: OrcaEngrad.in_str
@@ -328,7 +328,7 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.num_ats
 
-        |int| --  Number of atoms in the geometry ('N')
+        |int|_ --  Number of atoms in the geometry ('N')
 
     """
 

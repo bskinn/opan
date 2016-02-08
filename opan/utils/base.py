@@ -212,7 +212,7 @@ def make_timestamp(el_time):
 
     Parameters
     ----------
-    el_time : |int| or |float|
+    el_time : |int|_ or |float|
         Time interval in seconds to be converted to h/m/s format
 
     Returns
@@ -253,16 +253,16 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
     Parameters
     ----------
-    c1      : length-3N |npfloat|
+    c1      : length-3N |npfloat|_
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
 
-    a1      : length-N |str| or |int|
+    a1      : length-N |str| or |int|_
         Vector of first set of atom symbols or atomic numbers
 
-    c2      : length-3N |npfloat|
+    c2      : length-3N |npfloat|_
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
 
-    a2      : length-N |str| or |int|
+    a2      : length-N |str| or |int|_
         Vector of second set of atom symbols or atomic numbers
 
     tol    : float, optional
@@ -274,11 +274,11 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     Returns
     -------
     match  : bool
-        Whether input coords and atoms match (\ |True|\ ) or
-        not (\ |False|\ )
+        (|bool|_) -- Whether input coords and atoms match (|True|) or
+        not (|False|)
 
-    fail_type  : |str| or |None|
-        Type of check failure
+    fail_type
+        |str|_ or |None| -- Type of check failure
 
         If `match` == |True|:
 

@@ -199,7 +199,7 @@ class OpanXYZ(object):
 
     .. attribute:: geoms
 
-        length-G `list` of length-3N |npfloat| -- Molecular
+        length-G `list` of length-3N |npfloat|_ -- Molecular
         geometry/geometries read from file or passed to `coords` argument
 
     .. attribute:: in_str
@@ -212,11 +212,11 @@ class OpanXYZ(object):
 
     .. attribute:: num_atoms
 
-        |int| -- Number of atoms per geometry, N
+        |int|_ -- Number of atoms per geometry, N
 
     .. attribute:: num_geoms
 
-        |int| -- Number of geometries, G
+        |int|_ -- Number of geometries, G
 
     .. attribute:: XYZ_path
 
@@ -360,7 +360,7 @@ class OpanXYZ(object):
         atom_syms   : squeezes to array of N strings
             Element symbols for the XYZ. Must be valid elements as defined in
             .const.atom_num.keys()
-        coords      : squeezes to array of 3N |npfloat| castables
+        coords      : squeezes to array of 3N |npfloat|_ castables
             Coordinates for the geometry (x1, y1, z1, x2, y2, ...)
         bohrs       : bool, default True
             Units of coordinates
@@ -688,7 +688,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        length-3N |npfloat|
+        length-3N |npfloat|_
             Vector of the atomic coordinates for the geometry indicated
             by `g_num`
 
@@ -709,10 +709,10 @@ class OpanXYZ(object):
         """Iterator over a subset of geometries.
 
         The indices of the geometries to be returned are indicated by an
-        iterable of |int|\\ s passed as `g_nums`.
+        iterable of |int|_\\ s passed as `g_nums`.
 
         As with :meth:`geom_single`, each geometry is returned as a
-        length-3N |npfloat| with each atom's x/y/z coordinates
+        length-3N |npfloat|_ with each atom's x/y/z coordinates
         grouped together::
 
             [A1x, A1y, A1z, A2x, A2y, A2z, ...]
@@ -727,12 +727,12 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : length-R iterable of |int|
+        g_nums : length-R iterable of |int|_
             Indices of the desired geometries
 
         Yields
         ------
-        length-3N |npfloat|
+        length-3N |npfloat|_
             Vectors of the atomic coordinates for each geometry
             indicated in `g_nums`
 
@@ -769,7 +769,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        |npfloat|
+        |npfloat|_
             Distance in Bohrs between `at_1` and `at_2` from
             geometry `g_num`
 
@@ -828,13 +828,13 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int| or length-R iterable |int| or |None|
+        g_nums : |int|_ or length-R iterable |int|_ or |None|
             Index/indices of the desired geometry/geometries
 
-        ats_1 : |int| or iterable|int|or |None|
+        ats_1 : |int|_ or iterable |int|_ or |None|
             Index/indices of the first atom(s)
 
-        ats_2 : |int| or iterable|int|or |None|
+        ats_2 : |int|_ or iterable |int|_ or |None|
             Index/indices of the second atom(s)
 
         invalid_error  : bool
@@ -844,7 +844,7 @@ class OpanXYZ(object):
 
         Yields
         ------
-        |npfloat|
+        |npfloat|_
             Interatomic distance in Bohrs between each atom pair of
             `ats_1` and `ats_2` from the corresponding geometries
             of `g_nums`.
@@ -914,7 +914,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        |npfloat|
+        |npfloat|_
             Spanning angle in degrees between `at_1`-`at_2`-`at_3`, from
             geometry `g_num`
 
@@ -992,16 +992,16 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int| or iterable|int|or |None|
+        g_nums : |int|_ or iterable |int|_ or |None|
             Index of the desired geometry
 
-        ats_1  : |int| or iterable|int|or |None|
+        ats_1  : |int|_ or iterable |int|_ or |None|
             Index of the first atom
 
-        ats_2  : |int| or iterable|int|or |None|
+        ats_2  : |int|_ or iterable |int|_ or |None|
             Index of the second atom
 
-        ats_3  : |int| or iterable|int|or |None|
+        ats_3  : |int|_ or iterable |int|_ or |None|
             Index of the third atom
 
         invalid_error  : bool
@@ -1011,7 +1011,7 @@ class OpanXYZ(object):
 
         Yields
         ------
-        |npfloat|
+        |npfloat|_
             Spanning angles in degrees between corresponding |br|
             `ats_1`-`ats_2`-`ats_3`, from geometry/geometries `g_nums`
 
@@ -1106,7 +1106,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        |npfloat|
+        |npfloat|_
             Out-of-plane/dihedral angle in degrees for the indicated `at_#`,
             drawn from geometry `g_num`
 
@@ -1262,19 +1262,19 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums   : |int| or iterable|int|or |None|
+        g_nums   : |int|_ or iterable |int|_ or |None|
             Indices of the desired geometry
 
-        ats_1    : |int| or iterable|int|or |None|
+        ats_1    : |int|_ or iterable |int|_ or |None|
             Indices of the first atoms
 
-        ats_2    : |int| or iterable|int|or |None|
+        ats_2    : |int|_ or iterable |int|_ or |None|
             Indices of the second atoms
 
-        ats_3    : |int| or iterable|int|or |None|
+        ats_3    : |int|_ or iterable |int|_ or |None|
             Indices of the third atoms
 
-        ats_4    : |int| or iterable|int|or |None|
+        ats_4    : |int|_ or iterable |int|_ or |None|
             Indices of the fourth atoms
 
         invalid_error  : bool
@@ -1284,7 +1284,7 @@ class OpanXYZ(object):
 
         Yields
         ------
-        |npfloat|
+        |npfloat|_
             Out-of-plane/dihedral angles in degrees for the indicated
             atom sets `ats_1`-`ats_2`-`ats_3`-`ats_4`, drawn from
             the respective `g_nums`.
@@ -1362,7 +1362,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        length-3 |npfloat|
+        length-3 |npfloat|_
             Displacement vector from `at_1` to `at_2`
 
         Raises
@@ -1421,13 +1421,13 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int| or length-R iterable|int|or |None|
+        g_nums : |int|_ or length-R iterable |int|_ or |None|
             Index/indices of the desired geometry/geometries
 
-        ats_1 : |int| or length-R iterable|int|or |None|
+        ats_1 : |int|_ or length-R iterable |int|_ or |None|
             Index/indices of the first atom(s)
 
-        ats_2 : |int| or length-R iterable|int|or |None|
+        ats_2 : |int|_ or length-R iterable |int|_ or |None|
             Index/indices of the second atom(s)
 
         invalid_error  : bool
@@ -1437,7 +1437,7 @@ class OpanXYZ(object):
 
         Yields
         ------
-        |npfloat|
+        |npfloat|_
             Displacement vector in Bohrs between each atom pair of |br|
             `ats_1` :math:`\\rightarrow` `ats_2` from the corresponding
             geometries of `g_nums`.
@@ -1491,20 +1491,22 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        args : 3-5 arguments of|int|or iterable|int|type, or none
+        args : 3-5 arguments of |int|_ or iterable |int|_ type, or |None|
             First argument is always the indices for the geometries; all
             following are for the atoms in sequence as required for the
-            particular X_iter method
+            particular :samp:`{x}_iter` method
 
         Returns
         -------
         arglist     : 3-5 arguments, matching input params
-            Argument list, with 'None' substituted if validly present
+            Argument list, with |None| substituted if validly present
 
         Raises
         ------
-        ValueError  : If more than one 'None' argument is present
-        ValueError  : If an arg is non-str iterable when one 'None' is present
+        ~exceptions.ValueError  : If more than one |None| argument is present
+
+        ~exceptions.ValueError  : If an arg is non-|str|_ iterable when one
+        |None| is present
         """
 
         # Imports
@@ -1566,7 +1568,7 @@ class OpanXYZ(object):
 
         Returns
         -------
-        val     : |npfloat| or |None|
+        val     : |npfloat|_ or |None|
             Calculated value from fxn(*tup) call, or 'None' value indicating
             IndexError / ValueError
 

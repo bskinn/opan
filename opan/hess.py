@@ -267,10 +267,10 @@ class SuperOpanHess(object):
 
         Parameters
         ----------
-        coords : length-3N |npfloat|
+        coords : length-3N |npfloat|_
             Vector of stacked 'lab-frame' Cartesian coordinates
 
-        atoms  : length-N |str| or |int|
+        atoms  : length-N |str| or |int|_
             Vector of atom symbols or atomic numbers
 
         tol    : float, optional
@@ -481,7 +481,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.atom_masses
 
-        length-N list of |npfloat| --
+        length-N list of |npfloat|_ --
         List of atom masses as reported in the .hess file
 
     .. attribute:: OrcaHess.atom_syms
@@ -491,7 +491,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.dipders
 
-        3N x 3 |npfloat| --
+        3N x 3 |npfloat|_ --
         Matrix of dipole derivatives
 
     .. attribute:: OrcaHess.energy
@@ -500,19 +500,19 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.freqs
 
-        length-3N |npfloat| --
+        length-3N |npfloat|_ --
         Vibrational frequencies in
         :math:`\\mathrm{cyc\\over cm}`,
         as reported in the Hessian file
 
     .. attribute:: OrcaHess.geom
 
-        length-3N |npfloat| --
+        length-3N |npfloat|_ --
         Geometry vector
 
     .. attribute:: OrcaHess.hess
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat|_ --
         Cartesian Hessian matrix
 
     .. attribute:: OrcaHess.hess_path
@@ -520,57 +520,72 @@ class OrcaHess(SuperOpanHess):
         |str| --
         Complete path/filename from which the Hessian data was retrieved
 
-    .. attribute:: OrcaHess.joblist
-
-        N x 3 `bool` --
-        Completion status for each displacement in calculation of the Hessian
-
     .. attribute:: OrcaHess.in_str
 
-        |str| -- Complete contents of the imported .hess file
+        |str|_ -- Complete contents of the imported .hess file
 
     .. attribute:: OrcaHess.ir_comps
 
-        3N x 3 |npfloat| --
+        3N x 3 |npfloat|_ --
         :math:`\\left(T_x, T_y, T_z\\right)`
         components of the transition dipole for each normal mode
 
     .. attribute:: OrcaHess.ir_mags
 
-        length-3N |npfloat| --
+        length-3N |npfloat|_ --
         :math:`T^2` values (squared-magnitudes) of the
         transition dipole for each mode
 
+    .. attribute:: OrcaHess.joblist
+
+        N x 3 |bool|_ --
+        Completion status for each displacement in calculation of the Hessian
+
     .. attribute:: OrcaHess.modes
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat|_ --
         Rotation- and translation-purified, mass-weighted
         vibrational normal modes,
         with each mode (column vector) separately normalized by |orca|.
 
     .. attribute:: OrcaHess.mwh_eigvals
 
-        length-3N |npfloat| --
+        length-3N |npfloat|_ --
         Eigenvalues of the mass-weighted Hessian, in
         :math:`\\mathrm{E_h \\over u\\,B^2}`
 
     .. attribute:: OrcaHess.mwh_eigvecs
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat|_ --
         Eigenvectors of the mass-weighted Hessian, as column vectors: the
         eigenvector of eigenvalue :math:`i` would be retrieved with
         :samp:`mwh_eigvecs[:,{i}]`
 
-    num_ats         : int
-        Number of atoms in the system
-    polders         : 3N x 6 |npfloat|
+    .. attribute:: OrcaHess.num_ats
+
+        |int|_ _ -- Number of atoms in the system
+
+    .. attribute:: OrcaHess.polders
+
+        3N x 6 |npfloat|_ --
         Matrix of Cartesian polarizability derivatives
-    raman_acts      : length-3N |npfloat|
+
+    .. attribute:: OrcaHess.raman_acts
+
+        length-3N |npfloat|_ --
         Vector of Raman activities
-    raman_depols    : length-3N |npfloat|
+
+    .. attribute:: OrcaHess.raman_depols
+
+        length-3N |npfloat|_ --
         Vector of Raman depolarization factors
-    temp            : float
-        "Actual temperature" reported in the .hess file. May be meaningless.
+
+    .. attribute:: OrcaHess.temp
+
+        |float|_ --
+        "Actual temperature" reported in the .hess file. Occasionally
+        stored by |orca| as a meaningless zero value instead
+        of the temperature used.
 
     """
 

@@ -63,19 +63,19 @@ def ortho_basis(normal, ref_vec=None):
 
     Parameters
     ----------
-    normal   : length-3 |npfloat|
+    normal   : length-3 |npfloat|_
         The orthonormal basis output will span the plane perpendicular
         to `normal`.
-    ref_vec  : length-3 |npfloat|, optional
+    ref_vec  : length-3 |npfloat|_\\ , optional
         If specified, `on1` will be the normalized projection of `ref_vec`
         onto the plane perpendicular to `normal`. Default is |None|.
 
     Returns
     -------
-    on1 : length-3 |npfloat|
+    on1 : length-3 |npfloat|_
         First vector defining the orthonormal basis in the plane
         normal to `normal`
-    on2 : length-3 |npfloat|
+    on2 : length-3 |npfloat|_
         Second vector defining the orthonormal basis in the plane
         normal to `normal`
 
@@ -180,10 +180,10 @@ def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
 
     Parameters
     ----------
-    a : R x S |npfloat|
+    a : R x S |npfloat|_
         2-D array of column vectors to be checked for orthonormality.
 
-    tol : |npfloat|, optional
+    tol : |npfloat|_\\ , optional
         Tolerance for deviation of dot products from one or zero. Default
         value is :data:`opan.const.DEF.ORTHONORM_TOL`.
 
@@ -197,14 +197,14 @@ def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
         Indicates whether column vectors of `a` are orthonormal to within
         tolerance `tol`.
 
-    n_fail : list of |int| or |None|
+    n_fail : list of |int|_ or |None|
         If `report` == |True|: A list of indices of column vectors
         failing the normality condition, or an empty list if all vectors
         are normalized.
 
         If `report` == |False|: |None|
 
-    o_fail : list of 2-tuples of |int| or |None|
+    o_fail : list of 2-tuples of |int|_ or |None|
         If `report` == |True|: A list of 2-tuples of indices of
         column vectors failing the orthogonality condition, or an
         empty list if all vectors are orthogonal.
@@ -267,9 +267,9 @@ def parallel_check(vec1, vec2):
 
     Parameters
     ----------
-    vec1    : length-R |npfloat|
+    vec1    : length-R |npfloat|_
         First vector to compare
-    vec2    : length-R |npfloat|
+    vec2    : length-R |npfloat|_
         Second vector to compare
 
     Returns
@@ -321,14 +321,14 @@ def proj(vec, vec_onto):
 
     Parameters
     ----------
-    vec      : length-R |npfloat|
+    vec      : length-R |npfloat|_
         Vector to project
-    vec_onto : length-R |npfloat|
+    vec_onto : length-R |npfloat|_
         Vector onto which `vec` is to be projected
 
     Returns
     -------
-    length-R |npfloat|
+    length-R |npfloat|_
         Projection of `vec` onto `vec_onto`
     """
 
@@ -368,14 +368,14 @@ def rej(vec, vec_onto):
 
     Parameters
     ----------
-    vec      : length-R |npfloat|
+    vec      : length-R |npfloat|_
         Vector to reject
-    vec_onto : length-R |npfloat|
+    vec_onto : length-R |npfloat|_
         Vector onto which `vec` is to be rejected
 
     Returns
     -------
-    length-R |npfloat|
+    length-R |npfloat|_
         Rejection of `vec` onto `vec_onto`
     """
 
@@ -405,14 +405,14 @@ def vec_angle(vec1, vec2):
 
     Parameters
     ----------
-    vec1    : length-R |npfloat|
+    vec1    : length-R |npfloat|_
         First vector
-    vec2    : length-R |npfloat|
+    vec2    : length-R |npfloat|_
         Second vector
 
     Returns
     -------
-    |npfloat|
+    |npfloat|_
         Angle between the two vectors in degrees
 
     """

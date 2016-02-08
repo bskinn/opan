@@ -57,16 +57,16 @@ def ctr_mass(geom, masses):
 
     Parameters
     ----------
-    geom    : length-3N |npfloat|
+    geom    : length-3N |npfloat|_
         Coordinates of the atoms
 
-    masses  : length-N OR length-3N |npfloat|
+    masses  : length-N OR length-3N |npfloat|_
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr     : length-3 |npfloat|
+    ctr     : length-3 |npfloat|_
         Vector location of center of mass
 
     Raises
@@ -121,16 +121,16 @@ def ctr_geom(geom, masses):
 
     Parameters
     ----------
-    geom    : length-3N |npfloat|
+    geom    : length-3N |npfloat|_
         Original coordinates of the atoms
 
-    masses  : length-N OR length-3N |npfloat|
+    masses  : length-N OR length-3N |npfloat|_
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    ctr_geom    : length-3N |npfloat|
+    ctr_geom    : length-3N |npfloat|_
         Atomic coordinates after shift to center of mass
 
     Raises
@@ -168,16 +168,16 @@ def inertia_tensor(geom, masses):
 
     Parameters
     ----------
-    geom     : length-3N |npfloat|
+    geom     : length-3N |npfloat|_
         Coordinates of the atoms
 
-    masses   : length-N OR length-3N |npfloat|
+    masses   : length-N OR length-3N |npfloat|_
         Atomic masses of the atoms. Length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
     Returns
     -------
-    tensor   : 3 x 3 |npfloat|
+    tensor   : 3 x 3 |npfloat|_
         Moment of inertia tensor for the system
 
     Raises
@@ -252,25 +252,25 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
     Parameters
     ----------
-    geom     : length-3N |npfloat|
+    geom     : length-3N |npfloat|_
         Coordinates of the atoms
 
-    masses   : length-N OR length-3N |npfloat|
+    masses   : length-N OR length-3N |npfloat|_
         Atomic masses of the atoms. length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
-    on_tol   : |npfloat|, optional
+    on_tol   : |npfloat|_  optional
         Tolerance for deviation from unity/zero for principal axis dot products
         within which axes are considered orthonormal. Default is
         :data:`opan.const.DEF.ORTHONORM_TOL`.
 
     Returns
     -------
-    moments : length-3 |npfloat|
+    moments : length-3 |npfloat|_
         Principal inertial moments, sorted in increasing order
         :math:`\\left(0 \\leq I_A \\leq I_B \\leq I_C\\right)`
 
-    axes    : 3 x 3 |npfloat|
+    axes    : 3 x 3 |npfloat|_
         Principal axes, as column vectors, sorted with the principal moments
         and processed for repeatability. The axis corresponding to `moments[i]`
         is retrieved as `axes[:,i]`
@@ -503,10 +503,10 @@ def rot_consts(geom, masses, units=_EURC.INV_INERTIA, on_tol=_DEF.ORTHONORM_TOL)
 
     Parameters
     ----------
-    geom     : length-3N |npfloat|
+    geom     : length-3N |npfloat|_
         Coordinates of the atoms
 
-    masses   : length-N OR length-3N |npfloat|
+    masses   : length-N OR length-3N |npfloat|_
         Atomic masses of the atoms. length-3N option is to allow calculation of
         a per-coordinate perturbed value.
 
@@ -515,14 +515,14 @@ def rot_consts(geom, masses, units=_EURC.INV_INERTIA, on_tol=_DEF.ORTHONORM_TOL)
         constants. Default is :data:`~opan.const.EnumUnitsRotConst.INV_INERTIA`
         :math:`\\left(1\\over \\mathrm{uB^2}\\right)`
 
-    on_tol   : |npfloat|, optional
+    on_tol   : |npfloat|_\\ ,  optional
         Tolerance for deviation from unity/zero for principal axis dot products
         within which axes are considered orthonormal. Default is
         :data:`opan.const.DEF.ORTHONORM_TOL`
 
     Returns
     -------
-    rc       : length-3 |npfloat|
+    rc       : length-3 |npfloat|_
         Vector of rotational constants in the indicated units
 
     """
@@ -589,15 +589,15 @@ def _fadn_orth(vec, geom):
 
     Parameters
     ----------
-    vec     : length-3 |npfloat|
+    vec     : length-3 |npfloat|_
         Reference vector. Does not need to be normalized.
 
-    geom    : length-3N |npfloat|
+    geom    : length-3N |npfloat|_
         *CENTERED* molecular geometry
 
     Returns
     -------
-    out_vec : length-3 |npfloat|
+    out_vec : length-3 |npfloat|_
         Normalized non-zero atomic displacement not orthogonal to vec
 
     """
@@ -657,14 +657,14 @@ def _fadn_par(vec, geom):
 
     Parameters
     ----------
-    vec     : length-3 |npfloat|.
+    vec     : length-3 |npfloat|_
         Reference vector. Does not need to be normalized
-    geom    : length-3N |npfloat|
+    geom    : length-3N |npfloat|_
         *CENTERED* molecular geometry.
 
     Returns
     -------
-    out_vec : length-3 |npfloat|
+    out_vec : length-3 |npfloat|_
         Normalized non-zero atomic displacement not (anti-)parallel to vec.
 
     """

@@ -154,7 +154,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     Returns
     -------
-    `tuple` of objects or |int| PID
+    `tuple` of objects or |int|_ PID
         Varies depending on `wait_to_complete`; see *Return Values* above
 
 

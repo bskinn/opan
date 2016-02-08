@@ -120,14 +120,35 @@ modindex_common_prefix = ['opan.']
 # Epilogue for all files
 rst_epilog = """
 .. |extlink| image:: /_static/extlink.svg
+
 .. |orca| replace:: :ref:`ORCA <orca-description>`
+
 .. |None| replace:: :obj:`None`
+
 .. |True| replace:: :obj:`True`
+
 .. |False| replace:: :obj:`False`
+
 .. |npfloat| replace:: `np.float_`
+
+.. _npfloat: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
+
 .. |int| replace:: `int`
+
+.. _int: https://docs.python.org/2.7/library/functions.html#int
+
 .. |float| replace:: `float`
+
+.. _float: https://docs.python.org/2.7/library/functions.html#float
+
 .. |str| replace:: `str`
+
+.. _str: https://docs.python.org/2.7/library/functions.html#str
+
+.. |bool| replace:: `bool`
+
+.. _bool: https://docs.python.org/2.7/library/functions.html#bool
+
 .. |br| raw:: html
 
     <br />
@@ -135,10 +156,6 @@ rst_epilog = """
 
 """
 
-# Not-great replacements for the epilog
-# .. |npfloat| replace:: `np.float\\_ <http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html>`__
-#.. |int| replace:: `int <https://docs.python.org/2.7/library/functions.html#int>`__
-#.. |float| replace:: `float <https://docs.python.org/2.7/library/functions.html#float>`__
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False
