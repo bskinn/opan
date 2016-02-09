@@ -26,15 +26,17 @@ Module-Level Members
 
 Attributes
 ----------
-infty : str
-    Infinity symbol as Unicode string
-atom_num : dict
-    Atomic number lookup from element symbol
+infty
+    |unicode| -- Infinity symbol as Unicode string
+
+atom_num
+    |dict| -- Atomic number lookup from element symbol
 
     .. note:: Keys for `atom_num` are **all uppercase** (e.g., 'AR' for argon)
 
-atom_sym : dict
-    Element symbol lookup from atomic number, returned as **all uppercase**
+atom_sym
+    |dict| -- Element symbol lookup from atomic number,
+    returned as **all uppercase**
 
 
 Classes
@@ -47,10 +49,10 @@ Constants Classes
 ------------------
 :class:`~opan.const.CIC` -- Application-internal code information constants
 
-:class:`~opan.const.PHYS` -- Physical constants
-
 :class:`~opan.const.DEF` -- Default values for parameters intended to be
 user-adjustable
+
+:class:`~opan.const.PHYS` -- Physical constants
 
 :class:`~opan.const.PRM` -- Internal computation parameters, intended to be
 non-user-adjustable
@@ -105,6 +107,8 @@ API
 # Infinity symbol
 infty = u"\u221E"
 
+
+# ======  Enums  ====== #
 
 class OpanEnum(object):
     """ Superclass for enumeration objects.
@@ -320,9 +324,9 @@ class EnumAnharmRepoParam(OpanEnum):
     #: Length-`N` vector of all-caps atomic symbols
     ATOMS = 'ATOMS'
 
-    #: Displacement increment in :math:`\mathrm{B}\ \mathrm{u^{1/2}}`.
-    #: Note that these are *not* atomic units, which would instead be
-    #: :math:`\mathrm{B}\ \mathrm{m_e^{1/2}}`.
+    #: Displacement increment in :math:`\mathrm{B}\,\mathrm{u^{1/2}}`.
+    #: Note that these are *not* atomic |units|, which would instead be
+    #: :math:`\mathrm{B}\,\mathrm{m_e^{1/2}}`.
     INCREMENT = 'INCREMENT'
 
     #: Cartesian center of mass of system, *with perturbations applied*,
@@ -347,7 +351,7 @@ class EnumUnitsRotConst(OpanEnum):
     Contains enumeration parameters to indicate the associated/desired units
     of interpretation/display of a rotational constant.
 
-    String versions of these units are provided in
+    String expressions of these units are provided in
     :attr:`UNITS.rotConst`.
 
     #DOC: Add link to exposition(?) of how RotConst expression is developed,
@@ -357,19 +361,19 @@ class EnumUnitsRotConst(OpanEnum):
 
     """
 
-    #: Inverse moment of inertia, :math:`\frac{1}{\mathrm{u\ B^2}}`. Note that
-    #: the mass units here are *not* atomic units, which would require
-    #: :math:`\frac{1}{\mathrm{m_e\ B^2}}`.
+    #: Inverse moment of inertia, :math:`\frac{1}{\mathrm{u\,B^2}}`. Note that
+    #: the mass |units| here are *not* atomic units, which would require
+    #: :math:`\frac{1}{\mathrm{m_e\,B^2}}`.
     INV_INERTIA = 'INV_INERTIA'
 
-    #: Angular frequency in atomic units, :math:`\frac{1}{\mathrm{T_a}}`
+    #: Angular frequency in atomic |units|, :math:`\frac{1}{\mathrm{T_a}}`
     ANGFREQ_ATOMIC = 'ANGFREQ_ATOMIC'
 
     #: Angular frequency in SI units, :math:`\frac{1}{\mathrm s}`
     #: (**NOT** :math:`\mathrm{Hz}`!)
     ANGFREQ_SECS = 'ANGFREQ_SECS'
 
-    #: Cyclic frequency in atomic units,
+    #: Cyclic frequency in atomic |units|,
     #: :math:`\frac{\mathrm{cyc}}{\mathrm{T_a}}`
     CYCFREQ_ATOMIC = 'CYCFREQ_ATOMIC'
 
@@ -381,7 +385,7 @@ class EnumUnitsRotConst(OpanEnum):
     #: millions of :math:`\frac{\mathrm{cyc}}{\mathrm s}`
     CYCFREQ_MHZ = 'CYCFREQ_MHZ'
 
-    #: Wavenumbers in atomic units, :math:`\frac{\mathrm{cyc}}{\mathrm{B}}`
+    #: Wavenumbers in atomic |units|, :math:`\frac{\mathrm{cyc}}{\mathrm{B}}`
     WAVENUM_ATOMIC = 'WAVENUM_ATOMIC'
 
     #: Wavenumbers in conventional units,
@@ -390,6 +394,8 @@ class EnumUnitsRotConst(OpanEnum):
 
 ## end class EnumUnitsRotConst
 
+
+# ======  Constants Classes  ====== #
 
 class CIC(object):
     """Container for application-internal code information constants
@@ -403,10 +409,10 @@ class CIC(object):
 
     """
 
-    #: Maximum atomic number supported
+    #: |int| -- Maximum atomic number supported
     MAX_ATOMIC_NUM = 103
 
-    #: Minimum atomic number supported
+    #: |int| -- Minimum atomic number supported
     MIN_ATOMIC_NUM = 1
 
 ## end class CIC
@@ -423,32 +429,38 @@ class PHYS(object):
     # Imports
     import numpy as _np
 
+    #: |float| --
     #: Angstroms per Bohr radius (source: `NIST <http://physics.nist.gov/
     #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |external link|)
     ANG_PER_BOHR = 0.52917721067
 
+    #: |float| --
     #: Electron mass per unified atomic mass unit (source: `NIST
     #: <http://physics.nist.gov/cgi-bin/cuu/Value?meu|
     #: search_for=electron+mass>`__ |external link|)
     ME_PER_AMU = 1822.8885
 
+    #: |float| --
     #: Seconds per atomic time unit (source: `NIST <http://physics.nist.gov/
     #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |external link|)
     SEC_PER_TA = 2.4188843265e-17
 
-    #: Speed of light in atomic units, :math:`\frac{B}{T_a}`. Calculated from
+    #: |float| --
+    #: Speed of light in atomic |units|, :math:`\frac{B}{T_a}`. Calculated from
     #: the `NIST <http://physics.nist.gov/cgi-bin/cuu/Value
     #: ?c|search_for=speed+of+light>`__ |external link| value for the speed of
     #: light in vacuum, :math:`2.99792458e8\ \frac{m}{s}`, using
     #: :attr:`ANG_PER_BOHR` and :attr:`SEC_PER_TA` as conversion factors
     LIGHT_SPEED = 137.036
 
-    #: Standard Planck constant, equal to :math:`2\pi` in atomic units of
-    #: :math:`\frac{\mathrm{E_h\ T_a}}{\mathrm{cyc}}`
+    #: |float| --
+    #: Standard Planck constant, equal to :math:`2\pi` in atomic |units| of
+    #: :math:`\frac{\mathrm{E_h\,T_a}}{\mathrm{cyc}}`
     PLANCK = 2 * _np.pi
 
-    #: Reduced Planck constant, unity by definition in the atomic units
-    #: of :math:`\mathrm{E_h\ T_a}`
+    #: |float| --
+    #: Reduced Planck constant, unity by definition in the atomic |units|
+    #: of :math:`\mathrm{E_h\,T_a}`
     PLANCK_BAR = 1
 
 ## end class PHYS
@@ -460,46 +472,59 @@ class DEF(object):
 
     from .const import EnumSoftware as _E_SW, EnumFileType as _E_FT
 
+    #: |float| --
     #: Relative magnitude of atomic mass perturbations
     MASS_PERT_MAG = 1e-4
 
     #Moment_Tol = 1e-4
 
+    #: |float| --
     #: Acceptable deviation from Kronecker delta for orthonormality testing
     ORTHONORM_TOL = 1e-8
 
+    #: |float| --
     #: Max precision of HESS geometries (currently |orca|-specific)
     HESS_COORD_MATCH_TOL = 1e-6
 
+    #: |float| --
     #: Max precision of freqs in IR spectrum block (currently |orca|-specific)
     HESS_IR_MATCH_TOL = 1e-2
 
+    #: |float| --
     #: Max precision of GRAD geometries (currently |orca|-specific)
     GRAD_COORD_MATCH_TOL = 1e-7
 
+    #: |float| --
     #: Max tolerable deviation between XYZ geoms (currently |orca|-specific)
     XYZ_COORD_MATCH_TOL = 1e-12
 
+    # |float| --
     # Required quality of coordinate match for symmetry detection
     SYMM_MATCH_TOL = 1e-3
 
+    # |float| --
     # Tolerance for deviation in searching for neighbor axes in cubic
     # symmetry groups -- value is in **radians**, and equals 1.5 degrees
     SYMM_AXIS_MATCH_TOL = 0.026179939
 
+    # |int| --
     # Rounding atomic masses to avoid precision errors in atom matching
     SYMM_ATWT_ROUND_DIGITS = 4
 
+    # |int| --
     # Initial order of rotational symmetry to test for (conservative)
     SYMM_MATCH_NMAX = 10
 
+    # |int| --
     # Maximum order of atom averaging when looking for possible axes of
     # rotational symmetry
     SYMM_AVG_MAX = 2
 
-    #: Dictionary of dictionaries of file extensions for geom, gradient,
+    #: |dict| of |dict| --
+    #: Dictionary of dictionaries of file extensions for geometry, gradient,
     #: and hessian files from the various softwares.
-    #: Access as `FILE_EXTS`\ [\ `EnumSoftware`\ ][\ `EnumFileType`\ ]
+    #:
+    #: Access as :samp:`FILE_EXTS[{EnumSoftware}][{EnumFileType}]`
     FILE_EXTS = {
             _E_SW.ORCA :
                 { _E_FT.GRAD : 'engrad',
@@ -520,24 +545,29 @@ class PRM(object):
 
     """
 
+    #: |float| --
     #: Minimum angle deviation (degrees) required for two vectors to be
     #: considered non-parallel
     NON_PARALLEL_TOL = 1e-3
 
+    #: |float| --
     #: Vector magnitude below which a vector is considered equal to the zero
-    #: vector; dimensionless or units of :math:`\mathrm{B}`
+    #: vector; dimensionless or |units| of :math:`\mathrm{B}`
     ZERO_VEC_TOL = 1e-6
 
+    #: |float| --
     #: Trap value for aberrantly large dipole  derivative values in |orca|
     #: if dipoles are not calculated in a NUMFREQ run
-    MAX_SANE_DIPDER = 100
+    MAX_SANE_DIPDER = 100.0
 
+    #: |float| --
     #: Minimum deviation-ratio from unity below which two principal inertial
     #: moments are considered equal
     EQUAL_MOMENT_TOL = 1e-3
 
+    #: |float| --
     #: Threshold value below which moments are  considered equal to zero;
-    #: units of :math:`\mathrm{u\ B^2}`
+    #: |units| of :math:`\mathrm{u\,B^2}`
     ZERO_MOMENT_TOL = 1e-3
 
 ## end class PRM
@@ -628,17 +658,17 @@ class UNINIT(object):
     """
 
     # Empty doc comments trigger inclusion in the documentation
-    #:
-    UNSIGNED_LONG = -1
+    #: |int| --
+    UNSIGNED_INT = -1
 
-    #:
-    UNSIGNED_DOUBLE = -1.0
+    #: |float| --
+    UNSIGNED_FLOAT = -1.0
 
-    #:
-    SIGNED_LONG = 1234567890
+    #: |int| --
+    SIGNED_INT = 1234567890
 
-    #:
-    SIGNED_DOUBLE = 1234567890.12345
+    #: |float| --
+    SIGNED_FLOAT = 1234567890.12345
 
 ## end class UNINIT
 
@@ -665,7 +695,7 @@ class UNITS(object):
     # Imports
     from .const import EnumUnitsRotConst as _EUrc
 
-    #:
+    #: |dict| --
     rotConst = {
             _EUrc.INV_INERTIA :        "1/(amu*B^2)",
             _EUrc.ANGFREQ_ATOMIC :     "1/Ta",

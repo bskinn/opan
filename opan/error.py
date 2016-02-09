@@ -30,7 +30,7 @@ several common features:
  * Storage of a 'typecode' and a 'source' string along with the error message
    to allow passing of more fine-grained information to the exception stack
  * Implementation of a :attr:`~opan.error.OpanError.__metaclass__` on
-   :class:`OpanError` enabling typecode validity checking with `is`
+   :class:`OpanError` enabling typecode validity checking with ``is``
  * Re-implementation of :func:`~OpanError.__str__` to enhance the usefulness
    of stack messages when one of these errors is raised
 
@@ -86,33 +86,39 @@ class OpanError(Exception):
 
     Arguments
     ---------
-    tc  : str
-        String representation of typecode to be associated with the
+    tc
+        |str| -- String representation of typecode to be associated with the
         :class:`OpanError` subclass instance. *Must* be a validly
         constructed typecode defined for the relevant subclass.
-    msg : str
-        Explanation of the nature of the error being reported
-    src : str
-        Further detail of the code/file source of the error behavior,
-        if relevant
+
+    msg
+        |str| -- Explanation of the nature of the error being reported
+
+    src
+        |str| -- Further detail of the code/file source of the error
+        behavior, if relevant
 
     Raises
     ------
     ~exceptions.NotImplementedError
-        Upon attempt to instantiate abstract :class:`OpanError` base class.
+        Upon attempt to instantiate abstract :class:`OpanError` base class
+
     ~exceptions.KeyError
         Upon instantiation with an invalid typecode
 
     Attributes
     ----------
-    msg : str
-        Explanation of the nature of the error being reported
-    src : str
-        Further detail of the code source of the error behavior
-    subclass_name   : str
-        String representation of the :class:`OpanError` subclass name
-    tc  : str
-        String typecode associated with the instance
+    msg
+        |str| -- Explanation of the nature of the error being reported
+
+    src
+        |str| -- Further detail of the code source of the error behavior
+
+    subclass_name
+        |str| -- String representation of the :class:`OpanError` subclass name
+
+    tc
+        |str| -- String typecode associated with the instance
 
 
     .. class:: __metaclass__(type)
@@ -179,8 +185,8 @@ class OpanError(Exception):
 
         Returns
         -------
-        str
-            String representation of the instance.
+        retstr
+            |str| -- String representation of the instance.
 
         """
 
@@ -370,6 +376,8 @@ class SymmError(OpanError):
 
     """
 
+    #DOC: Add note about this being subject to future development?
+
     #: Symmetry element expected but not found
     NOTFOUND = 'NOTFOUND'
 
@@ -407,6 +415,8 @@ class AnharmError(OpanError):
     **Typecodes**
 
     """
+
+    #DOC: Add object references once the DOM is more established?
 
     #: OpanAnharmRepo conflict -- no repo bound when assignment attempted,
     #: or attempt made to bind new repo when one already bound

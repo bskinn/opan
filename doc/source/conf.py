@@ -123,38 +123,40 @@ rst_epilog = """
 
 .. |orca| replace:: :ref:`ORCA <orca-description>`
 
+.. |units| replace:: :ref:`units <units-header>`
+
 .. |None| replace:: :obj:`None`
 
 .. |True| replace:: :obj:`True`
 
 .. |False| replace:: :obj:`False`
 
+.. |int| replace:: :obj:`int`
+
+.. |float| replace:: :obj:`float`
+
+.. |str| replace:: :obj:`str`
+
+.. |unicode| replace:: :obj:`unicode`
+
+.. |bool| replace:: :obj:`bool`
+
+.. |dict| replace:: :obj:`dict`
+
 .. |npfloat| replace:: `np.float_`
 
 .. _npfloat: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
-
-.. |int| replace:: `int`
-
-.. _int: https://docs.python.org/2.7/library/functions.html#int
-
-.. |float| replace:: `float`
-
-.. _float: https://docs.python.org/2.7/library/functions.html#float
-
-.. |str| replace:: `str`
-
-.. _str: https://docs.python.org/2.7/library/functions.html#str
-
-.. |bool| replace:: `bool`
-
-.. _bool: https://docs.python.org/2.7/library/functions.html#bool
 
 .. |br| raw:: html
 
     <br />
 
-
 """
+#.. |str| replace:: `str`
+#.. _str: https://docs.python.org/2.7/library/functions.html#str
+#.. _bool: https://docs.python.org/2.7/library/functions.html#bool
+#.. _float: https://docs.python.org/2.7/library/functions.html#float
+#.. _int: https://docs.python.org/2.7/library/functions.html#int
 
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
