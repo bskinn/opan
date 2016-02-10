@@ -50,7 +50,7 @@ def pack_tups(*args):
 
     The input arguments are parsed such that bare strings are treated as
     **NON-ITERABLE**, through the use of a local subclass of |str| that
-    cripples the ``__iter__`` method. Any strings passed are returned
+    cripples the ``__iter__()`` method. Any strings passed are returned
     in the packed tuples as standard, **ITERABLE** instances of |str|, however.
 
     The order of the input arguments is retained within each output tuple.
@@ -68,9 +68,10 @@ def pack_tups(*args):
 
     Returns
     -------
-    tups :  `list` of `tuple`
+    tups
+        |list| of |tuple| --
         Number of tuples returned is equal to the length of the iterables
-        passed in `*args`
+        passed in ``*args``
 
     Raises
     ------
@@ -150,9 +151,10 @@ def delta_fxn(a, b):
 
     Returns
     -------
-    int
+    delta
+        |int| --
         Value of Kronecker delta for provided indices, as tested by
-        Python "\ `==`\ "
+        Python "`==`"
 
     """
 
@@ -170,15 +172,16 @@ def safe_cast(invar, totype):
 
     Parameters
     ----------
-    invar   : arbitrary
-        Value to be typecast.
-    totype  : `type`
-        Type to which `invar` is to be cast.
+    invar
+        (arbitrary) -- Value to be typecast.
+
+    totype
+        |type| --  Type to which `invar` is to be cast.
 
     Returns
     -------
-    outvar  : `type 'totype'`
-        Typecast version of `invar`
+    outvar
+        `type 'totype'` --  Typecast version of `invar`
 
     Raises
     ------
@@ -212,13 +215,15 @@ def make_timestamp(el_time):
 
     Parameters
     ----------
-    el_time : |int|_ or |float|
+    el_time
+        |int| or |float| --
         Time interval in seconds to be converted to h/m/s format
 
     Returns
     -------
-    str
-        String timestamp in #h #m #s format
+    stamp
+        |str| -- String timestamp in #h #m #s format
+
     """
 
     # Calc hours
@@ -253,19 +258,24 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
     Parameters
     ----------
-    c1      : length-3N |npfloat|_
+    c1
+        length-3N |npfloat|_ --
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
 
-    a1      : length-N |str| or |int|_
+    a1
+        length-N |str| or |int| --
         Vector of first set of atom symbols or atomic numbers
 
-    c2      : length-3N |npfloat|_
+    c2
+        length-3N |npfloat|_ --
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
 
-    a2      : length-N |str| or |int|_
+    a2
+        length-N |str| or |int| --
         Vector of second set of atom symbols or atomic numbers
 
-    tol    : float, optional
+    tol
+        |float|, optional --
         Tolerance for acceptable deviation of each geometry coordinate
         from that in the reference instance to still be considered
         matching. Default value is specified by
@@ -273,16 +283,17 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
     Returns
     -------
-    match  : bool
-        (|bool|_) -- Whether input coords and atoms match (|True|) or
+    match
+        |bool| --
+        Whether input coords and atoms match (|True|) or
         not (|False|)
 
     fail_type
-        |str|_ or |None| -- Type of check failure
+        |str| or |None| -- Type of check failure
 
         If `match` == |True|:
 
-            Returns |None|
+            Returns as |None|
 
         If `match` == |False|:
 
@@ -296,21 +307,22 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
                 `atom_mismatch`      -- Mismatch in one or more atoms
 
-                **#TODO:** ``opan.utils.check_geom``: Convert ``fail_type`` to Enum
+                **#TODO:** :func:`~opan.utils.base.check_geom`: Convert `fail_type` to Enum
 
-    fail_loc   : length-3N `bool` or length-N `bool` or |None|
+    fail_loc
+        length-3N |bool| or length-N |bool| or |None| --
         Mismatched elements
 
         If `match` == |True|:
 
-            Returns |None|
+            Returns as |None|
 
         If `match` == |False|:
 
             For "array-level" problems such as a dimension mismatch, a
             |None| value is returned.
 
-            For "element-level" problems, an ``np.array`` vector is returned
+            For "element-level" problems, a vector is returned
             indicating positions of mismatch in either `coords` or `atoms`,
             depending on the value of `fail_type`.
 
@@ -320,8 +332,8 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
     Raises
     ------
-    ValueError
-        If array lengths are inconsistent ::
+    ~exceptions.ValueError
+        If a pair of coords & atoms array lengths is inconsistent ::
 
             if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
                 raise(ValueError(...))
@@ -437,38 +449,42 @@ def template_subst(template, subs, delims=('<', '>')):
 
     Parameters
     ----------
-    template : |str|
+    template
+        |str| --
         Template containing tags delimited by `subs_delims`,
         with tag names and substitution contents provided in `subs`
 
-    subs    : `dict` of |str|
+    subs
+        |dict| of |str| --
         Each item's key and value are the tag name and corresponding content to
         be substituted into the provided template.
 
-    delims : iterable of |str|
+    delims
+        iterable of |str| --
         Iterable containing the 'open' and 'close' strings used to mark tags
         in the template, which are drawn from elements zero and one,
         respectively. Any elements beyond these are ignored.
 
     Returns
     -------
-    str
+    subst_text
+        |str| --
         String generated from the parsed template, with all tag
         substitutions performed.
 
     """
 
     # Store the template into the working variable
-    input_text = template
+    subst_text = template
 
     # Iterate over subs and perform the .replace() calls
     for (k,v) in subs:
-        input_text = input_text.replace(
+        subst_text = subst_text.replace(
                 delims[0] + k + delims[1], v)
     ## next tup
 
     # Return the result
-    return input_text
+    return subst_text
 
 ## end def template_subst
 
@@ -483,14 +499,15 @@ def iterable(y):
 
     Parameters
     ----------
-    y : object
-      Object to be tested.
+    y
+        (arbitrary) -- Object to be tested.
 
     Returns
     -------
-    bool
-      Returns |True| if the object has an iterator method or is a sequence,
-      and |False| otherwise.
+    test
+        |bool| --
+        Returns |False| if :func:`iter` raises an exception when `y` is
+        passed to it; |True| otherwise.
 
     Examples
     --------
@@ -519,8 +536,8 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     object to be checked, for use in raising of exceptions.
 
     Raises the exception `exc` with typecode `tc` if the indicated
-    object is determined not to be an `np.array`, with a dtype
-    that inherits from `np.float`.
+    object is determined not to be an ``np.array``, with a dtype
+    that inherits from ``np.float``.
 
     Intended primarily to serve as an early check for
     proper implementation of subclasses of
@@ -531,13 +548,16 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     Parameters
     ----------
     obj
+        (arbitrary) --
         Object to be checked, or object with attribute to be checked.
 
-    varname : |str| or |None|
+    varname
+        |str| or |None| --
         Name of the attribute of `obj` to be type-checked. |None|
         indicates to check `obj` itself.
 
-    desc : str
+    desc
+        |str| --
         Description of the object being checked to be used in any
         raised exceptions.
 
@@ -548,13 +568,10 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     tc
         Typecode of `exc` to be raised on a failed typecheck.
 
-    errsrc : str
+    errsrc
+        |str| --
         String description of the source of the data leading to a
         failed typecheck.
-
-    Returns
-    -------
-    (none)
 
     """
 

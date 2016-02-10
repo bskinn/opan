@@ -135,6 +135,12 @@ rst_epilog = """
 
 .. |float| replace:: :obj:`float`
 
+.. |list| replace:: :obj:`list`
+
+.. |tuple| replace:: :obj:`tuple`
+
+.. |type| replace:: :obj:`type`
+
 .. |str| replace:: :obj:`str`
 
 .. |unicode| replace:: :obj:`unicode`
