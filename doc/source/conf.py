@@ -153,6 +153,8 @@ rst_epilog = """
 
 .. _npfloat: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
 
+.. |nparray| replace:: :obj:`np.array <numpy.ndarray>`
+
 .. |br| raw:: html
 
     <br />

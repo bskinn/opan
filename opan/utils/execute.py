@@ -49,8 +49,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     Generates an |orca| input file dynamically from information passed into the
     various arguments, performs the run, and returns with exit info and
     computation results *(in some fashion; still under development)*.
-    Any required resources (GBW,
-    XYZ, etc.) MUST already be present in `work_dir`. No check for pre-existing
+    Any required resources (.gbw,
+    .xyz, etc.) MUST already be present in `work_dir`. No check for pre-existing
     files of the same base name is made; any such will be overwritten.
 
     |orca| MUST be called using a wrapper script; this function does not
@@ -120,41 +120,62 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     Parameters
     ----------
-    inp_tp  : str
+    inp_tp
+        |str| --
         Template text for the input file to be generated.
 
-    work_dir : str
+    work_dir
+        |str| --
         Path to base working directory. Must already exist and contain any
         resource files (.gbw, .xyz, etc.) required for the calculation.
 
-    exec_cmd : list of str
+    exec_cmd
+        |list| of |str| --
         Sequence of strings defining the |orca| execution call in the syntax of
         the :class:`~subprocess.Popen` constructor. This call must
         be to a local script; stream redirection of the forked process
         is not supported in this function.
 
-    subs    : `dict` of |str|, optional
+    subs
+        |dict| of |str|, optional --
         Substitutions to be performed in the template (see *Template
         Substitution*, above).
 
-    subs_delims : 2-tuple of str, optional
+    subs_delims
+        2-|tuple| of |str|, optional --
         Tag delimiters passed directly to
-        :func:`~opan.utils.base.template_subst`.  Defaults to `('<','>')`.
+        :func:`~opan.utils.base.template_subst`.  Defaults to ``('<','>')``.
 
-    sim_name : str, optional
+    sim_name
+        |str|, optional --
         Basename to use for the input/output/working files.
         If omitted, "orcarun" will be used.
 
-    inp_ext : str
-        Extension to be used for the input file generated.
+    inp_ext
+        |str|, optional --
+        Extension to be used for the input file generated
+        (default is 'txt').
 
-    out_ext : str
-        Extension to be used for the output file generated.
+    out_ext
+        |str|, optional --
+        Extension to be used for the output file generated
+        (default is 'out').
+
+    wait_to_complete
+        |bool|, optional --
+        Whether to wait within this function for |orca| execution to
+        complete (|True|), or to spawn/fork a child process and return
+        (|False|). Default is |True|. |False| **IS NOT YET IMPLEMENTED**.
+
+    bohrs
+        |bool|, optional --
+        Flag to indicate the units (Bohrs or Angstroms) of the
+        coordinates in .xyz and .trj files.
 
 
     Returns
     -------
-    `tuple` of objects or |int|_ PID
+    |tuple| of objects or |int| PID
         Varies depending on `wait_to_complete`; see *Return Values* above
 
 

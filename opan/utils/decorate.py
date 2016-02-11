@@ -38,7 +38,7 @@ class arraysqueeze(object):
     arguments according to integer indices passed, and to any keyword arguments
     according to any strings passed.
 
-    Each |int|_ argument passed instructs the decorator to convert the
+    Each |int| argument passed instructs the decorator to convert the
     corresponding positional argument in the function definition.
 
     Each |str| argument passed instructs the decorator to convert the
@@ -53,8 +53,8 @@ class arraysqueeze(object):
 
     Arguments
     ---------
-    \*args : |int|_ or |str|
-        Arguments to convert to squeezed np.arrays.
+    \*args : |int| or |str|
+        Arguments to convert to squeezed |nparray|.
 
 
     .. Decorator built using the class form per the exposition
@@ -83,7 +83,7 @@ class arraysqueeze(object):
         """ Call the wrapped function after arraysqueezing selected arguments.
 
         Absent keyword arguments and positional/optional argument indices
-        beyond the range of the actual *args of f are ignored.
+        beyond the range of the actual `*args` of `f` are ignored.
 
         """
         @_wraps(f)

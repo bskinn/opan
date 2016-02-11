@@ -528,7 +528,7 @@ def iterable(y):
 
 
 def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
-    """ Assert a value is an :class:`np.array <numpy.ndarray>` of ``np.float``.
+    """ Assert a value is an |nparray| of NumPy floats.
 
     Pass |None| to `varname` if `obj` itself is to be checked.
     Otherwise, `varname` is the string name of the attribute of `obj` to
@@ -536,8 +536,7 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     object to be checked, for use in raising of exceptions.
 
     Raises the exception `exc` with typecode `tc` if the indicated
-    object is determined not to be an ``np.array``, with a dtype
-    that inherits from ``np.float``.
+    object is determined not to be an |nparray|, with a NumPy float dtype.
 
     Intended primarily to serve as an early check for
     proper implementation of subclasses of
