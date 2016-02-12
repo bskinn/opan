@@ -59,23 +59,29 @@ def ortho_basis(normal, ref_vec=None):
             \\mathsf{on1} \\times \\mathsf{on2} =
             {\\mathsf{normal} \\over \\left\\| \\mathsf{normal}\\right\\|}
 
-    `normal` must be expressible as a one-dimensional np.array of length 3.
+    `normal` must be expressible as a one-dimensional |nparray| of length 3.
 
     Parameters
     ----------
-    normal   : length-3 |npfloat|_
+    normal
+        length-3 |npfloat|_ --
         The orthonormal basis output will span the plane perpendicular
         to `normal`.
-    ref_vec  : length-3 |npfloat|_\\ , optional
+
+    ref_vec
+        length-3 |npfloat|_, optional --
         If specified, `on1` will be the normalized projection of `ref_vec`
         onto the plane perpendicular to `normal`. Default is |None|.
 
     Returns
     -------
-    on1 : length-3 |npfloat|_
+    on1
+        length-3 |npfloat|_ --
         First vector defining the orthonormal basis in the plane
         normal to `normal`
-    on2 : length-3 |npfloat|_
+
+    on2
+        length-3 |npfloat|_ --
         Second vector defining the orthonormal basis in the plane
         normal to `normal`
 
@@ -84,9 +90,12 @@ def ortho_basis(normal, ref_vec=None):
     ~exceptions.ValueError
         If `normal` or `ref_vec` is not expressible as a 1-D vector
         with 3 elements
-    ~opan.error.XYZError
+
+    ~opan.error.VectorError
+        (typecode :attr:`~opan.error.VectorError.NONPRL`)
         If `ref_vec` is specified and it is insufficiently non-
         parallel with respect to `normal`
+
     """
 
     # Imports for library functions
@@ -145,7 +154,7 @@ def ortho_basis(normal, ref_vec=None):
             # Essentially equal or opposite vectors, making them too nearly
             #  parallel.
             raise(VectorError(VectorError.NONPRL,
-                    "'normal' and ref_vec are too nearly parallel.", ""))
+                    "'normal' and 'ref_vec' are too nearly parallel.", ""))
         ## end if
 
         # rv is ok to use from here
@@ -170,7 +179,7 @@ def ortho_basis(normal, ref_vec=None):
 def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
     """Checks orthonormality of the column vectors of a matrix.
 
-    If a one-dimensional np.array is passed to `a`, it is treated as a single
+    If a one-dimensional |nparray| is passed to `a`, it is treated as a single
     column vector, rather than a row matrix of length-one column vectors.
 
     The matrix `a` does not need to be square, though it must have at least
@@ -180,36 +189,52 @@ def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
 
     Parameters
     ----------
-    a : R x S |npfloat|_
+    a
+        R x S |npfloat|_ --
         2-D array of column vectors to be checked for orthonormality.
 
-    tol : |npfloat|_\\ , optional
+    tol
+        |npfloat|_, optional --
         Tolerance for deviation of dot products from one or zero. Default
         value is :data:`opan.const.DEF.ORTHONORM_TOL`.
 
-    report : bool, optional
+    report
+        |bool|, optional --
         Whether to record and return vectors / vector pairs failing the
         orthonormality condition. Default is |False|.
 
     Returns
     -------
-    o : bool
+    o
+        |bool| --
         Indicates whether column vectors of `a` are orthonormal to within
         tolerance `tol`.
 
-    n_fail : list of |int|_ or |None|
-        If `report` == |True|: A list of indices of column vectors
-        failing the normality condition, or an empty list if all vectors
-        are normalized.
+    n_fail
+        |list| of |int|, or |None| --
 
-        If `report` == |False|: |None|
+        If `report` == |True|:
 
-    o_fail : list of 2-tuples of |int|_ or |None|
-        If `report` == |True|: A list of 2-tuples of indices of
-        column vectors failing the orthogonality condition, or an
-        empty list if all vectors are orthogonal.
+            A list of indices of column vectors
+            failing the normality condition, or an empty list if all vectors
+            are normalized.
 
-        If `report` == |False|: |None|
+        If `report` == |False|:
+
+            |None|
+
+    o_fail
+        |list| of 2-tuples of |int|, or |None| --
+
+        If `report` == |True|:
+
+            A list of 2-tuples of indices of
+            column vectors failing the orthogonality condition, or an
+            empty list if all vectors are orthogonal.
+
+        If `report` == |False|:
+
+            |None|
 
     """
 
@@ -267,14 +292,18 @@ def parallel_check(vec1, vec2):
 
     Parameters
     ----------
-    vec1    : length-R |npfloat|_
+    vec1
+        length-R |npfloat|_ --
         First vector to compare
-    vec2    : length-R |npfloat|_
+
+    vec2
+        length-R |npfloat|_ --
         Second vector to compare
 
     Returns
     -------
-    bool
+    par
+        |bool| --
         |True| if (anti-)parallel to within
         :data:`opan.const.PRM.NON_PARALLEL_TOL` degrees.  |False| otherwise.
 
@@ -321,15 +350,20 @@ def proj(vec, vec_onto):
 
     Parameters
     ----------
-    vec      : length-R |npfloat|_
+    vec
+        length-R |npfloat|_ --
         Vector to project
-    vec_onto : length-R |npfloat|_
+
+    vec_onto
+        length-R |npfloat|_ --
         Vector onto which `vec` is to be projected
 
     Returns
     -------
-    length-R |npfloat|_
+    proj_vec
+        length-R |npfloat|_ --
         Projection of `vec` onto `vec_onto`
+
     """
 
     # Imports
@@ -368,15 +402,20 @@ def rej(vec, vec_onto):
 
     Parameters
     ----------
-    vec      : length-R |npfloat|_
+    vec
+        length-R |npfloat|_ --
         Vector to reject
-    vec_onto : length-R |npfloat|_
+
+    vec_onto
+        length-R |npfloat|_ --
         Vector onto which `vec` is to be rejected
 
     Returns
     -------
-    length-R |npfloat|_
+    rej_vec
+        length-R |npfloat|_ --
         Rejection of `vec` onto `vec_onto`
+
     """
 
     # Imports
@@ -405,14 +444,18 @@ def vec_angle(vec1, vec2):
 
     Parameters
     ----------
-    vec1    : length-R |npfloat|_
+    vec1
+        length-R |npfloat|_ --
         First vector
-    vec2    : length-R |npfloat|_
+
+    vec2
+        length-R |npfloat|_ --
         Second vector
 
     Returns
     -------
-    |npfloat|_
+    angle
+        |npfloat|_ --
         Angle between the two vectors in degrees
 
     """
