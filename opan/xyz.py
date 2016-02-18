@@ -688,7 +688,8 @@ class OpanXYZ(object):
 
             [A1x, A1y, A1z, A2x, A2y, A2z, ...]
 
-        An alternate method to achieve the same effect is by simply
+        An alternate method to achieve the same effect as this
+        function is by simply
         indexing into :attr:`~opan.xyz.OpanXYZ.geoms`::
 
             >>> x = opan.xyz.OpanXYZ(path='...')
@@ -697,12 +698,14 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_num : int
+        g_num
+            |int| --
             Index of the desired geometry
 
         Returns
         -------
-        length-3N |npfloat|_
+        geom
+            length-3N |npfloat|_ --
             Vector of the atomic coordinates for the geometry indicated
             by `g_num`
 
@@ -723,7 +726,7 @@ class OpanXYZ(object):
         """Iterator over a subset of geometries.
 
         The indices of the geometries to be returned are indicated by an
-        iterable of |int|_\\ s passed as `g_nums`.
+        iterable of |int|s passed as `g_nums`.
 
         As with :meth:`geom_single`, each geometry is returned as a
         length-3N |npfloat|_ with each atom's x/y/z coordinates
@@ -733,8 +736,8 @@ class OpanXYZ(object):
 
         In order to use NumPy `slicing or advanced indexing
         <http://docs.scipy.org/doc/numpy-1.10.0/reference/
-        arrays.indexing.html>`_, :data:`geoms` must first be
-        explicitly converted to :obj:`numpy.ndarray`, e.g.::
+        arrays.indexing.html>`__, :data:`geoms` must first be
+        explicitly converted to |nparray|, e.g.::
 
             >>> x = opan.xyz.OpanXYZ(path='...')
             >>> np.array(x.geoms)[[2,6,9]]
