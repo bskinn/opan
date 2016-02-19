@@ -476,7 +476,7 @@ class OpanXYZ(object):
         from .utils import safe_cast as scast
 
         # Complain if already initialized
-        if 'initialized' in dir(self):
+        if 'geoms' in dir(self):
             raise(XYZError(XYZError.OVERWRITE, \
                     "Cannot overwrite contents of existing OpanXYZ", ""))
         ## end if
@@ -726,7 +726,7 @@ class OpanXYZ(object):
         """Iterator over a subset of geometries.
 
         The indices of the geometries to be returned are indicated by an
-        iterable of |int|s passed as `g_nums`.
+        iterable of |int|\\ s passed as `g_nums`.
 
         As with :meth:`geom_single`, each geometry is returned as a
         length-3N |npfloat|_ with each atom's x/y/z coordinates
@@ -744,12 +744,14 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : length-R iterable of |int|_
+        g_nums
+            length-R iterable of |int| --
             Indices of the desired geometries
 
         Yields
         ------
-        length-3N |npfloat|_
+        geom
+            length-3N |npfloat|_ --
             Vectors of the atomic coordinates for each geometry
             indicated in `g_nums`
 
@@ -775,18 +777,19 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_num : int
-            Index of the desired geometry
+        g_num
+            |int| -- Index of the desired geometry
 
-        at_1 : int
-            Index of the first atom
+        at_1
+            |int| -- Index of the first atom
 
-        at_2 : int
-            Index of the second atom
+        at_2
+            |int| -- Index of the second atom
 
         Returns
         -------
-        |npfloat|_
+        dist
+            |npfloat|_ --
             Distance in Bohrs between `at_1` and `at_2` from
             geometry `g_num`
 
@@ -845,23 +848,28 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int|_ or length-R iterable |int|_ or |None|
+        g_nums
+            |int| or length-R iterable |int| or |None| --
             Index/indices of the desired geometry/geometries
 
-        ats_1 : |int|_ or iterable |int|_ or |None|
+        ats_1
+            |int| or iterable |int| or |None| --
             Index/indices of the first atom(s)
 
-        ats_2 : |int|_ or iterable |int|_ or |None|
+        ats_2
+            |int| or iterable |int| or |None| --
             Index/indices of the second atom(s)
 
-        invalid_error  : bool
+        invalid_error
+            |bool|, optional --
             If |False| (the default), |None| values are returned for
             results corresponding to invalid indices. If |True|,
             exceptions are raised per normal.
 
         Yields
         ------
-        |npfloat|_
+        dist
+            |npfloat|_ --
             Interatomic distance in Bohrs between each atom pair of
             `ats_1` and `ats_2` from the corresponding geometries
             of `g_nums`.
@@ -917,21 +925,26 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_num : int
+        g_num
+            |int| --
             Index of the desired geometry
 
-        at_1 : int
+        at_1
+            |int| --
             Index of the first atom
 
-        at_2 : int
+        at_2
+            |int| --
             Index of the second atom
 
-        at_3 : int
+        at_3
+            |int| --
             Index of the third atom
 
         Returns
         -------
-        |npfloat|_
+        angle
+            |npfloat|_ --
             Spanning angle in degrees between `at_1`-`at_2`-`at_3`, from
             geometry `g_num`
 
@@ -1009,26 +1022,32 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int|_ or iterable |int|_ or |None|
+        g_nums
+            |int| or iterable |int| or |None| --
             Index of the desired geometry
 
-        ats_1  : |int|_ or iterable |int|_ or |None|
+        ats_1
+            |int| or iterable |int| or |None| --
             Index of the first atom
 
-        ats_2  : |int|_ or iterable |int|_ or |None|
+        ats_2
+            |int| or iterable |int| or |None| --
             Index of the second atom
 
-        ats_3  : |int|_ or iterable |int|_ or |None|
+        ats_3
+            |int| or iterable |int| or |None| --
             Index of the third atom
 
-        invalid_error  : bool
+        invalid_error
+            |bool|, optional --
             If |False| (the default), |None| values are returned for
             results corresponding to invalid indices. If |True|,
             exceptions are raised per normal.
 
         Yields
         ------
-        |npfloat|_
+        angle
+            |npfloat|_ --
             Spanning angles in degrees between corresponding |br|
             `ats_1`-`ats_2`-`ats_3`, from geometry/geometries `g_nums`
 
@@ -1094,10 +1113,13 @@ class OpanXYZ(object):
         reference plane when looking from `at_3` toward `at_2`.
         Zero rotation corresponds to occlusion of `at_1` and `at_4`;
         that is, the case where
-        the respective projections of `at_1`
+        the respective rejections of `at_1`
         :math:`\\rightarrow`\\ `at_2` and
-        `at_3`\\ :math:`\\rightarrow`\\ `at_4` onto the reference
-        plane are ANTI-PARALLEL. **Pull the above to User Guide eventually**
+        `at_3`\\ :math:`\\rightarrow`\\ `at_4` onto
+        `at_2`\\ :math:`\\rightarrow`\\ `at_3`
+        are ANTI-PARALLEL.
+
+        *#DOC: Pull the above to User Guide eventually, with figures.*
 
         All four atom indices must be distinct. Both of the atom trios 1-2-3
         and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend
@@ -1106,24 +1128,25 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_num   : int
-            Index of the desired geometry
+        g_num
+            |int| -- Index of the desired geometry
 
-        at_1    : int
-            Index of the first atom
+        at_1
+            |int| -- Index of the first atom
 
-        at_2    : int
-            Index of the second atom
+        at_2
+            |int| -- Index of the second atom
 
-        at_3    : int
-            Index of the third atom
+        at_3
+            |int| -- Index of the third atom
 
-        at_4    : int
-            Index of the fourth atom
+        at_4
+            |int| -- Index of the fourth atom
 
         Returns
         -------
-        |npfloat|_
+        dihed
+            |npfloat|_ --
             Out-of-plane/dihedral angle in degrees for the indicated `at_#`,
             drawn from geometry `g_num`
 
@@ -1148,9 +1171,9 @@ class OpanXYZ(object):
         from .error import XYZError
         from .const import PRM
 
-        # The below errors are explicitly thrown since they are multiplied by
-        #  three when they are used as an index and thus give non-intuitive
-        #  errors in later code.
+        # The below errors are explicitly checked and raised since the indices
+        #  are multiplied by three when they are used as an index
+        #  and thus give non-intuitive errors in later code.
         # Complain if at_1 is invalid
         if not(-self.num_atoms <= at_1 < self.num_atoms):
             raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
@@ -1279,29 +1302,36 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums   : |int|_ or iterable |int|_ or |None|
+        g_nums
+            |int| or iterable |int| or |None| --
             Indices of the desired geometry
 
-        ats_1    : |int|_ or iterable |int|_ or |None|
+        ats_1
+            |int| or iterable |int| or |None| --
             Indices of the first atoms
 
-        ats_2    : |int|_ or iterable |int|_ or |None|
+        ats_2
+            |int| or iterable |int| or |None| --
             Indices of the second atoms
 
-        ats_3    : |int|_ or iterable |int|_ or |None|
+        ats_3
+            |int| or iterable |int| or |None| --
             Indices of the third atoms
 
-        ats_4    : |int|_ or iterable |int|_ or |None|
+        ats_4
+            |int| or iterable |int| or |None| --
             Indices of the fourth atoms
 
-        invalid_error  : bool
+        invalid_error
+            |bool|, optional --
             If |False| (the default), |None| values are returned for
             results corresponding to invalid indices. If |True|,
             exceptions are raised per normal.
 
         Yields
         ------
-        |npfloat|_
+        dihed
+            |npfloat|_ --
             Out-of-plane/dihedral angles in degrees for the indicated
             atom sets `ats_1`-`ats_2`-`ats_3`-`ats_4`, drawn from
             the respective `g_nums`.
@@ -1318,7 +1348,7 @@ class OpanXYZ(object):
             If any corresponding `ats_#` indices are equal.
 
         ~opan.error.XYZError
-            (typecode :data:`~opan.error.XYZError.DIHED`\\ ) If either
+            (typecode :data:`~opan.error.XYZError.DIHED`) If either
             of the atom trios (1-2-3 or
             2-3-4) is too close to linearity for any group of `ats_#`
 
@@ -1362,24 +1392,25 @@ class OpanXYZ(object):
 
         Returns the displacement vector pointing from `at_1`
         toward `at_2` from geometry `g_num`.
-        If `at_1` == `at_2` the zero vector is returned.
+        If `at_1` == `at_2` a strict zero vector is returned.
 
         Displacement vector is returned in units of Bohrs.
 
         Parameters
         ----------
-        g_num   : int
-            Index of the desired geometry
+        g_num
+            |int| -- Index of the desired geometry
 
-        at_1    : int
-            Index of the first atom
+        at_1
+            |int| -- Index of the first atom
 
-        at_2    : int
-            Index of the second atom
+        at_2
+            |int| -- Index of the second atom
 
         Returns
         -------
-        length-3 |npfloat|_
+        displ
+            length-3 |npfloat|_ --
             Displacement vector from `at_1` to `at_2`
 
         Raises
@@ -1438,23 +1469,28 @@ class OpanXYZ(object):
 
         Parameters
         ----------
-        g_nums : |int|_ or length-R iterable |int|_ or |None|
+        g_nums
+            |int| or length-R iterable |int| or |None| --
             Index/indices of the desired geometry/geometries
 
-        ats_1 : |int|_ or length-R iterable |int|_ or |None|
+        ats_1
+            |int| or length-R iterable |int| or |None| --
             Index/indices of the first atom(s)
 
-        ats_2 : |int|_ or length-R iterable |int|_ or |None|
+        ats_2
+            |int| or length-R iterable |int| or |None| --
             Index/indices of the second atom(s)
 
-        invalid_error  : bool
+        invalid_error
+            |bool|, optional --
             If |False| (the default), |None| values are returned for
             results corresponding to invalid indices. If |True|,
             exceptions are raised per normal.
 
         Yields
         ------
-        |npfloat|_
+        displ
+            |npfloat|_ --
             Displacement vector in Bohrs between each atom pair of |br|
             `ats_1` :math:`\\rightarrow` `ats_2` from the corresponding
             geometries of `g_nums`.
@@ -1499,16 +1535,16 @@ class OpanXYZ(object):
 
 
     def _none_subst(self, *args):
-        """ Helper function to insert full ranges for 'None' for X_iter methods.
+        """ Helper function to insert full ranges for |None| for X_iter methods.
 
         Custom method, specifically tailored, taking in the arguments from
-        an X_iter method and performing the replacement of 'None' after
-        error-checking the arguments for a max of one 'None' value, and ensuring
-        that if a 'None' is present, no other non-str iterables are present.
+        an X_iter method and performing the replacement of |None| after
+        error-checking the arguments for a max of one |None| value, and ensuring
+        that if a |None| is present, no other non-|str| iterables are present.
 
         Parameters
         ----------
-        args : 3-5 arguments of |int|_ or iterable |int|_ type, or |None|
+        args : 3-5 arguments of |int| or iterable |int|, or |None|
             First argument is always the indices for the geometries; all
             following are for the atoms in sequence as required for the
             particular :samp:`{x}_iter` method
@@ -1522,7 +1558,7 @@ class OpanXYZ(object):
         ------
         ~exceptions.ValueError  : If more than one |None| argument is present
 
-        ~exceptions.ValueError  : If an arg is non-|str|_ iterable when one
+        ~exceptions.ValueError  : If an arg is non-|str| iterable when one
         |None| is present
         """
 
@@ -1566,26 +1602,37 @@ class OpanXYZ(object):
 
     @staticmethod
     def _iter_return(tup, fxn, invalid_error):
-        """ Wrapper for error/None output handling of X_iter methods.
+        """ Wrapper for exception/|None| output handling of X_iter methods.
 
-        Attempts to pass 'tup' as arguments to 'fxn'.  If the call is
-        successful, returns the value produced. If IndexError or ValueError
-        is raised, indicating an invalid index value, re-raise if invalid_error
-        is True or return 'None' if False.  Other Exceptions are left uncaught.
+        Attempts to pass `tup` as arguments to `fxn`.  If the call is
+        successful, returns the value produced. If
+        :exc:`~exceptions.IndexError` or
+        :exc:`~exceptions.ValueError`
+        is raised, indicating an invalid index value, re-raise if
+        `invalid_error` is |True| or return |None| if |False|.
+
+        Other exceptions are left uncaught.
 
         Parameters
         ----------
-        tup     : tuple
-            Input arguments to unpack as arguments to 'fxn'
-        fxn     : callable
+        tup
+            |tuple| --
+            Input arguments to unpack as arguments to `fxn`
+
+        fxn
+            callable --
             Function/method to call to calculate the return value
-        invalid_error   : bool
-            Flag for whether to return None on IndexError/ValueError, or to
-            re-raise
+
+        invalid_error
+            |bool| --
+            Flag for whether to return |None| on an
+            :exc:`~exceptions.IndexError` or
+            :exc:`~exceptions.ValueError`, or to re-raise.
 
         Returns
         -------
-        val     : |npfloat|_ or |None|
+        val
+            |npfloat|_ or |None| --
             Calculated value from fxn(*tup) call, or 'None' value indicating
             IndexError / ValueError
 
