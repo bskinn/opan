@@ -5,6 +5,12 @@ opan API
 
 The full public API is delineated below.  Cross-references to NumPy are displayed with the ``np`` package abbreviation.
 
+.. note::
+   Documented attributes, functions, methods, etc. named with a leading underscore are **NOT** formally part of the
+   API. Their behavior may change without notice.
+
+|
+
  * :mod:`~opan.anharm`
 
    * :mod:`~opan.anharm.repo`

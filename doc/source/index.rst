@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 
-Welcome to opan!
+Welcome to OpenAnharmonic!
 ================================
 
 *Eventually, one will find here at least the API and a user's guide.*

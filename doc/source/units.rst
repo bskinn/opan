@@ -9,16 +9,14 @@ Atomic Units
 ---------------
 
  * :math:`\mathrm B` -- Bohr radius, atomic unit of length, equal to :math:`0.52917721067\ \mathring{\mathrm A}`
-   or :math:`0.52917721067\times 10^{-10}\ \mathrm m`
-   (`source <http://physics.nist.gov/cgi-bin/cuu/Value?tbohrrada0|search_for=atomic+length>`__
-   |extlink|)
+   or :math:`0.52917721067\times 10^{-10}\ \mathrm m` -- [NISTCUU_B]_
+
+ * :math:`\mathrm{E_h}` -- Hartree, atomic unit of energy, equal to :math:`4.35974465~\mathrm J` -- [NISTCUU_Eh]_
 
  * :math:`\mathrm{m_e}` -- Electron mass, atomic unit of mass, equal to :math:`9.10938356\times 10^{-31}
-   \ \mathrm{kg}` (`source <http://physics.nist.gov/cgi-bin/cuu/Value?me|search_for=electron+mass>`__
-   |extlink|)
+   \ \mathrm{kg}` -- [NISTCUU_me]_
 
- * :math:`\mathrm{T_a}` -- Atomic time unit, equal to :math:`2.4188843265\times 10^{-17}\ \mathrm s`
-   (`source <http://physics.nist.gov/cgi-bin/cuu/Value?aut|search_for=atomic+time>`__ |extlink|)
+ * :math:`\mathrm{T_a}` -- Atomic time unit, equal to :math:`2.4188843265\times 10^{-17}\ \mathrm s` -- [NISTCUU_Ta]_
 
 
 Other Units

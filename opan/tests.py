@@ -1670,7 +1670,7 @@ class TestOrcaEngradBadUsage(SuperOrcaEngrad):
 
     def test_ENGRAD_BadUsageOverwrite(self):
         from opan.error import GradError
-        assertErrorAndTypecode(self, GradError, self.oe._load,
+        assertErrorAndTypecode(self, GradError, self.oe.load,
                                 GradError.OVERWRITE, path=self.oe.engrad_path)
 
 ## end class TestOrcaEngradBadUsage
