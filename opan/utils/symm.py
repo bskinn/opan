@@ -7,7 +7,7 @@
 #                bskinn@alum.mit.edu
 #
 # Created:     19 Oct 2015
-# Copyright:   (c) Brian Skinn 2015
+# Copyright:   (c) Brian Skinn 2016
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #

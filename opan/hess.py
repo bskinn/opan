@@ -6,7 +6,7 @@
 #                bskinn@alum.mit.edu
 #
 # Created:     14 Nov 2014
-# Copyright:   (c) Brian Skinn 2015
+# Copyright:   (c) Brian Skinn 2016
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
@@ -37,18 +37,18 @@ Hessian data from external computational packages.
  *  The import for each external software package SHOULD have
     its own subclass.
 
- *  Each subclass MUST implement a ``_load(**kwargs)`` method as the
+ *  Each subclass MUST implement a ``load(**kwargs)`` method as the
     entry point for import of Hessian data.
 
  *  The Hessian data MUST be stored:
 
     *   In the instance member ``self.hess``
 
-    *   As a two-dimensional ``np.array``
+    *   As a two-dimensional |nparray|
 
     *   With `dtype` descended from ``np.float``
 
-    *   In units of Hartrees per Bohr-squared
+    *   In |units| of Hartrees per Bohr-squared
         :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B^2}\\right)`
 
     *   With elements arranged as:
@@ -114,11 +114,11 @@ Hessian data from external computational packages.
 
     *   In the instance member ``self.geom``
 
-    *   As a one-dimensional ``np.array``
+    *   As a one-dimensional |nparray|
 
     *   With `dtype` descended from ``np.float``
 
-    *   In units of Bohrs :math:`\\left(\\mathrm B\\right)`
+    *   In |units| of Bohrs :math:`\\left(\\mathrm B\\right)`
 
     *   With elements ordered as:
 
@@ -134,10 +134,11 @@ Hessian data from external computational packages.
 
     *   In the instance member ``self.atom_syms``
 
-    *   As a `list` of |str|, with each atom specified by an ALL-CAPS
+    *   As a |list| of |str|, with each atom specified by an **all-caps**
         atomic symbol (:data:`opan.const.atom_sym` may be helpful)
 
- *  Subclasses MAY define an unlimited number of class and/or
+ *  Subclasses MAY define an unlimited number of methods,
+    class variables, and/or
     instance variables in addition to those defined above, of
     unrestricted type.
 
@@ -172,7 +173,7 @@ class SuperOpanHess(object):
 
     1.  Ensures that the abstract superclass is not being instantiated,
         but instead a subclass.
-    2.  Calls the ``_load()`` method on the subclass, passing all `kwargs`
+    2.  Calls the ``load()`` method on the subclass, passing all `kwargs`
         through unmodified.
     3.  Typechecks the ``self.hess``, ``self.geom``, and
         ``self.atom_syms`` required members for existence, proper data type,
@@ -212,7 +213,7 @@ class SuperOpanHess(object):
 
         # Call the subclass _load method, passing in the keyword arguments
         #  wholesale
-        self._load(**kwargs)
+        self.load(**kwargs)
 
         # Define common error source string
         srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
@@ -267,13 +268,16 @@ class SuperOpanHess(object):
 
         Parameters
         ----------
-        coords : length-3N |npfloat|_
+        coords
+            length-3N |npfloat|_ --
             Vector of stacked 'lab-frame' Cartesian coordinates
 
-        atoms  : length-N |str| or |int|_
+        atoms
+            length-N |str| or |int| --
             Vector of atom symbols or atomic numbers
 
-        tol    : float, optional
+        tol
+            |float|, optional --
             Tolerance for acceptable deviation of each passed geometry
             coordinate  from that in the instance to still be considered
             matching. Default value is
@@ -323,7 +327,7 @@ class OrcaHess(SuperOpanHess):
     The precision of the geometry is less than that reported in an .xyz file,
     and thus should **not** be used for generation of subsequent computations.
 
-    Output :ref:`units <units-header>`:
+    Output |units|:
 
          *  Hessian : Hartrees per Bohr-squared
             :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm{B}^2}\\right)`
@@ -345,6 +349,12 @@ class OrcaHess(SuperOpanHess):
             :math:`\\frac{\\mathrm{E_h}}{\\mathrm{u\,B^2}}`
 
          *  Eigenvectors of the mass-weighted Hessian : (dimensionless)
+
+    |
+
+    **Methods**
+
+    .. automethod:: load
 
     |
 
@@ -481,12 +491,12 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.atom_masses
 
-        length-N list of |npfloat|_ --
+        length-N |list| of |npfloat|_ --
         List of atom masses as reported in the .hess file
 
     .. attribute:: OrcaHess.atom_syms
 
-        length-N list of |str| --
+        length-N |list| of |str| --
         List of uppercase atomic symbols
 
     .. attribute:: OrcaHess.dipders
@@ -522,7 +532,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.in_str
 
-        |str|_ -- Complete contents of the imported .hess file
+        |str| -- Complete contents of the imported .hess file
 
     .. attribute:: OrcaHess.ir_comps
 
@@ -538,7 +548,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.joblist
 
-        N x 3 |bool|_ --
+        N x 3 |bool| --
         Completion status for each displacement in calculation of the Hessian
 
     .. attribute:: OrcaHess.modes
@@ -563,7 +573,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.num_ats
 
-        |int|_ _ -- Number of atoms in the system
+        |int| -- Number of atoms in the system
 
     .. attribute:: OrcaHess.polders
 
@@ -582,7 +592,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.temp
 
-        |float|_ --
+        |float| --
         "Actual temperature" reported in the .hess file. Occasionally
         stored by |orca| as a meaningless zero value instead
         of the temperature used.
@@ -893,19 +903,21 @@ class OrcaHess(SuperOpanHess):
     ## end class Pat
 
 
-    def _load(self, **kwargs):
+    def load(self, **kwargs):
         """ Initialize OrcaHess Hessian object from .hess file
 
         Searches indicated file for data blocks within the .hess file.  The
         geometry, Hessian block, frequencies, and normal modes must be present
         and will be retrieved; other blocks will be imported if present, or
-        ignored if absent.  If malformed/inaccurate data is found in any
-        block that is present, some flavor of HessError will be raised.
-
+        ignored if absent (stored as |None| in the resulting object).
+        If malformed/inaccurate data is found in any
+        block that is present, some flavor of :exc:`~opan.error.HessError`
+        will be raised.
 
         Parameters
         ----------
-        path : str
+        path
+            |str| --
             `kwargs` parameter specifying complete path to the
             .hess file to be read.
 
@@ -921,10 +933,7 @@ class OrcaHess(SuperOpanHess):
         ~exceptions.IOError
             If the indicated file does not exist or cannot be read.
 
-        Methods
-        -------------
-        parse_multiblock :  Helper function for importing blocks with multiple
-            sections
+
         """
 
         # Local method(s)
@@ -937,36 +946,50 @@ class OrcaHess(SuperOpanHess):
             function.  The structure depends critically on several formatting
             features of |orca| .hess files.
 
-            Note the search groups that must be present in the 'p_block' and
-            'p_line' Regex patterns.
+            Note the search groups that must be present in the `p_block` and
+            `p_line` Regex patterns.
 
             Parameters
             ----------
-            hesstest    : str
+            hesstest
+                |str| --
                 Complete text of the .hess file
-            p_block     : re.compile() pattern
+
+            p_block
+                :func:`re.compile` pattern --
                 Retrieves the **entirety** of the relevant block
                 Required groups:
                     dim     : overall dimension of the data block
                     block   : contents of the block, including column headers
-            p_sec       : re.compile() pattern
+
+            p_sec
+                :func:`re.compile` pattern --
                 Retrieves each section of data columns
-            p_line      : re.compile() pattern
+
+            p_line
+                :func:`re.compile` pattern --
                 Retrieves individual lines of a section
                 Required groups:
                     row     : Row index into the final data block
                     e#      : Column index into the data section (# in range(6))
-            num_ats     : int
+
+            num_ats
+                |int| --
                 Number of atoms in the geometry
-            blockname   : str
+
+            blockname
+                |str| --
                 Brief text description of the block being imported, if needed
                 for error reporting purposes
-            tc          : HessError typecode
+
+            tc
+                :class:`~opan.error.HessError` typecode --
                 Type of error to be thrown, if required
 
             Returns
             -------
-            workmtx     : 3N x 3N np.float_
+            workmtx
+                3N x 3N |npfloat|_ --
                 Assembled array for storage
 
             """
