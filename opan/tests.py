@@ -3087,7 +3087,7 @@ class TestOrcaHessBadUsage(SuperOrcaHess):
 
     def test_HESS_BadUsageOverwrite(self):
         from opan.error import HessError
-        assertErrorAndTypecode(self, HessError, self.oh._load,
+        assertErrorAndTypecode(self, HessError, self.oh.load,
                                 HessError.OVERWRITE, path=self.oh.hess_path)
 
 ## end class TestOrcaHessBadUsage
