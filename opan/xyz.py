@@ -273,7 +273,7 @@ class OpanXYZ(object):
     # The "[^\\n\\w]" pattern is a weak equivalent of \\s, made necessary
     #  since \\s *includes* \\n.
     # Perhaps "[ \\t]" will suffice...
-    #: :func:`re.compile` pattern -- Retrieves full OpenBabel
+    #: |re.compile| pattern -- Retrieves full OpenBabel
     #: XYZ geometry frames/blocks
     p_geom = _re.compile("""
     ^(?P<num>\\d+)      # Integer number of atoms
@@ -297,7 +297,7 @@ class OpanXYZ(object):
     #  retrieved by the p_geom RegEx.
     # As w/p_geom, re.M is required for "^" to match the start of each line of
     #  the coords block.
-    #: :func:`re.compile` pattern -- Retrieves individual lines from
+    #: |re.compile| pattern -- Retrieves individual lines from
     #: coordinate blocks matched by :attr:`p_geom`
     p_coords = _re.compile("""
     ^[ \\t]*?               # Any whitespace before element id

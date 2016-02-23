@@ -135,6 +135,16 @@ class OpanEnum(object):
 
             **Example:**
 
+            >>> [val for val in opan.const.EnumDispDirection]
+            ['POSITIVE', 'NO_DISP', 'NEGATIVE']
+
+        .. method:: __contains__(value)
+
+            Returns |True| if `value` is a valid value for the
+            enumeration type, else |False|.
+
+            **Example:**
+
             >>> 'NO_DISP' in EnumDispDirection
             True
 
@@ -148,6 +158,10 @@ class OpanEnum(object):
                 ## end if
             ## next item
         ## end def __iter__
+
+        def __contains__(self, value):
+            return (value in self.__dict__ and value == self.__dict__[value])
+        ## end def __contains__
     ## end class __metaclass__
 
 ## end class OpanEnum
@@ -162,6 +176,10 @@ class EnumDispDirection(OpanEnum):
     **Enum Values**
 
     """
+
+    # CHANGE OPANERROR METACLASS EXAMPLE IF ANY NEW TYPECODES ARE ADDED
+    # HERE!!! (Should never happen, but....)
+
     #: Positive displacement along a particular normal mode
     POSITIVE = 'POSITIVE'
 

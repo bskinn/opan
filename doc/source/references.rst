@@ -4,7 +4,11 @@
 References
 =============
 
-.. [Kro92] H.W. Kroto. "Molecular Rotation Spectra." 1st Dover ed. Mineola, NY: Dover Publications, 1992.
+.. [Gri10] S. Grimme, J. Antony, S. Erlich, H. Krieg. *J Chem Phys* **132**\ (15): 154104, 2010. `doi:10.1063/1.3382344 <http://dx.doi.org/10.1063/1.3382344>`__
+
+.. [Kro92] H.W. Kroto. "Molecular Rotation Spectra." 1st Dover ed. Mineola, NY: Dover Publications, 1992. `Google Books <https://books.google.com/books?id=z1uoQgAACAAJ>`__ || `Amazon <http://www.amazon.com/Molecular-Rotation-Spectra-H-Kroto/dp/048667259X>`__
+
+.. [Kru12] H. Kruse, S. Grimme. *J Chem Phys* **136**\ (15): 154101, 2012. `doi:10.1063/1.3700154 <http://dx.doi.org/10.1063/1.3700154>`__
 
 
 *From the* |NISTRef|_ |extlink|

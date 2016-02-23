@@ -60,7 +60,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     If `wait_to_complete` is |True|, the :func:`subprocess.call` syntax will
     be used and the function will not return until execution of the
     wrapper script completes.
-    If False, *[indicate what will be returned if not waiting]*.
+    If |False|, *[indicate what will be returned if not waiting]*.
 
     *#!DOC: execute_orca: The different output modes, depending on waiting
     or not.*
@@ -102,7 +102,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     If `wait_to_complete` == |True|:
 
-        A `tuple` of objects is returned, with elements of type ::
+        A |tuple| of objects is returned, with elements of type ::
 
             (OrcaOutput, OpanXYZ, OrcaEngrad, OrcaHess)
 

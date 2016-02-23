@@ -362,7 +362,7 @@ class OrcaHess(SuperOpanHess):
 
     .. class:: Pat
 
-        :func:`re.compile` patterns for data parsing.
+        |re.compile| patterns for data parsing.
 
         |
 
@@ -956,18 +956,18 @@ class OrcaHess(SuperOpanHess):
                 Complete text of the .hess file
 
             p_block
-                :func:`re.compile` pattern --
+                |re.compile| pattern --
                 Retrieves the **entirety** of the relevant block
                 Required groups:
                     dim     : overall dimension of the data block
                     block   : contents of the block, including column headers
 
             p_sec
-                :func:`re.compile` pattern --
+                |re.compile| pattern --
                 Retrieves each section of data columns
 
             p_line
-                :func:`re.compile` pattern --
+                |re.compile| pattern --
                 Retrieves individual lines of a section
                 Required groups:
                     row     : Row index into the final data block

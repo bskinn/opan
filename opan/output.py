@@ -92,34 +92,70 @@ class OrcaOutput(object):
 
     **Class Variables**
 
-    dict() lookups of re.compile() RegEx patterns:
-        p_en    : Energies reported at the end of SCF cycles. Keys:
-            EN.SCFFINAL : SCF energy including gCP, D3, etc. corrections
-            EN.GCP      : gCP correction
-            EN.D3       : D3 correction (D3BJ, at least; unconfirmed with
-                            D3ZERO. Likely nonfunctional with DFT-NL)
-            EN.SCFOCC   : SCF energy with only COSMO outlying q correction
-            EN.OCC      : COSMO outlying q correction
-            EN.SCFFINALOCC  : Final SCF energy with COSMO q correction added
-        p_thermo    : Quantities extracted from THERMOCHEMISTRY block. Keys:
-            THERMO.BLOCK    : Entire THERMOCHEMISTRY block
-            THERMO.TEMP     : Simulated temperature (K)
-            THERMO.PRESS    : Simulated pressure (atm)
-            THERMO.E_EL     : Electronic energy from thermo (Eh; often slightly
-                                different than the last EN_SCFFINAL value)
-            THERMO.E_ZPE    : Zero-point energy in thermo (Eh)
-            THERMO.E_VIB    : Thermal vibrational U correction (Eh)
-            THERMO.E_ROT    : Thermal rotational U correction (Eh)
-            THERMO.E_TRANS  : Thermal translational U correction (Eh)
-            THERMO.H_IG     : Ideal-gas (kB*T) enthalpy contribution (Eh)
-            THERMO.TS_EL    : Electronic T*S contribution (Eh)
-            THERMO.TS_VIB   : Vibrational T*S contribution (Eh)
-            THERMO.TS_TRANS : Translational T*S contribution (Eh)
-            THERMO.QROT     : Rotational partition function (unitless)
-        p_spincont  : Spin contamination block values. Keys:
-            SPINCONT.ACTUAL : Calculated <S**2> expectation value
-            SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
-            SPINCONT.DEV    : Deviation (calc - ideal)
+    *Enumerations*
+
+    .. class:: EN
+
+        :class:`~opan.const.OpanEnum` for the energies reported
+        at the end of SCF cycles.
+
+        .. attribute:: D3
+
+            Grimme's D3BJ dispersion correction [Gri10]_. May or may not play
+            nicely with D3ZERO. Likely non-functional with DFT-NL
+            dispersion.
+
+        .. attribute:: GCP
+
+            Grimme's geometric counterpose (gCP) correction [Kru12]_
+
+        .. attribute:: OCC
+
+            COSMO outlying charge correction
+
+            *#DOC: Need COSMO reference*
+
+        .. attribute:: SCFFINAL
+
+            SCF energy including gCP and D3 corrections
+
+        .. attribute:: SCFFINALOCC
+
+            :attr:`SCFFINAL` energy, but also with COSMO outlying
+            charge correction
+
+        .. attribute:: SCFOCC
+
+            SCF energy with only the COSMO outlying charge correction
+            (no dispersion or gCP corrections)
+
+    *Regular Expression Patterns*
+
+    .. attribute:: p_en
+
+        |dict| of |re.compile| for the energies reported
+        at the end of SCF cycles. Keys are in :attr:`~OrcaOutput.EN`.
+
+
+    p_thermo    : Quantities extracted from THERMOCHEMISTRY block. Keys:
+        THERMO.BLOCK    : Entire THERMOCHEMISTRY block
+        THERMO.TEMP     : Simulated temperature (K)
+        THERMO.PRESS    : Simulated pressure (atm)
+        THERMO.E_EL     : Electronic energy from thermo (Eh; often slightly
+                            different than the last EN_SCFFINAL value)
+        THERMO.E_ZPE    : Zero-point energy in thermo (Eh)
+        THERMO.E_VIB    : Thermal vibrational U correction (Eh)
+        THERMO.E_ROT    : Thermal rotational U correction (Eh)
+        THERMO.E_TRANS  : Thermal translational U correction (Eh)
+        THERMO.H_IG     : Ideal-gas (kB*T) enthalpy contribution (Eh)
+        THERMO.TS_EL    : Electronic T*S contribution (Eh)
+        THERMO.TS_VIB   : Vibrational T*S contribution (Eh)
+        THERMO.TS_TRANS : Translational T*S contribution (Eh)
+        THERMO.QROT     : Rotational partition function (unitless)
+    p_spincont  : Spin contamination block values. Keys:
+        SPINCONT.ACTUAL : Calculated <S**2> expectation value
+        SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
+        SPINCONT.DEV    : Deviation (calc - ideal)
 
     |str| constants for keys of above 'dict struct' variables are also defined,
         as class variables.  For example, to retrieve the Regex pattern for
@@ -150,7 +186,7 @@ class OrcaOutput(object):
     .. attribute:: OrcaOutput.converged
 
         |bool| --
-        |True| if SCF converged ANYWHERE IN run.
+        |True| if SCF converged ANYWHERE in run.
 
         *#DOC Update oo.converged with any robustifications*
 
@@ -194,6 +230,7 @@ class OrcaOutput(object):
 
     # Imports
     import re as _re
+    from .const import OpanEnum as _OpEnum
 
 
     # Various class-level RegEx patterns, collected into dictionaries to
@@ -212,13 +249,13 @@ class OrcaOutput(object):
 
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class EN(object):
-        SCFFINAL = "scffinal"
-        GCP = "gcp"
-        D3  = "d3"
-        SCFOCC = "scfocc"
-        OCC = "occ"
-        SCFFINALOCC = "scffinalocc"
+    class EN(_OpEnum):
+        SCFFINAL = "SCFFINAL"
+        GCP = "GCP"
+        D3  = "D3"
+        SCFOCC = "SCFOCC"
+        OCC = "OCC"
+        SCFFINALOCC = "SCFFINALOCC"
     ## end class EN
 
     # Initialize dictionary
@@ -273,20 +310,20 @@ class OrcaOutput(object):
 
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class THERMO(object):
-        BLOCK = "block"
-        TEMP = "temp"
-        PRESS = "press"
-        E_EL = "e_el"
-        E_ZPE = "e_zpe"
-        E_VIB = "e_vib"
-        E_ROT = "e_rot"
-        E_TRANS = "e_trans"
-        H_IG = "h_ig"
-        TS_EL = "ts_el"
-        TS_VIB = "ts_vib"
-        TS_TRANS = "ts_trans"
-        QROT = "qrot"
+    class THERMO(_OpEnum):
+        BLOCK = "BLOCK"
+        TEMP = "TEMP"
+        PRESS = "PRESS"
+        E_EL = "E_EL"
+        E_ZPE = "E_ZPE"
+        E_VIB = "E_VIB"
+        E_ROT = "E_ROT"
+        E_TRANS = "E_TRANS"
+        H_IG = "H_IG"
+        TS_EL = "TS_EL"
+        TS_VIB = "TS_VIB"
+        TS_TRANS = "TS_TRANS"
+        QROT = "QROT"
     ## end class THERMO
 
     # Initialize dictionary
@@ -417,11 +454,11 @@ class OrcaOutput(object):
     # Patterns for the spin contamination information
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class SPINCONT(object):
-        ACTUAL = "actual"
-        IDEAL = "ideal"
-        DEV = "dev"
-    ## end class SPINCONTAM
+    class SPINCONT(_OpEnum):
+        ACTUAL = "ACTUAL"
+        IDEAL = "IDEAL"
+        DEV = "DEV"
+    ## end class SPINCONT
 
     # Initialize dictionary
     p_spincont = dict()
@@ -470,7 +507,7 @@ class OrcaOutput(object):
 
         Available data includes:
 
-         *  SCF energies (incl D3, gCP, COSMO outlying charge corrections)
+         *  SCF energies (incl D3BJ, gCP, COSMO outlying charge corrections)
 
          *  Thermochemistry
 
@@ -498,7 +535,7 @@ class OrcaOutput(object):
 
         .. warning::
 
-            THIS CLASS ONLY WORKS ON A **VERY SMALL** SUBSET OF
+            THIS CLASS PRESENTLY ONLY WORKS ON A **VERY SMALL** SUBSET OF
             COMPUTATION TYPES!!
 
         Parameters

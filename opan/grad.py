@@ -284,7 +284,7 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. class:: Pat
 
-        :func:`re.compile` patterns for data parsing.
+        |re.compile| patterns for data parsing.
 
         |
 

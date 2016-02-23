@@ -139,6 +139,16 @@ class OpanError(Exception):
 
             **Example:**
 
+            >>> [tc for tc in opan.error.XYZError]
+            ['XYZFILE', 'DIHED', 'NONPRL', 'OVERWRITE']
+
+        .. method:: __contains__(tc)
+
+            Returns |True| if `tc` is a valid typecode for the
+            enumeration type, else |False|.
+
+            **Example:**
+
             >>> 'XYZFILE' in opan.error.XYZError
             True
 
@@ -207,6 +217,10 @@ class OpanError(Exception):
                 ## end if
             ## next item
         ##end def __iter__
+
+        def __contains__(self, tc):
+            return (tc in self.__dict__ and tc == self.__dict__[tc])
+        ## end def __contains__
     ## end class __metaclass__
 
 ## end class OpanError
@@ -221,6 +235,9 @@ class XYZError(OpanError):
     **Typecodes**
 
     """
+
+    # CHANGE OPANERROR METACLASS EXAMPLE IF ANY NEW TYPECODES ARE ADDED
+    # HERE!!!
 
     #: Inconsistent geometry in an OpenBabel XYZ file
     #:

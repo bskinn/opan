@@ -149,6 +149,8 @@ rst_epilog = """
 
 .. |dict| replace:: :obj:`dict`
 
+.. |re.compile| replace:: :func:`re.compile`
+
 .. |npfloat| replace:: ``np.float_``
 
 .. _npfloat: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
