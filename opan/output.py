@@ -29,8 +29,8 @@
     :class:`~opan.hess.SuperOpanHess`.  This is necessary because
     automated execution of external
     computation softwares will require some unified mechanism for
-    indicating whether a particular computation completed successfully
-    for the purposes of automatic execution, independent of the
+    indicating whether a particular computation completed successfully,
+    independent of the
     identify of the software package that was executed.
 
 .. warning::
@@ -99,6 +99,8 @@ class OrcaOutput(object):
         :class:`~opan.const.OpanEnum` for the energies reported
         at the end of SCF cycles.
 
+        |
+
         .. attribute:: D3
 
             Grimme's D3BJ dispersion correction [Gri10]_. May or may not play
@@ -129,6 +131,80 @@ class OrcaOutput(object):
             SCF energy with only the COSMO outlying charge correction
             (no dispersion or gCP corrections)
 
+    .. class:: THERMO
+
+        :class:`~opan.const.OpanEnum` for the quantities reported
+        in the THERMOCHEMISTRY block.
+
+        |
+
+        .. attribute:: BLOCK
+
+            Entire THERMOCHEMISTRY block (as |str|)
+
+        .. attribute:: E_EL
+
+            Electronic energy from the thermochemistry block, often
+            slightly different than the last
+            :attr:`EN.SCFFINAL <OrcaOutput.EN.SCFFINAL>` value
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: E_ROT
+
+            Thermal rotational internal energy correction
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: E_TRANS
+
+            Thermal translational internal energy correction
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: E_VIB
+
+            Thermal vibrational internal energy correction
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: E_ZPE
+
+            Zero-point energy correction
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: H_IG
+
+            Ideal-gas
+            :math:`\\left(k_\\mathrm{B} T\\right)`
+            enthalpy contribution
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: PRESS
+
+            Simulated pressure
+            :math:`\\left(\\mathrm{atm}\\right)`
+
+        .. attribute:: QROT
+
+            Rotational partition function (unitless)
+
+        .. attribute:: TEMP
+
+            Simulated temperature
+            :math:`\\left(\\mathrm K\\right)`
+
+        .. attribute:: TS_EL
+
+            Electronic :math:`TS` entropy contribution
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: TS_TRANS
+
+            Translational :math:`TS` entropy contribution
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
+        .. attribute:: TS_VIB
+
+            Vibrational :math:`TS` entropy contribution
+            :math:`\\left(\\mathrm{E_h}\\right)`
+
     *Regular Expression Patterns*
 
     .. attribute:: p_en
@@ -137,32 +213,16 @@ class OrcaOutput(object):
         at the end of SCF cycles. Keys are in :attr:`~OrcaOutput.EN`.
 
 
-    p_thermo    : Quantities extracted from THERMOCHEMISTRY block. Keys:
-        THERMO.BLOCK    : Entire THERMOCHEMISTRY block
-        THERMO.TEMP     : Simulated temperature (K)
-        THERMO.PRESS    : Simulated pressure (atm)
-        THERMO.E_EL     : Electronic energy from thermo (Eh; often slightly
-                            different than the last EN_SCFFINAL value)
-        THERMO.E_ZPE    : Zero-point energy in thermo (Eh)
-        THERMO.E_VIB    : Thermal vibrational U correction (Eh)
-        THERMO.E_ROT    : Thermal rotational U correction (Eh)
-        THERMO.E_TRANS  : Thermal translational U correction (Eh)
-        THERMO.H_IG     : Ideal-gas (kB*T) enthalpy contribution (Eh)
-        THERMO.TS_EL    : Electronic T*S contribution (Eh)
-        THERMO.TS_VIB   : Vibrational T*S contribution (Eh)
-        THERMO.TS_TRANS : Translational T*S contribution (Eh)
-        THERMO.QROT     : Rotational partition function (unitless)
+    .. attribute:: p_thermo
+
+        |dict| of |re.compile| for the quantities extracted
+        from the THERMOCHEMISTRY block. Keys are in
+        :attr:`~OrcaOutput.THERMO`.
+
     p_spincont  : Spin contamination block values. Keys:
         SPINCONT.ACTUAL : Calculated <S**2> expectation value
         SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
         SPINCONT.DEV    : Deviation (calc - ideal)
-
-    |str| constants for keys of above 'dict struct' variables are also defined,
-        as class variables.  For example, to retrieve the Regex pattern for
-        locating the vibrational entropy contribution, the following syntax
-        can be used:
-
-            OrcaOutput.p_thermo[THERMO.TS_VIB]
 
     |
 
@@ -193,14 +253,14 @@ class OrcaOutput(object):
     .. attribute:: OrcaOutput.optimized
 
         |bool| --
-        |True| if any OPT converged ANYWHERE in run. Fine for OPT, but ambiguous
-        for scans.
+        |True| if any OPT converged ANYWHERE in run. Fine for OPT,
+        but ambiguous for scans.
 
         *#DOC Update oo.optimized with any robustifications*
 
     .. attribute:: OrcaOutput.en
 
-        |dict| of |list\\\ s of |npfloat|_--
+        |dict| of |list| of |npfloat|_--
         Lists of the various energy values from the parsed output. Dict
         keys are those of :attr:`p_en`, above.  Any energy type not found in the
         output is assigned as an empty list.
@@ -216,7 +276,7 @@ class OrcaOutput(object):
 
     .. attribute:: OrcaOutput.spincont
 
-        |dict| of |npfloat|_--
+        |dict| of |list| of |npfloat|_--
         Lists of the various values from the spin contamination calculations
         in the output, if present. Empty lists if absent. Dict keys are those
         of :attr:`p_spincont`, above.
@@ -502,7 +562,7 @@ class OrcaOutput(object):
         .. note::
 
             Current `plan <https://github.com/bskinn/opan/issues/56>`__
-            is to refactor such that only loads from files are
+            is to implement such that only loads from files are
             supported.
 
         Available data includes:
@@ -515,18 +575,18 @@ class OrcaOutput(object):
 
         Success indicators include:
 
-        *   completed
+        *   `completed`
 
                 Checks for the 'ORCA TERMINATED NORMALLY' report at the
                 end of the file
 
-        *   converged
+        *   `converged`
 
                 Checks for any occurrence of successful SCF convergence
                 in the file (questionable for anything but single-point
                 calculations)
 
-        *   optimized
+        *   `optimized`
 
                 Checks for any occurrence of "OPTIMIZATION HAS
                 CONVERGED" in the file (questionable for anything but
