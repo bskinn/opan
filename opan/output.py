@@ -131,7 +131,29 @@ class OrcaOutput(object):
             SCF energy with only the COSMO outlying charge correction
             (no dispersion or gCP corrections)
 
-    .. class:: THERMO
+
+    .. class:: OrcaOutput.SPINCONT
+
+        :class:`~opan.const.OpanEnum` for the spin contamination
+        values reported after each unrestricted SCF cycle.
+
+        |
+
+        .. attribute:: ACTUAL
+
+            Calculated :math:`\\left<S^2\\right>` expectation value
+
+        .. attribute:: DEV
+
+            Deviation of :math:`\\left<S^2\\right>` (calculated
+            minus ideal)
+
+        .. attribute:: IDEAL
+
+            Ideal :math:`\\left<S^2\\right>` expectation value
+
+
+    .. class:: OrcaOutput.THERMO
 
         :class:`~opan.const.OpanEnum` for the quantities reported
         in the THERMOCHEMISTRY block.
@@ -207,36 +229,25 @@ class OrcaOutput(object):
 
     *Regular Expression Patterns*
 
-    .. attribute:: p_en
+    .. attribute:: OrcaOutput.p_en
 
         |dict| of |re.compile| for the energies reported
         at the end of SCF cycles. Keys are in :attr:`~OrcaOutput.EN`.
 
+    .. attribute:: OrcaOutput.p_spincont
 
-    .. attribute:: p_thermo
+        |dict| of |re.compile| for the spin contamination block
+        values. Keys are in :attr:`~OrcaOutput.SPINCONT`.
+
+    .. attribute:: OrcaOutput.p_thermo
 
         |dict| of |re.compile| for the quantities extracted
         from the THERMOCHEMISTRY block. Keys are in
         :attr:`~OrcaOutput.THERMO`.
 
-    p_spincont  : Spin contamination block values. Keys:
-        SPINCONT.ACTUAL : Calculated <S**2> expectation value
-        SPINCONT.IDEAL  : Ideal <S**2> expectation value for system
-        SPINCONT.DEV    : Deviation (calc - ideal)
-
     |
 
     **Instance Variables**
-
-    .. attribute:: OrcaOutput.src_type
-
-        |str| --
-        String describing the nature of the source used to create the instance.
-
-    .. attribute:: OrcaOutput.src_src
-
-        |str| --
-        Descriptor of the location of the source used to create the instance.
 
     .. attribute:: OrcaOutput.completed
 
@@ -250,6 +261,13 @@ class OrcaOutput(object):
 
         *#DOC Update oo.converged with any robustifications*
 
+    .. attribute:: OrcaOutput.en
+
+        |dict| of |list| of |npfloat|_--
+        Lists of the various energy values from the parsed output. Dict
+        keys are those of :attr:`EN`, above.  Any energy type not found in the
+        output is assigned as an empty list.
+
     .. attribute:: OrcaOutput.optimized
 
         |bool| --
@@ -258,28 +276,31 @@ class OrcaOutput(object):
 
         *#DOC Update oo.optimized with any robustifications*
 
-    .. attribute:: OrcaOutput.en
-
-        |dict| of |list| of |npfloat|_--
-        Lists of the various energy values from the parsed output. Dict
-        keys are those of :attr:`p_en`, above.  Any energy type not found in the
-        output is assigned as an empty list.
-
-    .. attribute:: OrcaOutput.thermo
-
-        |dict| of |npfloat|_--
-        Values from the thermochemistry block of the parsed output. Dict keys
-        are those of :attr:`p_thermo`, above.
-
-        *#TODO: OrcaOutput.thermo: Test on single-atom case, update
-        documentation to reflect outcome*
-
     .. attribute:: OrcaOutput.spincont
 
         |dict| of |list| of |npfloat|_--
         Lists of the various values from the spin contamination calculations
         in the output, if present. Empty lists if absent. Dict keys are those
-        of :attr:`p_spincont`, above.
+        of :attr:`SPINCONT`, above.
+
+    .. attribute:: OrcaOutput.src_type
+
+        |str| --
+        String describing the nature of the source used to create the instance.
+
+    .. attribute:: OrcaOutput.src_src
+
+        |str| --
+        Descriptor of the location of the source used to create the instance.
+
+    .. attribute:: OrcaOutput.thermo
+
+        |dict| of |npfloat|_--
+        Values from the thermochemistry block of the parsed output. Dict keys
+        are those of :attr:`THERMO`, above.
+
+        *#TODO: OrcaOutput.thermo: Test on single-atom case, update
+        documentation to reflect outcome*
 
     .. attribute:: OrcaOutput.thermo_block
 
@@ -562,8 +583,8 @@ class OrcaOutput(object):
         .. note::
 
             Current `plan <https://github.com/bskinn/opan/issues/56>`__
-            is to implement such that only loads from files are
-            supported.
+            is to constrain implementation such that only loads from
+            files are supported.
 
         Available data includes:
 

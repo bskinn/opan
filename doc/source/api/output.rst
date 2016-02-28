@@ -5,8 +5,8 @@ opan.output
 
 
 .. automodule:: opan.output
-   :members:
-   :show-inheritance:
+
+
 
 
 
