@@ -322,15 +322,10 @@ class OrcaOutput(object):
         in the output, if present. Empty lists if absent. Dict keys are those
         of :attr:`SPINCONT`, above.
 
-    .. attribute:: OrcaOutput.src_type
+    .. attribute:: OrcaOutput.src_path
 
         |str| --
-        String describing the nature of the source used to create the instance.
-
-    .. attribute:: OrcaOutput.src_src
-
-        |str| --
-        Descriptor of the location of the source used to create the instance.
+        Full path to the associated output file
 
     .. attribute:: OrcaOutput.thermo
 
@@ -611,19 +606,16 @@ class OrcaOutput(object):
 
     ## end class variables
 
-    def __init__(self, output_src, src_type="file"):
+    def __init__(self, file_path):
         """ Initialize :class:`OrcaOutput` object.
 
-        Actions performed depend on the indicated 'src_type':
+        Imports the data found in the output file found at `file_path`.
 
-        'file':
-            |orca| output is read from a file on disk
+        .. warning::
 
-        .. note::
-
-            Current `plan <https://github.com/bskinn/opan/issues/56>`__
-            is to constrain implementation such that only loads from
-            files are supported.
+            THIS CLASS PRESENTLY ONLY WORKS ON A **VERY SMALL** SUBSET OF
+            COMPUTATION TYPES, currently HF, LDA-DFT, GGA-DFT, and mGGA-DFT.
+            *MAY* work on some double-hybrid or range-separated DFT.
 
         Available data includes:
 
@@ -650,28 +642,16 @@ class OrcaOutput(object):
 
                 Checks for any occurrence of "OPTIMIZATION HAS
                 CONVERGED" in the file (questionable for anything but
-                a standalone OPT -- i.e., not a mode or internal coordinate
-                scan)
+                a standalone OPT -- i.e., not useful for a mode or
+                internal coordinate scan)
 
-        .. warning::
 
-            THIS CLASS PRESENTLY ONLY WORKS ON A **VERY SMALL** SUBSET OF
-            COMPUTATION TYPES!!
 
         Parameters
         ----------
-        output_src
+        file_path
             |str| --
-            Depending on the value of 'src_type':
-
-            "file" : Full path to the output file to be parsed.
-
-        src_type
-            |str| --
-            One of the following values indicating the type of output data
-            source to be parsed:
-
-            file : |orca| output file on disk
+            Full path to the output file to be parsed.
 
         Raises
         ------
@@ -683,6 +663,7 @@ class OrcaOutput(object):
             If `src_type` is invalid
 
         """
+
         #TODO: (?) OrcaOutput: Add initialization parameter to indicate which
         # type of run should be expected?
 
@@ -692,17 +673,10 @@ class OrcaOutput(object):
         from .error import OutputError
         import numpy as np
 
-        # Confirm src_type is valid
-        if not src_type == "file":
-            raise(ValueError("'{0}' is invalid".format(src_type)))
-        ##end if
-
         # Get the output data
-        if src_type == "file":
-            with open(output_src) as in_f:
-                datastr = in_f.read()
-            ##end with
-        ##end if
+        with open(file_path) as in_f:
+            datastr = in_f.read()
+        ##end with
 
         # Check for normal termination (weird values in dicts, etc. would be
         #  diagnostic also, but might as well define this since it's easy).
@@ -719,8 +693,7 @@ class OrcaOutput(object):
         self.optimized = datastr.find("OPTIMIZATION HAS CONVERGED") > -1
 
         # Store the source information
-        self.src_type = src_type
-        self.src_src = output_src
+        self.src_path = file_path
 
         # Initialize the energies dict as empty
         self.en = dict()
@@ -774,8 +747,8 @@ class OrcaOutput(object):
             for (k,p) in self.p_thermo.iteritems():
                 if k != self.THERMO.BLOCK:
                     try:
-                        self.thermo.update({ k : \
-                                    scast(p.search(datastr) \
+                        self.thermo.update({ k :
+                                    scast(p.search(datastr)
                                             .group(self.P_GROUP), np.float_) })
                     except AttributeError:
                         # Value not found, probably due to monoatomic freq calc
