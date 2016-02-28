@@ -18,18 +18,26 @@
 #
 #-------------------------------------------------------------------------------
 
-""" #DOC: Docstring for anharm.base
+""" Base-level objects/functions implementing VPT2 anharmonic calculations
+
+*This module docstring is not used in the Sphinx docs.*
+
+OpanAnharm -- Core object for VPT2 calculations.
+
 """
 
 class OpanAnharm(object):
-    """ #DOC: OpanAnharm class-level docstring
+    """ Container for data from VPT2 anharmonic calculations.
+
+    *To be added...*
+
     """
 
     # Imports
     from ..const import EnumSoftware as _E_SW
 
     def __init__(self):
-        """ #DOC: OpanAnharm.__init__ docstring (if needed)?
+        """ Barebones initializer to declare relevant variables.
         """
 
         # Declare the holding variables for the XYZ, GRAD, HESS
@@ -47,11 +55,8 @@ class OpanAnharm(object):
                     bohrs=False, \
                     software=_E_SW.ORCA, \
                     repo_clobber=False, **kwargs):
-        """ #DOC: new_from_files docstring
-                    xyz_ext='xyz', \
-                    grad_ext='engrad', \
-                    hess_ext='hess', \
-                    kwargs
+        """ Initialize with data from files.
+
         """
 
         # Imports

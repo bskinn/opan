@@ -5,8 +5,7 @@ opan.anharm.repo
 
 
 .. automodule:: opan.anharm.repo
-   :members:
-   :show-inheritance:
+
 
 
 

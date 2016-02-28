@@ -20,6 +20,7 @@
 
 """General purpose utility functions for OpenAnharmonic.
 
+*This module docstring is not used in the Sphinx docs.*
 
 check_geom       -- Confirm two OpenBabel geometries (atom types and
                         coordinates) match to within a specified tolerance

@@ -18,12 +18,28 @@
 #
 #-------------------------------------------------------------------------------
 
-"""**NEEDS DOCSTRING**, add submodules and base members to this docstring
+"""Submodule implementing VPT2 anharmonic computations.
 
-Sub-Modules
------------
+.. warning::
 
-:mod:`~opan.anharm.repo` -- HDF5 repository for :class:`OPAN_ANHARM`
+    This module is under active development. API &c. may change
+    with little notice.
+
+**Sub-Modules**
+
+:mod:`~opan.anharm.repo` -- HDF5 repository for :class:`OpanAnharm`
+
+
+**Classes**
+
+:class:`~opan.anharm.base.OpanAnharm` -- Core driver class for VPT2
+anharmonic calculations.
+
+
+**API**
+
+.. autoclass:: opan.anharm.base.OpanAnharm
+
 
 """
 

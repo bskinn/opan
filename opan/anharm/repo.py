@@ -18,14 +18,25 @@
 #
 #-------------------------------------------------------------------------------
 
-""" #DOC: anharm.repo docstring
+""" Sub-module for HDF5 repo interactions for VPT2 anharmonic calculations.
+
+.. warning::
+
+    Module is under active development. API &c. may change
+    with little notice.
+
+**Classes**
+
+.. autoclass:: OpanAnharmRepo
+
+
 """
 
 # Imports
 
 
 class OpanAnharmRepo(object):
-    """ #DOC: OpanAnharmRepo docstring
+    """ HDF5 repo interface for VPT2 anharmonic calculations.
 
     Operations here **DO NOT** ensure consistency with the surrounding data.
     Such consistency must be checked/handled at a higher level. This is just
@@ -34,28 +45,24 @@ class OpanAnharmRepo(object):
     Currently no chunking or any filters are used. May or may not be worth
     robustification. Things stored are not likely to be huge....
 
-    --- to be filled ---
+    *#DOC: --- to be filled ---*
 
-    Instantiation
-    -------------
-    __init__(...)
-        --- to be completed ---
+    **Instantiation**
 
-    Class Variables
-    ---------------
+    .. automethod:: __init__(...)
 
 
-    Instance Variables
-    ------------------
+    **Class Variables**
 
+    *To be documented*
 
-    Methods
-    -------
+    **Instance Variables**
 
+    *To be documented*
 
-    Generators
-    ----------
-    (none)
+    **Methods**
+
+    *To be documented*
 
     """
 
