@@ -82,6 +82,37 @@ class OrcaOutput(object):
 
     |
 
+    **Contents**
+
+    *   `Methods <OrcaOutput-Methods_>`_
+
+        *   :meth:`~opan.output.OrcaOutput.__init__`
+
+        *   :meth:`~opan.output.OrcaOutput.en_last`
+
+    *   `Class Variables <OrcaOutput-ClassVars_>`_
+
+        *   `Enumerations <OrcaOutput-ClassVars-Enums_>`_
+
+            *   :class:`~opan.output.OrcaOutput.EN`
+
+            *   :class:`~opan.output.OrcaOutput.SPINCONT`
+
+            *   :class:`~opan.output.OrcaOutput.THERMO`
+
+        *   `Regular Expression Patterns
+            <OrcaOutput-ClassVars-Regex_>`_
+
+            *   :class:`~opan.output.OrcaOutput.p_en`
+
+            *   :class:`~opan.output.OrcaOutput.p_spincont`
+
+            *   :class:`~opan.output.OrcaOutput.p_thermo`
+
+    *   `Instance Variables <OrcaOutput-InstVars_>`_
+
+    .. _OrcaOutput-Methods:
+
     **Methods**
 
     .. automethod:: __init__
@@ -90,7 +121,11 @@ class OrcaOutput(object):
 
     |
 
+    .. _OrcaOutput-ClassVars:
+
     **Class Variables**
+
+    .. _OrcaOutput-ClassVars-Enums:
 
     *Enumerations*
 
@@ -227,6 +262,8 @@ class OrcaOutput(object):
             Vibrational :math:`TS` entropy contribution
             :math:`\\left(\\mathrm{E_h}\\right)`
 
+    .. _OrcaOutput-ClassVars-Regex:
+
     *Regular Expression Patterns*
 
     .. attribute:: OrcaOutput.p_en
@@ -246,6 +283,8 @@ class OrcaOutput(object):
         :attr:`~OrcaOutput.THERMO`.
 
     |
+
+    .. _OrcaOutput-InstVars:
 
     **Instance Variables**
 
