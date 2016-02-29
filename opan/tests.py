@@ -754,58 +754,6 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
 ## end class TestOpanXYZBadUsage
 
 
-# ============================  utils.base  ================================= #
-
-class TestOpanUtilsBase(unittest.TestCase):
-
-    def test_Utils_PackTupsGoodPacking(self):
-        from opan.utils import pack_tups
-        tups = pack_tups(range(3), range(3,6), range(6,9))
-        [[self.assertEqual(tups[i][j], 3*j + i) for i in range(3)]
-                                                for j in range(3)]
-
-    def test_Utils_PackTupsStrNoIter(self):
-        from opan.utils import pack_tups
-        tups = pack_tups("ab", range(2))
-        self.assertEqual(tups[0][0], "ab")
-        self.assertEqual(tups[1][0], "ab")
-
-    def test_Utils_PackTupsErrIfDiffLens(self):
-        from opan.utils import pack_tups
-        self.assertRaises(ValueError, pack_tups, range(2), range(3))
-
-    def test_Utils_PackTupsTestAllSingletons(self):
-        from opan.utils import pack_tups
-        tups = pack_tups(0,1,2,3,4)
-        self.assertEqual(len(tups), 1)
-        self.assertTupleEqual(tups[0], tuple(range(5)))
-
-    def test_Utils_SafeCastNumpyArray(self):
-        import numpy as np
-        from opan.utils import safe_cast as scast
-        a = np.array(range(5))
-        self.assertRaises(TypeError, scast, a, np.float_)
-
-    def test_Utils_MakeTimeStampSecs(self):
-        from opan.utils import make_timestamp as mt
-        self.assertEqual(mt(5), "0h 0m 5s")
-
-    def test_Utils_MakeTimeStampMins(self):
-        from opan.utils import make_timestamp as mt
-        self.assertEqual(mt(500), "0h 8m 20s")
-
-    def test_Utils_MakeTimeStampHours(self):
-        from opan.utils import make_timestamp as mt
-        self.assertEqual(mt(20000), "5h 33m 20s")
-
-    def test_Utils_MakeTimeStampLongHours(self):
-        from opan.utils import make_timestamp as mt
-        self.assertEqual(mt(200000), "55h 33m 20s")
-
-
-## end class TestOpanUtilsBase
-
-
 # ===========================  utils.inertia  =============================== #
 
 class SuperOpanUtilsInertia(object):
@@ -3220,7 +3168,10 @@ def setUpTestDir(dirname):
         Name of desired working directory
     """
 
-    import os
+    import os, time
+
+    # Wait 10ms for folder access to clear
+    time.sleep(0.01)
 
     # Check if test directory already exists (or file of same name);
     #  error if so
@@ -3252,8 +3203,47 @@ def tearDownTestDir(dirname):
 
 if __name__ == '__main__':
 
-    # Run test package, default verbose. Can override with '-q' at
-    #  commandline
+    import sys, argparse as ap
+
+    # Arguments for selecting test suites
+    ALL = 'all'
+    UTILS_BASE = 'utils_base'
+
+    # Collecting the args together for iteration later
+    test_args = [ALL, UTILS_BASE]
+
+    # Create the parser
+    prs = ap.ArgumentParser(description="Run tests for OpenAnharmonic.")
+
+    # Create the test groups
+    gp_global = prs.add_argument_group(title="Global Options")
+    gp_utils_base = prs.add_argument_group(title="opan.base.utils Tests")
+
+    # Add the all-tests argument
+    gp_global.add_argument('--{0}'.format(ALL),
+            action='store_true',
+            help="Run all tests (overrides any other selections)")
+
+    # Add the arguments for the various suite cases
+    gp_utils_base.add_argument('--{0}'.format(UTILS_BASE),
+            action='store_true', help="Run all opan.utils.base tests")
+
+    # Pull the dictionary of the stored flags
+    params = vars(prs.parse_args())
+
+    # Assemble the compiled test suite
+    # (bunch of if statements)
+    if params[ALL] or params[UTILS_BASE]:
+        from opan.test.opan_utils_base import TestOpanUtilsBase
+
+    # Strip from sys.argv any test arguments that are present
+    for a in test_args:
+        str_arg = '--{0}'.format(a)
+        if str_arg in sys.argv:
+            sys.argv.remove(str_arg)
+
+    # Run test package, default verbose.
+    # Can override with '-q' at commandline
     unittest.main(verbosity=2)
 
 ## end main block
