@@ -3201,6 +3201,38 @@ def tearDownTestDir(dirname):
     os.rmdir(dirname)
 
 
+def any_params(p, k):
+    """ Shortcut function for finding truthy values in a |dict|
+
+    If the |dict| `p` contains truthy values at one or more of the keys
+    in `k`, returns |True|. Otherwise, |False|.
+
+    Parameters
+    ----------
+    p
+        |dict| -- Dictionary of values to evaluate.
+
+    k
+        iterable -- Keys to search for truthy values.
+
+    Returns
+    -------
+    any_found
+        |bool| -- |True| if any truthy values were found at the indicated
+        keys; |False| otherwise.
+
+    Raises
+    ------
+    ~exceptions.KeyError
+        If any of the values held in `k` is not a valid key in `p`.
+
+    """
+
+    return any(p[x] for x in k)
+
+## end def any_params
+
+
 if __name__ == '__main__':
 
     import sys, argparse as ap
@@ -3228,19 +3260,19 @@ if __name__ == '__main__':
     gp_utils_base.add_argument('--{0}'.format(UTILS_BASE),
             action='store_true', help="Run all opan.utils.base tests")
 
-    # Pull the dictionary of the stored flags
-    params = vars(prs.parse_args())
+    # Pull the dictionary of the stored flags, with the unused args,
+    #  and update sys.argv
+    ns, args_left = prs.parse_known_args()
+    params = vars(ns)
+    sys.argv = sys.argv[:1] + args_left
+    print(args_left)
 
     # Assemble the compiled test suite
     # (bunch of if statements)
-    if params[ALL] or params[UTILS_BASE]:
-        from opan.test.opan_utils_base import TestOpanUtilsBase
 
-    # Strip from sys.argv any test arguments that are present
-    for a in test_args:
-        str_arg = '--{0}'.format(a)
-        if str_arg in sys.argv:
-            sys.argv.remove(str_arg)
+    # opan.utils.base
+    if any_params(params, [ALL, UTILS_BASE]):
+        from opan.test.opan_utils_base import TestOpanUtilsBase
 
     # Run test package, default verbose.
     # Can override with '-q' at commandline

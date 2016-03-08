@@ -28,7 +28,5 @@ from __future__ import absolute_import
 
 ##from . import *
 
-from .opan_utils_base import TestOpanUtilsBase
-
 
 

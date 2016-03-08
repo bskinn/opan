@@ -4,3 +4,4 @@ README.md
 doc/*
 opan/resource/*
 opan/tests.py
+opan/test/*
