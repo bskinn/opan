@@ -69,3 +69,10 @@ class TestOpanUtilsBase(unittest.TestCase):
         self.assertEqual(mt(200000), "55h 33m 20s")
 
 
+def suite():
+    s = unittest.TestLoader().loadTestsFromTestCase(TestOpanUtilsBase)
+    return s
+
+
+if __name__ == '__main__':  # pragma: no cover
+    print("Module not executable.")
