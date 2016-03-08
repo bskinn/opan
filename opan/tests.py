@@ -2723,6 +2723,12 @@ def assertErrorAndTypecode(testclass, errtype, cobj, tc, *args, **kwargs):
     'errtype' with typecode 'tc' when instantiated/called with *args and
     **kwargs.
 
+    If imported into a :class:`~unittest.TestCase` subclass, this function
+    is treated by Python as a class method and the initial `testclass`
+    argument behaves like the `self` argument of such a class method.
+    In particular, this means that the :class:`~unittest.TestCase` class
+    should NOT be passed as the first argument in this usage situation.
+
     Parameters
     ----------
     testclass   : object reference

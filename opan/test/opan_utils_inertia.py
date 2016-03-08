@@ -293,7 +293,7 @@ class TestOpanUtilsInertiaLinear(SuperOpanUtilsInertia, unittest.TestCase):
         from opan.utils.inertia import _fadn_par as fP, ctr_geom as cg
         import numpy as np
         from opan.error import InertiaError as INErr
-        self.assertErrorAndTypecode(self, INErr, fP , INErr.BAD_GEOM,
+        self.assertErrorAndTypecode(INErr, fP , INErr.BAD_GEOM,
                             self.xyz.displ_single(0,0,1),
                             cg(self.xyz.geoms[0], self.hess.atom_masses))
 

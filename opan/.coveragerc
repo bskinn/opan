@@ -1,6 +1,5 @@
 # .coveragerc to control coverage.py
 [run]
-branch = True
 source = opan
 omit = test*
 
@@ -23,6 +22,10 @@ exclude_lines =
     if __name__ == .__main__.:
 
 ignore_errors = True
+
+partial_branches = 
+    # Don't care about this right now
+    .
 
 [html]
 directory = htmlcov
