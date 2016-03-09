@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import
 
-__all__ = ['opan_utils_base', 'opan_utils_inertia']
+__all__ = ['opan_utils_base', 'opan_utils_inertia', 'opan_xyz']
 
 from . import *
 
