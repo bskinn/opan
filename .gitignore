@@ -61,3 +61,6 @@ target/
 
 # NoteTab backups
 *.bak
+
+# PyCharm
+.idea/

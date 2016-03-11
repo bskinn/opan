@@ -21,81 +21,6 @@
 # Module-level imports
 import unittest, opan.test
 
-
-# =============================  OpanError  ================================= #
-
-class TestOpanEnumValueCheck(unittest.TestCase):
-
-    def test_OpanEnum_ValueCheck(self):
-        from opan.const import EnumDispDirection as EDD
-
-        # Representative value in a representative Enum
-        self.assertTrue(EDD.NEGATIVE in EDD)
-
-
-# =============================  OpanError  ================================= #
-
-class TestOpanErrorTypecodeCheck(unittest.TestCase):
-
-    def test_OpanError_TypecodeCheck(self):
-        from opan.error import XYZError
-
-        # Representative typecode in a representative error class
-        self.assertTrue(XYZError.XYZFILE in XYZError)
-
-class TestOpanErrorInitErrors(unittest.TestCase):
-    # Testing errors that should be thrown on initialization
-
-    def test_OpanError_init_NotImplemented(self):
-        # Must import
-        from opan.error import OpanError
-
-        # Confirm OpanError parent class as abstract
-        self.assertRaises(NotImplementedError, OpanError, "tc", "msg", "src")
-
-    def test_XYZError_init_BadTypecode(self):
-        # Must import
-        from opan.error import XYZError
-
-        # Confirm KeyError raised when invalid typecode passed
-        self.assertRaises(KeyError, XYZError, "INVALID TYPECODE", "msg", "src")
-
-## end class TestOpanErrorInitErrors
-
-
-class TestXYZErrorInitConfig(unittest.TestCase):
-    # XYZError used as a representative OpanError subclass
-
-    # Class-level constants
-    tc = 'NONPRL'
-    msg = "Test message"
-    src = "Test source"
-    subclass_name = "XYZError"
-
-    def test_XYZError_init_SubclassName(self):
-        # Confirm subclass name is retrieved correctly
-        from opan.error import XYZError as XE
-        self.assertEqual(XE(self.tc, self.msg, self.src).subclass_name,
-                                                self.subclass_name)
-
-    def test_XYZError_init_TypecodeStored(self):
-        # Confirm typecode name stored correctly
-        from opan.error import XYZError as XE
-        self.assertEqual(XE(self.tc, self.msg, self.src).tc, self.tc)
-
-    def test_XYZError_init_MessageStrStored(self):
-        # Confirm message string stored correctly
-        from opan.error import XYZError as XE
-        self.assertEqual(XE(self.tc, self.msg, self.src).msg, self.msg)
-
-    def test_XYZError_init_SourceStrStored(self):
-        # Confirm source string stored correctly
-        from opan.error import XYZError as XE
-        self.assertEqual(XE(self.tc, self.msg, self.src).src, self.src)
-
-## end class TestXYZErrorInitConfig
-
-
 # =========================  SuperOpanGrad  ================================= #
 
 class TestSuperOpanGrad(unittest.TestCase):
@@ -2112,6 +2037,8 @@ if __name__ == '__main__':
     # Arguments for selecting test suites
     ALL = 'all'
     OLD = 'old'
+    CONST = 'const'
+    ERROR = 'error'
     UTILS = 'utils'
     UTILS_BASE = 'utils_base'
     UTILS_INERTIA = 'utils_inertia'
@@ -2125,6 +2052,8 @@ if __name__ == '__main__':
 
     # Create the top-level test groups
     gp_global = prs.add_argument_group(title="Global Test Options")
+    gp_const = prs.add_argument_group(title="opan.const Tests")
+    gp_error = prs.add_argument_group(title="opan.error Tests")
     gp_utils = prs.add_argument_group(title="opan.utils Tests")
     gp_xyz = prs.add_argument_group(title="opan.xyz Tests")
 
@@ -2139,6 +2068,14 @@ if __name__ == '__main__':
     gp_global.add_argument('--{0}'.format(ALL),
             action='store_true',
             help="Run all tests (overrides any other selections)")
+
+    # ====  CONST  ==== #
+    gp_const.add_argument('--{0}'.format(CONST),
+              action='store_true', help="Run all opan.const tests")
+
+    # ====  ERROR  ==== #
+    gp_error.add_argument('--{0}'.format(ERROR),
+              action='store_true', help="Run all opan.error tests")
 
     # ====  UTILS  ==== #
     # Add the arguments for the various suite cases
@@ -2169,6 +2106,13 @@ if __name__ == '__main__':
     # Create the test suite to be compiled for running
     TestMasterSuite = unittest.TestSuite()
 
+    # opan.const
+    if any_params(params, [ALL, CONST]):
+        TestMasterSuite.addTest(opan.test.opan_const.suite())
+
+    # opan.error
+    if any_params(params, [ALL, ERROR]):
+        TestMasterSuite.addTest(opan.test.opan_error.suite())
 
     # opan.utils.base
     if any_params(params, [ALL, UTILS, UTILS_BASE]):

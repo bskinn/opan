@@ -1,11 +1,11 @@
 #-------------------------------------------------------------------------------
-# Name:        __init__
-# Purpose:     opan.test.__init__ file
+# Name:        opan_const
+# Purpose:     Test objects for opan.const
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
 #
-# Created:     28 Feb 2016
+# Created:     10 Mar 2016
 # Copyright:   (c) Brian Skinn 2016
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
@@ -18,16 +18,27 @@
 #
 #-------------------------------------------------------------------------------
 
-"""Test framework for OpenAnharmonic.
 
-"""
-
-from __future__ import absolute_import
-
-__all__ = ['opan_utils_base', 'opan_utils_inertia', 'opan_xyz',
-           'opan_error', 'opan_const']
-
-from . import *
+import unittest
 
 
+class TestOpanEnumValueCheck(unittest.TestCase):
+
+    def test_OpanEnum_ValueCheck(self):
+        from opan.const import EnumDispDirection as EDD
+
+        # Representative value in a representative Enum
+        self.assertTrue(EDD.NEGATIVE in EDD)
+
+
+def suite():
+    s = unittest.TestSuite()
+    tl = unittest.TestLoader()
+    s.addTests([tl.loadTestsFromTestCase(TestOpanEnumValueCheck)
+                ])
+    return s
+
+
+if __name__ == '__main__':  # pragma: no cover
+    print("Module not executable.")
 
