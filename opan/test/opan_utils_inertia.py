@@ -38,7 +38,7 @@ class SuperOpanUtilsInertia(object):
     import os
 
     # Common constants
-    filedir = os.path.join('resource','inertia')
+    filedir = os.path.join('test','resource','inertia')
 
     # Common setUpClass method
     @classmethod
@@ -269,7 +269,7 @@ class TestOpanUtilsInertiaLinear(SuperOpanUtilsInertia, unittest.TestCase):
     # Imports
     import numpy as np
     from opan.const import EnumTopType, PRM
-    from opan.tests import assertErrorAndTypecode
+    from opan.test.utils import assertErrorAndTypecode
 
     # Constants for superclass method use
     fname = "HC2Cl_Linear"

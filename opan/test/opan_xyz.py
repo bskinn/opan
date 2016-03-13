@@ -28,7 +28,7 @@ class SuperOpanXYZ(unittest.TestCase):
     # Imports
     from textwrap import dedent
     import numpy as np
-    from opan.tests import assertErrorAndTypecode
+    from opan.test.utils import assertErrorAndTypecode
 
     # Superclass constants
 
@@ -270,7 +270,7 @@ class TestOpanXYZGoodFileData(SuperOpanXYZ):
 
     @classmethod
     def setUpClass(cls):
-        from opan.tests import setUpTestDir
+        from opan.test.utils import setUpTestDir
 
         # Set up the directory and add the good file
         setUpTestDir(cls.testdir)
@@ -282,7 +282,7 @@ class TestOpanXYZGoodFileData(SuperOpanXYZ):
     @classmethod
     def tearDownClass(cls):
         import os
-        from opan.tests import tearDownTestDir
+        from opan.test.utils import tearDownTestDir
 
         # Delete the xyz file
         os.remove(cls.file_name)
@@ -377,7 +377,7 @@ class TestOpanXYZAltFileData(SuperOpanXYZ):
     @classmethod
     def setUpClass(cls):
         # Set up the directory and add alternate-g files
-        from opan.tests import setUpTestDir
+        from opan.test.utils import setUpTestDir
         setUpTestDir(cls.testdir)
 
         # Write the files
@@ -390,7 +390,7 @@ class TestOpanXYZAltFileData(SuperOpanXYZ):
     def tearDownClass(cls):
         # Remove any created files and try to remove the temp directory
         import os
-        from opan.tests import tearDownTestDir
+        from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
         [os.remove(cls.file_name + bname) for bname in
@@ -504,7 +504,7 @@ class TestOpanXYZBadFileData(SuperOpanXYZ):
     @classmethod
     def setUpClass(cls):
         # Set up the directory and add munged files
-        from opan.tests import setUpTestDir
+        from opan.test.utils import setUpTestDir
         setUpTestDir(cls.testdir)
 
         # Write the files
@@ -517,7 +517,7 @@ class TestOpanXYZBadFileData(SuperOpanXYZ):
     def tearDownClass(cls):
         # Remove any created files and try to remove the temp directory
         import os
-        from opan.tests import tearDownTestDir
+        from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
         [os.remove(cls.file_name + bname) for bname in
@@ -675,7 +675,7 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
     @classmethod
     def setUpClass(cls):
         # Set up the directory and add the good file
-        from opan.tests import setUpTestDir
+        from opan.test.utils import setUpTestDir
         setUpTestDir(cls.testdir)
 
         # Write the file
@@ -685,7 +685,7 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
     @classmethod
     def tearDownClass(cls):
         import os
-        from opan.tests import tearDownTestDir
+        from opan.test.utils import tearDownTestDir
 
         # Delete the xyz file
         os.remove(cls.file_name)

@@ -25,7 +25,8 @@
 from __future__ import absolute_import
 
 __all__ = ['opan_utils_base', 'opan_utils_inertia', 'opan_xyz',
-           'opan_error', 'opan_const']
+           'opan_error', 'opan_const', 'opan_supers',
+           'orca_engrad', 'orca_hess', 'utils']
 
 from . import *
 
