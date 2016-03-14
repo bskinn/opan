@@ -208,7 +208,7 @@ class SuperOpanHess(object):
 
         # Check for abstract base class
         if type(self) == SuperOpanHess:
-            raise(NotImplementedError("SuperOpanHess base class is abstract"))
+            raise NotImplementedError("SuperOpanHess base class is abstract")
         ## end if
 
         # Call the subclass _load method, passing in the keyword arguments
@@ -229,27 +229,27 @@ class SuperOpanHess(object):
         if (len(self.hess.shape) != 2 or
                             self.hess.shape[0] % 3 != 0 or
                             self.hess.shape[0] != self.hess.shape[1]):
-            raise(HErr(HErr.BADHESS, # pragma: no cover
-                        "Hessian is not a 3N x 3N matrix", srcstr))
+            raise HErr(HErr.BADHESS, # pragma: no cover
+                        "Hessian is not a 3N x 3N matrix", srcstr)
         ## end if
         if self.geom.shape != (self.hess.shape[0],):
-            raise(HErr(HErr.BADGEOM, # pragma: no cover
-                        "Geometry shape does not match Hessian shape", srcstr))
+            raise HErr(HErr.BADGEOM, # pragma: no cover
+                        "Geometry shape does not match Hessian shape", srcstr)
 
         # Ensure atomic symbols length matches & they're all valid
         if not hasattr(self, 'atom_syms'): # pragma: no cover
-            raise(HErr(HErr.BADATOM, "Atoms list not found", srcstr))
+            raise HErr(HErr.BADATOM, "Atoms list not found", srcstr)
         ## end if
         if type(self.atom_syms) is not type(range(3)): # pragma: no cover
-            raise(HErr(HErr.BADATOM, "Atoms list is not a list", srcstr))
+            raise HErr(HErr.BADATOM, "Atoms list is not a list", srcstr)
         ## end if
         if 3*len(self.atom_syms) != self.hess.shape[0]: # pragma: no cover
-            raise(HErr(HErr.BADATOM, "Atoms list is not length-N", srcstr))
+            raise HErr(HErr.BADATOM, "Atoms list is not length-N", srcstr)
         ## end if
         if not all(map(lambda v: v in atom_num, self.atom_syms)):
-            raise(HErr(HErr.BADATOM,    # pragma: no cover
+            raise HErr(HErr.BADATOM,    # pragma: no cover
                     "Invalid atoms in list: {0}".format(self.atom_syms),
-                    srcstr))
+                    srcstr)
         ## end if
 
     ## end def __init__
@@ -999,9 +999,9 @@ class OrcaHess(SuperOpanHess):
 
             # Confirm the anticipated matrix size matches 3*num_ats
             if not int(m_block.group("dim")) == 3*num_ats:
-                raise(HessError(tc, blockname + " dimension " +
+                raise HessError(tc, blockname + " dimension " +
                         "specification mismatched with geometry",
-                        "HESS File: " + hess_path))
+                        "HESS File: " + hess_path)
             ## end if
 
             # Initialize the working matrix
@@ -1050,17 +1050,17 @@ class OrcaHess(SuperOpanHess):
             #  a check against malformation of the HESS file, resulting in a
             #  reduced number of sections being retrieved.
             if not col_offset >= (3 * num_ats):
-                raise(HessError(tc, "Insufficient number of " + blockname +
+                raise HessError(tc, "Insufficient number of " + blockname +
                         " sections found",
-                        "HESS File: " + hess_path))
+                        "HESS File: " + hess_path)
             ## end if
 
             # Additional cross-check on number of rows imported
             if (rows_counter % (3*num_ats)) != 0:
                 # Not the right number of rows; complain
-                raise(HessError(tc,
+                raise HessError(tc,
                             blockname + " row count mismatch",
-                            "HESS File: " + hess_path))
+                            "HESS File: " + hess_path)
             ## end if
 
             # Return the working matrix
@@ -1076,8 +1076,8 @@ class OrcaHess(SuperOpanHess):
 
         # Check if instantiated; complain if so
         if 'hess_path' in dir(self):
-            raise(HessError(HessError.OVERWRITE,
-                    "Cannot overwrite contents of existing OrcaHess", ""))
+            raise HessError(HessError.OVERWRITE,
+                    "Cannot overwrite contents of existing OrcaHess", "")
         ## end if
 
         # Retrieve the file target and store
@@ -1094,28 +1094,28 @@ class OrcaHess(SuperOpanHess):
 
         # Check to ensure all required data blocks are found
         if not OrcaHess.Pat.at_block.search(self.in_str):
-            raise(HessError(HessError.AT_BLOCK,
-                    "Atom specification block not found", srcstr))
+            raise HessError(HessError.AT_BLOCK,
+                    "Atom specification block not found", srcstr)
         ## end if
         if not OrcaHess.Pat.hess_block.search(self.in_str):
-            raise(HessError(HessError.HESS_BLOCK,
-                    "Hessian block not found", srcstr))
+            raise HessError(HessError.HESS_BLOCK,
+                    "Hessian block not found", srcstr)
         ## end if
         if not OrcaHess.Pat.freq_block.search(self.in_str):
-            raise(HessError(HessError.FREQ_BLOCK,
-                    "Frequencies block (cm**-1 units) not found", srcstr))
+            raise HessError(HessError.FREQ_BLOCK,
+                    "Frequencies block (cm**-1 units) not found", srcstr)
         ## end if
         if not OrcaHess.Pat.modes_block.search(self.in_str):
-            raise(HessError(HessError.MODES_BLOCK,
-                    "Normal modes block not found", srcstr))
+            raise HessError(HessError.MODES_BLOCK,
+                    "Normal modes block not found", srcstr)
         ## end if
         if not OrcaHess.Pat.energy.search(self.in_str):
-            raise(HessError(HessError.ENERGY,
-                    "Energy value not found", srcstr))
+            raise HessError(HessError.ENERGY,
+                    "Energy value not found", srcstr)
         ## end if
         if not OrcaHess.Pat.temp.search(self.in_str):
-            raise(HessError(HessError.TEMP,
-                    "'Actual temperature' value not found", srcstr))
+            raise HessError(HessError.TEMP,
+                    "'Actual temperature' value not found", srcstr)
         ## end if
 
 
@@ -1162,8 +1162,8 @@ class OrcaHess(SuperOpanHess):
         #  number indicated in the HESS file. Checks of atomic masses
         #  and geometry length are presumably redundant.
         if not len(self.atom_syms) == self.num_ats:
-            raise(HessError(HessError.AT_BLOCK, "Atomic symbol dimension " +
-                    "mismatch with HESS atom specification", srcstr))
+            raise HessError(HessError.AT_BLOCK, "Atomic symbol dimension " +
+                    "mismatch with HESS atom specification", srcstr)
         ## end if
 
         # Convert geometry to numpy storage form
@@ -1184,9 +1184,9 @@ class OrcaHess(SuperOpanHess):
         m_work = self.Pat.modes_block.search(self.in_str)
         if scast(m_work.group("dim"), np.int_) != \
                             scast(m_work.group("dim2"), np.int_):
-            raise(HessError(HessError.MODES_BLOCK,
+            raise HessError(HessError.MODES_BLOCK,
                     "Normal mode block dimension specification mismatch",
-                    srcstr))
+                    srcstr)
         ## end if
 
         #=== Frequencies ===#
@@ -1196,9 +1196,9 @@ class OrcaHess(SuperOpanHess):
         # Check that number of frequencies indicated in the block matches
         #  that expected from the number of atoms
         if 3*self.num_ats != scast(m_work.group("num"), np.int_):
-            raise(HessError(HessError.FREQ_BLOCK,
+            raise HessError(HessError.FREQ_BLOCK,
                     "Count in frequencies block != 3 * number of atoms",
-                    srcstr))
+                    srcstr)
         ## end if
 
         # Retrieve the frequencies
@@ -1208,8 +1208,8 @@ class OrcaHess(SuperOpanHess):
 
         # Proofread for proper size
         if not self.freqs.shape[0] == 3*self.num_ats:
-            raise(HessError(HessError.FREQ_BLOCK,
-                    "Number of frequencies != 3 * number of atoms", srcstr))
+            raise HessError(HessError.FREQ_BLOCK,
+                    "Number of frequencies != 3 * number of atoms", srcstr)
         ## end if
 
 
@@ -1231,9 +1231,9 @@ class OrcaHess(SuperOpanHess):
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != scast(m_work.group("dim"), np.int_):
-                raise(HessError(HessError.DIPDER_BLOCK,
+                raise HessError(HessError.DIPDER_BLOCK,
                         "Count in dipole derivatives block != 3 * # of atoms",
-                        srcstr))
+                        srcstr)
             ## end if
 
             # Retrieve the derivatives
@@ -1247,9 +1247,9 @@ class OrcaHess(SuperOpanHess):
             #  three, since any row not containing three numerical values will
             #  result in the block getting truncated, per the Regex constrution.
             if not self.dipders.shape[0] == 3*self.num_ats:
-                raise(HessError(HessError.DIPDER_BLOCK,
+                raise HessError(HessError.DIPDER_BLOCK,
                         "Number of dipole derivative rows != \
-                        3 * number of atoms", srcstr))
+                        3 * number of atoms", srcstr)
             ## end if
 
             # If max-absolute element is too big, overwrite with None
@@ -1268,9 +1268,9 @@ class OrcaHess(SuperOpanHess):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HessError(HessError.IR_BLOCK,
+                raise HessError(HessError.IR_BLOCK,
                         "Count in IR spectrum block != 3 * # of atoms",
-                        srcstr))
+                        srcstr)
             ## end if
 
             # Pull the blocks
@@ -1287,9 +1287,9 @@ class OrcaHess(SuperOpanHess):
             # Confirm length of ir_mags conforms. Shouldn't need to check both,
             #  since they both rely equally on Pat.ir_line.finditer.
             if 3*self.num_ats != self.ir_mags.shape[0]:
-                raise(HessError(HessError.IR_BLOCK,
+                raise HessError(HessError.IR_BLOCK,
                         "Number of IR spectrum rows != \
-                        3 * number of atoms", srcstr))
+                        3 * number of atoms", srcstr)
             ## end if
 
             # Confirm match of all frequencies with those reported separately
@@ -1300,9 +1300,9 @@ class OrcaHess(SuperOpanHess):
                                 m_work.group("block") )]),
                     rtol=0,
                     atol=DEF.HESS_IR_MATCH_TOL):
-                raise(HessError(HessError.IR_BLOCK,
+                raise HessError(HessError.IR_BLOCK,
                         "Frequency mismatch between freq and IR blocks",
-                        srcstr))
+                        srcstr)
             ## end if
         ## end if
 
@@ -1316,9 +1316,9 @@ class OrcaHess(SuperOpanHess):
             # Check that number of derivatives rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HessError(HessError.POLDER_BLOCK,
+                raise HessError(HessError.POLDER_BLOCK,
                         "Count in polarizability derivatives block \
-                        != 3 * # of atoms", srcstr))
+                        != 3 * # of atoms", srcstr)
             ## end if
 
             # Retrieve the derivatives
@@ -1332,9 +1332,9 @@ class OrcaHess(SuperOpanHess):
             #  six, since any row not containing six numerical values will
             #  result in the block getting truncated.
             if not self.polders.shape[0] == 3*self.num_ats:
-                raise(HessError(HessError.POLDER_BLOCK,
+                raise HessError(HessError.POLDER_BLOCK,
                         "Number of polarizability derivative rows != \
-                        3 * number of atoms", srcstr))
+                        3 * number of atoms", srcstr)
             ## end if
         ## end if
 
@@ -1349,9 +1349,9 @@ class OrcaHess(SuperOpanHess):
         else:
             # Complain if number of stated modes mismatches expectation
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HessError(HessError.RAMAN_BLOCK,
+                raise HessError(HessError.RAMAN_BLOCK,
                         "Count in Raman spectrum block != 3 * # of atoms",
-                        srcstr))
+                        srcstr)
             ## end if
 
             # Pull the blocks

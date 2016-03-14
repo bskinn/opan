@@ -166,7 +166,7 @@ class SuperOpanGrad(object):
 
         # Check for abstract base class
         if type(self) == SuperOpanGrad:
-            raise(NotImplementedError("SuperOpanGrad base class is abstract"))
+            raise NotImplementedError("SuperOpanGrad base class is abstract")
         ## end if
 
         # Call the subclass load method, passing in the keyword arguments
@@ -186,27 +186,27 @@ class SuperOpanGrad(object):
         # Gradient and geometry shape
         if (len(self.gradient.shape) != 1 or
                                     self.gradient.shape[0] % 3 != 0):
-            raise(GErr(GErr.BADGRAD, # pragma: no cover
-                        "Gradient is not a length-3N vector", srcstr))
+            raise GErr(GErr.BADGRAD, # pragma: no cover
+                        "Gradient is not a length-3N vector", srcstr)
         ## end if
         if self.gradient.shape != self.geom.shape:
-            raise(GErr(GErr.BADGEOM, # pragma: no cover
-                        "Geometry shape does not match gradient shape", srcstr))
+            raise GErr(GErr.BADGEOM, # pragma: no cover
+                        "Geometry shape does not match gradient shape", srcstr)
 
         # Ensure atomic symbols length matches & they're all valid
         if not hasattr(self, 'atom_syms'): # pragma: no cover
-            raise(GErr(GErr.BADATOM, "Atoms list not found", srcstr))
+            raise GErr(GErr.BADATOM, "Atoms list not found", srcstr)
         ## end if
         if type(self.atom_syms) is not type(range(3)): # pragma: no cover
-            raise(GErr(GErr.BADATOM, "Atoms list is not a list", srcstr))
+            raise GErr(GErr.BADATOM, "Atoms list is not a list", srcstr)
         ## end if
         if 3*len(self.atom_syms) != self.gradient.shape[0]: # pragma: no cover
-            raise(GErr(GErr.BADATOM, "Atoms list is not length-N", srcstr))
+            raise GErr(GErr.BADATOM, "Atoms list is not length-N", srcstr)
         ## end if
         if not all(map(lambda v: v in atom_num, self.atom_syms)):
-            raise(GErr(GErr.BADATOM,    # pragma: no cover
+            raise GErr(GErr.BADATOM,    # pragma: no cover
                     "Invalid atoms in list: {0}".format(self.atom_syms),
-                    srcstr))
+                    srcstr)
         ## end if
 
     ## end def __init__
@@ -473,8 +473,8 @@ class OrcaEngrad(SuperOpanGrad):
 
         # Check if instantiated; complain if so
         if 'engrad_path' in dir(self):
-            raise(GradError(GradError.OVERWRITE,
-                    "Cannot overwrite contents of existing OrcaEngrad", ""))
+            raise GradError(GradError.OVERWRITE,
+                    "Cannot overwrite contents of existing OrcaEngrad", "")
         ## end if
 
         # Retrieve the file target
@@ -491,20 +491,20 @@ class OrcaEngrad(SuperOpanGrad):
 
         # Check to ensure all relevant data blocks are found
         if not self.Pat.numats.search(self.in_str):
-            raise(GradError(GradError.NUMATS,
-                    "Number of atoms specification not found", srcstr))
+            raise GradError(GradError.NUMATS,
+                    "Number of atoms specification not found", srcstr)
         ## end if
         if not self.Pat.energy.search(self.in_str):
-            raise(GradError(GradError.ENERGY,
-                    "Energy specification not found", srcstr))
+            raise GradError(GradError.ENERGY,
+                    "Energy specification not found", srcstr)
         ## end if
         if not self.Pat.gradblock.search(self.in_str):
-            raise(GradError(GradError.GRADBLOCK,
-                    "Gradient data block not found", srcstr))
+            raise GradError(GradError.GRADBLOCK,
+                    "Gradient data block not found", srcstr)
         ## end if
         if not self.Pat.atblock.search(self.in_str):
-            raise(GradError(GradError.GEOMBLOCK,
-                    "Geometry data block not found", srcstr))
+            raise GradError(GradError.GEOMBLOCK,
+                    "Geometry data block not found", srcstr)
         ## end if
 
         # Retrieve the number of atoms
@@ -518,9 +518,9 @@ class OrcaEngrad(SuperOpanGrad):
         #  number of atoms.
         grad_str = self.Pat.gradblock.search(self.in_str).group("block")
         if not len(grad_str.splitlines()) == 3 * self.num_ats:
-            raise(GradError(GradError.GRADBLOCK,
+            raise GradError(GradError.GRADBLOCK,
                     "Gradient block size mismatch with number of atoms",
-                    srcstr))
+                    srcstr)
         ## end if
         self.gradient = np.array(grad_str.splitlines(), dtype=np.float_)
 
@@ -529,9 +529,9 @@ class OrcaEngrad(SuperOpanGrad):
 
         # Confirm the correct number of atoms
         if not len(self.Pat.atline.findall(geom_str)) ==  self.num_ats:
-            raise(GradError(GradError.GEOMBLOCK,
+            raise GradError(GradError.GEOMBLOCK,
                     "Inconsistent number of atom coordinates in \
-                    geometry block", srcstr))
+                    geometry block", srcstr)
         ## end if
 
         # Initialize the atom symbols list
@@ -552,9 +552,9 @@ class OrcaEngrad(SuperOpanGrad):
                 # Check for valid number
                 at_num = scast(line_mch.group("at"), np.int_)
                 if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
-                    raise(GradError(GradError.GEOMBLOCK,
+                    raise GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unsupported element"
-                            .format(atom_count), srcstr))
+                            .format(atom_count), srcstr)
                 ##end if
 
                 # Tag on the new symbol
@@ -567,17 +567,17 @@ class OrcaEngrad(SuperOpanGrad):
                 try:
                     at_num = atom_num[line_mch.group("at").upper()]
                 except KeyError:
-                    raise(GradError(GradError.GEOMBLOCK,
+                    raise GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unrecognized element"
-                            .format(atom_count), srcstr))
+                            .format(atom_count), srcstr)
                 ## end try
 
                 # Now check whether the successfully converted atomic
                 #  number is in the valid range (should be a redundant check.)
                 if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
-                    raise(GradError(GradError.GEOMBLOCK,
+                    raise GradError(GradError.GEOMBLOCK,
                             "Atom #{0} is an unsupported element"
-                            .format(atom_count), srcstr))
+                            .format(atom_count), srcstr)
                 ## end if
 
                 # Tag on the new symbol

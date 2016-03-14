@@ -161,7 +161,7 @@ class OpanError(Exception):
 
         # Check for and complain at instantiation of base class.
         if type(self) == OpanError:
-            raise(NotImplementedError("OpanError base class is abstract."))
+            raise NotImplementedError("OpanError base class is abstract.")
         ## end if
 
         # Quick RegEx to extract the name of the subclass.
@@ -171,8 +171,8 @@ class OpanError(Exception):
         # Check for valid typecode and throw a more descriptive error if
         #  invalid.
         if not tc in self.__class__:
-            raise(KeyError("Invalid {0} typecode: {1}"
-                                            .format(self.subclass_name, tc)))
+            raise KeyError("Invalid {0} typecode: {1}"
+                                            .format(self.subclass_name, tc))
         ## end if
 
         # Store error content

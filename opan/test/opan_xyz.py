@@ -710,13 +710,13 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
         from opan.xyz import OpanXYZ
 
         # Should work fine
-        xyz = OpanXYZ(coords=self.good_direct_geom, \
+        xyz = OpanXYZ(coords=self.good_direct_geom,
                                 atom_syms=self.good_direct_atoms)
 
         # Should raise error to re-init with same contents.
-        self.assertErrorAndTypecode(XYZError, xyz._load_data, \
-                        XYZError.OVERWRITE, \
-                        coords=self.good_direct_geom, \
+        self.assertErrorAndTypecode(XYZError, xyz._load_data,
+                        XYZError.OVERWRITE,
+                        coords=self.good_direct_geom,
                         atom_syms=self.good_direct_atoms)
 
     def test_XYZ_BadUsageReInitFileData(self):
@@ -730,8 +730,8 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
         xyz = OpanXYZ(path=self.file_name)
 
         # Should raise error to re-init with same contents.
-        self.assertErrorAndTypecode(XYZError, xyz._load_file, \
-                        XYZError.OVERWRITE, \
+        self.assertErrorAndTypecode(XYZError, xyz._load_file,
+                        XYZError.OVERWRITE,
                         XYZ_path=self.file_name)
 
     def test_XYZ_BadUsageNotXYZFile(self):
@@ -747,8 +747,8 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
                 f.write("This is not an OpenBabel file.\n\n")
                 f.write("(In case you were wondering...)\n\n")
 
-            self.assertErrorAndTypecode(XYZError, OpanXYZ, \
-                            XYZError.XYZFILE, \
+            self.assertErrorAndTypecode(XYZError, OpanXYZ,
+                            XYZError.XYZFILE,
                             path=badfilename)
 
         finally:
