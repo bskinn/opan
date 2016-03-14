@@ -343,7 +343,7 @@ class OpanXYZ(object):
                         bohrs=(kwargs['bohrs'] if 'bohrs' in kwargs else True))
             else:
                 # NOT found -- error!
-                raise(NameError("Insufficient named parameters found"))
+                raise NameError("Insufficient named parameters found")
             ## end if
         ## end if
 
@@ -390,37 +390,37 @@ class OpanXYZ(object):
 
         # Gripe if already initialized
         if 'geoms' in dir(self):
-            raise(XYZError(XYZError.OVERWRITE,
-                    "Cannot overwrite contents of existing OpanXYZ", ""))
+            raise XYZError(XYZError.OVERWRITE,
+                    "Cannot overwrite contents of existing OpanXYZ", "")
         ## end if
 
         # Check and store dimensions
         if not len(coords.shape) == 1:
-            raise(ValueError("Coordinates are not a vector"))
+            raise ValueError("Coordinates are not a vector")
         ## end if
         if not len(atom_syms.shape) == 1:
-            raise(ValueError("Atom symbols are not a simple list"))
+            raise ValueError("Atom symbols are not a simple list")
         ## end if
         if not coords.shape[0] == 3 * atom_syms.shape[0]:
-            raise(ValueError("len(coords) != 3 * len(atom_syms)"))
+            raise ValueError("len(coords) != 3 * len(atom_syms)")
         ## end if
 
         # Proof the atoms list
         if not all( (atom_syms[i].upper() in atom_num)
                                 for i in range(atom_syms.shape[0]) ):
             # Invalid atoms specified
-            raise(ValueError("Invalid atoms specified: {0}".format(
+            raise ValueError("Invalid atoms specified: {0}".format(
                     [(j, atom_syms[j]) for j in
                         (i for (i, valid) in
                             enumerate(map(lambda k: k in atom_num, atom_syms))
                             if not valid
                         )
-                    ] )))
+                    ] ))
         ## end if
 
         # Ensure the geometry is all numeric
         if not all(map(np.isreal, coords)):
-            raise(ValueError("All coordinates must be real numeric"))
+            raise ValueError("All coordinates must be real numeric")
         ## end if
 
         # Store the number of atoms. Only one geometry. Standard string
@@ -477,8 +477,8 @@ class OpanXYZ(object):
 
         # Complain if already initialized
         if 'geoms' in dir(self):
-            raise(XYZError(XYZError.OVERWRITE, \
-                    "Cannot overwrite contents of existing OpanXYZ", ""))
+            raise XYZError(XYZError.OVERWRITE,
+                    "Cannot overwrite contents of existing OpanXYZ", "")
         ## end if
 
         # Open file, read contents, close stream
@@ -493,9 +493,9 @@ class OpanXYZ(object):
         # Check to ensure at least one geom match; else raise some sort of
         #  error
         if not OpanXYZ.p_geom.search(self.in_str):
-            raise(XYZError(XYZError.XYZFILE,
+            raise XYZError(XYZError.XYZFILE,
                     "No valid geometry found",
-                    "XYZ file: " + XYZ_path))
+                    "XYZ file: " + XYZ_path)
         ## end if
 
         # Store the number of atoms. XYZ files with multiple geometries will
@@ -511,9 +511,9 @@ class OpanXYZ(object):
             self.num_atoms = scast(OpanXYZ.p_geom.match(self.in_str)
                                             .group("num"), np.int_)
         except AttributeError:
-            raise(XYZError(XYZError.XYZFILE,
+            raise XYZError(XYZError.XYZFILE,
                     "No geometry block found at start of file",
-                    "XYZ file: " + XYZ_path))
+                    "XYZ file: " + XYZ_path)
         ## end try
 
         # Initialize the description vector and geometry array
@@ -540,9 +540,9 @@ class OpanXYZ(object):
             # Check that the number of atoms is consistent with the spec
             #  found in the first geometry block
             if not scast(mch.group("num"), np.int_) == self.num_atoms:
-                raise(XYZError(XYZError.XYZFILE,
+                raise XYZError(XYZError.XYZFILE,
                         "Non-constant number of atoms in multiple geometry",
-                        "XYZ file: " + XYZ_path))
+                        "XYZ file: " + XYZ_path)
             ## end if
 
             # Store the description for the current geometry
@@ -564,11 +564,11 @@ class OpanXYZ(object):
                         at_num = scast(line_mch.group("el"), np.int_)
                         if not (CIC.MIN_ATOMIC_NUM <= at_num
                                                     <= CIC.MAX_ATOMIC_NUM):
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: {0}".format(XYZ_path)))
+                                     "XYZ file: {0}".format(XYZ_path))
                         ##end if
 
                         # Tag on the new symbol
@@ -580,11 +580,11 @@ class OpanXYZ(object):
                         try:
                             at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unrecognized element"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: {0}".format(XYZ_path)))
+                                     "XYZ file: {0}".format(XYZ_path))
                         ## end try
 
                         # Tag on the new symbol
@@ -600,18 +600,18 @@ class OpanXYZ(object):
                         at_num = scast(line_mch.group("el"), np.int_)
                         if not (CIC.MIN_ATOMIC_NUM <= at_num
                                                     <= CIC.MAX_ATOMIC_NUM):
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unsupported element"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: {0}".format(XYZ_path)))
+                                     "XYZ file: {0}".format(XYZ_path))
                         ## end if
                         if not atom_sym[at_num] == self.atom_syms[atom_count]:
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is inconsistent \
                                         with geometry #0"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: {0}".format(XYZ_path)))
+                                     "XYZ file: {0}".format(XYZ_path))
                         ## end if
 
                     else:
@@ -621,20 +621,20 @@ class OpanXYZ(object):
                         try:
                             at_num = atom_num[line_mch.group("el").upper()]
                         except KeyError:
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is an \
                                         unrecognized element"
                                         .format(self.num_geoms, atom_count),
-                                     "XYZ file: {0}".format(XYZ_path)))
+                                     "XYZ file: {0}".format(XYZ_path))
                         ## end try
                         # Confirm symbol matches the initial geometry
                         if not line_mch.group("el").upper() == \
                                                 self.atom_syms[atom_count]:
-                            raise(XYZError(XYZError.XYZFILE,
+                            raise XYZError(XYZError.XYZFILE,
                                     "Geometry #{0}, atom #{1} is inconsistent \
                                         with geometry #0"
                                         .format(self.num_geoms, atom_count),
-                                    "XYZ file: {0}".format(XYZ_path)))
+                                    "XYZ file: {0}".format(XYZ_path))
                         ## end if
                     ## end if
                 ## end if
@@ -660,10 +660,10 @@ class OpanXYZ(object):
             # Confirm that number of imported coordinates matches the
             #  number expected from self.num_atoms
             if not coord_vec.shape[0] == 3*self.num_atoms:
-                raise(XYZError(XYZError.XYZFILE,
+                raise XYZError(XYZError.XYZFILE,
                         "Geometry #{0} atom count is inconsistent"
                             .format(self.num_geoms),
-                        "XYZ file: {0}".format(XYZ_path)))
+                        "XYZ file: {0}".format(XYZ_path))
             ## end if
 
             # Assemble the coordinates vector into the actual coordinates
@@ -810,11 +810,11 @@ class OpanXYZ(object):
         #  errors in subsequent code.
         # Complain if at_1 is invalid
         if not (-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
+            raise IndexError("Invalid index for 'at_1' ({0})".format(at_1))
 
         # Complain if at_2 is invalid
         if not (-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
+            raise IndexError("Invalid index for 'at_2' ({0})".format(at_2))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce at_1 and at_2 to their floor() values.  This is again
@@ -968,15 +968,15 @@ class OpanXYZ(object):
         #  errors in later code.
         # Complain if at_1 is invalid
         if not(-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
+            raise IndexError("Invalid index for 'at_1' ({0})".format(at_1))
 
         # Complain if at_2 is invalid
         if not(-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
+            raise IndexError("Invalid index for 'at_2' ({0})".format(at_2))
 
         # Complain if at_3 is invalid
         if not(-self.num_atoms <= at_3 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_3' ({0})".format(at_3)))
+            raise IndexError("Invalid index for 'at_3' ({0})".format(at_3))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce the at_x to their floor() values.  This is again
@@ -989,9 +989,9 @@ class OpanXYZ(object):
         # Complain if at_2 is equal to either at_1 or at_3.  Must factor in
         #  the possibility of negative indexing via modulo arithmetic.
         if (at_2 % self.num_atoms) == (at_1 % self.num_atoms):
-            raise(ValueError("'at_1' and 'at_2' must be different"))
+            raise ValueError("'at_1' and 'at_2' must be different")
         if (at_2 % self.num_atoms) == (at_3 % self.num_atoms):
-            raise(ValueError("'at_2' and 'at_3' must be different"))
+            raise ValueError("'at_2' and 'at_3' must be different")
 
         # Trivial return if at_1 and at_3 are the same
         if (at_1 % self.num_atoms) == (at_3 % self.num_atoms):
@@ -1176,19 +1176,19 @@ class OpanXYZ(object):
         #  and thus give non-intuitive errors in later code.
         # Complain if at_1 is invalid
         if not(-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
+            raise IndexError("Invalid index for 'at_1' ({0})".format(at_1))
 
         # Complain if at_2 is invalid
         if not(-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
+            raise IndexError("Invalid index for 'at_2' ({0})".format(at_2))
 
         # Complain if at_3 is invalid
         if not(-self.num_atoms <= at_3 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_3' ({0})".format(at_3)))
+            raise IndexError("Invalid index for 'at_3' ({0})".format(at_3))
 
         # Complain if at_4 is invalid
         if not(-self.num_atoms <= at_4 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_4' ({0})".format(at_4)))
+            raise IndexError("Invalid index for 'at_4' ({0})".format(at_4))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce the at_x to their floor() values.  This is again
@@ -1227,7 +1227,7 @@ class OpanXYZ(object):
             #  formatting in the output.
             ats_pairs = [tuple(np.column_stack(np.triu_indices(4,1))[x])
                                         for x in range(6) if ats_test[x] == 1]
-            raise(ValueError("Duplicate atom indices: {0}".format(ats_pairs)))
+            raise ValueError("Duplicate atom indices: {0}".format(ats_pairs))
         ## end if
 
         # Check to ensure non-collinearity of the 1-2-3 and 2-3-4 atom trios
@@ -1240,11 +1240,11 @@ class OpanXYZ(object):
             # Check for whether angle is too close to zero or 180 degrees
             if np.min([ang, 180.0 - ang]) < PRM.NON_PARALLEL_TOL:
                 # Too close; raise error
-                raise(XYZError(XYZError.DIHED,
+                raise XYZError(XYZError.DIHED,
                         "Angle {0} is insufficiently nonlinear"
                             .format([(at_2, at_1, at_3),
                             (at_3, at_2, at_4)][idx]),
-                        "XYZ file: {0}".format(self.XYZ_path)))
+                        "XYZ file: {0}".format(self.XYZ_path))
             ## end if
         ## next idx
 
@@ -1429,11 +1429,11 @@ class OpanXYZ(object):
         #  errors.
         # Complain if at_1 is invalid
         if not (-self.num_atoms <= at_1 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_1' ({0})".format(at_1)))
+            raise IndexError("Invalid index for 'at_1' ({0})".format(at_1))
 
         # Complain if at_2 is invalid
         if not (-self.num_atoms <= at_2 < self.num_atoms):
-            raise(IndexError("Invalid index for 'at_2' ({0})".format(at_2)))
+            raise IndexError("Invalid index for 'at_2' ({0})".format(at_2))
 
         # Should never be necessary (save for badly erroneous calling code),
         #  but coerce at_1 and at_2 to their floor() values.  This is again
@@ -1575,16 +1575,16 @@ class OpanXYZ(object):
         # Error if more than one None; handle if exactly one; pass through if
         #  none.
         if np.count_nonzero(none_vals) > 1:
-            raise(ValueError("Multiple 'None' values [indices {0}] not \
-                    supported".format(tuple(np.nonzero(none_vals)[0]))))
+            raise ValueError("Multiple 'None' values [indices {0}] not \
+                    supported".format(tuple(np.nonzero(none_vals)[0])))
         elif np.count_nonzero(none_vals) == 1:
             # Must be no iterables that are not strings. Thus, an element-wise
             #  test for iterability and an element-wise test for stringiness
             #  must give matching arrays
             if not all(np.equal(map(np.iterable, arglist), \
                                 map(lambda e: isinstance(e, str), arglist))):
-                raise(ValueError("'None' as parameter invalid with \
-                                                        non-str iterables"))
+                raise ValueError("'None' as parameter invalid with \
+                                                        non-str iterables")
             ## end if
 
             # Parameters okay; replace the None with the appropriate range()

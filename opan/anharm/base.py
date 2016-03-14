@@ -76,24 +76,24 @@ class OpanAnharm(object):
 
         # Complain if anything is already bound
         if not self.w_xyz == None:
-            raise(ANHErr(ANHErr.STATUS, \
-                    "XYZ object is already bound", \
-                    ""))
+            raise ANHErr(ANHErr.STATUS,
+                    "XYZ object is already bound",
+                    "")
         ## end if
         if not self.w_grad == None:
-            raise(ANHErr(ANHErr.STATUS, \
-                    "GRAD object is already bound", \
-                    ""))
+            raise ANHErr(ANHErr.STATUS,
+                    "GRAD object is already bound",
+                    "")
         ## end if
         if not self.w_hess == None:
-            raise(ANHErr(ANHErr.STATUS, \
-                    "HESS object is already bound", \
-                    ""))
+            raise ANHErr(ANHErr.STATUS,
+                    "HESS object is already bound",
+                    "")
         ## end if
         if not self.repo == None:
-            raise(ANHErr(ANHErr.STATUS, \
-                    "Repository object is already bound", \
-                    ""))
+            raise ANHErr(ANHErr.STATUS,
+                    "Repository object is already bound",
+                    "")
         ## end if
 
         # RESUME: anharm--factor for loading from different software pkgs
@@ -110,8 +110,8 @@ class OpanAnharm(object):
 
         # Only accept new repos for now
         if not isinstance(repo, str):
-            raise(TypeError("Must create new repository when loading " + \
-                    "a new dataset."))
+            raise TypeError("Must create new repository when loading " +
+                    "a new dataset.")
         ## end if
 
         # Repo is string, treat as filename and try to load
@@ -123,8 +123,8 @@ class OpanAnharm(object):
 
         # Complain if it's a directory
         if osp.isdir(repo):
-            raise(IOError("Cannot bind repository -- specified " + \
-                    "location is a directory"))
+            raise IOError("Cannot bind repository -- specified " +
+                    "location is a directory")
         ## end if
 
         # If file exists ...
@@ -135,8 +135,8 @@ class OpanAnharm(object):
                     os.remove(repo)
                 else:
                     # Raise error
-                    raise(IOError("Target repository file exists and " + \
-                            "clobber is disabled."))
+                    raise IOError("Target repository file exists and " +
+                            "clobber is disabled.")
                 ## end if
             ## end if
 

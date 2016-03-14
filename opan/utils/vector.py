@@ -111,10 +111,10 @@ def ortho_basis(normal, ref_vec=None):
 
     # Test 'normal' for shape and length
     if not len(normal.shape) == 1:
-        raise(ValueError("'normal' is not a vector"))
+        raise ValueError("'normal' is not a vector")
     ## end if
     if not normal.shape[0] == 3:
-        raise(ValueError("Length of 'normal' is not three"))
+        raise ValueError("Length of 'normal' is not three")
     ## end if
 
     # Normalize to concise variable 'nv'
@@ -140,10 +140,10 @@ def ortho_basis(normal, ref_vec=None):
     else:
         # ref_vec specified, go ahead and use.  Start with validity check.
         if not len(ref_vec.shape) == 1:
-            raise(ValueError("ref_vec is not a vector"))
+            raise ValueError("ref_vec is not a vector")
         ## end if
         if not ref_vec.shape[0] == 3:
-            raise(ValueError("ref_vec length is not three"))
+            raise ValueError("ref_vec length is not three")
         ## end if
 
         # Normalize ref_vec to 'rv'
@@ -153,8 +153,8 @@ def ortho_basis(normal, ref_vec=None):
         if parallel_check(nv, rv):
             # Essentially equal or opposite vectors, making them too nearly
             #  parallel.
-            raise(VectorError(VectorError.NONPRL,
-                    "'normal' and 'ref_vec' are too nearly parallel.", ""))
+            raise VectorError(VectorError.NONPRL,
+                    "'normal' and 'ref_vec' are too nearly parallel.", "")
         ## end if
 
         # rv is ok to use from here
@@ -319,11 +319,11 @@ def parallel_check(vec1, vec2):
     # Shape check
     for n,v in enumerate([vec1, vec2]):
         if not len(v.shape) == 1:
-            raise(ValueError("Bad shape for vector #{0}".format(n)))
+            raise ValueError("Bad shape for vector #{0}".format(n))
         ## end if
     ## next v,n
     if not vec1.shape[0] == vec2.shape[0]:
-        raise(ValueError("Vector length mismatch"))
+        raise ValueError("Vector length mismatch")
     ## end if
 
     # Check for (anti-)parallel character and return
@@ -371,13 +371,13 @@ def proj(vec, vec_onto):
 
     # Ensure vectors
     if not len(vec.shape) == 1:
-        raise(ValueError("'vec' is not a vector"))
+        raise ValueError("'vec' is not a vector")
     ## end if
     if not len(vec_onto.shape) == 1:
-        raise(ValueError("'vec_onto' is not a vector"))
+        raise ValueError("'vec_onto' is not a vector")
     ## end if
     if not vec.shape[0] == vec_onto.shape[0]:
-        raise(ValueError("Shape mismatch between vectors"))
+        raise ValueError("Shape mismatch between vectors")
     ## end if
 
     # Calculate the projection and return
@@ -467,21 +467,21 @@ def vec_angle(vec1, vec2):
 
     # Check shape and equal length
     if len(vec1.shape) != 1:
-        raise(ValueError("'vec1' is not a vector"))
+        raise ValueError("'vec1' is not a vector")
     ## end if
     if len(vec2.shape) != 1:
-        raise(ValueError("'vec2' is not a vector"))
+        raise ValueError("'vec2' is not a vector")
     ## end if
     if vec1.shape[0] != vec2.shape[0]:
-        raise(ValueError("Vector lengths are not equal"))
+        raise ValueError("Vector lengths are not equal")
     ## end if
 
     # Check magnitudes
     if spla.norm(vec1) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("'vec1' norm is too small"))
+        raise ValueError("'vec1' norm is too small")
     ## end if
     if spla.norm(vec2) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("'vec2' norm is too small"))
+        raise ValueError("'vec2' norm is too small")
     ## end if
 
     # Calculate the angle and return. Do in multiple steps to test for

@@ -700,7 +700,7 @@ class OrcaOutput(object):
 
         # Populate with the Regex-retrieved values.
         #  If any are not found, this will store as an empty list.
-        for (k,p) in self.p_en.iteritems():
+        for (k,p) in self.p_en.items():
             self.en.update({ k :
                     [scast(m.group(self.P_GROUP), np.float_) for m in
                         p.finditer(datastr)] })
@@ -744,7 +744,7 @@ class OrcaOutput(object):
             self.thermo = dict()
 
             # Iterate to pull the individual values
-            for (k,p) in self.p_thermo.iteritems():
+            for (k,p) in self.p_thermo.items():
                 if k != self.THERMO.BLOCK:
                     try:
                         self.thermo.update({ k :
@@ -778,7 +778,7 @@ class OrcaOutput(object):
 
         # Populate with the Regex-retrieved values.
         #  If any are not found, this will store as an empty list.
-        for (k,p) in self.p_spincont.iteritems():
+        for (k,p) in self.p_spincont.items():
             self.spincont.update({ k :
                     [scast(m.group(self.P_GROUP), np.float_) for m in
                         p.finditer(datastr)] })

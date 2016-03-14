@@ -89,7 +89,7 @@ if __name__ == '__main__':
     gp_error = prs.add_argument_group(title="opan.error Tests")
     gp_utils = prs.add_argument_group(title="opan.utils Tests")
     gp_xyz = prs.add_argument_group(title="opan.xyz Tests")
-    
+
     gp_orca = prs.add_argument_group(title="ORCA Object Tests")
 
     # ====  OPTIONS  ==== #
@@ -145,7 +145,6 @@ if __name__ == '__main__':
     ns, args_left = prs.parse_known_args()
     params = vars(ns)
     sys.argv = sys.argv[:1] + args_left
-    print(args_left)
 
     # Create the test suite to be compiled for running
     TestMasterSuite = unittest.TestSuite()

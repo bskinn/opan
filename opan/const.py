@@ -27,7 +27,7 @@ Module-Level Members
 Attributes
 ----------
 infty
-    |unicode| -- Infinity symbol as Unicode string
+    |str| -- Infinity symbol from Unicode
 
 atom_num
     |dict| -- Atomic number lookup from element symbol
@@ -105,7 +105,7 @@ API
 
 
 # Infinity symbol
-infty = u"\u221E"
+infty = "\u221E"
 
 
 # ======  Enums  ====== #

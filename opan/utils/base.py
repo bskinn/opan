@@ -101,7 +101,7 @@ def pack_tups(*args):
     class StrNoIter(str):
         """ Non-iterable subclass of |str|. """
         def __iter__(self):
-            raise(NotImplementedError("Non-iterable string"))
+            raise NotImplementedError("Non-iterable string")
         ## end def __iter__
     ## end class StrNoIter
 
@@ -115,7 +115,7 @@ def pack_tups(*args):
 
     # Check to ensure all iterables are the same length
     if not all(map(lambda v: v in (NOT_ITER, maxiter), iterlens)):
-        raise(ValueError("All iterable items must be of equal length"))
+        raise ValueError("All iterable items must be of equal length")
     ## end if
 
     # If everything is non-iterable, just return the args tuple wrapped in
@@ -196,8 +196,8 @@ def safe_cast(invar, totype):
 
     # Check that the cast type matches
     if not isinstance(outvar, totype):
-        raise(TypeError("Result of cast to '{0}' is '{1}'"
-                                            .format(totype, type(outvar))))
+        raise TypeError("Result of cast to '{0}' is '{1}'"
+                                            .format(totype, type(outvar)))
     ## end if
 
     # Success; return the cast value
@@ -337,7 +337,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         If a pair of coords & atoms array lengths is inconsistent ::
 
             if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
-                raise(ValueError(...))
+                raise (ValueError(...)
 
     """
 
@@ -351,30 +351,30 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     #** Check coords for suitable shape. Assume 1-D np.arrays.
     if not len(c1.shape) == 1:
         # Cannot coerce to vector; complain.
-        raise(ValueError(("'c1' is not a vector.")))
+        raise ValueError(("'c1' is not a vector."))
     ## end if
     if not len(c2.shape) == 1:
         # Cannot coerce to vector; complain.
-        raise(ValueError(("'c2' is not a vector.")))
+        raise ValueError(("'c2' is not a vector."))
     ## end if
 
     #** Check atoms for suitable shape. Assume lists of strings, so
     # convert to np.array to check.
     if not len(a1.shape) == 1:
         # Not a vector; complain
-        raise(ValueError(("'a1' is not a simple list.")))
+        raise ValueError(("'a1' is not a simple list."))
     ## end if
     if not len(a2.shape) == 1:
         # Not a vector; complain.
-        raise(ValueError(("'a2' is not a simple list.")))
+        raise ValueError(("'a2' is not a simple list."))
     ## end if
 
     #** Confirm proper lengths of coords vs atoms
     if not c1.shape[0] == 3 * a1.shape[0]:
-        raise(ValueError("len(c1) != 3*len(a1)"))
+        raise ValueError("len(c1) != 3*len(a1)")
     ## end if
     if not c2.shape[0] == 3 * a2.shape[0]:
-        raise(ValueError("len(c2) != 3*len(a2)"))
+        raise ValueError("len(c2) != 3*len(a2)")
     ## end if
 
     #** Confirm matching lengths of coords and atoms w/corresponding
@@ -586,8 +586,8 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
         try:
             var = getattr(obj, varname)
         except AttributeError:
-            raise(exc(tc, "Attribute '{0}' not defined in '{1}'"
-                    .format(varname, obj), errsrc))
+            raise exc(tc, "Attribute '{0}' not defined in '{1}'"
+                    .format(varname, obj), errsrc)
         ## end try
     ## end if
 
@@ -595,14 +595,14 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
     try:
         dt = var.dtype
     except AttributeError:
-        raise(exc(tc, "'{0}' is not an np.array (lacks a 'dtype' member)"
-                    .format(desc), errsrc))
+        raise exc(tc, "'{0}' is not an np.array (lacks a 'dtype' member)"
+                    .format(desc), errsrc)
     ## end try
 
     # Confirm dtype inherits from np.float
     if not np.issubdtype(dt, np.float):
-        raise(exc(tc, "'{0}' is not an np.array of np.float".format(desc),
-                errsrc))
+        raise exc(tc, "'{0}' is not an np.array of np.float".format(desc),
+                errsrc)
     ## end if
 
 ## end def assert_npfloatarray

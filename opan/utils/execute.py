@@ -213,7 +213,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     # Check for inp_ext identical to out_ext
     if inp_ext == out_ext:
-        raise(ValueError("'inp_ext' and 'out_ext' cannot be identical."))
+        raise ValueError("'inp_ext' and 'out_ext' cannot be identical.")
     ##end if
 
     # Build the input and output file names and store the substitution keys
@@ -232,8 +232,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     # Complain if special tags used in subs
     if not set(SPECIALSUBS.keys()).isdisjoint(subs):
-        raise(KeyError("Redefinition of special tag(s) is forbidden: {0}"
-                .format(list(set(SPECIALSUBS.keys()).intersection(subs)))))
+        raise KeyError("Redefinition of special tag(s) is forbidden: {0}"
+                .format(list(set(SPECIALSUBS.keys()).intersection(subs))))
     ## end if
 
     # Perform the replacement into the exec_cmd of the input and output
@@ -298,7 +298,7 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
         ## end try
 
     else:
-        raise(NotImplementedError("Background execution not yet implemented."))
+        raise NotImplementedError("Background execution not yet implemented.")
     ## end if
 
     # Return to prior working directory

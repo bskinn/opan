@@ -237,7 +237,7 @@ def geom_symm_match(g, atwts, ax, theta, do_refl):
 
     # Ensure proper dimensionality
     if not g.shape[0] == 3 * atwts.shape[0]:
-        raise(ValueError("Size of 'g' is not 3*size of 'atwts'"))
+        raise ValueError("Size of 'g' is not 3*size of 'atwts'")
     ## end if
 
     # Calculate transformed geometry
@@ -336,7 +336,7 @@ def geom_find_rotsymm(g, atwts, ax, improp, \
         except ZeroDivisionError as zde:
             # If it's because nval == zero, ignore. Else re-raise.
             if nval > 0:
-                raise(zde)
+                raise zde
             ## end if
         ## end try
     ## loop
@@ -540,9 +540,9 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 
             # If nothing found here, raise exception
             if order < 2:
-                raise(SymmError(SymmError.NOTFOUND, \
+                raise SymmError(SymmError.NOTFOUND,
                         "Cubic point group not found in spherical top " +
-                        "molecule.", "geom_find_group()"))
+                        "molecule.", "geom_find_group()")
             ## end if
 
             # Store the found vector as Axis
@@ -712,7 +712,7 @@ def g_subset(g, atwts, atwt, \
 
     # Ensure dims match (should already be checked at object creation...)
     if not (len(g) == 3*len(atwts)):
-        raise(ValueError("Dim mismatch [len(g) != 3*len(ats)]."))
+        raise ValueError("Dim mismatch [len(g) != 3*len(ats)].")
     ## end if
 
     # Pull into coordinate groups
@@ -756,13 +756,13 @@ def make_nd_vec(v, nd=None, t=None, norm=False):
 
     # Confirm vector form
     if not len(out_v.shape) == 1:
-        raise(ValueError("'v' is not reducible to a vector."))
+        raise ValueError("'v' is not reducible to a vector.")
     ## end if
 
     # If indicated, confirm dimensionality
     if nd and not out_v.shape[0] == nd:
-        raise(ValueError("'v' dimension is " + str(out_v.shape[0]) +
-                ", not " + str(nd)))
+        raise ValueError("'v' dimension is " + str(out_v.shape[0]) +
+                ", not " + str(nd))
     ## end if
 
     # Normalize, if indicated
@@ -794,7 +794,7 @@ def mtx_refl(nv, reps=1):
 
     # Ensure |nv| is large enough for confident directionality
     if spla.norm(nv) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("Norm of 'nv' is too small."))
+        raise ValueError("Norm of 'nv' is too small.")
     ## end if
 
     # Ensure nv is a normalized np.float64 3-vector
@@ -802,13 +802,13 @@ def mtx_refl(nv, reps=1):
 
     # Ensure reps is a positive scalar integer
     if not np.isscalar(reps):
-        raise(ValueError("'reps' must be scalar."))
+        raise ValueError("'reps' must be scalar.")
     ## end if
     if not np.issubdtype(type(reps), int):
-        raise(ValueError("'reps' must be an integer."))
+        raise ValueError("'reps' must be an integer.")
     ## end if
     if not reps > 0:
-        raise(ValueError("'reps' must be a positive integer."))
+        raise ValueError("'reps' must be a positive integer.")
     ## end if
 
     # Initialize the single-point reflection transform matrix
@@ -850,7 +850,7 @@ def mtx_rot(ax, theta, reps=1):
 
     # Ensure |ax| is large enough for confident directionality
     if spla.norm(ax) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("Norm of 'ax' is too small."))
+        raise ValueError("Norm of 'ax' is too small.")
     ## end if
 
     # Ensure ax is a normalized np.float64 3-vector
@@ -858,18 +858,18 @@ def mtx_rot(ax, theta, reps=1):
 
     # Ensure reps is a positive scalar integer
     if not np.isscalar(reps):
-        raise(ValueError("'reps' must be scalar."))
+        raise ValueError("'reps' must be scalar.")
     ## end if
     if not np.issubdtype(type(reps), int):
-        raise(ValueError("'reps' must be an integer."))
+        raise ValueError("'reps' must be an integer.")
     ## end if
     if not reps > 0:
-        raise(ValueError("'reps' must be a positive integer."))
+        raise ValueError("'reps' must be a positive integer.")
     ## end if
 
     # Ensure theta is scalar
     if not np.isscalar(theta):
-        raise(ValueError("'theta' must be scalar."))
+        raise ValueError("'theta' must be scalar.")
     ## end if
 
     # Assemble the modified Levi-Civita matrix

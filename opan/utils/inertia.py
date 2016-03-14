@@ -85,16 +85,16 @@ def ctr_mass(geom, masses):
 
     # Shape check
     if len(geom.shape) != 1:
-        raise(ValueError("Geometry is not a vector"))
+        raise ValueError("Geometry is not a vector")
     ## end if
     if len(masses.shape) != 1:
-        raise(ValueError("Masses cannot be parsed as a vector"))
+        raise ValueError("Masses cannot be parsed as a vector")
     ## end if
     if not geom.shape[0] % 3 == 0:
-        raise(ValueError("Geometry is not length-3N"))
+        raise ValueError("Geometry is not length-3N")
     ## end if
     if geom.shape[0] != 3*masses.shape[0] and geom.shape[0] != masses.shape[0]:
-        raise(ValueError("Inconsistent geometry and masses vector lengths"))
+        raise ValueError("Inconsistent geometry and masses vector lengths")
     ## end if
 
     # If N masses are provided, expand to 3N; if 3N, retain.
@@ -323,8 +323,8 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
     # Detect top type; start with error check
     if moments[0] < -PRM.ZERO_MOMENT_TOL:  # pragma: no cover
         # Invalid moment; raise error. Should be impossible!
-        raise(InertiaError(InertiaError.NEG_MOMENT,
-                    "Negative principal inertial moment", ""))
+        raise InertiaError(InertiaError.NEG_MOMENT,
+                    "Negative principal inertial moment", "")
     elif moments[0] < PRM.ZERO_MOMENT_TOL:
         # Zero first moment. Check whether others are too
         if all(moments < PRM.ZERO_MOMENT_TOL):
@@ -352,8 +352,8 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
     # Check for nothing assigned (this should never occur!)
     if top is None:  # pragma: no cover
-        raise(InertiaError(InertiaError.TOP_TYPE,
-                    "Unrecognized molecular top type",""))
+        raise InertiaError(InertiaError.TOP_TYPE,
+                    "Unrecognized molecular top type","")
     ## end if
 
     # Initialize the axes
@@ -392,8 +392,8 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
         # Vectors should already be orthonormal; following error should
         #  never occur
         if not orthchk(vecs, tol=on_tol):  # pragma: no cover
-            raise(VectorError(VectorError.ORTHONORM,
-                         "'eigh' produced non-orthonormal axes", ""))
+            raise VectorError(VectorError.ORTHONORM,
+                         "'eigh' produced non-orthonormal axes", "")
         ## end if
 
         # Duplicate the vectors to the axes object
@@ -486,8 +486,8 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
     # Reconfirm orthonormality. Again, the error should never occur.
     if not orthchk(axes, tol=on_tol): # pragma: no cover
-        raise(VectorError(VectorError.ORTHONORM,
-                    "Axis conditioning broke orthonormality",""))
+        raise VectorError(VectorError.ORTHONORM,
+                    "Axis conditioning broke orthonormality","")
     ## end if
 
     # Return the moments, axes, and top type
@@ -553,7 +553,7 @@ def rot_consts(geom, masses, units=_EURC.INV_INERTIA, on_tol=_DEF.ORTHONORM_TOL)
 
     # Ensure units are valid
     if not units in EURC:
-        raise(ValueError("'{0}' is not a valid units value".format(units)))
+        raise ValueError("'{0}' is not a valid units value".format(units))
     ## end if
 
     # Retrieve the moments, axes and top type. Geom and masses are proofed
@@ -591,7 +591,7 @@ def rot_consts(geom, masses, units=_EURC.INV_INERTIA, on_tol=_DEF.ORTHONORM_TOL)
         rc = PHYS.PLANCK / (mom * PHYS.ME_PER_AMU) / \
             (8.0 * np.pi**2.0 * PHYS.LIGHT_SPEED * PHYS.ANG_PER_BOHR) * 1.0e8
     else:               # pragma: no cover -- Valid units; not implemented
-        raise(NotImplementedError("Units conversion not yet implemented."))
+        raise NotImplementedError("Units conversion not yet implemented.")
     ## end if
 
     # Return the result
@@ -634,15 +634,15 @@ def _fadn_orth(vec, geom):
 
     # Geom and vec must both be the right shape
     if not (len(geom.shape) == 1 and geom.shape[0] % 3 == 0):
-        raise(ValueError("Geometry is not length 3N"))
+        raise ValueError("Geometry is not length 3N")
     ## end if
     if not vec.shape == (3,):
-        raise(ValueError("Reference vector is not length 3"))
+        raise ValueError("Reference vector is not length 3")
     ## end if
 
     # vec must not be the zero vector
     if spla.norm(vec) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("Reference vector norm is too small"))
+        raise ValueError("Reference vector norm is too small")
     ## end if
 
     # Normalize the ref vec
@@ -663,8 +663,8 @@ def _fadn_orth(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be atom, linear, or planar
-        raise(InertiaError(InertiaError.BAD_GEOM,
-                    "No suitable atomic displacement found", ""))
+        raise InertiaError(InertiaError.BAD_GEOM,
+                    "No suitable atomic displacement found", "")
     ## end for disp
 
 ## end def _fadn_orth
@@ -705,15 +705,15 @@ def _fadn_par(vec, geom):
 
     # Geom and vec must both be the right shape
     if not (len(geom.shape) == 1 and geom.shape[0] % 3 == 0):
-        raise(ValueError("Geometry is not length 3N"))
+        raise ValueError("Geometry is not length 3N")
     ## end if
     if not vec.shape == (3,):
-        raise(ValueError("Reference vector is not length 3"))
+        raise ValueError("Reference vector is not length 3")
     ## end if
 
     # vec must not be the zero vector
     if spla.norm(vec) < PRM.ZERO_VEC_TOL:
-        raise(ValueError("Reference vector norm is too small"))
+        raise ValueError("Reference vector norm is too small")
     ## end if
 
      # Normalize the ref vec
@@ -732,8 +732,8 @@ def _fadn_par(vec, geom):
     ## next disp
     else:
         # Nothing fit the bill - must be a linear molecule?
-        raise(InertiaError(InertiaError.BAD_GEOM,
-                    "Linear molecule, no non-parallel displacement", ""))
+        raise InertiaError(InertiaError.BAD_GEOM,
+                    "Linear molecule, no non-parallel displacement", "")
     ## end for disp
 
     # Return the resulting vector

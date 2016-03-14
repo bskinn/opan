@@ -85,7 +85,7 @@ def setUpTestDir(dirname):
     # Check if test directory already exists (or file of same name);
     #  error if so
     if os.path.isdir(dirname) or os.path.isfile(dirname): # pragma: no cover
-        raise(IOError("Cannot create new test directory!"))
+        raise IOError("Cannot create new test directory!")
 
     # Create and change to test directory
     os.mkdir(dirname)

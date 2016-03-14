@@ -111,7 +111,7 @@ class OpanAnharmRepo(object):
             self._repo = None
             self.fname = None
         else:
-            raise(TypeError("Invalid filename type: {0}".format(type(fname))))
+            raise TypeError("Invalid filename type: {0}".format(type(fname)))
         ## end if
 
     ## end def __init__
@@ -131,9 +131,9 @@ class OpanAnharmRepo(object):
             self._repo = None
             # Leave self.fname defined for potential easy re-opening later on.
         else:
-            raise(RepoError(RepoError.STATUS, \
-                    "Cannot close; no repository open", \
-                    "Last repo: {0}".format(self.fname)))
+            raise RepoError(RepoError.STATUS,
+                    "Cannot close; no repository open",
+                    "Last repo: {0}".format(self.fname))
         ## end if
 
     ## end def close
@@ -149,9 +149,9 @@ class OpanAnharmRepo(object):
 
         # If repo not None, complain
         if not self._repo == None:
-            raise(RepoError(RepoError.STATUS, \
-                    "Repository already open", \
-                    "File: {0}".format(self.fname)))
+            raise RepoError(RepoError.STATUS,
+                    "Repository already open",
+                    "File: {0}".format(self.fname))
         ## end if
 
         # If string passed, try opening h5.File; otherwise complain
@@ -159,7 +159,7 @@ class OpanAnharmRepo(object):
             self.fname = fname
             self._repo = h5.File(fname)
         else:
-            raise(TypeError("Invalid filename type: {0}".format(type(fname))))
+            raise TypeError("Invalid filename type: {0}".format(type(fname)))
         ## end if
 
         # Dirty/clean status will be as it was when repo was last closed
@@ -195,19 +195,19 @@ class OpanAnharmRepo(object):
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
-            raise(ValueError("Mode must be a non-negative integer"))
+            raise ValueError("Mode must be a non-negative integer")
         ## end if
 
         # Must be a valid disp direction
         if not disp in _E_DD:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "displacement enum value".format(disp)))
+            raise ValueError("'{0}' is not a valid " +
+                    "displacement enum value".format(disp))
         ## end if
 
         # Must be a valid repo data type
         if not datatype in EnumAnharmRepoData:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "data type enum value".format(datatype)))
+            raise ValueError("'{0}' is not a valid " +
+                    "data type enum value".format(datatype))
         ## end if
 
         # Get the appropriate geom group name
@@ -222,8 +222,8 @@ class OpanAnharmRepo(object):
             grp = self._repo.require_group(grpname)
         except AttributeError:
             # Presume repo not open/attached
-            raise(RErr(RErr.STATUS, \
-                        "Cannot store; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot store; no repository open", "")
         ## end try
 
         # If dataset exists in repo group, obliterate or complain. Can't use
@@ -233,9 +233,9 @@ class OpanAnharmRepo(object):
             if clobber:
                 grp.pop(datatype)
             else:
-                raise(RErr(RErr.DATA, \
-                        "Dataset to be stored exists and clobber == False", \
-                        self._repo.filename))
+                raise RErr(RErr.DATA,
+                        "Dataset to be stored exists and clobber == False",
+                        self._repo.filename)
             ## end if
         ## end if
 
@@ -262,19 +262,19 @@ class OpanAnharmRepo(object):
 
         # Must be valid mode
         if not (mode >=0 and isinstance(mode, int)):
-            raise(ValueError("Mode must be a non-negative integer"))
+            raise ValueError("Mode must be a non-negative integer")
         ## end if
 
         # Must be a valid disp direction
         if not disp in _E_DD:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "displacement enum value".format(disp)))
+            raise ValueError("'{0}' is not a valid " +
+                    "displacement enum value".format(disp))
         ## end if
 
         # Must be a valid data type
         if not datatype in EnumAnharmRepoData:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "repository data type enum value".format(datatype)))
+            raise ValueError("'{0}' is not a valid " +
+                    "repository data type enum value".format(datatype))
         ## end if
 
         # Get the appropriate geom group name
@@ -289,24 +289,24 @@ class OpanAnharmRepo(object):
         try:
             grp = self._repo.get(grpname)
         except AttributeError:
-            raise(RErr(RErr.STATUS,
-                        "Cannot load; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot load; no repository open", "")
         ## end try
 
         # If succeeded, check if group not found
         if grp is None:
-            raise(RErr(RErr.GROUP,
-                    "Group '" + grpname + "' not found", \
-                    self.fname))
+            raise RErr(RErr.GROUP,
+                    "Group '" + grpname + "' not found",
+                    self.fname)
         ## end if
 
         # Group found, try loading the data object; complain if not found
         try:
             out_data = grp.get(datatype).value
         except AttributeError:
-            raise(RErr(RErr.DATA, \
-                    "Dataset '" + datatype + "' not found", \
-                    self.fname))
+            raise RErr(RErr.DATA,
+                    "Dataset '" + datatype + "' not found",
+                    self.fname)
         ## end try
 
         # Return as-is (h5py creates NumPy arrays of appropriate dimensions)
@@ -351,23 +351,23 @@ class OpanAnharmRepo(object):
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "parameter enum value".format(param)))
+            raise ValueError("'{0}' is not a valid " +
+                    "parameter enum value".format(param))
         ## end if
 
         # Get the params group, complaining if repo not bound
         try:
             grp = self._repo.require_group(self.G_param)
         except AttributeError:
-            raise(RErr(RErr.STATUS,
-                        "Cannot store; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot store; no repository open", "")
         ## end try
 
         # If succeeded, check if group not found
         if grp is None:
-            raise(RErr(RErr.GROUP,
-                    "Parameters group not found", \
-                    self.fname))
+            raise RErr(RErr.GROUP,
+                    "Parameters group not found",
+                    self.fname)
         ## end if
 
         # If dataset exists in repo group, obliterate or complain. Can't use
@@ -377,9 +377,9 @@ class OpanAnharmRepo(object):
             if clobber:
                 grp.pop(param)
             else:
-                raise(RErr(RErr.DATA,
-                        "Parameter to be stored exists and clobber == False", \
-                        self._repo.filename))
+                raise RErr(RErr.DATA,
+                        "Parameter to be stored exists and clobber == False",
+                        self._repo.filename)
             ## end if
         ## end if
 
@@ -405,16 +405,16 @@ class OpanAnharmRepo(object):
 
         # Must be a valid parameter name
         if not param in EnumAnharmRepoParam:
-            raise(ValueError("'{0}' is not a valid " + \
-                    "parameter enum value".format(param)))
+            raise ValueError("'{0}' is not a valid " +
+                    "parameter enum value".format(param))
         ## end if
 
         # Get the params group, complaining if repo not bound
         try:
             grp = self._repo.require_group(self.G_param)
         except AttributeError:
-            raise(RErr(RErr.STATUS,
-                        "Cannot load; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot load; no repository open", "")
         ## end try
 
         # Group should be guaranteed present with 'require_group', try
@@ -422,9 +422,9 @@ class OpanAnharmRepo(object):
         try:
             out_param = grp.get(param).value
         except AttributeError:
-            raise(RErr(RErr.DATA,
-                    "Parameter '" + param + "' not found", \
-                    self.fname))
+            raise RErr(RErr.DATA,
+                    "Parameter '" + param + "' not found",
+                    self.fname)
         ## end try
 
         # Return
@@ -472,8 +472,8 @@ class OpanAnharmRepo(object):
             retval = self._repo.require_dataset(self.N_dirty, \
                                 shape=(), dtype=bool, data=True).value
         except AttributeError:
-            raise(RErr(RErr.STATUS, \
-                        "Cannot report dirty status; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot report dirty status; no repository open", "")
         ## end try
 
         # Either way it evaluated, should be good to return. Flush first.
@@ -489,7 +489,7 @@ class OpanAnharmRepo(object):
 
         # Complain if 'dirty' isn't boolean
         if not isinstance(dirty, bool):
-            raise(ValueError("'dirty' must be Boolean"))
+            raise ValueError("'dirty' must be Boolean")
         ## end if
 
         # Try to retrieve the dataset; complain if repo not bound.
@@ -497,8 +497,8 @@ class OpanAnharmRepo(object):
             dset = self._repo.require_dataset(self.N_dirty, \
                                 shape=(), dtype=bool)
         except AttributeError:
-            raise(RErr(RErr.STATUS, \
-                        "Cannot set dirty status; no repository open", ""))
+            raise RErr(RErr.STATUS,
+                        "Cannot set dirty status; no repository open", "")
         ## end try
 
         # Change the value to the indicated value

@@ -1138,7 +1138,7 @@ class OrcaHess(SuperOpanHess):
             try:
                 # See if it casts as an int
                 num = scast(m.group('el'), np.int_)
-            except ValueError, TypeError:
+            except (ValueError, TypeError):
                 # Nope, must be letters. Check if valid by poking it into the
                 #  dict. If not valid, should raise another error.
                 num = atom_num[m.group('el').upper()]
@@ -1367,9 +1367,9 @@ class OrcaHess(SuperOpanHess):
             # Confirm length of raman_acts conforms. Shouldn't need to check
             #  both, since they both rely equally on Pat.raman_line.finditer.
             if 3*self.num_ats != self.raman_acts.shape[0]:
-                raise(HessError(HessError.RAMAN_BLOCK, \
+                raise HessError(HessError.RAMAN_BLOCK,
                         "Number of Raman spectrum rows != \
-                        3 * number of atoms", srcstr))
+                        3 * number of atoms", srcstr)
             ## end if
 
             # Confirm match of all frequencies with those reported separately
@@ -1380,9 +1380,9 @@ class OrcaHess(SuperOpanHess):
                                 m_work.group("block")) ]),
                     rtol=0,
                     atol=DEF.HESS_IR_MATCH_TOL):
-                raise(HessError(HessError.RAMAN_BLOCK,
+                raise HessError(HessError.RAMAN_BLOCK,
                         "Frequency mismatch between freq and Raman blocks",
-                        srcstr))
+                        srcstr)
             ## end if
         ## end if
 
@@ -1396,8 +1396,8 @@ class OrcaHess(SuperOpanHess):
             # Check that number of joblist rows indicated in the block
             #  matches that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HessError(HessError.JOB_BLOCK,
-                        "Count in job list block != 3 * # of atoms", srcstr))
+                raise HessError(HessError.JOB_BLOCK,
+                        "Count in job list block != 3 * # of atoms", srcstr)
             ## end if
 
             # Retrieve the job list
@@ -1411,8 +1411,8 @@ class OrcaHess(SuperOpanHess):
             #  three, since any row not containing three numerical values will
             #  result in the block getting truncated.
             if not self.joblist.shape[0] == self.num_ats:
-                raise(HessError(HessError.JOB_BLOCK,
-                        "Number of job list rows != number of atoms", srcstr))
+                raise HessError(HessError.JOB_BLOCK,
+                        "Number of job list rows != number of atoms", srcstr)
             ## end if
 
             # Convert to boolean
@@ -1430,9 +1430,9 @@ class OrcaHess(SuperOpanHess):
             # Check that number of eigenvalues indicated in the block matches
             #  that expected from the number of atoms
             if 3*self.num_ats != np.int_(m_work.group("dim")):
-                raise(HessError(HessError.EIGVAL_BLOCK,
+                raise HessError(HessError.EIGVAL_BLOCK,
                         "Count in MWH eigenvalues block != 3 * number of atoms",
-                        srcstr))
+                        srcstr)
             ## end if
 
             # Retrieve the eigenvalues
@@ -1442,9 +1442,9 @@ class OrcaHess(SuperOpanHess):
 
             # Proofread for proper size
             if not self.mwh_eigvals.shape[0] == 3*self.num_ats:
-                raise(HessError(HessError.EIGVAL_BLOCK,
+                raise HessError(HessError.EIGVAL_BLOCK,
                         "Number of MWH eigenvalues != 3 * number of atoms",
-                        srcstr))
+                        srcstr)
             ## end if
 
         ## end if
@@ -1465,9 +1465,9 @@ class OrcaHess(SuperOpanHess):
             # Extra check of 'dim' vs 'dim2' on modes
             if scast(m_work.group("dim"), np.int_) != \
                                 scast(m_work.group("dim2"), np.int_):
-                raise(HessError(HessError.EIGVEC_BLOCK,
+                raise HessError(HessError.EIGVEC_BLOCK,
                         "MWH eigenvectors dimension specification mismatch",
-                        srcstr))
+                        srcstr)
             ## end if
         ## end if
 
