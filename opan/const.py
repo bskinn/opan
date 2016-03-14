@@ -67,6 +67,9 @@ units descriptions
 
 Enumeration Classes
 ----------------------
+:class:`~opan.const.EnumIterType` -- Metaclass for iterable enumerations
+supporting membership testing with `in`
+
 :class:`~opan.const.OpanEnum` -- Superclass for enumerations
 
     **Plain Enumerations**
@@ -107,62 +110,59 @@ API
 # Infinity symbol
 infty = "\u221E"
 
+# ======  Enum Metaclass  ====== #
+class EnumIterType(type):
+    """ Metaclass for enumeration types allowing `in` membership testing.
+
+    .. method:: __iter__()
+
+        Iterate over all defined enumeration values.
+
+        Generator iterating over all class variables whose names match
+        their contents. For a properly constructed
+        :class:`~opan.error.OpanEnum` subclass, these are identical to
+        the enumeration values.
+
+        **Example:**
+
+        >>> [val for val in opan.const.EnumDispDirection]
+        ['POSITIVE', 'NO_DISP', 'NEGATIVE']
+
+    .. method:: __contains__(value)
+
+        Returns |True| if `value` is a valid value for the
+        enumeration type, else |False|.
+
+        **Example:**
+
+        >>> 'NO_DISP' in EnumDispDirection
+        True
+    """
+
+    def __iter__(self):
+        for item in self.__dict__:
+            if item == self.__dict__[item]:
+                yield item
+            ## end if
+        ## next item
+    ## end def __iter__
+
+    def __contains__(self, value):
+        return (value in self.__dict__ and value == self.__dict__[value])
+    ## end def __contains__
+
+## end class EnumIterType
+
 
 # ======  Enums  ====== #
 
-class OpanEnum(object):
+class OpanEnum(object, metaclass=EnumIterType):
     """ Superclass for enumeration objects.
 
-    Metaclassed to allow direct iteration and membership testing
-    of enumeration values on the subclass type.
-
-
-    .. class:: __metaclass__(type)
-
-        Metaclass providing ability to iterate over enum values.
-
-        With this metaclass, iterating over the class itself (rather than an
-        instance) yields the valid enumeration values.
-
-        .. method:: __iter__()
-
-            Iterate over all defined enumeration values.
-
-            Generator iterating over all class variables whose names match
-            their contents. For a properly constructed
-            :class:`~opan.error.OpanEnum` subclass, these are identical to
-            the enumeration values.
-
-            **Example:**
-
-            >>> [val for val in opan.const.EnumDispDirection]
-            ['POSITIVE', 'NO_DISP', 'NEGATIVE']
-
-        .. method:: __contains__(value)
-
-            Returns |True| if `value` is a valid value for the
-            enumeration type, else |False|.
-
-            **Example:**
-
-            >>> 'NO_DISP' in EnumDispDirection
-            True
+    Metaclassed with :class:`EnumIterType` to allow direct iteration 
+    and membership testing of enumeration values on the subclass type.
 
     """
-
-    class __metaclass__(type):
-        def __iter__(self):
-            for item in self.__dict__:
-                if item == self.__dict__[item]:
-                    yield item
-                ## end if
-            ## next item
-        ## end def __iter__
-
-        def __contains__(self, value):
-            return (value in self.__dict__ and value == self.__dict__[value])
-        ## end def __contains__
-    ## end class __metaclass__
 
 ## end class OpanEnum
 

@@ -126,8 +126,8 @@ def pack_tups(*args):
 
     # Swap any non-iterables for a suitable length repeat, and zip to
     #  tuples for return
-    tups = zip(*[(np.repeat(a, maxiter) if l == NOT_ITER else a)
-            for (a,l) in zip(mod_args, iterlens)])
+    tups = list(zip(*[(np.repeat(a, maxiter) if l == NOT_ITER else a)
+            for (a,l) in zip(mod_args, iterlens)]))
 
     # Dump the resulting tuples, if in debug mode
     if _DEBUG:  # pragma: no cover

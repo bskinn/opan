@@ -240,7 +240,7 @@ class SuperOpanHess(object):
         if not hasattr(self, 'atom_syms'): # pragma: no cover
             raise HErr(HErr.BADATOM, "Atoms list not found", srcstr)
         ## end if
-        if type(self.atom_syms) is not type(range(3)): # pragma: no cover
+        if type(self.atom_syms) is not type([1,2,3]): # pragma: no cover
             raise HErr(HErr.BADATOM, "Atoms list is not a list", srcstr)
         ## end if
         if 3*len(self.atom_syms) != self.hess.shape[0]: # pragma: no cover

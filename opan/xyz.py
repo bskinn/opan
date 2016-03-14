@@ -432,7 +432,7 @@ class OpanXYZ(object):
         self.XYZ_path = self.LOAD_DATA_FLAG
 
         # Store the atoms as vector
-        self.atom_syms = map(str.upper, list(atom_syms))
+        self.atom_syms = list(map(str.upper, list(atom_syms)))
 
         # Store the single geometry by bracketing with an array
         self.geoms = [coords / (1.0 if bohrs else PHYS.ANG_PER_BOHR)]
@@ -1570,7 +1570,7 @@ class OpanXYZ(object):
         none_found = False
 
         # Check for None values
-        none_vals = map(lambda e: isinstance(e, type(None)), arglist)
+        none_vals = list(map(lambda e: isinstance(e, type(None)), arglist))
 
         # Error if more than one None; handle if exactly one; pass through if
         #  none.
@@ -1581,8 +1581,8 @@ class OpanXYZ(object):
             # Must be no iterables that are not strings. Thus, an element-wise
             #  test for iterability and an element-wise test for stringiness
             #  must give matching arrays
-            if not all(np.equal(map(np.iterable, arglist), \
-                                map(lambda e: isinstance(e, str), arglist))):
+            if not all(np.equal(list(map(np.iterable, arglist)), \
+                        list(map(lambda e: isinstance(e, str), arglist)))):
                 raise ValueError("'None' as parameter invalid with \
                                                         non-str iterables")
             ## end if

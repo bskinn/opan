@@ -217,8 +217,8 @@ def inertia_tensor(geom, masses):
         for j in range(i,3):
             if i == j:
                 # On-diagonal element; calculate indices to include
-                ind = np.concatenate([np.array(map(lambda v: v % 3,
-                                        range(i+1, i+3))) + o for o in
+                ind = np.concatenate([np.array(list(map(lambda v: v % 3,
+                                        range(i+1, i+3)))) + o for o in
                                         range(0,geom.shape[0],3)])
 
                 # Calculate the tensor element

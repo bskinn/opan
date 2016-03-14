@@ -70,9 +70,10 @@ several common features:
 
 
 # Module-level imports
+from .const import EnumIterType as _EnumIterType
 
 
-class OpanError(Exception):
+class OpanError(Exception, metaclass=_EnumIterType):
     """Base class for custom errors defined for OpenAnharmonic
 
     :class:`OpanError` is an abstract superclass of any custom errors defined
@@ -80,8 +81,8 @@ class OpanError(Exception):
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are |str| class variables with contents
     identical to their names.  These are recognized by the
-    :meth:`~OpanError.__metaclass__.__iter__`
-    defined in :class:`~OpanError.__metaclass__` as being the
+    :meth:`~opan.const.EnumIterType.__iter__`
+    defined in :class:`opan.const.EnumIterType` as being the
     set of valid typecodes.
 
     Arguments
@@ -120,37 +121,6 @@ class OpanError(Exception):
     tc
         |str| -- String typecode associated with the instance
 
-
-    .. class:: __metaclass__(type)
-
-        Metaclass providing ability to iterate over typecodes.
-
-        With this metaclass, iterating over the class itself (rather than an
-        instance) yields the valid typecodes for the class.
-
-        .. method:: __iter__()
-
-            Iterate over all defined typecodes.
-
-            Generator iterating over all class variables whose names match
-            their contents. For a properly constructed
-            :class:`~opan.error.OpanError`
-            subclass, these are identical to the typecodes.
-
-            **Example:**
-
-            >>> [tc for tc in opan.error.XYZError]
-            ['XYZFILE', 'DIHED', 'NONPRL', 'OVERWRITE']
-
-        .. method:: __contains__(tc)
-
-            Returns |True| if `tc` is a valid typecode for the
-            enumeration type, else |False|.
-
-            **Example:**
-
-            >>> 'XYZFILE' in opan.error.XYZError
-            True
 
     """
 
