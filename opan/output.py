@@ -74,6 +74,12 @@ class OrcaOutput(object):
     not detectable, it
     is stored as |None| in the corresponding instance variable.
 
+    .. note::
+
+        In particular, thermochemistry from single atom/ion computations
+        **should work**, with |None| or zero/negligible values returned
+        for rotational and vibrational quantities.
+
     The verbose contents of the output file are not generally retained within
     the :class:`OrcaOutput` instance due to the potential for such to involve a
     tremendously large string. Exceptions include, if present:
@@ -658,9 +664,6 @@ class OrcaOutput(object):
         ~opan.error.OutputError
             (various typecodes) If indicated output is un-parseably
             malformed in some fashion
-
-        ~exceptions.ValueError
-            If `src_type` is invalid
 
         """
 

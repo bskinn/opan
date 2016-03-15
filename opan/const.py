@@ -67,7 +67,7 @@ units descriptions
 
 Enumeration Classes
 ----------------------
-:class:`~opan.const.EnumIterType` -- Metaclass for iterable enumerations
+:class:`~opan.const.EnumIterMeta` -- Metaclass for iterable enumerations
 supporting membership testing with `in`
 
 :class:`~opan.const.OpanEnum` -- Superclass for enumerations
@@ -111,7 +111,7 @@ API
 infty = "\u221E"
 
 # ======  Enum Metaclass  ====== #
-class EnumIterType(type):
+class EnumIterMeta(type):
     """ Metaclass for enumeration types allowing `in` membership testing.
 
     .. method:: __iter__()
@@ -120,7 +120,7 @@ class EnumIterType(type):
 
         Generator iterating over all class variables whose names match
         their contents. For a properly constructed
-        :class:`~opan.error.OpanEnum` subclass, these are identical to
+        :class:`~opan.const.OpanEnum` subclass, these are identical to
         the enumeration values.
 
         **Example:**
@@ -156,10 +156,10 @@ class EnumIterType(type):
 
 # ======  Enums  ====== #
 
-class OpanEnum(object, metaclass=EnumIterType):
+class OpanEnum(object, metaclass=EnumIterMeta):
     """ Superclass for enumeration objects.
 
-    Metaclassed with :class:`EnumIterType` to allow direct iteration 
+    Metaclassed with :class:`EnumIterMeta` to allow direct iteration
     and membership testing of enumeration values on the subclass type.
 
     """

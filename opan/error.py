@@ -70,10 +70,10 @@ several common features:
 
 
 # Module-level imports
-from .const import EnumIterType as _EnumIterType
+from .const import EnumIterMeta as _EnumIterMeta
 
 
-class OpanError(Exception, metaclass=_EnumIterType):
+class OpanError(Exception, metaclass=_EnumIterMeta):
     """Base class for custom errors defined for OpenAnharmonic
 
     :class:`OpanError` is an abstract superclass of any custom errors defined
@@ -81,8 +81,8 @@ class OpanError(Exception, metaclass=_EnumIterType):
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are |str| class variables with contents
     identical to their names.  These are recognized by the
-    :meth:`~opan.const.EnumIterType.__iter__`
-    defined in :class:`opan.const.EnumIterType` as being the
+    :meth:`~opan.const.EnumIterMeta.__iter__`
+    defined in :class:`opan.const.EnumIterMeta` as being the
     set of valid typecodes.
 
     Arguments
