@@ -22,7 +22,7 @@
 """Utilities for calculation of inertia tensor, principal axes/moments, and
 rotational constants.
 
-These functions are housed separately from the :mod:`opan.anharm` VPT2 module
+These functions are housed separately from the :mod:`opan.vpt2` VPT2 module
 since they may have broader applicability to other envisioned capabilites of
 opan.
 

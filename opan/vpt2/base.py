@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Name:        anharm
+# Name:        vpt2
 # Purpose:     Submodule implementing VPT2 anharmonic calculations/computations
 #
 # Author:      Brian Skinn
@@ -22,11 +22,11 @@
 
 *This module docstring is not used in the Sphinx docs.*
 
-OpanAnharm -- Core object for VPT2 calculations.
+OpanVPT2 -- Core object for VPT2 calculations.
 
 """
 
-class OpanAnharm(object):
+class OpanVPT2(object):
     """ Container for data from VPT2 anharmonic calculations.
 
     *To be added...*
@@ -67,7 +67,7 @@ class OpanAnharm(object):
         from ..hess import OrcaHess as OH
         from .repo import OpanAnharmRepo as OR
         from ..const import EnumDispDirection as E_DDir, EnumFileType as E_FT
-        from ..const import _E_SW as E_SW
+        from ..const import EnumSoftware as E_SW
         from ..const import DEF
         from ..error import AnharmError as ANHErr
 
@@ -96,7 +96,7 @@ class OpanAnharm(object):
                     "")
         ## end if
 
-        # RESUME: anharm--factor for loading from different software pkgs
+        # RESUME: vpt2--factor for loading from different software pkgs
 
         # Load the three data files
         self.w_xyz = OX( osp.join(basepath, \
@@ -149,7 +149,7 @@ class OpanAnharm(object):
 
     ## end def new_from_files
 
-## end class OpanAnharm
+## end class OpanVPT2
 
 
 

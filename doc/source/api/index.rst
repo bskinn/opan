@@ -6,14 +6,10 @@ opan API
 The full public API is delineated below.  Cross-references to NumPy are displayed with the ``np`` package abbreviation.
 
 .. note::
-   Documented or undocumented attributes, functions, methods, etc. named with a leading underscore are **NOT** formally part of the
-   API. Their behavior may change without notice.
+    Documented or undocumented attributes, functions, methods, etc. named with a leading underscore are **NOT** formally part of the
+    API. Their behavior may change without notice.
 
 |
-
- * :mod:`~opan.anharm`
-
-   * :mod:`~opan.anharm.repo`
 
  * :mod:`~opan.const`
 
@@ -27,28 +23,32 @@ The full public API is delineated below.  Cross-references to NumPy are displaye
 
  * :mod:`~opan.utils`
 
-   * :mod:`~opan.utils.decorate`
+    * :mod:`~opan.utils.decorate`
 
-   * :mod:`~opan.utils.execute`
+    * :mod:`~opan.utils.execute`
 
-   * :mod:`~opan.utils.inertia`
+    * :mod:`~opan.utils.inertia`
 
-   * :mod:`~opan.utils.symm`
+    * :mod:`~opan.utils.symm`
 
-   * :mod:`~opan.utils.vector`
+    * :mod:`~opan.utils.vector`
+
+ * :mod:`~opan.vpt2`
+
+    * :mod:`~opan.vpt2.repo`
 
  * :mod:`~opan.xyz`
 
 
 .. toctree::
-   :hidden:
+    :hidden:
 
-   anharm
-   const
-   error
-   grad
-   hess
-   output
-   utils
-   xyz
+    const
+    error
+    grad
+    hess
+    output
+    utils
+    vpt2
+    xyz
 

@@ -37,7 +37,7 @@ several common features:
 :class:`OpanError` **Subclasses**
 
     :class:`AnharmError` -- Raised as a result of
-    :class:`~opan.anharm.base.OpanAnharm` actions
+    :class:`~opan.vpt2.base.OpanVPT2` actions
 
     :class:`GradError` -- Raised during parsing of or calculations using
     gradient data
@@ -394,7 +394,7 @@ class RepoError(OpanError):
 
 
 class AnharmError(OpanError):
-    """Error relating to :class:`~opan.anharm.base.OpanAnharm` actions.
+    """Error relating to :class:`~opan.vpt2.base.OpanVPT2` actions.
 
     See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
@@ -409,7 +409,7 @@ class AnharmError(OpanError):
     #: or attempt made to bind new repo when one already bound
     REPO = 'REPO'
 
-    #: :class:`~opan.anharm.base.OpanAnharm` internal variables in
+    #: :class:`~opan.vpt2.base.OpanVPT2` internal variables in
     #: inappropriate state for the requested operation
     STATUS = 'STATUS'
 

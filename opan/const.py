@@ -307,7 +307,7 @@ class EnumAnharmRepoData(OpanEnum):
 
     Contains enumeration parameters to indicate the type of data to be
     retrieved from the on-disk HDF5 repository in the VPT2 anharmonic
-    calculations of the :mod:`opan.anharm` submodule.
+    calculations of the :mod:`opan.vpt2` submodule.
 
     **Enum Values**
 
@@ -333,7 +333,7 @@ class EnumAnharmRepoParam(OpanEnum):
 
     Contains enumeration parameters to indicate the parameter value to be
     retrieved from the on-disk HDF5 repository in the VPT2 anharmonic
-    calculations of the :mod:`opan.anharm` submodule.
+    calculations of the :mod:`opan.vpt2` submodule.
 
     **Enum Values**
 
