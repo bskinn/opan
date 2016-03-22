@@ -1262,7 +1262,7 @@ class OrcaHess(SuperOpanHess):
         #=== IR Spectrum ===#
         # If dipole derivs absent or munged, or if block missing, then skip
         m_work = self.Pat.ir_block.search(self.in_str)
-        if None in [self.dipders, m_work]:
+        if self.dipders is None or m_work is None:
             self.ir_comps = None
             self.ir_mags = None
         else:
@@ -1343,7 +1343,7 @@ class OrcaHess(SuperOpanHess):
         # If polarizability derivs absent or munged, or if block missing,
         #  then skip
         m_work = self.Pat.raman_block.search(self.in_str)
-        if None in [self.polders, m_work]:
+        if self.polders is None or m_work is None:
             self.raman_acts = None
             self.raman_depols = None
         else:
