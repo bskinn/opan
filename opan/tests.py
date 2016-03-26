@@ -93,8 +93,8 @@ if __name__ == '__main__':
     gp_orca = prs.add_argument_group(title="ORCA Object Tests")
 
     # ====  OPTIONS  ==== #
-    prs.add_argument('-q', action='store_true',
-            help="Suppress output of successful tests")
+    prs.add_argument('-v', action='store_true',
+            help="Show verbose output")
 
     # ====  GLOBAL  ==== #
     # Add the all-tests argument
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
     # Create the text test runner and execute
     ttr = unittest.TextTestRunner(buffer=True,
-                verbosity=(1 if params['q'] else 2))
+                verbosity=(2 if params['v'] else 1))
     ttr.run(TestMasterSuite)
 
 

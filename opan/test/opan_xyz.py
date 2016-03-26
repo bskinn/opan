@@ -222,6 +222,22 @@ class SuperOpanXYZ(unittest.TestCase):
                 152.735, 151.323, 148.425, 146.671, 146.400, 146.499, 146.558,
                 146.589, 146.589, 146.584, 146.584])
 
+    displ_Cu_O = np.array([[ 3.21908987,  0.66715836,  0.66775173],
+                            [ 3.23349526,  0.70347512,  0.70395889],
+                            [ 3.26319986,  0.76993489,  0.77019568],
+                            [ 3.30012511,  0.83970547,  0.83971303],
+                            [ 3.33239218,  0.88053868,  0.88038183],
+                            [ 3.3547193 ,  0.88979644,  0.88958101],
+                            [ 3.37721649,  0.88587148,  0.88564283],
+                            [ 3.40641087,  0.87127146,  0.87107304],
+                            [ 3.41941596,  0.86010885,  0.85995011],
+                            [ 3.41996398,  0.85752181,  0.85738386],
+                            [ 3.41886605,  0.85783928,  0.85771456],
+                            [ 3.41853157,  0.85816243,  0.85804338],
+                            [ 3.4184881 ,  0.85836274,  0.85825313],
+                            [ 3.41855236,  0.85837408,  0.85827203],
+                            [ 3.41859015,  0.85834384,  0.85824558],
+                            [ 3.41858637,  0.85833817,  0.8582418 ]])
 
     good_direct_geom = [np.array([-1.32000015, -0.39071977, -0.39106748,
          1.89908972,  0.27643859, 0.27668425,  2.54469386,  1.96100848,
@@ -363,6 +379,17 @@ class TestOpanXYZGoodFileData(SuperOpanXYZ):
                 self.assertAlmostEqual(t[0][i], t[1][i], delta=1e-6,
                         msg="Geometry #" + str(t[2]) + \
                                 ", coordinate element #" + str(i))
+
+    def test_XYZ_GoodFileDataDisplacements(self):
+
+        for t in zip(self.displ_Cu_O,
+                        self.xyz.displ_iter(None, 0, 1),
+                        range(len(self.displ_Cu_O))
+                    ):
+            for i in range(self.displ_Cu_O[0].shape[0]):
+                self.assertAlmostEqual(t[0][i], t[1][i], delta=1e-6,
+                        msg="Displacement #{0}, dimension #{1}".format(t[2], i))
+
 
     #TEST: displ_iter call (dist_iter only calls displ_single)
 
@@ -628,9 +655,11 @@ class TestOpanXYZBadDirectData(SuperOpanXYZ):
     #  throws the appropriate errors or otherwise exhibits the correct problems.
 
     def test_XYZ_BadDirectDataTruncCoords(self):
+        # This test also happens to cover instances where a non-array numeric
+        #  value is passed to 'coords'
         from opan.xyz import OpanXYZ
-        self.assertRaises(ValueError, OpanXYZ, \
-                    coords=self.good_direct_geom[0][:-2], \
+        self.assertRaises(ValueError, OpanXYZ,
+                    coords=self.good_direct_geom[0][:-2],
                     atom_syms=self.good_direct_atoms)
 
     def test_XYZ_BadDirectDataBadElement(self):
@@ -639,31 +668,50 @@ class TestOpanXYZBadDirectData(SuperOpanXYZ):
         # Copy symbols, munge, and pass into assert
         munge_atoms = self.good_direct_atoms[:]
         munge_atoms[0] = 'CX'
-        self.assertRaises(ValueError, OpanXYZ, \
-                    coords=self.good_direct_geom, \
+        self.assertRaises(ValueError, OpanXYZ,
+                    coords=self.good_direct_geom,
                     atom_syms=munge_atoms)
 
     def test_XYZ_BadDirectDataNonRealCoords(self):
         from opan.xyz import OpanXYZ
-        import numpy as np
 
         # Copy coords, munge, and pass to assert
         munge_coords = self.good_direct_geom[0].copy() * 1.j
-        self.assertRaises(ValueError, OpanXYZ, \
-                    coords=munge_coords, \
+        self.assertRaises(ValueError, OpanXYZ,
+                    coords=munge_coords,
                     atom_syms=self.good_direct_atoms)
 
-    # TEST: ValueError for Angle at_1 == at_2 and at_3 == at_2 cases
+    def test_XYZ_BadDirectDataNonVectorCoords(self):
+        from opan.xyz import OpanXYZ
 
-    # TEST: ValueError for Dihed any at_x equal
+        # Reshape coordinates to 2-D array and pass to assert
+        munge_coords = self.good_direct_geom[0]
+        munge_coords = munge_coords.reshape((munge_coords.shape[0] // 3,3))
+        self.assertRaises(ValueError, OpanXYZ,
+                    coords=munge_coords,
+                    atom_syms=self.good_direct_atoms)
 
-    # TEST: IndexError for invalid (out-of-range) at_x for Dist, Angle, Dihed
+    def test_XYZ_BadDirectDataNonListAtomSyms(self):
+        from opan.xyz import OpanXYZ
+        import numpy as np
 
-    # TEST: XYZError.DIHED for too-nearly-linear atom trio(s)
+        # Reshape atoms to 2-D array and pass to assert
+        munge_atoms = np.array(self.good_direct_atoms).reshape((2,2))
+        self.assertRaises(ValueError, OpanXYZ,
+                    coords=self.good_direct_geom[0],
+                    atom_syms=munge_atoms)
 
-    # TEST: ValueError when multiple 'None' values passed to an X_iter method
+    #TEST: ValueError for Angle at_1 == at_2 and at_3 == at_2 cases
 
-    # TEST: ValueError when 'None' passed to an X_iter with another iterable
+    #TEST: ValueError for Dihed any at_x equal
+
+    #TEST: IndexError for invalid (out-of-range) at_x for Dist, Angle, Dihed
+
+    #TEST: XYZError.DIHED for too-nearly-linear atom trio(s)
+
+    #TEST: ValueError when multiple 'None' values passed to an X_iter method
+
+    #TEST: ValueError when 'None' passed to an X_iter with another iterable
 
 ## end class TestOpanXYZBadDirectData
 

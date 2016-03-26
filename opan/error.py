@@ -177,22 +177,6 @@ class OpanError(Exception, metaclass=_EnumIterMeta):
 
     ## end def __str__
 
-
-    class __metaclass__(type):
-        # Enable iteration over the typecodes
-        def __iter__(self):
-            for item in self.__dict__:
-                if item == self.__dict__[item]:
-                    yield item
-                ## end if
-            ## next item
-        ##end def __iter__
-
-        def __contains__(self, tc):
-            return (tc in self.__dict__ and tc == self.__dict__[tc])
-        ## end def __contains__
-    ## end class __metaclass__
-
 ## end class OpanError
 
 
