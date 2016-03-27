@@ -1575,16 +1575,17 @@ class OpanXYZ(object):
         # Error if more than one None; handle if exactly one; pass through if
         #  none.
         if np.count_nonzero(none_vals) > 1:
-            raise ValueError("Multiple 'None' values [indices {0}] not \
-                    supported".format(tuple(np.nonzero(none_vals)[0])))
+            raise ValueError(
+                    "Multiple 'None' values [indices {0}] not supported"
+                    .format(tuple(np.nonzero(none_vals)[0])))
         elif np.count_nonzero(none_vals) == 1:
             # Must be no iterables that are not strings. Thus, an element-wise
             #  test for iterability and an element-wise test for stringiness
             #  must give matching arrays
-            if not all(np.equal(list(map(np.iterable, arglist)), \
+            if not all(np.equal(list(map(np.iterable, arglist)),
                         list(map(lambda e: isinstance(e, str), arglist)))):
-                raise ValueError("'None' as parameter invalid with \
-                                                        non-str iterables")
+                raise ValueError(
+                        "'None' as parameter invalid with non-str iterables")
             ## end if
 
             # Parameters okay; replace the None with the appropriate range()

@@ -390,8 +390,11 @@ class TestOpanXYZGoodFileData(SuperOpanXYZ):
                 self.assertAlmostEqual(t[0][i], t[1][i], delta=1e-6,
                         msg="Displacement #{0}, dimension #{1}".format(t[2], i))
 
+    def test_XYZ_GoodFileDataZeroDisplacement(self):
 
-    #TEST: displ_iter call (dist_iter only calls displ_single)
+        # Have to use assertTrue b/c numpy confuses assertEqual &c.
+        self.assertTrue(all(self.xyz.displ_single(0,0,0) == [0.0, 0.0, 0.0]))
+
 
 ## end class TestOpanXYZGoodData
 
@@ -458,6 +461,8 @@ class TestOpanXYZAltFileData(SuperOpanXYZ):
 
 class TestOpanXYZGoodDirectData(SuperOpanXYZ):
     # Confirming sanity of an OpanXYZ generated directly from data.
+    # There are checks here of some of the generated resuls when using
+    #  'x_iter' methods with 'None'.
 
     def setUp(self):
         # Load the object
@@ -701,18 +706,6 @@ class TestOpanXYZBadDirectData(SuperOpanXYZ):
                     coords=self.good_direct_geom[0],
                     atom_syms=munge_atoms)
 
-    #TEST: ValueError for Angle at_1 == at_2 and at_3 == at_2 cases
-
-    #TEST: ValueError for Dihed any at_x equal
-
-    #TEST: IndexError for invalid (out-of-range) at_x for Dist, Angle, Dihed
-
-    #TEST: XYZError.DIHED for too-nearly-linear atom trio(s)
-
-    #TEST: ValueError when multiple 'None' values passed to an X_iter method
-
-    #TEST: ValueError when 'None' passed to an X_iter with another iterable
-
 ## end class TestOpanXYZBadDirectData
 
 
@@ -801,6 +794,112 @@ class TestOpanXYZBadUsage(SuperOpanXYZ):
 
         finally:
             os.remove(badfilename)
+
+    def test_XYZ_BadUsageBadDistIndices(self):
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Try invalid arguments to dist_single, in both positions
+        self.assertRaises(IndexError, x.dist_single, 0, 1000000, 0)
+        self.assertRaises(IndexError, x.dist_single, 0, 0, 1000000)
+
+    def test_XYZ_BadUsageBadDisplIndices(self):
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Try invalid arguments to dist_single, in both positions
+        self.assertRaises(IndexError, x.displ_single, 0, 1000000, 0)
+        self.assertRaises(IndexError, x.displ_single, 0, 0, 1000000)
+
+    def test_XYZ_BadUsageBadAngleIndices(self):
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Try invalid arguments to angle_single, in all three positions
+        self.assertRaises(IndexError, x.angle_single, 0, 1000000, 1, 2)
+        self.assertRaises(IndexError, x.angle_single, 0, 0, 1000000, 2)
+        self.assertRaises(IndexError, x.angle_single, 0, 0, 1, 200000)
+
+        # Try inputs where at_1 == at_2 or at_3 == at_2
+        self.assertRaises(ValueError, x.angle_single, 0, 1, 1, 2)
+        self.assertRaises(ValueError, x.angle_single, 0, 1, 2, 2)
+
+    def test_XYZ_BadUsageBadDihedIndices(self):
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Try invalid arguments to dihed_single, in all four positions
+        self.assertRaises(IndexError, x.dihed_single, 0, 1000000, 1, 2, 3)
+        self.assertRaises(IndexError, x.dihed_single, 0, 0, 1000, 2, 3)
+        self.assertRaises(IndexError, x.dihed_single, 0, 0, 1, 20000, 3)
+        self.assertRaises(IndexError, x.dihed_single, 0, 0, 1, 2, 3000000)
+
+        # Test for catch on duplicate indices
+        self.assertRaises(ValueError, x.dihed_single, 0, 0, 0, 0, 0)
+
+    def test_XYZ_BadUsageLinearDihedAngle(self):
+
+        import os
+        from opan.xyz import OpanXYZ
+        from opan.error import XYZError
+
+        # Construct path to benzene test file
+        bz_path = os.path.join(os.path.pardir, 'test', 'resource', 'inertia',
+                            'C6H6_Planar.xyz')
+
+        # Load benzene test file from inside inertia
+        x = OpanXYZ(path=bz_path)
+
+        # From testing, the (6,0,3) H-C-C angle is 180 degrees
+        self.assertErrorAndTypecode(XYZError, x.dihed_single,
+                        XYZError.DIHED, 0, 6, 0, 3, 4)
+
+    def test_XYZ_BadUsageBadNoneParamsWithIters(self):
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Check error on multiple Nones passed
+        with self.assertRaises(ValueError):
+            [d for d in x.dist_iter(None, None, 1)]
+
+        # Check error on None passed with iterable
+        with self.assertRaises(ValueError):
+            [d for d in x.dist_iter(None, [0,1,2], 3)]
+
+    def test_XYZ_BadUsageNoneInAngleIterAtom(self):
+        # Confirm that an error is thrown when using angle_iter called with
+        #  'error_invalid=True', when 'None' is passed as one of the 'at_n'
+        #  parameters.
+
+        from opan.xyz import OpanXYZ
+
+        # Load the test file
+        x = OpanXYZ(path=self.file_name)
+
+        # Check that error is not raised when error_invalid == False, but
+        #  *is* raised when error_invalid == True.
+        try:
+            [a for a in x.angle_iter(0,0,None,1, invalid_error=False)]
+        except Exception:
+            self.fail("Unexpected error raised in 'angle_iter' call")
+
+        with self.assertRaises(ValueError):
+            [a for a in x.angle_iter(0, 0, None, 1, invalid_error=True)]
 
 
 ## end class TestOpanXYZBadUsage
