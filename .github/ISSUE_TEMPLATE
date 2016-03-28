@@ -1,0 +1,31 @@
+Please fill out the below information and add the `bug` label when submitting bug requests.
+
+## Description of Problem
+
+`...`
+
+## Steps to Reproduce
+
+ 1. `...`
+
+## OS & Software/Package Versions
+
+`python --version` and `pip freeze` are convenient for this.
+
+ * Operating System: 
+ * Python: `x.x.x`
+ * NumPy: `x.x.x`
+ * SciPy: `x.x.x`
+ * H5Py: `x.x.x`
+
+## Results of Unit Tests
+
+Substitute the appropriate Python execution command below, as appropriate.
+
+ 1. At the command line, change to `[Project Root]/opan`
+ 1. Execute `python tests.py --all`
+
+Paste the test suite output below, [formatted as a code block](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code):
+
+`...`
+
