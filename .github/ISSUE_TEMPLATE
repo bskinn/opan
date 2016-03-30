@@ -1,4 +1,4 @@
-Please fill out the below information and add the `bug` label when submitting bug requests.
+Please fill out the below information and add the `bug` label when submitting bug reports.
 
 ## Description of Problem
 
@@ -27,5 +27,8 @@ Substitute the appropriate Python execution command below, as appropriate.
 
 Paste the test suite output below, [formatted as a code block](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code):
 
-`...`
+```
+...
+```
+
 
