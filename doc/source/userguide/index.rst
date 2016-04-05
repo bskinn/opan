@@ -1,11 +1,17 @@
 .. opan User's Guide landing page
 
-opan User's Guide
+Open Anharmonic User's Guide
 =========================================
 
 *Eventually there will be a User Guide here...*
 
 Contents:
 
-.. toctree:
-   :maxdepth: 2
+.. toctree::
+    :maxdepth: 2
+
+    Usage & Examples <usage/index>
+    Theory <theory/index>
+    
+
+

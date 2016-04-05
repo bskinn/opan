@@ -5,17 +5,36 @@
 
 
 Welcome to Open Anharmonic!
-================================
+===========================
 
-*Eventually, one will find here at least the API and a user's guide.*
+Open Anharmonic is a Python wrapper for computational chemistry
+software packages intended to enable VPT2 computation of anharmonic
+vibrational constants. Other types of calculations are under consideration.
+
+An adjunct goal of the project is to expose an API providing
+convenient access to various results of standalone calculations.
+In particular, :class:`~opan.xyz.OpanXYZ` and the subclasses of
+:class:`~opan.grad.SuperOpanGrad` and
+:class:`~opan.hess.SuperOpanHess` are anticipated to be particularly
+useful.
+
+Due to the large number of possible variations of computational
+runs, parsing of output files is challenging, and only a small number of
+run types have been `implemented to date <api/output.html>`__. More are planned,
+but are currently low priority.
+
+The source repository for Opan Anharmonic can be found at:
+
+    https://www.github.com/bskinn/opan
 
 
-Contents:
+Contents
+========
 
 .. toctree::
    :maxdepth: 1
 
-   User Guide <userguide/index>
+   User's Guide <userguide/index>
    API <api/index>
    conventions
    software
