@@ -21,6 +21,11 @@
 
 """Defines objects bearing assorted constants for Open Anharmonic.
 
+.. testsetup:: *
+
+    import opan, numpy as np
+
+
 Module-Level Members
 =========================
 
@@ -125,8 +130,8 @@ class EnumIterMeta(type):
 
         **Example:**
 
-        >>> [val for val in opan.const.EnumDispDirection]
-        ['POSITIVE', 'NO_DISP', 'NEGATIVE']
+        >>> [val for val in sorted(opan.const.EnumDispDirection)]
+        ['NEGATIVE', 'NO_DISP', 'POSITIVE']
 
     .. method:: __contains__(value)
 
@@ -135,8 +140,9 @@ class EnumIterMeta(type):
 
         **Example:**
 
-        >>> 'NO_DISP' in EnumDispDirection
+        >>> 'NO_DISP' in opan.const.EnumDispDirection
         True
+
     """
 
     def __iter__(self):
