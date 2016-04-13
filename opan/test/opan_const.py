@@ -30,6 +30,12 @@ class TestOpanEnumValueCheck(unittest.TestCase):
         # Representative value in a representative Enum
         self.assertTrue(EDD.NEGATIVE in EDD)
 
+    def test_OpanEnum_IterCheck(self):
+        from opan.const import EnumDispDirection as EDD
+
+        self.assertSetEqual({'NEGATIVE', 'NO_DISP', 'POSITIVE'},
+                            set(k for k in EDD))
+
 
 def suite():
     s = unittest.TestSuite()

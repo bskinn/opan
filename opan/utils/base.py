@@ -479,7 +479,7 @@ def template_subst(template, subs, delims=('<', '>')):
     subst_text = template
 
     # Iterate over subs and perform the .replace() calls
-    for (k,v) in subs:
+    for (k,v) in subs.items():
         subst_text = subst_text.replace(
                 delims[0] + k + delims[1], v)
     ## next tup
@@ -596,6 +596,10 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
         dt = var.dtype
     except AttributeError:
         raise exc(tc, "'{0}' is not an np.array (lacks a 'dtype' member)"
+                    .format(desc), errsrc)
+    else:
+        if len(var.shape) < 1:
+            raise exc(tc, "'{0}' is not an np.array ('len(shape)' < 1)"
                     .format(desc), errsrc)
     ## end try
 
