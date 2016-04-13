@@ -11,7 +11,7 @@
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
-#       This file is part of opan (OpenAnharmonic), a system for automated
+#       This file is part of opan (Open Anharmonic), a system for automated
 #       computation of anharmonic properties of molecular systems via wrapper
 #       calls to computational/quantum chemical software packages.
 #
@@ -500,7 +500,7 @@ class OpanXYZ(object):
 
         # Store the number of atoms. XYZ files with multiple geometries will
         #  be required to have the same number of atoms in all geometries.
-        #  This is fine for OpenAnharmonic, but may be highly undesirable
+        #  This is fine for Open Anharmonic, but may be highly undesirable
         #  in other applications.  Beware.
         # If the .match() call doesn't have a group attribute, catch the
         #  resulting AttributeError and throw an XYZError. Can't think of any

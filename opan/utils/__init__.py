@@ -10,7 +10,7 @@
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
-#       This file is part of opan (OpenAnharmonic), a system for automated
+#       This file is part of opan (Open Anharmonic), a system for automated
 #       computation of anharmonic properties of molecular systems via wrapper
 #       calls to computational/quantum chemical software packages.
 #
@@ -18,12 +18,12 @@
 #
 #-------------------------------------------------------------------------------
 
-"""Utility functions for OpenAnharmonic, including execution automation.
+"""Utility functions for Open Anharmonic, including execution automation.
 
 
 **Sub-Modules**
 
-:mod:`~opan.utils.decorate` -- Custom OpenAnharmonic decorators
+:mod:`~opan.utils.decorate` -- Custom Open Anharmonic decorators
 
 :mod:`~opan.utils.execute` -- Functions for execution of external computational
 software packages

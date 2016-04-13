@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 # Name:        utils.symm
 # Purpose:     Module containing molecular symmetry utility functions for
-#               OpenAnharmonic
+#               Open Anharmonic
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
@@ -11,7 +11,7 @@
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
-#       This file is part of opan (OpenAnharmonic), a system for automated
+#       This file is part of opan (Open Anharmonic), a system for automated
 #       computation of anharmonic properties of molecular systems via wrapper
 #       calls to computational/quantum chemical software packages.
 #

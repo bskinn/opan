@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        error
-# Purpose:     Definitions of all custom errors for the OpenAnharmonic
+# Purpose:     Definitions of all custom errors for the Open Anharmonic
 #                package.
 #
 # Author:      Brian Skinn
@@ -11,7 +11,7 @@
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
-#       This file is part of opan (OpenAnharmonic), a system for automated
+#       This file is part of opan (Open Anharmonic), a system for automated
 #       computation of anharmonic properties of molecular systems via wrapper
 #       calls to computational/quantum chemical software packages.
 #
@@ -21,7 +21,7 @@
 
 
 
-"""Custom errors for OpenAnharmonic
+"""Custom errors for Open Anharmonic
 
 Error classes are subclassed from :exc:`~exceptions.Exception` via an
 abstract superclass, :class:`~opan.error.OpanError`, which defines
@@ -74,10 +74,10 @@ from .const import EnumIterMeta as _EnumIterMeta
 
 
 class OpanError(Exception, metaclass=_EnumIterMeta):
-    """Base class for custom errors defined for OpenAnharmonic
+    """Base class for custom errors defined for Open Anharmonic
 
     :class:`OpanError` is an abstract superclass of any custom errors defined
-    under the OpenAnharmonic umbrella. It defines all common methods shared
+    under the Open Anharmonic umbrella. It defines all common methods shared
     among the various subtype error classes, such that the only contents that
     must be declared by a subclass are |str| class variables with contents
     identical to their names.  These are recognized by the

@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        tests
-# Purpose:     Definitions of all unit tests for the OpenAnharmonic package.
+# Purpose:     Definitions of all unit tests for the Open Anharmonic package.
 #
 # Author:      Brian Skinn
 #                bskinn@alum.mit.edu
@@ -10,7 +10,7 @@
 # License:     The MIT License; see "license.txt" for full license terms
 #                   and contributor agreement.
 #
-#       This file is part of opan (OpenAnharmonic), a system for automated
+#       This file is part of opan (Open Anharmonic), a system for automated
 #       computation of anharmonic properties of molecular systems via wrapper
 #       calls to computational/quantum chemical software packages.
 #
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     PFX = "--{0}"
 
     # Create the parser
-    prs = ap.ArgumentParser(description="Run tests for OpenAnharmonic.")
+    prs = ap.ArgumentParser(description="Run tests for Open Anharmonic.")
 
     # Create the top-level test groups
     gp_global = prs.add_argument_group(title="Global Test Options")

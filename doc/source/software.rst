@@ -4,7 +4,7 @@
 Supported Software Packages
 ==============================
 
-At this development stage, OpenAnharmonic is being built with support only for ORCA.
+At this development stage, Open Anharmonic is being built with support only for ORCA.
 Pending community response, support for other packages may be added.
 
 Descriptions are quoted from the respective software websites.
