@@ -572,14 +572,6 @@ class OrcaEngrad(SuperOpanGrad):
                             .format(atom_count), srcstr)
                 ## end try
 
-                # Now check whether the successfully converted atomic
-                #  number is in the valid range (should be a redundant check.)
-                if not (CIC.MIN_ATOMIC_NUM <= at_num <= CIC.MAX_ATOMIC_NUM):
-                    raise GradError(GradError.GEOMBLOCK,
-                            "Atom #{0} is an unsupported element"
-                            .format(atom_count), srcstr)
-                ## end if
-
                 # Tag on the new symbol
                 self.atom_syms.append(line_mch.group("at").upper())
             ## end if

@@ -135,8 +135,8 @@ class OpanError(Exception, metaclass=_EnumIterMeta):
         ## end if
 
         # Quick RegEx to extract the name of the subclass.
-        self.subclass_name = re.search(self.__module__ + "\\.(?P<cls>\w+)'",
-                    str(self.__class__), re.I).group("cls")
+        self.subclass_name = re.search("^(?P<cls>[^(]+)\\(", repr(self)) \
+                        .group("cls")
 
         # Check for valid typecode and throw a more descriptive error if
         #  invalid.

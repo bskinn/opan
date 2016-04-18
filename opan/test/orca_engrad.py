@@ -31,6 +31,7 @@ class SuperOrcaEngrad(SuperOrca):
     from textwrap import dedent
     import numpy as np
     from opan.test.utils import assertErrorAndTypecode
+    from opan.const import OpanEnum
 
     # Superclass constants
     file_name = 'test.engrad'
@@ -66,13 +67,13 @@ class SuperOrcaEngrad(SuperOrca):
            1     2.6798241    1.9892213   -0.1622520
            1     2.6798521   -0.1622023    1.9892043
         """)
-    class names(object):
+    class names(OpanEnum):
         numats = 'numats'
         energy = 'energy'
         grad = 'grad'
         geom = 'geom'
         atomicnum = 'atomicnum'
-        E = frozenset([numats, energy, grad, geom, atomicnum])
+        atomicsym = 'atomicsym'
 
     bad_block_substs = {
             names.numats: ('umber of', 'asdlkjf'),
@@ -88,7 +89,12 @@ class SuperOrcaEngrad(SuperOrca):
 
     bad_data_substs = {
             names.numats: ('of atoms\n#\n 4', 'of atoms\n#\n 8'),
-            names.atomicnum: (' 29    -1.5545432', '229    -1.5545432')
+            names.atomicnum: (' 29    -1.5545432', '229    -1.5545432'),
+            names.atomicsym: ('29    -1.5545432', 'Xx    -1.5545432')
+                        }
+
+    alt_data_substs = {
+            names.atomicsym: ('29    -1.5545432', 'Cu    -1.5545432')
                         }
 
     atoms = ['CU', 'O', 'H', 'H']
@@ -174,6 +180,52 @@ class TestOrcaEngradKnownGood(SuperOrcaEngrad):
         self.assertTrue(self.oe.check_geom(self.oe.geom, self.oe.atom_syms))
 
 ## end class TestOrcaEngradKnownGood
+
+
+class TestOrcaEngradAltGoodData(SuperOrcaEngrad):
+    # Ensuring importing a file with data different from the 'known good'
+    #  but with acceptable variants loads satisfactorily.
+
+    @classmethod
+    def setUpClass(cls):
+        # Set up the directory and add modified files
+        from opan.test.utils import setUpTestDir
+
+        setUpTestDir(cls.testdir)
+
+        # Write the files
+        for bname in cls.alt_data_substs.keys():
+            with open(cls.file_name + bname, 'w') as f:
+                f.write(cls.file_text_good
+                                    .replace(*cls.alt_data_substs[bname]))
+
+
+    @classmethod
+    def tearDownClass(cls):
+        # Remove any engrad files and try to remove the temp directory
+
+        import os
+        from opan.test.utils import tearDownTestDir
+
+        # Try to remove the files
+        [os.remove(cls.file_name + bname) for bname in
+                                        cls.alt_data_substs.keys()]
+
+        # Try to remove the directory
+        tearDownTestDir(cls.testdir)
+
+    def test_ENGRAD_AltDataAtomicSymbol(self):
+        from opan.grad import OrcaEngrad
+
+        # Fail if any exception raised while loading the modified file
+        #  with copper specified as the atomic symbol
+        try:
+            oe = OrcaEngrad(path=(self.file_name + self.names.atomicsym))
+        except Exception:
+            self.fail("Failed to load .engrad file with atomic symbol")
+
+
+## end class TestOrcaEngradAltGoodData
 
 
 class TestOrcaEngradMissingBlocks(SuperOrcaEngrad):
@@ -340,6 +392,14 @@ class TestOrcaEngradBadData(SuperOrcaEngrad):
                     GradError.GRADBLOCK, path=(self.file_name
                                         + self.names.numats))
 
+    def test_ENGRAD_BadDataAtomSym(self):
+        from opan.grad import OrcaEngrad
+        from opan.error import GradError
+
+        self.assertErrorAndTypecode(GradError, OrcaEngrad,
+                      GradError.GEOMBLOCK, path=(self.file_name
+                                         + self.names.atomicsym))
+
 ## end class TestOrcaEngradBadData
 
 
@@ -412,7 +472,8 @@ class TestOrcaEngradLiveData(SuperOrcaEngrad):
 def suite():
     s = unittest.TestSuite()
     tl = unittest.TestLoader()
-    s.addTests([tl.loadTestsFromTestCase(TestOrcaEngradBadData),
+    s.addTests([tl.loadTestsFromTestCase(TestOrcaEngradAltGoodData),
+                tl.loadTestsFromTestCase(TestOrcaEngradBadData),
                 tl.loadTestsFromTestCase(TestOrcaEngradBadUsage),
                 tl.loadTestsFromTestCase(TestOrcaEngradKnownGood),
                 tl.loadTestsFromTestCase(TestOrcaEngradLiveData),

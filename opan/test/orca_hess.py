@@ -29,6 +29,7 @@ class SuperOrcaHess(SuperOrca):
     from textwrap import dedent
     import numpy as np
     from opan.test.utils import assertErrorAndTypecode
+    from opan.const import OpanEnum
 
     # Superclass constants
 
@@ -687,13 +688,14 @@ class SuperOrcaHess(SuperOrca):
 
 
     #=== Defining ways to break the .hess ===#
-    class names(object):
+    class names(OpanEnum):
         hess = 'hess'
         geom = 'geom'
         atsym = 'atsym'
+        atnum = 'atnum'
         energy = 'energy'
         temp = 'temp'
-        freqs = 'freq'
+        freqs = 'freqs'
         modes = 'modes'
         dipders = 'dipders'
         ir = 'ir'
@@ -707,8 +709,6 @@ class SuperOrcaHess(SuperOrca):
         suffix_badfreq = '_badfreq'
         suffix_badval = '_badval'
 
-        E = frozenset([hess, geom, atsym, energy, temp, freqs, modes,
-                    dipders, ir, polders, raman, mwh_eigvals, mwh_eigvecs])
         suffixes = frozenset([suffix_dim2, suffix_badfreq, suffix_badval])
 
 
@@ -752,6 +752,7 @@ class SuperOrcaHess(SuperOrca):
             names.freqs : ('al_frequencies\n15', 'al_frequencies\n30'),
             names.atsym : ('C     12.0110     -0.000000',
                                     'Cx    12.0110     -0.000000'),
+            names.atnum : ('C     12.0110', '385   12.0110'),
             names.modes : ('l_modes\n15', 'l_modes\n19'),
             names.modes + names.suffix_dim2 :
                             ('l_modes\n15 15', 'l_modes\n15 19'),
@@ -776,7 +777,8 @@ class SuperOrcaHess(SuperOrca):
                         }
 
     alt_data_substs = {
-            names.joblist : ('2    1    1    1', '2    0    1    0')
+            names.joblist : ('2    1    1    1', '2    0    1    0'),
+            names.atnum : ('C     12.0110', '12     12.0110')
                         }
 
     alt_data_values = {
@@ -1274,8 +1276,12 @@ class TestOrcaHessBadData(SuperOrcaHess):
                     self.names.freqs))
 
     def test_HESS_BadDataAtomSym(self):
+        from opan.hess import OrcaHess
 
-        from opan.error import HessError
+        self.assertRaises(KeyError, OrcaHess,
+                                    path=(self.file_name + self.names.atsym))
+
+    def test_HESS_BadDataAtomNum(self):
         from opan.hess import OrcaHess
 
         self.assertRaises(KeyError, OrcaHess,
@@ -1429,7 +1435,7 @@ class TestOrcaHessBadUsage(SuperOrcaHess):
 
 class TestOrcaHessAltData(SuperOrcaHess):
     # Ensuring importing a HESS file with data of valid formatting but
-    #  invalid content raises the appropriate errors
+    #  invalid content raises the appropriate errors (or not)
 
     @classmethod
     def setUpClass(cls):
@@ -1475,6 +1481,15 @@ class TestOrcaHessAltData(SuperOrcaHess):
                 self.assertEqual(h.joblist[i,j],
                         self.alt_data_values[self.names.joblist][i,j],
                         msg="Job list element (" + str(i) + ',' + str(j) + ')')
+
+    def test_HESS_AltDataAtomNum(self):
+        from opan.hess import OrcaHess
+
+        try:
+            oh = OrcaHess(path=(self.file_name + self.names.atnum))
+        except Exception:
+            self.fail(msg="Parsing failed unexpectedly with an atomic " +
+                            "number in the '$atoms' block")
 
 ## end class TestOrcaHessAltData
 
