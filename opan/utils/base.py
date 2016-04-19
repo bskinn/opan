@@ -290,7 +290,8 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         not (|False|)
 
     fail_type
-        |str| or |None| -- Type of check failure
+        :class:`~opan.const.EnumCheckGeomMismatch` or |None|
+        -- Type of check failure
 
         If `match` == |True|:
 
@@ -298,17 +299,17 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
 
         If `match` == |False|:
 
-            A string code describing the reason for the failed match:
+            An :class:`~opan.const.EnumCheckGeomMismatch` value
+            indicating the reason for the failed match:
 
-                `coord_dim_mismatch` -- Mismatch in coordinate vector sizes
+                :attr:`~opan.const.EnumCheckGeomMismatch.DIMENSION`
+                -- Mismatch in geometry size (number of atoms)
 
-                `atom_dim_mismatch`  -- Mismatch in atom vector sizes
+                :attr:`~opan.const.EnumCheckGeomMismatch.COORDS`
+                -- Mismatch in one or more coordinates
 
-                `coord_mismatch`     -- Mismatch in one or more coordinates
-
-                `atom_mismatch`      -- Mismatch in one or more atoms
-
-                **#TODO:** :func:`~opan.utils.base.check_geom`: Convert `fail_type` to Enum
+                :attr:`~opan.const.EnumCheckGeomMismatch.ATOMS`
+                -- Mismatch in one or more atoms
 
     fail_loc
         length-3N |bool| or length-N |bool| or |None| --
@@ -337,13 +338,14 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         If a pair of coords & atoms array lengths is inconsistent ::
 
             if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
-                raise (ValueError(...)
+                raise ValueError(...)
 
     """
 
     # Import(s)
     from ..const import atom_num
     import numpy as np
+    from ..const import EnumCheckGeomMismatch as ECGM
 
     # Initialize return value to success condition
     match = True
@@ -381,12 +383,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     #  objects among the two geometries
     if not c1.shape[0] == c2.shape[0]:
         match = False
-        fail_type = "coord_dim_mismatch"
-        return match, fail_type, None
-    ## end if
-    if not a1.shape[0] == a2.shape[0]:
-        match = False
-        fail_type = "atom_dim_mismatch"
+        fail_type = ECGM.DIMENSION
         return match, fail_type, None
     ## end if
 
@@ -396,7 +393,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         # Count of matching coordinates should equal the number of
         #  coordinates. If not, complain with 'coord_mismatch' fail type.
         match = False
-        fail_type = "coord_mismatch"
+        fail_type = ECGM.COORDS
         return match, fail_type, fail_loc
     ## end if
 
@@ -417,7 +414,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         # Count of matching atoms should equal number of atoms. If not,
         #  complain with the 'atom_mismatch' fail type.
         match = False
-        fail_type = "atom_mismatch"
+        fail_type = ECGM.ATOMS
         return match, fail_type, fail_loc
 
     #** If reached here, all tests passed; return success.
@@ -598,7 +595,7 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
         raise exc(tc, "'{0}' is not an np.array (lacks a 'dtype' member)"
                     .format(desc), errsrc)
     else:
-        if len(var.shape) < 1:
+        if not var.shape:
             raise exc(tc, "'{0}' is not an np.array ('len(shape)' < 1)"
                     .format(desc), errsrc)
     ## end try
