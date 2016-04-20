@@ -335,7 +335,9 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     Raises
     ------
     ~exceptions.ValueError
-        If a pair of coords & atoms array lengths is inconsistent ::
+        If a pair of coords & atoms array lengths is inconsistent:
+
+        .. code-block:: python
 
             if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
                 raise (ValueError(...)
