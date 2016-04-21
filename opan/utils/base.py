@@ -609,7 +609,6 @@ def assert_npfloatarray(obj, varname, desc, exc, tc, errsrc):
 ## end def assert_npfloatarray
 
 
-
 if __name__ == '__main__': # pragma: no cover
     print("Module not executable.")
 
