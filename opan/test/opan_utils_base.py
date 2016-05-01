@@ -82,15 +82,21 @@ class TestOpanUtilsBaseMisc(unittest.TestCase):
 
 class TestOpanUtilsBaseCheckGeom(unittest.TestCase):
     import numpy as np
+    from opan.const import EnumCheckGeomMismatch as ECGM
 
     coords = np.array(range(12))
     atoms = ['H', 'O', 'O', 'H']
 
     def test_Utils_CheckGeom_GoodCheck(self):
         from opan.utils import check_geom as cg
+        from opan.const import atom_num
 
         # check_geom returns a tuple; success or not is the first element
         self.assertTrue(cg(self.coords, self.atoms,
+                           self.coords, self.atoms)[0])
+
+        # Also check if the atoms are swapped with atomic numbers
+        self.assertTrue(cg(self.coords, [atom_num[s] for s in self.atoms],
                            self.coords, self.atoms)[0])
 
     def test_Utils_CheckGeom_ArgsNotVectors(self):
@@ -126,7 +132,7 @@ class TestOpanUtilsBaseCheckGeom(unittest.TestCase):
         tup = cg(self.coords, self.atoms, self.coords[:9], self.atoms[:3])
 
         self.assertFalse(tup[0])
-        self.assertEqual(tup[1], 'coord_dim_mismatch')
+        self.assertEqual(tup[1], self.ECGM.DIMENSION)
         self.assertIsNone(tup[2])
 
     def test_Utils_CheckGeom_CoordMismatch(self):
@@ -139,7 +145,7 @@ class TestOpanUtilsBaseCheckGeom(unittest.TestCase):
         # Store the call result and check its contents
         tup = cg(coord_mod, self.atoms, self.coords, self.atoms)
         self.assertFalse(tup[0])
-        self.assertEqual(tup[1], 'coord_mismatch')
+        self.assertEqual(tup[1], self.ECGM.COORDS)
         self.assertFalse(tup[2][0])
         self.assertTrue(all(tup[2][1:]))
 
@@ -153,7 +159,7 @@ class TestOpanUtilsBaseCheckGeom(unittest.TestCase):
         # Store the call result and check its contents
         tup = cg(self.coords, atoms_mod, self.coords, self.atoms)
         self.assertFalse(tup[0])
-        self.assertEqual(tup[1], 'atom_mismatch')
+        self.assertEqual(tup[1], self.ECGM.ATOMS)
         self.assertFalse(tup[2][2])
         self.assertTrue(all(tup[2][:2]))
         self.assertTrue(tup[2][3])
