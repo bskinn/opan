@@ -1,0 +1,9 @@
+numpy
+scipy
+h5py
+sphinx
+sphinx-rtd-theme
+sphinxcontrib-napoleon
+psutil
+pip-tools
+
