@@ -20,6 +20,7 @@
 
 
 import unittest
+from opan.test.utils import inject_tests
 
 
 class TestOpanUtilsVectorParallelCheck(unittest.TestCase):
@@ -91,7 +92,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
     # Dict of dicts of data
     data = {
             # Unremarkable vectors with ~order-one components
-            namestr.format(RelType.NS, VecType.O1) :
+            namestr.format(RelType.NS, VecType.O1):
                 {DType.V1: np.array([1, 2, 3]),
                  DType.V2: np.array([-1, 3, 8]),
                  DType.PROJ: np.array([-0.391892, 1.175676, 3.135135]),
@@ -99,7 +100,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(25.712002)},
 
             # Nearly-normal vectors with ~order-one components
-            namestr.format(RelType.NORM, VecType.O1) :
+            namestr.format(RelType.NORM, VecType.O1):
                 {DType.V1: np.array([2, 8, -4, 2.5, -1.4]),
                  DType.V2: np.array([-1, 3, 6.2, 5, 7]),
                  DType.PROJ: np.array([0.000817, -0.002450, -0.005064,
@@ -109,7 +110,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(90.053923)},
 
             # Nearly-parallel vectors with ~order-one components
-            namestr.format(RelType.PAR, VecType.O1) :
+            namestr.format(RelType.PAR, VecType.O1):
                 {DType.V1: np.array([1, 2, 2.9999, 4]),
                  DType.V2: np.array([1.0001, 2, 3, 4]),
                  DType.PROJ: np.array([1.000087, 1.999973, 2.999960, 3.999947]),
@@ -118,7 +119,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(0.001267)},
 
             # Nearly-antiparallel vectors with ~order-one components
-            namestr.format(RelType.AP, VecType.O1) :
+            namestr.format(RelType.AP, VecType.O1):
                 {DType.V1: np.array([-0.5, 2.3, 1.4, -3.1]),
                  DType.V2: np.array([0.50001, -2.29999, -1.4, 3.1]),
                  DType.PROJ: np.array([-0.500011, 2.299992,
@@ -128,7 +129,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(179.999814)},
 
             # Two large vectors far from parallel/normal
-            namestr.format(RelType.NS, VecType.LOL) :
+            namestr.format(RelType.NS, VecType.LOL):
                 {DType.V1: np.array([376328., 384874.,
                                      992834., 182873.]),
                  DType.V2: np.array([538344., 283747.,
@@ -140,7 +141,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(20.151554)},
 
             # Two small vectors far from parallel/normal
-            namestr.format(RelType.NS, VecType.SOS) :
+            namestr.format(RelType.NS, VecType.SOS):
                 {DType.V1: np.array([0.000045, -0.00031,
                                      -0.000915, 0.000002]),
                  DType.V2: np.array([0.0002874, -0.0003987,
@@ -152,7 +153,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(80.787151)},
 
             # Large onto small, far from parallel/normal
-            namestr.format(RelType.NS, VecType.LOS) :
+            namestr.format(RelType.NS, VecType.LOS):
                 {DType.V1: np.array([238973., 239884.,
                                      -1092938., -893983.]),
                  DType.V2: np.array([0.0002874, -0.0003987,
@@ -164,7 +165,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(122.176632)},
 
             # Small onto large, far from parallel/normal
-            namestr.format(RelType.NS, VecType.SOL) :
+            namestr.format(RelType.NS, VecType.SOL):
                 {DType.V1: np.array([0.00000374, -0.0000233,
                                      0.0002837, 0.0000026]),
                  DType.V2: np.array([538344., 283747., 1838447., 929292.]),
@@ -175,7 +176,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(31.859107)},
 
             # Two badly scaled vectors far from parallel/normal
-            namestr.format(RelType.NS, VecType.BS) :
+            namestr.format(RelType.NS, VecType.BS):
                 {DType.V1: np.array([0.000015, 6214., -0.000235, 12374.]),
                  DType.V2: np.array([-0.00005, 38184., 0.000045, 21669.]),
                  DType.PROJ: np.array([-0.000013, 10011.853795,
@@ -186,7 +187,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
 
 
             # Two large vectors nearly parallel
-            namestr.format(RelType.PAR, VecType.LOL) :
+            namestr.format(RelType.PAR, VecType.LOL):
                 {DType.V1: np.array([554387., 38185., -532247., 12374.]),
                  DType.V2: np.array([554389., 38184., -532248., 12375.]),
                  DType.PROJ: np.array([554387.488030, 38183.895862,
@@ -196,7 +197,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(0.000120)},
 
             # Two small vectors nearly parallel
-            namestr.format(RelType.PAR, VecType.SOS) :
+            namestr.format(RelType.PAR, VecType.SOS):
                 {DType.V1: np.array([0.000015, 0.000016, -0.000042,
                                     -0.000034, 0.000065, -0.000033]),
                  DType.V2: np.array([0.000014, 0.000017, -0.000041,
@@ -208,7 +209,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(1.483536)},
 
             # Large onto small, nearly parallel
-            namestr.format(RelType.PAR, VecType.LOS) :
+            namestr.format(RelType.PAR, VecType.LOS):
                 {DType.V1: np.array([14001., 17002., -41003., -33001.,
                                      66004., -32005., 75008.]),
                  DType.V2: np.array([0.000014, 0.000017, -0.000041,
@@ -223,7 +224,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(0.001811)},
 
             # Small onto large, nearly parallel
-            namestr.format(RelType.PAR, VecType.SOL) :
+            namestr.format(RelType.PAR, VecType.SOL):
                 {DType.V1: np.array([1.20E-05, -1.30E-05, 3.80E-05,
                                     -7.90E-05, -8.50E-05, 2.20E-05,
                                      4.50E-05]),
@@ -237,7 +238,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(0.004356)},
 
             # Two badly scaled vectors nearly parallel
-            namestr.format(RelType.PAR, VecType.BS) :
+            namestr.format(RelType.PAR, VecType.BS):
                 {DType.V1: np.array([0.00053, -2135., 0.00015, 65548.,
                                     -0.0085, 0.00022, -17815., -0.00035]),
                  DType.V2: np.array([0.00054, -2136., 0.00014, 65549.,
@@ -252,7 +253,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
 
 
             # Two large vectors nearly normal
-            namestr.format(RelType.NORM, VecType.LOL) :
+            namestr.format(RelType.NORM, VecType.LOL):
                 {DType.V1: np.array([654564., 48249., -248896.,
                                     -54789., 24444.]),
                  DType.V2: np.array([-6048., 68589., -34061.,
@@ -265,7 +266,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(90.024498)},
 
             # Two small vectors nearly normal
-            namestr.format(RelType.NORM, VecType.SOS) :
+            namestr.format(RelType.NORM, VecType.SOS):
                 {DType.V1: np.array([0.000048, 0.000017, -0.000032,
                                     0.000091, -0.000016]),
                  DType.V2: np.array([0.000015, 0.000007, 0.00001,
@@ -277,7 +278,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(89.350346)},
 
             # Large onto small, nearly normal
-            namestr.format(RelType.NORM, VecType.LOS) :
+            namestr.format(RelType.NORM, VecType.LOS):
                 {DType.V1: np.array([32185., 27265., -30185.,
                                     108115., -13755.]),
                  DType.V2: np.array([0.000015, 0.000007, 0.00001,
@@ -290,7 +291,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(90.018157)},
 
             # Small onto large, nearly normal
-            namestr.format(RelType.NORM, VecType.SOL) :
+            namestr.format(RelType.NORM, VecType.SOL):
                 {DType.V1: np.array([0.000028, -0.000035, 0.000017,
                                      0.000098, 0.000072, -0.000055]),
                 DType.V2: np.array([16589., 22852., 44185.,
@@ -301,7 +302,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(90.073867)},
 
             # Two badly scaled vectors nearly normal
-            namestr.format(RelType.NORM, VecType.BS) :
+            namestr.format(RelType.NORM, VecType.BS):
                 {DType.V1: np.array([0.0015, 6214., 2319., 145.]),
                  DType.V2: np.array([8285., -0.0004, 0.0034, 2166.]),
                  DType.PROJ: np.array([35.485053, -0.000002,
@@ -312,7 +313,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
 
 
             # Two large vectors nearly anti-parallel
-            namestr.format(RelType.AP, VecType.LOL) :
+            namestr.format(RelType.AP, VecType.LOL):
                 {DType.V1: np.array([215484., 665452., -654587.,
                                      541887., 64657., -6546347.,
                                     -687887., -1137889.]),
@@ -329,7 +330,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(179.999914)},
 
             # Two small vectors nearly anti-parallel
-            namestr.format(RelType.AP, VecType.SOS) :
+            namestr.format(RelType.AP, VecType.SOS):
                 {DType.V1: np.array([0.000041, -0.000038, 0.000091,
                                     -0.000019, 0.000037, -0.000068,
                                     -0.000071, -0.000055]),
@@ -345,7 +346,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(179.379006)},
 
             # Large onto small, nearly anti-parallel
-            namestr.format(RelType.AP, VecType.LOS) :
+            namestr.format(RelType.AP, VecType.LOS):
                 {DType.V1: np.array([41002., -38997., 90004., -18997.,
                                      36001., -68002., -70003., -54988.]),
                  DType.V2: np.array([-0.000041, 0.000039, -0.00009,
@@ -361,7 +362,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(179.994978)},
 
             # Small onto large, nearly anti-parallel
-            namestr.format(RelType.AP, VecType.SOL) :
+            namestr.format(RelType.AP, VecType.SOL):
                 {DType.V1: np.array([0.000038, -0.000044, 0.000057,
                                      0.000098, 0.000089, -0.000072,
                                     -0.000022, 0.000025, -0.000017]),
@@ -375,7 +376,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                  DType.ANG: np.float_(179.995212)},
 
             # Two badly scaled vectors nearly anti-parallel
-            namestr.format(RelType.AP, VecType.BS) :
+            namestr.format(RelType.AP, VecType.BS):
                 {DType.V1: np.array([25778., -35778., 0.000032, -47789.,
                                      -0.000038, 0.000041, 24448., -35779.,
                                      -0.000017]),
@@ -430,21 +431,9 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
     # Populate the local namespace with the auto-generated
     #  test methods
     _locals = locals()
-    for k, d in data.items():
-        # Vector projection
-        fxnname = "test_Vector_Proj_Good_{0}".format(k)
-        fxn = lambda self, k=k, d=d: self.template_proj(k, d)
-        _locals.update({fxnname: fxn})
-
-        # Vector rejection
-        fxnname = "test_Vector_Rej_Good_{0}".format(k)
-        fxn = lambda self, k=k, d=d: self.template_rej(k, d)
-        _locals.update({fxnname: fxn})
-
-        # Vector angle
-        fxnname = "test_Vector_Angle_Good_{0}".format(k)
-        fxn = lambda self, k=k, d=d: self.template_angle(k, d)
-        _locals.update({fxnname: fxn})
+    inject_tests(_locals, data, "test_Vector_Proj_Good_{0}", template_proj)
+    inject_tests(_locals, data, "test_Vector_Rej_Good_{0}", template_rej)
+    inject_tests(_locals, data, "test_Vector_Angle_Good_{0}", template_angle)
 
 
     def setUp(self):
@@ -475,11 +464,18 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
                           np.array(range(5)), np.array(range(6)))
 
 
+class TestOpanUtilsVectorOrthoBasis(unittest.TestCase):
+
+    def setUp(self):
+        self.longMessage = True
+
+
 def suite():
     s = unittest.TestSuite()
     tl = unittest.TestLoader()
     s.addTests([tl.loadTestsFromTestCase(TestOpanUtilsVectorParallelCheck),
-                tl.loadTestsFromTestCase(TestOpanUtilsVectorProjRejAngle)
+                tl.loadTestsFromTestCase(TestOpanUtilsVectorProjRejAngle),
+                tl.loadTestsFromTestCase(TestOpanUtilsVectorOrthoBasis)
                 ])
     return s
 
