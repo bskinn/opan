@@ -1,0 +1,29 @@
+sudo: required
+
+language: python
+
+python:
+#  - "3.3"
+#  - "3.4"
+  - "3.5"
+
+before_install:
+  - env
+  - sudo apt-get -qq update
+  - sudo apt-get install -y gfortran libatlas-base-dev
+  - sudo apt-get install -y libblas-dev liblapack-dev
+  - sudo apt-get install -y libopenblas-base libopenblas-dev
+#  - sudo apt-get install -y lapack3-dev liblapack-dev liblapacke-dev lapack2-dev liblapacke
+  - sudo find / -name lapack*
+  - sudo find / -name atlas*
+  - sudo find / -name openblas*
+
+#virtualenv:
+#  system_site_packages: true
+
+#install: "pip install -r doc-requirements.txt --global-option=build_ext --global-option='-L/usr/lib/atlas-base/atlas' --global-option='-L/usr/lib/openblas-base'"
+
+install: "pip install -r doc-requirements.txt"
+
+script: "cd opan; python tests.py --all"
+
