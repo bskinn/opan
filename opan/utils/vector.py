@@ -489,9 +489,9 @@ def vec_angle(vec1, vec2):
     dotp = np.dot(vec1, vec2) / spla.norm(vec1) / spla.norm(vec2)
 
     if dotp > 1:
-        angle = 0.
+        angle = 0. # pragma: no cover
     elif dotp < -1:
-        angle = 180.
+        angle = 180. # pragma: no cover
     else:
         angle = np.degrees(np.arccos(dotp))
     ## end if
@@ -501,5 +501,5 @@ def vec_angle(vec1, vec2):
 ## end def vec_angle
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     print("Module not executable.")

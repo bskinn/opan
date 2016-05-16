@@ -109,6 +109,32 @@ def tearDownTestDir(dirname):
     # Try to remove the temp directory
     os.rmdir(dirname)
 
+def inject_tests(ns, data, namestr, f_template):
+    """ Function to automate test method creation/injection
+
+    Parameters
+    ----------
+    ns
+        |dict| -- Namespace into which functions are to be injected
+
+    data
+        |dict| -- Lookup dictionary with data to be passed to `f_template`
+
+    namestr
+        |str| -- String template for the names of the test methods to be
+        injected. Must contain exactly one substitution field ("{0}" is
+        preferred), into which each key from `data` will be substituted
+        to define the unique method name
+
+    f_template
+        `callable` -- Function to call to carry out the desired test
+
+    """
+    for k, d in data.items():
+        fxnname = namestr.format(k)
+        fxn = lambda self, k=k, d=d: f_template(self, k, d)
+        ns.update({fxnname: fxn})
+
 
 if __name__ == '__main__':  # pragma: no cover
     print("Module not executable.")

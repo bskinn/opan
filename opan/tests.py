@@ -125,6 +125,8 @@ if __name__ == '__main__':
             action='store_true', help="Run opan.utils.inertia tests")
     gp_utils.add_argument(PFX.format(UTILS_DECORATE),
             action='store_true', help="Run opan.utils.decorate tests")
+    gp_utils.add_argument(PFX.format(UTILS_VECTOR),
+            action='store_true', help="Run opan.utils.vector tests")
 
     # ====  XYZ  ==== #
     gp_xyz.add_argument(PFX.format(XYZ),
@@ -177,6 +179,10 @@ if __name__ == '__main__':
     if any_params(params, [ALL, UTILS, UTILS_DECORATE]):
         TestMasterSuite.addTest(opan.test.opan_utils_decorate.suite())
 
+    # opan.utils.vector
+    if any_params(params, [ALL, UTILS, UTILS_VECTOR]):
+        TestMasterSuite.addTest(opan.test.opan_utils_vector.suite())
+
     # opan.xyz (file data)
     if any_params(params, [ALL, XYZ, XYZ_FILEDATA]):
         TestMasterSuite.addTest(opan.test.opan_xyz.suite_FileData())
@@ -203,7 +209,6 @@ if __name__ == '__main__':
     ttr = unittest.TextTestRunner(buffer=True,
                 verbosity=(2 if params['v'] else 1))
     ttr.run(TestMasterSuite)
-
 
 
 ## end main block
