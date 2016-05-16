@@ -463,11 +463,249 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
         self.assertRaises(ValueError, proj,
                           np.array(range(5)), np.array(range(6)))
 
+    def test_Utils_Vector_Angle_BadVecShapes(self):
+        import numpy as np
+        from opan.utils.vector import vec_angle as ang
+
+        self.assertRaises(ValueError, ang,
+                            np.array(range(6)).reshape((2,3)),
+                            np.array(range(6)))
+
+        self.assertRaises(ValueError, ang,
+                            np.array(range(6)),
+                            np.array(range(6)).reshape((3,2)))
+
+    def test_Utils_Vector_Angle_VecLenMismatch(self):
+        import numpy as np
+        from opan.utils.vector import vec_angle as ang
+
+        self.assertRaises(ValueError, ang,
+                            np.array(range(4)), np.array(range(12)))
+
+    def test_Utils_Vector_Angle_VecNormTooSmall(self):
+        import numpy as np
+        from opan.utils.vector import vec_angle as ang
+
+        self.assertRaises(ValueError, ang,
+                            1e-12* np.array(range(4)),
+                            np.array(range(-3,1)))
+
+        self.assertRaises(ValueError, ang,
+                            np.array(range(4)),
+                            1e-12 * np.array(range(-3,1)))
+
 
 class TestOpanUtilsVectorOrthoBasis(unittest.TestCase):
 
     def setUp(self):
         self.longMessage = True
+
+    def test_Utils_Vector_OrthoBasis_GoodRandomRefVec(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+        from opan.utils.vector import vec_angle as ang
+
+        nv = [8.5, -3.15, -2.1884]
+
+        on1, on2 = ob(nv)
+
+        self.assertAlmostEqual(np.dot(nv, on1), 0.0,
+                delta=1e-10,
+                msg="Normal vector not normal to first basis vector")
+
+        self.assertAlmostEqual(np.dot(nv, on2), 0.0,
+                delta=1e-10,
+                msg="Normal vector not normal to second basis vector")
+
+        self.assertAlmostEqual(np.dot(on1, on2), 0.0,
+                delta=1e-10,
+                msg="Basis vectors not normal")
+
+        self.assertAlmostEqual(np.sum(np.power(on1, 2.)), 1.0,
+                delta=1e-10,
+                msg="First basis vector not normalized")
+
+        self.assertAlmostEqual(np.sum(np.power(on2, 2.)), 1.0,
+                delta=1e-10,
+                msg="Second basis vector not normalized")
+
+        self.assertAlmostEqual(ang(nv, np.cross(on1, on2)), 0.0,
+                delta=1e-5,
+                msg="Incorrect handedness of basis vectors")
+
+    def test_Utils_Vector_OrthoBasis_GoodDefinedRefVec(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+        from opan.utils.vector import vec_angle as ang
+        from opan.utils.vector import rej
+
+        nv = [2.5, 31.15, -25.1884]
+        rv = [-12.15, 0.0034, 35.18]
+
+        on1, on2 = ob(nv, rv)
+
+        self.assertAlmostEqual(np.dot(nv, on1), 0.0,
+                delta=1e-10,
+                msg="Normal vector not normal to first basis vector")
+
+        self.assertAlmostEqual(np.dot(nv, on2), 0.0,
+                delta=1e-10,
+                msg="Normal vector not normal to second basis vector")
+
+        self.assertAlmostEqual(np.dot(on1, on2), 0.0,
+                delta=1e-10,
+                msg="Basis vectors not normal")
+
+        self.assertAlmostEqual(np.sum(np.power(on1, 2.)), 1.0,
+                delta=1e-10,
+                msg="First basis vector not normalized")
+
+        self.assertAlmostEqual(np.sum(np.power(on2, 2.)), 1.0,
+                delta=1e-10,
+                msg="Second basis vector not normalized")
+
+        self.assertAlmostEqual(ang(nv, np.cross(on1, on2)), 0.0,
+                delta=1e-5,
+                msg="Incorrect handedness of basis vectors")
+
+        self.assertAlmostEqual(ang(rej(rv, nv), on1), 0.0,
+                delta=1e-5,
+                msg="First basis vector not aligned with reference")
+
+    def test_Utils_Vector_OrthoBasis_TooParallelRefVec(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+        from opan.test.utils import assertErrorAndTypecode
+        from opan.error import VectorError as VErr
+
+        nv = np.array([2.81, -3.855, -12.384])
+
+        assertErrorAndTypecode(self, VErr, ob, VErr.NONPRL,
+                                nv, nv*1.1111)
+
+
+    def test_Utils_Vector_OrthoBasis_BadNormArrayShape(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+
+        with self.assertRaises(ValueError):
+            ob(np.array(range(9)).reshape((3,3)))
+
+    def test_Utils_Vector_OrthoBasis_BadNormArrayLen(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+
+        with self.assertRaises(ValueError):
+            ob(np.array(range(6)))
+
+    def test_Utils_Vector_OrthoBasis_BadRefArrayShape(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+
+        with self.assertRaises(ValueError):
+            ob(np.array(range(1,4)), np.array(range(9)).reshape((3,3)))
+
+    def test_Utils_Vector_OrthoBasis_BadRefArrayLen(self):
+        import numpy as np
+        from opan.utils.vector import ortho_basis as ob
+
+        with self.assertRaises(ValueError):
+            ob(np.array(range(1,4)), np.array(range(6)))
+
+class TestOpanUtilsVectorOrthonormCheck(unittest.TestCase):
+
+    def setUp(self):
+        self.longMessage = True
+
+    def test_Utils_Vector_ONCheck_Trivial1D(self):
+        import numpy as np
+        from scipy import linalg as spla
+        from opan.utils.vector import orthonorm_check as onchk
+
+        vec = np.array(range(15))
+        vec = vec / spla.norm(vec)
+
+        c, nf, of = onchk(vec)
+
+        self.assertTrue(c)
+        self.assertIsNone(nf)
+        self.assertIsNone(of)
+
+        c, nf, of = onchk(vec, report=True)
+
+        self.assertTrue(c)
+        self.assertEqual(len(nf), 0)
+        self.assertEqual(len(of), 0)
+
+    def test_Utils_Vector_ONCheck_Trivial2D(self):
+        import numpy as np
+        from scipy import linalg as spla
+        from opan.utils.vector import orthonorm_check as onchk
+        from opan.utils.vector import ortho_basis as ob
+
+        vec = np.array([3.18, -2.25, 1.0005])
+        on1, on2 = ob(vec)
+
+        m = np.column_stack((vec / spla.norm(vec), on1, on2))
+
+        c, nf, of = onchk(m)
+
+        self.assertTrue(c)
+        self.assertIsNone(nf)
+        self.assertIsNone(of)
+
+        c, nf, of = onchk(m, report=True)
+
+        self.assertTrue(c)
+        self.assertEqual(len(nf), 0)
+        self.assertEqual(len(of), 0)
+
+    def test_Utils_Vector_ONCheck_NonNormedVec(self):
+        import numpy as np
+        from opan.utils.vector import orthonorm_check as onchk
+        from opan.utils.vector import ortho_basis as ob
+
+        vec = np.array([-2.112, 2923.3, -0.2323])
+        on1, on2 = ob(vec)
+
+        m = np.column_stack((vec, on1, on2))
+
+        c, nf, of = onchk(m)
+
+        self.assertFalse(c)
+        self.assertIsNone(nf)
+        self.assertIsNone(of)
+
+        c, nf, of = onchk(m, report=True)
+
+        self.assertFalse(c)
+        self.assertEqual(len(of), 0)
+
+        self.assertEqual(len(nf), 1)
+        self.assertEqual(nf[0], 0)
+
+    def test_Utils_Vector_ONCheck_SkewedVec(self):
+        import numpy as np
+        from scipy import linalg as spla
+        from opan.utils.vector import orthonorm_check as onchk
+        from opan.utils.vector import ortho_basis as ob
+
+        vec = np.array([-6.277, 1.345, -23.8734])
+        offvec = np.subtract(vec, np.array([-3, 5, -12]))
+        offvec = offvec / spla.norm(offvec)
+
+        on1, on2 = ob(vec)
+
+        m = np.column_stack((offvec, on1, on2))
+
+        c, nf, of = onchk(m, report=True)
+
+        self.assertFalse(c)
+        self.assertEqual(len(nf), 0)
+
+        self.assertEqual(len(of), 2)
+        self.assertEqual(of[0], (0,1))
+        self.assertEqual(of[1], (0,2))
 
 
 def suite():
@@ -475,7 +713,8 @@ def suite():
     tl = unittest.TestLoader()
     s.addTests([tl.loadTestsFromTestCase(TestOpanUtilsVectorParallelCheck),
                 tl.loadTestsFromTestCase(TestOpanUtilsVectorProjRejAngle),
-                tl.loadTestsFromTestCase(TestOpanUtilsVectorOrthoBasis)
+                tl.loadTestsFromTestCase(TestOpanUtilsVectorOrthoBasis),
+                tl.loadTestsFromTestCase(TestOpanUtilsVectorOrthonormCheck)
                 ])
     return s
 
