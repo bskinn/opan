@@ -21,6 +21,11 @@
 
 """Defines objects bearing assorted constants for Open Anharmonic.
 
+.. testsetup:: *
+
+    import opan, numpy as np
+
+
 Module-Level Members
 =========================
 
@@ -74,6 +79,10 @@ supporting membership testing with `in`
 
     **Plain Enumerations**
 
+    :class:`~opan.const.EnumCheckGeomMismatch` -- Mismatch type found
+    during :func:`~opan.utils.base.check_geom` comparison checks of
+    two geometries.
+
     :class:`~opan.const.EnumDispDirection` -- Displacement direction along
     a particular mode
 
@@ -125,8 +134,8 @@ class EnumIterMeta(type):
 
         **Example:**
 
-        >>> [val for val in opan.const.EnumDispDirection]
-        ['POSITIVE', 'NO_DISP', 'NEGATIVE']
+        >>> [val for val in sorted(opan.const.EnumDispDirection)]
+        ['NEGATIVE', 'NO_DISP', 'POSITIVE']
 
     .. method:: __contains__(value)
 
@@ -135,8 +144,9 @@ class EnumIterMeta(type):
 
         **Example:**
 
-        >>> 'NO_DISP' in EnumDispDirection
+        >>> 'NO_DISP' in opan.const.EnumDispDirection
         True
+
     """
 
     def __iter__(self):
@@ -411,6 +421,29 @@ class EnumUnitsRotConst(OpanEnum):
     WAVENUM_CM = 'WAVENUM_CM'
 
 ## end class EnumUnitsRotConst
+
+
+class EnumCheckGeomMismatch(OpanEnum):
+    """ Enumeration for mismatch types in :func:`~opan.utils.base.check_geom`
+
+    Only mismatches of validly constructed coordinates and atoms vector
+    combinations are represented here; other mismatches/misconfigurations
+    result in raised Exceptions.
+
+    **Enum Values**
+
+    """
+
+    #: Mismatch in dimensions of the two geometries
+    DIMENSION = 'DIMENSION'
+
+    #: Mismatch in individual coordinate(s)
+    COORDS = 'COORDS'
+
+    #: Mismatch in individual atom(s)
+    ATOMS = 'ATOMS'
+
+## end class EnumCheckGeomMismatch
 
 
 # ======  Constants Classes  ====== #
