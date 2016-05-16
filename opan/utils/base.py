@@ -25,6 +25,7 @@
 check_geom       -- Confirm two OpenBabel geometries (atom types and
                         coordinates) match to within a specified tolerance
 delta_fxn        -- Generalized Kronecker delta function
+iterable         -- Test whether an object is iterable
 make_timestamp   -- Construct a string time-elapsed timestamp in h/m/s format
 pack_tups        -- Pack an arbitrary combination of iterables and non-
                         iterables into a list of tuples
@@ -335,7 +336,9 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     Raises
     ------
     ~exceptions.ValueError
-        If a pair of coords & atoms array lengths is inconsistent ::
+        If a pair of coords & atoms array lengths is inconsistent:
+
+        .. code-block:: python
 
             if len(c1) != 3 * len(a1) or len(c2) != 3 * len(a2):
                 raise ValueError(...)
@@ -509,9 +512,9 @@ def iterable(y):
 
     Examples
     --------
-    >>> np.iterable([1, 2, 3])
+    >>> opan.utils.iterable([1, 2, 3])
     True
-    >>> np.iterable(2)
+    >>> opan.utils.iterable(2)
     False
 
     """

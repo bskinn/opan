@@ -37,7 +37,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
 #    'numpydoc',
-#    'sphinx.ext.doctest',
+    'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
@@ -117,6 +117,15 @@ pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
 modindex_common_prefix = ['opan.']
+
+# Prologue for all files
+rst_prolog = """
+.. testsetup:: *
+
+    import opan, numpy as np
+    from scipy import linalg as spla
+
+"""
 
 # Epilogue for all files
 rst_epilog = """
