@@ -937,13 +937,13 @@ class OrcaHess(SuperOpanHess):
         """
 
         # Local method(s)
-        def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats, \
+        def parse_multiblock(hesstext, p_block, p_sec, p_line, num_ats,
                                                             blockname, tc):
             """ Helper function for importing blocks with multiple sections.
 
             Parsing of data spanning multiple sections of columns is somewhat
             involved. This function encapsulates the process for cleaner
-            function.  The structure depends critically on several formatting
+            code.  The structure depends critically on several formatting
             features of |orca| .hess files.
 
             Note the search groups that must be present in the `p_block` and

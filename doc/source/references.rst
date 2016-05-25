@@ -2,7 +2,7 @@
 
 
 References
-=============
+==========
 
 .. [Gri10] S. Grimme, J. Antony, S. Erlich, H. Krieg. *J Chem Phys* **132**\ (15): 154104, 2010. `doi:10.1063/1.3382344 <http://dx.doi.org/10.1063/1.3382344>`__
 

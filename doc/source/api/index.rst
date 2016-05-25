@@ -3,10 +3,12 @@
 Open Anharmonic API
 ================================
 
-The full public API is delineated below.  Cross-references to NumPy are displayed with the ``np`` package abbreviation.
+The full public API is delineated below.  Cross-references to NumPy are
+displayed with the ``np`` package abbreviation.
 
 .. note::
-    Documented or undocumented attributes, functions, methods, etc. named with a leading underscore are **NOT** formally part of the
+    Documented or undocumented attributes, functions, methods, etc.
+    named with a leading underscore are **NOT** formally part of the
     API. Their behavior may change without notice.
 
 |
@@ -41,14 +43,14 @@ The full public API is delineated below.  Cross-references to NumPy are displaye
 
 
 .. toctree::
-    :hidden:
+     :hidden:
 
-    const
-    error
-    grad
-    hess
-    output
-    utils
-    vpt2
-    xyz
+     const
+     error
+     grad
+     hess
+     output
+     utils
+     vpt2
+     xyz
 

@@ -45,7 +45,7 @@ class OpanAnharmRepo(object):
     Currently no chunking or any filters are used. May or may not be worth
     robustification. Things stored are not likely to be huge....
 
-    *#DOC: --- to be filled ---*
+    .. todo:: Main docstring for OpanAnharmRepo (renamed to VPT2...)
 
     **Instantiation**
 
@@ -95,7 +95,7 @@ class OpanAnharmRepo(object):
 
     # Instance methods
     def __init__(self, fname=None):
-        """ #DOC: REPO.__init__ docstring
+        """ .. todo:: REPO.__init__ docstring
 
         """
 
@@ -118,7 +118,7 @@ class OpanAnharmRepo(object):
 
 
     def close(self):
-        """ #DOC: REPO.close docstring
+        """ .. todo:: REPO.close docstring
         """
 
         # Imports
@@ -140,7 +140,7 @@ class OpanAnharmRepo(object):
 
 
     def load(self, fname):
-        """ #DOC: REPO.load docstring
+        """ .. todo:: REPO.load docstring
         """
 
         # Imports
@@ -168,7 +168,7 @@ class OpanAnharmRepo(object):
 
 
     def is_open(self):
-        """ #DOC: is_open docstring
+        """ .. todo:: is_open docstring
         """
 
         # Imports
@@ -184,7 +184,7 @@ class OpanAnharmRepo(object):
 
 
     def store_data(self, data, datatype, mode, disp, clobber=False):
-        """ #DOC: store_data docstring
+        """ .. todo:: store_data docstring
         """
 
         # Imports
@@ -251,7 +251,7 @@ class OpanAnharmRepo(object):
 
 
     def get_data(self, datatype, mode, disp):
-        """ #DOC: docstring for get_data
+        """ .. todo:: docstring for get_data
         """
 
         # Imports
@@ -316,7 +316,7 @@ class OpanAnharmRepo(object):
 
 
     def has_data(self, datatype, mode, disp):
-        """ #DOC: has_data docstring
+        """ .. todo:: has_data docstring
         """
 
         # Imports
@@ -342,7 +342,7 @@ class OpanAnharmRepo(object):
 
 
     def store_param(self, value, param, clobber=False):
-        """ #DOC: store_param docstring
+        """ .. todo:: store_param docstring
         """
 
         # Imports
@@ -395,7 +395,7 @@ class OpanAnharmRepo(object):
 
 
     def get_param(self, param):
-        """ #DOC: docstring for get_param
+        """ .. todo:: docstring for get_param
         """
 
         # Imports
@@ -435,7 +435,7 @@ class OpanAnharmRepo(object):
 
 
     def has_param(self, param):
-        """ #DOC: has_param docstring
+        """ .. todo:: has_param docstring
         """
 
         # Imports
@@ -459,7 +459,7 @@ class OpanAnharmRepo(object):
 
 
     def is_dirty(self):
-        """ #DOC: docstring for is_dirty
+        """ .. todo:: docstring for is_dirty
         """
 
         # Imports
@@ -484,7 +484,7 @@ class OpanAnharmRepo(object):
 
 
     def set_dirty(self, dirty):
-        """ #DOC: set_clean docstring
+        """ .. todo:: set_clean docstring
         """
 
         # Complain if 'dirty' isn't boolean
@@ -509,7 +509,7 @@ class OpanAnharmRepo(object):
 
 
     def get_XYZ(self, mode, disp):
-        """ #DOC: docstring for get_xyz
+        """ .. todo:: docstring for get_xyz
         """
 
         # Imports

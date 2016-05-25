@@ -1119,7 +1119,7 @@ class OpanXYZ(object):
         `at_2`\\ :math:`\\rightarrow`\\ `at_3`
         are ANTI-PARALLEL.
 
-        *#DOC: Pull the above to User Guide eventually, with figures.*
+        .. todo:: Pull the above to User Guide eventually, with figures.
 
         All four atom indices must be distinct. Both of the atom trios 1-2-3
         and 2-3-4 must be sufficiently nonlinear, as diagnosed by a bend

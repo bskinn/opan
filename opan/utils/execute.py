@@ -62,8 +62,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     wrapper script completes.
     If |False|, *[indicate what will be returned if not waiting]*.
 
-    *#!DOC: execute_orca: The different output modes, depending on waiting
-    or not.*
+    .. todo:: execute_orca: The different output modes, depending on waiting
+              or not.
 
     The command to call |orca| must be specified in the parameter list syntax of
     the `args` argument to the :class:`subprocess.Popen` constructor.

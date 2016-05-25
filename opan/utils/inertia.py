@@ -170,7 +170,7 @@ def inertia_tensor(geom, masses):
 
     Reference for inertia tensor: [Kro92]_, Eq. (2.26)
 
-    *#DOC: Replace cite eventually with link to exposition in user guide.*
+    .. todo:: Replace cite eventually with link to exposition in user guide.
 
     Parameters
     ----------
@@ -257,7 +257,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
     fashion to ensure repeatable, **identical** generation, including
     orientation AND directionality.
 
-    *#DOC: Add ref to exposition in webdocs once written up.*
+    .. todo:: Add ref to exposition in webdocs once written up.
 
     Parameters
     ----------

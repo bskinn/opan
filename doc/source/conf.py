@@ -36,13 +36,12 @@ sys.path.insert(0, os.path.abspath('../..'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-#    'numpydoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
+    #'sphinx.ext.ifconfig',
 ]
 
 # napoleon configuration
@@ -172,11 +171,6 @@ rst_epilog = """
     <br />
 
 """
-#.. |str| replace:: `str`
-#.. _str: https://docs.python.org/2.7/library/functions.html#str
-#.. _bool: https://docs.python.org/2.7/library/functions.html#bool
-#.. _float: https://docs.python.org/2.7/library/functions.html#float
-#.. _int: https://docs.python.org/2.7/library/functions.html#int
 
 
 # If true, keep warnings as "system message" paragraphs in the built documents.

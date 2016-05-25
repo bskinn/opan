@@ -2,14 +2,27 @@
 
 
 Open Anharmonic - Usage & Examples
-===================================
+==================================
 
-*This will tell about how to actually use the package.*
+*This will tell about how to actually use the package, with a focus on
+interactive usage.*
 
 
-Contents:
+**Contents**
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
+
+    const
+    error
+    grad/index
+    hess/index
+    output/index
+    utils/index
+    vpt2/index
+    xyz
+
+
+
 
 

@@ -5,7 +5,7 @@ opan.grad
 
 
 .. automodule:: opan.grad
-   :show-inheritance:
+    :show-inheritance:
 
 
 

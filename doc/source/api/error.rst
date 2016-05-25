@@ -5,8 +5,8 @@ opan.error
 
 
 .. automodule:: opan.error
-   :members:
-   :show-inheritance:
+    :members:
+    :show-inheritance:
 
 
 

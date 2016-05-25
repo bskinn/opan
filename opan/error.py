@@ -20,8 +20,7 @@
 #-------------------------------------------------------------------------------
 
 
-
-"""Custom errors for Open Anharmonic
+"""**Defines custom errors for Open Anharmonic**
 
 Error classes are subclassed from :exc:`~exceptions.Exception` via an
 abstract superclass, :class:`~opan.error.OpanError`, which defines
@@ -29,8 +28,8 @@ several common features:
 
  * Storage of a 'typecode' and a 'source' string along with the error message
    to allow passing of more fine-grained information to the exception stack
- * Implementation of a :attr:`~opan.error.OpanError.__metaclass__` on
-   :class:`OpanError` enabling typecode validity checking with ``is``
+ * Implementation of the :class:`~opan.const.EnumIterMeta` metaclass on
+   :class:`OpanError`, enabling typecode validity checking with ``in``
  * Re-implementation of :func:`~OpanError.__str__` to enhance the usefulness
    of stack messages when one of these errors is raised
 
@@ -343,11 +342,11 @@ class SymmError(OpanError):
     See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
+    .. todo:: Add note about this being subject to future development?
+
     **Typecodes**
 
     """
-
-    #DOC: Add note about this being subject to future development?
 
     #: Symmetry element expected but not found
     NOTFOUND = 'NOTFOUND'
@@ -383,11 +382,11 @@ class AnharmError(OpanError):
     See the :class:`OpanError` documentation for more information on
     attributes, methods, etc.
 
+    .. todo:: Add object references once the DOM is more established?
+
     **Typecodes**
 
     """
-
-    #DOC: Add object references once the DOM is more established?
 
     #: OpanAnharmRepo conflict -- no repo bound when assignment attempted,
     #: or attempt made to bind new repo when one already bound

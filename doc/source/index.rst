@@ -23,28 +23,27 @@ runs, parsing of output files is challenging, and only a small number of
 run types have been `implemented to date <api/output.html>`__. More are planned,
 but are currently low priority.
 
-The source repository for Opan Anharmonic can be found at:
+The source repository for Open Anharmonic can be found at:
 
     https://www.github.com/bskinn/opan
 
 
-Contents
-========
+**Contents**
 
 .. toctree::
-   :maxdepth: 1
+    :maxdepth: 1
 
-   User's Guide <userguide/index>
-   API <api/index>
-   conventions
-   software
-   Package Dependencies <dependencies>
-   units
-   references
+    User's Guide <userguide/index>
+    API <api/index>
+    conventions
+    software
+    Package Dependencies <dependencies>
+    units
+    references
+    doc_todo
 
 
-Indices and tables
-==================
+**Indices and Tables**
 
 * :ref:`genindex`
 * :ref:`modindex`

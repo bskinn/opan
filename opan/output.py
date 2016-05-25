@@ -156,7 +156,7 @@ class OrcaOutput(object):
 
             COSMO outlying charge correction
 
-            *#DOC: Need COSMO reference*
+            .. todo:: Need COSMO reference
 
         .. attribute:: SCFFINAL
 
@@ -304,7 +304,7 @@ class OrcaOutput(object):
         |bool| --
         |True| if SCF converged ANYWHERE in run.
 
-        *#DOC Update oo.converged with any robustifications*
+        .. todo:: Update oo.converged with any robustifications
 
     .. attribute:: OrcaOutput.en
 
@@ -319,7 +319,7 @@ class OrcaOutput(object):
         |True| if any OPT converged ANYWHERE in run. Fine for OPT,
         but ambiguous for scans.
 
-        *#DOC Update oo.optimized with any robustifications*
+        .. todo:: Update oo.optimized with any robustifications
 
     .. attribute:: OrcaOutput.spincont
 
@@ -338,9 +338,6 @@ class OrcaOutput(object):
         |dict| of |npfloat|_--
         Values from the thermochemistry block of the parsed output. Dict keys
         are those of :attr:`THERMO`, above.
-
-        *#TODO: OrcaOutput.thermo: Test on single-atom case, update
-        documentation to reflect outcome*
 
     .. attribute:: OrcaOutput.thermo_block
 

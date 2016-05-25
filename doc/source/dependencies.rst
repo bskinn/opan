@@ -1,7 +1,7 @@
 .. List of opan dependencies and known-good versions
 
 Open Anharmonic Dependencies
-=============================
+============================
 
 Open Anharmonic is compatible only with Python 3. As of April 2016 is
 being developed and tested with Python 3.5.1, on both Windows and Debian
