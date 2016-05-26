@@ -31,7 +31,7 @@ class SuperOrcaEngrad(SuperOrca):
     from textwrap import dedent
     import numpy as np
     from opan.test.utils import assertErrorAndTypecode
-    from opan.const import OpanEnum
+    from enum import Enum
 
     # Superclass constants
     file_name = 'test.engrad'
@@ -67,7 +67,7 @@ class SuperOrcaEngrad(SuperOrca):
            1     2.6798241    1.9892213   -0.1622520
            1     2.6798521   -0.1622023    1.9892043
         """)
-    class names(OpanEnum):
+    class names(Enum):
         numats = 'numats'
         energy = 'energy'
         grad = 'grad'

@@ -351,7 +351,7 @@ class OrcaOutput(object):
 
     # Imports
     import re as _re
-    from .const import OpanEnum as _OpEnum
+    from enum import Enum as _Enum
 
 
     # Various class-level RegEx patterns, collected into dictionaries to
@@ -370,7 +370,7 @@ class OrcaOutput(object):
 
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class EN(_OpEnum):
+    class EN(_Enum):
         SCFFINAL = "SCFFINAL"
         GCP = "GCP"
         D3  = "D3"
@@ -431,7 +431,7 @@ class OrcaOutput(object):
 
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class THERMO(_OpEnum):
+    class THERMO(_Enum):
         BLOCK = "BLOCK"
         TEMP = "TEMP"
         PRESS = "PRESS"
@@ -575,7 +575,7 @@ class OrcaOutput(object):
     # Patterns for the spin contamination information
     # String constants for retrieving energy quantities.
     # Prefix is the uppercase of the Regex dictionary name
-    class SPINCONT(_OpEnum):
+    class SPINCONT(_Enum):
         ACTUAL = "ACTUAL"
         IDEAL = "IDEAL"
         DEV = "DEV"

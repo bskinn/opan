@@ -60,10 +60,10 @@ class TestOpanUtilsVectorParallelCheck(unittest.TestCase):
 
 class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
     import numpy as np
-    from opan.const import OpanEnum
+    from enum import Enum
 
     # Enum for the types of data stored for calculations
-    class DType(OpanEnum):
+    class DType(Enum):
         V1 = 'V1'
         V2 = 'V2'
         PROJ = 'PROJ'
@@ -71,7 +71,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
         ANG = 'ANG'
 
     # Enum for the types of vector pairs being tested
-    class VecType(OpanEnum): # Types of vectors
+    class VecType(Enum): # Types of vectors
         O1 = 'O1'   # Both order-one
         LOL = 'LOL' # Both large (large on large)
         SOS = 'SOS' # Both small (small on small)
@@ -80,7 +80,7 @@ class TestOpanUtilsVectorProjRejAngle(unittest.TestCase):
         BS = 'BS'   # Badly-scaled
 
     # Enum for the relationship between the vectors being tested
-    class RelType(OpanEnum): # Type of vector relationship
+    class RelType(Enum): # Type of vector relationship
         NS = 'NS'      # Nonspecific
         PAR = 'PAR'    # Nearly parallel
         NORM = 'NORM'  # Nearly normal

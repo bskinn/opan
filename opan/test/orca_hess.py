@@ -29,7 +29,7 @@ class SuperOrcaHess(SuperOrca):
     from textwrap import dedent
     import numpy as np
     from opan.test.utils import assertErrorAndTypecode
-    from opan.const import OpanEnum
+    from enum import Enum
 
     # Superclass constants
 
@@ -688,7 +688,7 @@ class SuperOrcaHess(SuperOrca):
 
 
     #=== Defining ways to break the .hess ===#
-    class names(OpanEnum):
+    class names(Enum):
         hess = 'hess'
         geom = 'geom'
         atsym = 'atsym'
@@ -733,7 +733,7 @@ class SuperOrcaHess(SuperOrca):
 
     trunc_block_substs = {
             names.hess  : ('7       0.094130  -0.308688', 'gabrab'),
-            names.hess + names.suffix_dim2 :
+            names.hess.value + names.suffix_dim2.value :
                             ('10       0.007047   0.008159', 'farfrif'),
             names.geom  : ('H      1.0080      2.059801', 'gaffraf'),
             names.freqs : ('10     1524.709386', 'fobbardgik'),
@@ -754,24 +754,24 @@ class SuperOrcaHess(SuperOrca):
                                     'Cx    12.0110     -0.000000'),
             names.atnum : ('C     12.0110', '385   12.0110'),
             names.modes : ('l_modes\n15', 'l_modes\n19'),
-            names.modes + names.suffix_dim2 :
+            names.modes.value + names.suffix_dim2.value :
                             ('l_modes\n15 15', 'l_modes\n15 19'),
             names.dipders : ('ole_derivatives\n15', 'ole_derivatives\n25'),
-            names.dipders + names.suffix_badval :
+            names.dipders.value + names.suffix_badval.value :
                             ('-0.118178     0.000019', '-11817.8     0.000019'),
             names.ir    : ('ir_spectrum\n15', 'ir_spectrum\n38'),
-            names.ir + names.suffix_badfreq :
+            names.ir.value + names.suffix_badfreq.value :
                             ('1292.94      14.6749', '3232.28      14.6749'),
             names.polders : ('ity_derivatives\n15', 'ity_derivatives\n38'),
             names.raman : ('man_spectrum\n15', 'man_spectrum\n27'),
-            names.raman + names.suffix_badfreq :
+            names.raman.value + names.suffix_badfreq.value :
                             ('1524.71      26.2096', '3184.71      26.2096'),
             names.joblist : ('job_list\n15', 'job_list\n38'),
             names.mwh_eigvals: ('values_mass_weighted_hessian\n15',
                                         'values_mass_weighted_hessian\n7'),
             names.mwh_eigvecs: ('ectors_mass_weighted_hessian\n15',
                                         'ectors_mass_weighted_hessian\n39'),
-            names.mwh_eigvecs + names.suffix_dim2:
+            names.mwh_eigvecs.value + names.suffix_dim2.value:
                                 ('ectors_mass_weighted_hessian\n15 15',
                                         'ectors_mass_weighted_hessian\n15 19')
                         }
@@ -962,7 +962,7 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
 
         # Write the files
         for bname in cls.bad_block_substs.keys():
-            with open(cls.file_name + bname, 'w') as f:
+            with open(cls.file_name + bname.value, 'w') as f:
                 f.write(cls.file_text_good
                                     .replace(*cls.bad_block_substs[bname]))
 
@@ -974,7 +974,7 @@ class TestOrcaHessMissingBlocks(SuperOrcaHess):
         from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
-        [os.remove(cls.file_name + bname) for bname in
+        [os.remove(cls.file_name + bname.value) for bname in
                                             cls.bad_block_substs.keys()]
 
         # Remove the directory
@@ -1103,7 +1103,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
 
         # Write the files
         for bname in cls.trunc_block_substs.keys():
-            with open(cls.file_name + bname, 'w') as f:
+            with open(cls.file_name + bname.value, 'w') as f:
                 f.write(cls.file_text_good
                                     .replace(*cls.trunc_block_substs[bname]))
 
@@ -1115,7 +1115,7 @@ class TestOrcaHessTruncatedBlocks(SuperOrcaHess):
         from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
-        [os.remove(cls.file_name + bname) for bname in
+        [os.remove(cls.file_name + bname.value) for bname in
                                             cls.trunc_block_substs.keys()]
 
         # Remove the directory
@@ -1239,7 +1239,7 @@ class TestOrcaHessBadData(SuperOrcaHess):
 
         # Write the files
         for bname in cls.bad_data_substs.keys():
-            with open(cls.file_name + bname, 'w') as f:
+            with open(cls.file_name + bname.value, 'w') as f:
                 f.write(cls.file_text_good
                                     .replace(*cls.bad_data_substs[bname]))
 
@@ -1251,7 +1251,7 @@ class TestOrcaHessBadData(SuperOrcaHess):
         from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
-        [os.remove(cls.file_name + dname) for dname in
+        [os.remove(cls.file_name + dname.value) for dname in
                                             cls.bad_data_substs.keys()]
 
         # Remove the directory
@@ -1446,7 +1446,7 @@ class TestOrcaHessAltData(SuperOrcaHess):
 
         # Write the files
         for bname in cls.alt_data_substs.keys():
-            with open(cls.file_name + bname, 'w') as f:
+            with open(cls.file_name + bname.value, 'w') as f:
                 f.write(cls.file_text_good
                                     .replace(*cls.alt_data_substs[bname]))
 
@@ -1458,7 +1458,7 @@ class TestOrcaHessAltData(SuperOrcaHess):
         from opan.test.utils import tearDownTestDir
 
         # Try to remove the files
-        [os.remove(cls.file_name + dname) for dname in
+        [os.remove(cls.file_name + dname.value) for dname in
                                             cls.alt_data_substs.keys()]
 
         # Remove the directory
