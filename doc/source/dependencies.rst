@@ -1,15 +1,23 @@
 .. List of opan dependencies and known-good versions
 
-opan Dependencies
-=================
+Open Anharmonic Dependencies
+=============================
 
-opan depends on the following Python libraries:
+Open Anharmonic is compatible only with Python 3. As of April 2016 is
+being developed and tested with Python 3.5.1, on both Windows and Debian
+Linux.
 
- * numpy
- * scipy
- * h5py
+Open Anharmonic depends on the following Python libraries (versions
+used for development as of April 2016 are given in parentheses):
 
-Currently, only the functions to drive the `ORCA <http://orcaforum.cec.mpg.de>`_ package and parse its output files have been implemented.  The opan framework is being designed to accommodate extensibility to other computational packages to the extent possible, though.  Proper installation/configuration of ORCA and construction of suitable input templates and execution scripts is entirely the responsibility of the user. **It is the responsibility of the user to ascertain whether usage of ORCA in concert with opan is in accord with the license conditions of the ORCA package!**
+ * numpy (1.11.0)
+
+ * scipy (0.17.0)
+
+ * h5py (2.5.0)
+
+Some earlier versions of all of these packages will likely work
+satisfactorily.
 
 
 

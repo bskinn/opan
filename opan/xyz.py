@@ -385,7 +385,7 @@ class OpanXYZ(object):
 
         # Imports
         import numpy as np
-        from .const import atom_num
+        from .const import atom_num, PHYS
         from .error import XYZError
 
         # Gripe if already initialized

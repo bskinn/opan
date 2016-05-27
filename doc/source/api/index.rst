@@ -1,6 +1,6 @@
 .. opan API landing page
 
-opan API
+Open Anharmonic API
 ================================
 
 The full public API is delineated below.  Cross-references to NumPy are displayed with the ``np`` package abbreviation.
