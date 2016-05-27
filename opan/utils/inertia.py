@@ -106,7 +106,7 @@ def ctr_mass(geom, masses):
     #  column-wise, sum each column, then divide by the sum of masses, which
     #  must further be divided by three because there are three replicates
     #  (possibly perturbed) of the mass of each atom.
-    ctr = np.multiply(geom, masses).reshape((geom.shape[0]/3,3)) \
+    ctr = np.multiply(geom, masses).reshape((geom.shape[0]//3, 3)) \
                                 .sum(axis=0).squeeze() / (masses.sum() / 3)
 
     # Return the vector
@@ -423,7 +423,7 @@ def principals(geom, masses, on_tol=_DEF.ORTHONORM_TOL):
 
         try:
             axes[:,2] = vecs[:,2] * np.sign(np.dot(vecs[:,2],
-                                                    _fadn_orth(vecs[:,2], geom)))
+                                                _fadn_orth(vecs[:,2], geom)))
         except InertiaError as IE:
             # Check that typecode is as expected for error from planar system.
             if not IE.tc == InertiaError.BAD_GEOM:  # pragma: no cover
@@ -649,7 +649,7 @@ def _fadn_orth(vec, geom):
     vec = vec / spla.norm(vec)
 
     # Iterate over reshaped geometry
-    for disp in geom.reshape((geom.shape[0]/3, 3)):
+    for disp in geom.reshape((geom.shape[0]//3, 3)):
         # See if the displacement is nonzero and not orthonormal. Trailing
         #  [0] index is to retrieve only the success/fail bool.
         if spla.norm(disp) >= PRM.ZERO_VEC_TOL and not onchk(
@@ -720,7 +720,7 @@ def _fadn_par(vec, geom):
     vec = vec / spla.norm(vec)
 
     # Iterate over reshaped geometry
-    for disp in geom.reshape((geom.shape[0]/3, 3)):
+    for disp in geom.reshape((geom.shape[0]//3, 3)):
         # See if the displacement is nonzero and nonparallel to the ref vec
         if spla.norm(disp) >= PRM.ZERO_VEC_TOL and \
                 not parchk(disp.reshape(3), vec):
