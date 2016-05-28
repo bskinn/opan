@@ -33,11 +33,11 @@ from ..const import DEF as _DEF, EnumSoftware as _E_SW, EnumFileType as _E_FT
 
 # Functions
 
-def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
-            sim_name="orcarun", \
-            inp_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.INPUTFILE], \
-            out_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.OUTPUT], \
-            wait_to_complete=True, \
+def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"),
+            sim_name="orcarun",
+            inp_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.INPUTFILE],
+            out_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.OUTPUT],
+            wait_to_complete=True,
             bohrs=False):
     """Executes |orca| on a dynamically constructed input file.
 
@@ -175,7 +175,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     Returns
     -------
-    |tuple| of objects or |int| PID
+    [varies]
+        |tuple| of objects or |int| PID.
         Varies depending on `wait_to_complete`; see *Return Values* above
 
 

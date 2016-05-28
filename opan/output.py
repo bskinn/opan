@@ -308,7 +308,7 @@ class OrcaOutput(object):
 
     .. attribute:: OrcaOutput.en
 
-        |dict| of |list| of |npfloat|_--
+        |dict| of |list| of |npfloat|--
         Lists of the various energy values from the parsed output. Dict
         keys are those of :attr:`EN`, above.  Any energy type not found in the
         output is assigned as an empty list.
@@ -323,7 +323,7 @@ class OrcaOutput(object):
 
     .. attribute:: OrcaOutput.spincont
 
-        |dict| of |list| of |npfloat|_--
+        |dict| of |list| of |npfloat|--
         Lists of the various values from the spin contamination calculations
         in the output, if present. Empty lists if absent. Dict keys are those
         of :attr:`SPINCONT`, above.
@@ -335,7 +335,7 @@ class OrcaOutput(object):
 
     .. attribute:: OrcaOutput.thermo
 
-        |dict| of |npfloat|_--
+        |dict| of |npfloat|--
         Values from the thermochemistry block of the parsed output. Dict keys
         are those of :attr:`THERMO`, above.
 
@@ -801,7 +801,7 @@ class OrcaOutput(object):
         Returns
         -------
         last_ens
-            |dict| of |npfloat|_--
+            |dict| of |npfloat|--
             Energies from the last SCF present in the output.
 
         """

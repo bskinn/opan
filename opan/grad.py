@@ -46,7 +46,7 @@ gradient data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from ``np.float``
+    *   With `dtype` descended from :mod:`np.float <numpy.doc.basics>`
 
     *   In |units| of Hartrees per Bohr
         :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`
@@ -225,7 +225,7 @@ class SuperOpanGrad(object):
         Parameters
         ----------
         coords
-            length-3N |npfloat|_ --
+            length-3N |npfloat| --
             Vector of stacked 'lab-frame' Cartesian coordinates
 
         atoms
@@ -323,12 +323,12 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.geom
 
-        length-3N |npfloat|_ -- Vector of the atom coordinates
+        length-3N |npfloat| -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
     .. attribute:: OrcaEngrad.gradient
 
-        length-3N |npfloat|_ -- Vector of the Cartesian gradient in
+        length-3N |npfloat| -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
     .. attribute:: OrcaEngrad.in_str
