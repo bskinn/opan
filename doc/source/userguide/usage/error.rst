@@ -20,11 +20,11 @@ quite sensibly results in an error:
 .. testsetup:: errordemo
 
     import os
-    os.chdir('source\\userguide\\usage')
+    os.chdir(os.path.join('source', 'userguide', 'usage'))
 
 .. testcleanup:: errordemo
 
-    os.chdir('..\\..\\..')
+    os.chdir(os.path.join('..', '..', '..'))
 
 .. doctest:: errordemo
 
