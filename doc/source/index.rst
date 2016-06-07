@@ -37,7 +37,7 @@ The source repository for Open Anharmonic can be found at:
     API <api/index>
     conventions
     software
-    Package Dependencies <dependencies>
+    Dependencies <dependencies>
     units
     references
     doc_todo

@@ -4,7 +4,7 @@ Notational and Algebraic Conventions
 ====================================
 
 In order to aid comprehension, this documentation strives to obey the following
-formatting conventions.
+formatting/notation conventions.
 
 **In text:**
 
@@ -21,42 +21,57 @@ formatting conventions.
    they will be linked to the relevant documentation (via
    :mod:`~sphinx.ext.intersphinx`).
 
- * Engineering units are set in upright Roman (serif) equation type:
-   :math:`\left(\mathrm{E_h\over B^2}\right)`
+ * Code examples are set in fixed font and boxed the full width of the
+   page::
 
- * Code examples are set in fixed font, formatted like a Python console
-   session, and boxed the full width of the page (as per
-   :mod:`~sphinx.ext.doctest`):
+       from opan.utils.vector import proj
+       pvec = proj(vec1, vec2)
+
+   Interactive usage examples are formatted like a Python console
+   session, as per :mod:`~sphinx.ext.doctest`:
 
    >>> 1 + 2 + 3
    6
+
+ * Where included, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+   "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+   "OPTIONAL" in this documentation are to be interpreted as described in
+   :rfc:`2119`.
+
+ * Mathematical symbols and engineering units are set as in equations, below.
 
 
 
 **In equations:**
 
- * x
+ * Roman variables are set in serif italics:
+   :math:`x + C`
 
-|
+ * Lowercase Greek variables are set in italics:
+   :math:`\theta + \pi \over \gamma`
 
- * *Upright sans-serif* in equations when referring to code variable names
+ * Uppercase Greek variables are set in upright serif:
+   :math:`\Phi + \Theta`
 
- * Roman (serif) text in equations when referring to code functions/methods
+ * Vectors are set in bold, upright, serif Roman symbols:
+   :math:`\mathbf{r}_2 - \mathbf{r}_1`
 
- * Italics in text when referring to mathematical symbols
+ * Matrices are set as bold, uppercase, serif Roman or Greek symbols:
+   :math:`\mathbf{M}\!^{^{^{-1}\!/_2}} \mathbf{F}
+   \mathbf{M}\!^{^{^{-1}\!/_2}}`
 
- * Italics in text when referring to code functions or names
+ * Engineering units are set in upright Roman (serif) equation type:
+   :math:`\left(\mathrm{E_h\over B^2}\right)`
 
- * N always refers to the number of atoms in the system of interest
 
- * Where relevant, G refers to the number of geometries in an OpenBabel XYZ file
+**Common symbols:**
 
- * Arbitrary integers represented as R, S, ...
+ * :math:`N` -- the number of atoms in the system of interest
 
- * Where included, capitalized instructions [add list] are to be interpreted in
-   accordance with `RFC 2119 <http://tools.ietf.org/html/rfc2119>`__
+ * :math:`G` -- the number of geometries in an OpenBabel XYZ file
 
- * [Others?]
+ * :math:`R, S, ...` -- Arbitrary integers 
+
 
 
 .. toctree:
