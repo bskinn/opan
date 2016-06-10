@@ -46,7 +46,7 @@ gradient data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from :mod:`np.float <numpy.doc.basics>`
+    *   With `dtype` descended from |npfloat|
 
     *   In |units| of Hartrees per Bohr
         :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`
