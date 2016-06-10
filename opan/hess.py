@@ -37,7 +37,7 @@ Hessian data from external computational packages.
  *  The import for each external software package SHOULD have
     its own subclass.
 
- *  Each subclass MUST implement a ``load(**kwargs)`` method as the
+ *  Each subclass MUST implement a ``_load(**kwargs)`` method as the
     entry point for import of Hessian data.
 
  *  The Hessian data MUST be stored:
@@ -173,7 +173,7 @@ class SuperOpanHess(object):
 
     1.  Ensures that the abstract superclass is not being instantiated,
         but instead a subclass.
-    2.  Calls the ``load()`` method on the subclass, passing all `kwargs`
+    2.  Calls the ``_load()`` method on the subclass, passing all `kwargs`
         through unmodified.
     3.  Typechecks the ``self.hess``, ``self.geom``, and
         ``self.atom_syms`` required members for existence, proper data type,
@@ -213,7 +213,7 @@ class SuperOpanHess(object):
 
         # Call the subclass _load method, passing in the keyword arguments
         #  wholesale
-        self.load(**kwargs)
+        self._load(**kwargs)
 
         # Define common error source string
         srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
@@ -354,7 +354,7 @@ class OrcaHess(SuperOpanHess):
 
     **Methods**
 
-    .. automethod:: load
+    .. automethod:: _load
 
     |
 
@@ -903,7 +903,7 @@ class OrcaHess(SuperOpanHess):
     ## end class Pat
 
 
-    def load(self, **kwargs):
+    def _load(self, **kwargs):
         """ Initialize OrcaHess Hessian object from .hess file
 
         Searches indicated file for data blocks within the .hess file.  The
