@@ -68,3 +68,6 @@ target/
 # gedit backup files
 *.rst~
 
+# Virtualenv dirs
+env*
+
