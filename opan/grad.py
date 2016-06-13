@@ -37,7 +37,7 @@ gradient data from external computational packages.
  *  The import for each external software package SHOULD have
     its own subclass.
 
- *  Each subclass MUST implement a ``_load(**kwargs)`` instance method
+ *  Each subclass MUST implement a ``_load(self, **kwargs)`` instance method
     as the entry point for import of gradient data.
 
  *  The gradient data MUST be stored:
@@ -74,7 +74,7 @@ gradient data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from ``np.float``
+    *   With `dtype` descended from |npfloat|
 
     *   In |units| of Bohrs :math:`\\left(\\mathrm B\\right)`
 
@@ -225,7 +225,7 @@ class SuperOpanGrad(object):
         Parameters
         ----------
         coords
-            length-3N |npfloat| --
+            length-3N |npfloat_| --
             Vector of stacked 'lab-frame' Cartesian coordinates
 
         atoms
@@ -323,12 +323,12 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.geom
 
-        length-3N |npfloat| -- Vector of the atom coordinates
+        length-3N |npfloat_| -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
     .. attribute:: OrcaEngrad.gradient
 
-        length-3N |npfloat| -- Vector of the Cartesian gradient in
+        length-3N |npfloat_| -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
     .. attribute:: OrcaEngrad.in_str

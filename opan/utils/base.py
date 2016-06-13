@@ -261,7 +261,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     Parameters
     ----------
     c1
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
 
     a1
@@ -269,7 +269,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         Vector of first set of atom symbols or atomic numbers
 
     c2
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
 
     a2

@@ -202,7 +202,7 @@ class OpanXYZ(object):
 
     .. attribute:: geoms
 
-        length-G |list| of length-3N |npfloat| -- Molecular
+        length-G |list| of length-3N |npfloat_| -- Molecular
         geometry/geometries read from file or passed to `coords` argument
 
     .. attribute:: in_str
@@ -362,7 +362,7 @@ class OpanXYZ(object):
             the keys of :data:`const.atom_num <opan.const.atom_num>`.
 
         coords
-            Squeezes to array of 3N |npfloat| castables --
+            Squeezes to array of 3N |npfloat_| castables --
             Coordinates for the geometry.
 
         bohrs
@@ -705,7 +705,7 @@ class OpanXYZ(object):
         Returns
         -------
         geom
-            length-3N |npfloat| --
+            length-3N |npfloat_| --
             Vector of the atomic coordinates for the geometry indicated
             by `g_num`
 
@@ -729,7 +729,7 @@ class OpanXYZ(object):
         iterable of |int|\\ s passed as `g_nums`.
 
         As with :meth:`geom_single`, each geometry is returned as a
-        length-3N |npfloat| with each atom's x/y/z coordinates
+        length-3N |npfloat_| with each atom's x/y/z coordinates
         grouped together::
 
             [A1x, A1y, A1z, A2x, A2y, A2z, ...]
@@ -751,7 +751,7 @@ class OpanXYZ(object):
         Yields
         ------
         geom
-            length-3N |npfloat| --
+            length-3N |npfloat_| --
             Vectors of the atomic coordinates for each geometry
             indicated in `g_nums`
 
@@ -789,7 +789,7 @@ class OpanXYZ(object):
         Returns
         -------
         dist
-            |npfloat| --
+            |npfloat_| --
             Distance in Bohrs between `at_1` and `at_2` from
             geometry `g_num`
 
@@ -869,7 +869,7 @@ class OpanXYZ(object):
         Yields
         ------
         dist
-            |npfloat| --
+            |npfloat_| --
             Interatomic distance in Bohrs between each atom pair of
             `ats_1` and `ats_2` from the corresponding geometries
             of `g_nums`.
@@ -944,7 +944,7 @@ class OpanXYZ(object):
         Returns
         -------
         angle
-            |npfloat| --
+            |npfloat_| --
             Spanning angle in degrees between `at_1`-`at_2`-`at_3`, from
             geometry `g_num`
 
@@ -1047,7 +1047,7 @@ class OpanXYZ(object):
         Yields
         ------
         angle
-            |npfloat| --
+            |npfloat_| --
             Spanning angles in degrees between corresponding |br|
             `ats_1`-`ats_2`-`ats_3`, from geometry/geometries `g_nums`
 
@@ -1146,7 +1146,7 @@ class OpanXYZ(object):
         Returns
         -------
         dihed
-            |npfloat| --
+            |npfloat_| --
             Out-of-plane/dihedral angle in degrees for the indicated `at_#`,
             drawn from geometry `g_num`
 
@@ -1331,7 +1331,7 @@ class OpanXYZ(object):
         Yields
         ------
         dihed
-            |npfloat| --
+            |npfloat_| --
             Out-of-plane/dihedral angles in degrees for the indicated
             atom sets `ats_1`-`ats_2`-`ats_3`-`ats_4`, drawn from
             the respective `g_nums`.
@@ -1410,7 +1410,7 @@ class OpanXYZ(object):
         Returns
         -------
         displ
-            length-3 |npfloat| --
+            length-3 |npfloat_| --
             Displacement vector from `at_1` to `at_2`
 
         Raises
@@ -1490,7 +1490,7 @@ class OpanXYZ(object):
         Yields
         ------
         displ
-            |npfloat| --
+            |npfloat_| --
             Displacement vector in Bohrs between each atom pair of |br|
             `ats_1` :math:`\\rightarrow` `ats_2` from the corresponding
             geometries of `g_nums`.
@@ -1633,7 +1633,7 @@ class OpanXYZ(object):
         Returns
         -------
         val
-            |npfloat| or |None| --
+            |npfloat_| or |None| --
             Calculated value from fxn(*tup) call, or 'None' value indicating
             IndexError / ValueError
 

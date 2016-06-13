@@ -116,7 +116,7 @@ Hessian data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from ``np.float``
+    *   With `dtype` descended from |npfloat|
 
     *   In |units| of Bohrs :math:`\\left(\\mathrm B\\right)`
 
@@ -269,7 +269,7 @@ class SuperOpanHess(object):
         Parameters
         ----------
         coords
-            length-3N |npfloat| --
+            length-3N |npfloat_| --
             Vector of stacked 'lab-frame' Cartesian coordinates
 
         atoms
@@ -491,7 +491,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.atom_masses
 
-        length-N |list| of |npfloat| --
+        length-N |list| of |npfloat_| --
         List of atom masses as reported in the .hess file
 
     .. attribute:: OrcaHess.atom_syms
@@ -501,7 +501,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.dipders
 
-        3N x 3 |npfloat| --
+        3N x 3 |npfloat_| --
         Matrix of dipole derivatives
 
     .. attribute:: OrcaHess.energy
@@ -510,19 +510,19 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.freqs
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Vibrational frequencies in
         :math:`\\mathrm{cyc\\over cm}`,
         as reported in the Hessian file
 
     .. attribute:: OrcaHess.geom
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Geometry vector
 
     .. attribute:: OrcaHess.hess
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat_| --
         Cartesian Hessian matrix
 
     .. attribute:: OrcaHess.hess_path
@@ -536,13 +536,13 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.ir_comps
 
-        3N x 3 |npfloat| --
+        3N x 3 |npfloat_| --
         :math:`\\left(T_x, T_y, T_z\\right)`
         components of the transition dipole for each normal mode
 
     .. attribute:: OrcaHess.ir_mags
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         :math:`T^2` values (squared-magnitudes) of the
         transition dipole for each mode
 
@@ -553,20 +553,20 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.modes
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat_| --
         Rotation- and translation-purified, mass-weighted
         vibrational normal modes,
         with each mode (column vector) separately normalized by |orca|.
 
     .. attribute:: OrcaHess.mwh_eigvals
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Eigenvalues of the mass-weighted Hessian, in
         :math:`\\mathrm{E_h \\over u\\,B^2}`
 
     .. attribute:: OrcaHess.mwh_eigvecs
 
-        3N x 3N |npfloat| --
+        3N x 3N |npfloat_| --
         Eigenvectors of the mass-weighted Hessian, as column vectors: the
         eigenvector of eigenvalue :math:`i` would be retrieved with
         :samp:`mwh_eigvecs[:,{i}]`
@@ -577,17 +577,17 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.polders
 
-        3N x 6 |npfloat| --
+        3N x 6 |npfloat_| --
         Matrix of Cartesian polarizability derivatives
 
     .. attribute:: OrcaHess.raman_acts
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Vector of Raman activities
 
     .. attribute:: OrcaHess.raman_depols
 
-        length-3N |npfloat| --
+        length-3N |npfloat_| --
         Vector of Raman depolarization factors
 
     .. attribute:: OrcaHess.temp
@@ -989,7 +989,7 @@ class OrcaHess(SuperOpanHess):
             Returns
             -------
             workmtx
-                3N x 3N |npfloat| --
+                3N x 3N |npfloat_| --
                 Assembled array for storage
 
             """

@@ -160,7 +160,9 @@ rst_epilog = """
 
 .. |re.compile| replace:: :func:`re.compile`
 
-.. |npfloat| replace:: :mod:`np.float_ <numpy.doc.basics>`
+.. |npfloat_| replace:: :mod:`np.float_ <numpy.doc.basics>`
+
+.. |npfloat| replace:: ``np.float``
 
 .. |nparray| replace:: :obj:`np.array <numpy.ndarray>`
 

@@ -18,10 +18,19 @@ Firstly, the instance members specified as having to be there by
 :class:`~opan.grad.SuperOpanGrad`:
 
  * :attr:`gradient` -- 1-D |nparray| of |npfloat| -- Gradient data in
-   :math:`\left({E_h\over B}\right)` units
+   :math:`\left(\mathrm{E_h\over B}\right)` |units|
 
- * [...more...]
+ * :attr:`geom` -- 1-D |nparray| of |npfloat| -- Geometry data in
+   :math:`\mathrm B` |units|
 
+ * :attr:`atom_syms` -- |list| of |str| -- Atomic symbols in **ALL CAPS**
+
+There will need to be a private ``_load`` method, but that shouldn't ever be
+useful or usable, interactively.
+
+Other than that, the below subpages describe the software-specific data
+available in the specific subclass objects of
+:class:`~opan.grad.SuperOpanGrad`.
 
 **Implemented Subclasses**
 
