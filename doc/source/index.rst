@@ -23,6 +23,13 @@ runs, parsing of output files is challenging, and only a small number of
 run types have been `implemented to date <api/output.html>`__. More are planned,
 but are currently low priority.
 
+Open Anharmonic is available on PyPI as ``opan``::
+
+    pip install opan
+
+See the :doc:`dependencies page <dependencies>` for package dependencies
+and compatible versions.
+
 The source repository for Open Anharmonic can be found at:
 
     https://www.github.com/bskinn/opan

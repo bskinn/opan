@@ -1,12 +1,17 @@
 # opan (Open Anharmonic)
 
 
-Dreams one day to be an automated system for driving VPT2 anharmonic
- (and possibly other) computations on a variety of computational/quantum chemistry software
- packages.
+Open Anharmonic is a Python wrapper for computational chemistry
+  software packages intended to enable VPT2 computation of anharmonic
+  vibrational constants. 
+  Other types of calculations are under consideration.
 
-Any branches with a prefixed `v.` are volatile (under active development). The history there may be
- rewritten dramatically, without warning.
+An adjunct goal of the project is to expose an API providing
+  convenient access to various results of standalone calculations.
+
+Any branches with a prefixed `v.` are volatile (under active
+  development). The history there may be rewritten dramatically, 
+  without warning.
 
 Starting with v0.4, this project strives to follow [Semantic Versioning v2.0.0](http://semver.org/spec/v2.0.0.html)
   and [PEP 440](https://www.python.org/dev/peps/pep-0440), with PEP 440 taking priority.  Thus, some elements of
