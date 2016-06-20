@@ -6,7 +6,7 @@ Open Anharmonic Dependencies
 Open Anharmonic is compatible only with Python ~= 3.4.  Open Anharmonic
 depends on the following Python libraries and versions:
 
- * numpy ~= 1.7
+ * numpy ~= 1.10
 
  * scipy >= 0.12.0
 

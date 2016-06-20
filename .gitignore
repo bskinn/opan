@@ -36,6 +36,7 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
+tox.report*
 .coverage
 .coverage.*
 .cache
@@ -67,7 +68,4 @@ target/
 
 # gedit backup files
 *.rst~
-
-# Virtualenv dirs
-env*
 

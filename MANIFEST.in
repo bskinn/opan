@@ -1,2 +1,2 @@
-include README.md README.rst LICENSE.txt
+include README.md README.rst LICENSE.txt tox.ini
 recursive-include opan/test/resource *

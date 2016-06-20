@@ -24,7 +24,8 @@
 
 from __future__ import absolute_import
 
-__all__ = ['opan_utils_base', 'opan_utils_inertia', 'opan_utils_decorate',
+__all__ = ['opan_base',
+           'opan_utils_base', 'opan_utils_inertia', 'opan_utils_decorate',
            'opan_utils_vector',
            'opan_xyz',
            'opan_error', 'opan_const', 'opan_supers',
