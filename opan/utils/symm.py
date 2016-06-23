@@ -31,8 +31,8 @@
 [Will need to harmonize the matrix typing; currently things are just
     passed around as np.array for the most part.]
 
-#!DOC: Complete symm module docstring, including the member functions
-#!TODO: Vector: Consider casting all outputs to np.matrix()?
+.. todo:: Complete symm module docstring, including the member functions
+
 """
 
 # Imports
@@ -44,7 +44,7 @@ def point_displ(pt1, pt2):
 
     pt1 - pt2
 
-    #!DOC: Complete point_disp docstring
+    .. todo:: Complete point_disp docstring
 
     """
 
@@ -75,7 +75,7 @@ def point_dist(pt1, pt2):
 
     |pt1 - pt2|
 
-    #!DOC: Complete point_dist docstring
+    .. todo:: Complete point_dist docstring
 
     """
 
@@ -96,7 +96,7 @@ def point_rotate(pt, ax, theta):
     a 90deg rotation of (1,0,0) around the z-axis (0,0,1) yields a point at
     (0,1,0).
 
-    #!DOC: Complete point_rotate docstring
+    .. todo:: Complete point_rotate docstring
 
     Raises
     ------
@@ -125,7 +125,7 @@ def point_reflect(pt, nv):
 
     nv defines the normal vector to the plane (needs not be normalized)
 
-    #!DOC: Complete point_reflect docstring
+    .. todo:: Complete point_reflect docstring
 
     Raises
     ------
@@ -153,7 +153,7 @@ def geom_reflect(g, nv):
     nv is normal vector to reflection plane
     g is assumed already translated to center of mass @ origin
 
-    #!DOC: Complete geom_reflect docstring
+    .. todo:: Complete geom_reflect docstring
 
     """
 
@@ -179,7 +179,7 @@ def geom_rotate(g, ax, theta):
 
     Sense of rotation is the same as point_rotate
 
-    #!DOC: Complete geom_rotate docstring
+    .. todo:: Complete geom_rotate docstring
 
     """
 
@@ -200,7 +200,7 @@ def geom_rotate(g, ax, theta):
 def symm_op(g, ax, theta, do_refl):
     """ Perform general point symmetry operation on a geometry.
 
-    #!DOC: Complete symm_op docstring
+    .. todo:: Complete symm_op docstring
 
     """
 
@@ -223,7 +223,7 @@ def symm_op(g, ax, theta, do_refl):
 def geom_symm_match(g, atwts, ax, theta, do_refl):
     """ [Revised match factor calculation]
 
-    #!DOC: Complete geom_symm_match docstring
+    .. todo:: Complete geom_symm_match docstring
 
     """
 
@@ -309,7 +309,7 @@ def geom_find_rotsymm(g, atwts, ax, improp, \
 
     Regular and improper axes possible.
 
-    #!DOC: Complete geom_find_rotsymm docstring
+    .. todo:: Complete geom_find_rotsymm docstring
 
     """
 
@@ -347,12 +347,12 @@ def geom_find_rotsymm(g, atwts, ax, improp, \
 ## end def geom_find_rotsymm
 
 
-def geom_check_axis(g, atwts, ax, \
-        nmax=_DEF.SYMM_MATCH_NMAX, \
+def geom_check_axis(g, atwts, ax,
+        nmax=_DEF.SYMM_MATCH_NMAX,
         tol=_DEF.SYMM_MATCH_TOL):
     """ [Get max proper order and reflection for an axis]
 
-    #!DOC: Complete geom_parse_axis docstring
+    .. todo:: Complete geom_parse_axis docstring
 
     """
 
@@ -379,7 +379,7 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
         avmax=_DEF.SYMM_AVG_MAX):
     """ [Find all(?) proper rotation axes (n > 1) and reflection planes.]
 
-    #!DOC: Complete geom_find_axes docstring INCLUDING NEW HEADER LINE
+    .. todo:: Complete geom_find_axes docstring INCLUDING NEW HEADER LINE
 
     DEPENDS on principal axes and moments being sorted such that:
         I_A <= I_B <= I_C
@@ -695,11 +695,11 @@ def geom_find_group(g, atwts, pr_ax, mom, tt, \
 ## end def geom_find_group
 
 
-def g_subset(g, atwts, atwt, \
+def g_subset(g, atwts, atwt,
             digits=_DEF.SYMM_ATWT_ROUND_DIGITS):
     """ Extract a subset of a geometry matching a desired atom.
 
-    #!DOC: Complete g_subset docstring
+    .. todo:: Complete g_subset docstring
 
     """
 
@@ -743,7 +743,7 @@ def make_nd_vec(v, nd=None, t=None, norm=False):
     Cast to type 't' if passed
     Normalize output if norm=True
 
-    #!DOC: Complete make_nd_vec docstring
+    .. todo:: Complete make_nd_vec docstring
 
     """
 
@@ -783,7 +783,7 @@ def mtx_refl(nv, reps=1):
     matrix should be repeated along the block diagonal.  Typically this
     will be the number of atoms in a geometry.
 
-    #!DOC: Complete mtx_refl docstring
+    .. todo:: Complete mtx_refl docstring
 
     """
 
@@ -839,7 +839,7 @@ def mtx_rot(ax, theta, reps=1):
 
     [copy handedness from somewhere]
 
-    #!DOC: Complete mtx_rot docstring
+    .. todo:: Complete mtx_rot docstring
 
     """
 

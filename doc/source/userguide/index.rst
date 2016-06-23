@@ -3,7 +3,7 @@
 Open Anharmonic User's Guide
 =========================================
 
-*Eventually there will be a User Guide here...*
+*Eventually there will be an introduction to the User's Guide here...*
 
 Contents:
 

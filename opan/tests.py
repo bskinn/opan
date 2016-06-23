@@ -62,6 +62,7 @@ if __name__ == '__main__':
 
     # Arguments for selecting test suites
     ALL = 'all'
+    BASE = 'base'
     CONST = 'const'
     ERROR = 'error'
     SUPERS = 'supers'
@@ -106,6 +107,9 @@ if __name__ == '__main__':
     gp_global.add_argument(PFX.format(SUPERS),
             action='store_true',
             help="Run tests for superclasses")
+    gp_global.add_argument(PFX.format(BASE),
+            action='store_true',
+            help="Run opan base-package tests")
 
     # ====  CONST  ==== #
     gp_const.add_argument(PFX.format(CONST),
@@ -154,6 +158,10 @@ if __name__ == '__main__':
 
     # Create the test suite to be compiled for running
     TestMasterSuite = unittest.TestSuite()
+
+    # Base tests
+    if any_params(params, [ALL, BASE]):
+        TestMasterSuite.addTest(opan.test.opan_base.suite())
 
     # Superclasses
     if any_params(params, [ALL, SUPERS]):
@@ -208,7 +216,10 @@ if __name__ == '__main__':
     # Create the text test runner and execute
     ttr = unittest.TextTestRunner(buffer=True,
                 verbosity=(2 if params['v'] else 1))
-    ttr.run(TestMasterSuite)
+    success = ttr.run(TestMasterSuite).wasSuccessful()
 
+    # Store success/fail code and return it
+    sys.exit(0 if success else 1)
 
 ## end main block
+

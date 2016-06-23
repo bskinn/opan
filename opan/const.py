@@ -21,18 +21,13 @@
 
 """Defines objects bearing assorted constants for Open Anharmonic.
 
-.. testsetup:: *
-
-    import opan, numpy as np
-
-
 Module-Level Members
 =========================
 
 Attributes
 ----------
 infty
-    |str| -- Infinity symbol from Unicode
+    |str| -- Unicode infinity symbol
 
 atom_num
     |dict| -- Atomic number lookup from element symbol
@@ -45,13 +40,15 @@ atom_sym
 
 
 Classes
-=============
+=======
 
 Overview
-~~~~~~~~~~
+~~~~~~~~
+
+.. _api-const-constclasses:
 
 Constants Classes
-------------------
+-----------------
 :class:`~opan.const.CIC` -- Application-internal code information constants
 
 :class:`~opan.const.DEF` -- Default values for parameters intended to be
@@ -65,13 +62,11 @@ non-user-adjustable
 .. :class:`~opan.const.SYMM` -- Constants relating to the point-group detection
    implementation in :mod:`opan.utils.symm`
 
-:class:`~opan.const.UNINIT` -- Constants representing un-initialized values
-
 :class:`~opan.const.UNITS` -- Functions returning text strings of
 units descriptions
 
 Enumeration Classes
-----------------------
+-------------------
 :class:`~opan.const.EnumIterMeta` -- Metaclass for iterable enumerations
 supporting membership testing with `in`
 
@@ -111,7 +106,7 @@ supporting membership testing with `in`
 
 
 API
-~~~~
+~~~
 
 """
 
@@ -153,15 +148,9 @@ class EnumIterMeta(type):
         for item in self.__dict__:
             if item == self.__dict__[item]:
                 yield item
-            ## end if
-        ## next item
-    ## end def __iter__
 
     def __contains__(self, value):
         return (value in self.__dict__ and value == self.__dict__[value])
-    ## end def __contains__
-
-## end class EnumIterType
 
 
 # ======  Enums  ====== #
@@ -294,7 +283,7 @@ class EnumFileType(OpanEnum):
 
     #: XYZ atomic coordinates, assumed to follow the `Open Babel XYZ
     #: specification <http://openbabel.org/docs/2.3.0/FileFormats/
-    #: XYZ_cartesian_coordinates_format.html>`_ |external link|
+    #: XYZ_cartesian_coordinates_format.html>`_ |extlink|
     XYZ = 'XYZ'
 
     #: Files containing nuclear gradient information
@@ -380,10 +369,10 @@ class EnumUnitsRotConst(OpanEnum):
     of interpretation/display of a rotational constant.
 
     String expressions of these units are provided in
-    :attr:`UNITS.rotConst`.
+    :attr:`UNITS.rot_const`.
 
-    #DOC: Add link to exposition(?) of how RotConst expression is developed,
-    once written.
+    .. todo:: Add link to exposition(?) of how RotConst expression is developed,
+              once written.
 
     **Enum Values**
 
@@ -482,24 +471,24 @@ class PHYS(object):
 
     #: |float| --
     #: Angstroms per Bohr radius (source: `NIST <http://physics.nist.gov/
-    #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |external link|)
+    #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |extlink|)
     ANG_PER_BOHR = 0.52917721067
 
     #: |float| --
     #: Electron mass per unified atomic mass unit (source: `NIST
     #: <http://physics.nist.gov/cgi-bin/cuu/Value?meu|
-    #: search_for=electron+mass>`__ |external link|)
+    #: search_for=electron+mass>`__ |extlink|)
     ME_PER_AMU = 1822.8885
 
     #: |float| --
     #: Seconds per atomic time unit (source: `NIST <http://physics.nist.gov/
-    #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |external link|)
+    #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |extlink|)
     SEC_PER_TA = 2.4188843265e-17
 
     #: |float| --
     #: Speed of light in atomic |units|, :math:`\frac{B}{T_a}`. Calculated from
     #: the `NIST <http://physics.nist.gov/cgi-bin/cuu/Value
-    #: ?c|search_for=speed+of+light>`__ |external link| value for the speed of
+    #: ?c|search_for=speed+of+light>`__ |extlink| value for the speed of
     #: light in vacuum, :math:`2.99792458e8\ \frac{m}{s}`, using
     #: :attr:`ANG_PER_BOHR` and :attr:`SEC_PER_TA` as conversion factors
     LIGHT_SPEED = 137.036
@@ -512,7 +501,7 @@ class PHYS(object):
     #: |float| --
     #: Reduced Planck constant, unity by definition in the atomic |units|
     #: of :math:`\mathrm{E_h\,T_a}`
-    PLANCK_BAR = 1
+    PLANCK_BAR = 1.0
 
 ## end class PHYS
 
@@ -573,7 +562,7 @@ class DEF(object):
 
     #: |dict| of |dict| --
     #: Dictionary of dictionaries of file extensions for geometry, gradient,
-    #: and hessian files from the various softwares.
+    #: hessian, etc. files from the various software suites.
     #:
     #: Access as :samp:`FILE_EXTS[{EnumSoftware}][{EnumFileType}]`
     FILE_EXTS = {
@@ -699,43 +688,18 @@ class SYMM(object):
 ## end class SYMM
 
 
-class UNINIT(object):
-    """Container for numerical values indicating an un-initialized parent
-        object.
-
-    #TODO: (?)UNINIT: Consider deprecating in favor of a custom Exception.
-
-    **Members**
-    """
-
-    # Empty doc comments trigger inclusion in the documentation
-    #: |int| --
-    UNSIGNED_INT = -1
-
-    #: |float| --
-    UNSIGNED_FLOAT = -1.0
-
-    #: |int| --
-    SIGNED_INT = 1234567890
-
-    #: |float| --
-    SIGNED_FLOAT = 1234567890.12345
-
-## end class UNINIT
-
-
 class UNITS(object):
     """Container for dicts providing strings describing the various display
     units available for physical quantities.
 
     Dictionary keys are the enum values provided in the corresponding
-    ``EU_xxxx`` class in this module (:mod:`opan.const`).
+    ``EnumUnits[...]`` class in this module (:mod:`opan.const`).
 
-    ================== =========================== =====================
-      Dictionary              Enum                  Physical Quantity
-    ================== =========================== =====================
-     :attr:`rotConst`   :attr:`EnumUnitsRotConst`   Rotational constant
-    ================== =========================== =====================
+    =================== =========================== =====================
+      Dictionary               Enum                  Physical Quantity
+    =================== =========================== =====================
+     :attr:`rot_const`   :attr:`EnumUnitsRotConst`   Rotational constant
+    =================== =========================== =====================
 
     """
 
@@ -747,7 +711,7 @@ class UNITS(object):
     from .const import EnumUnitsRotConst as _EUrc
 
     #: |dict| --
-    rotConst = {
+    rot_const = {
             _EUrc.INV_INERTIA :        "1/(amu*B^2)",
             _EUrc.ANGFREQ_ATOMIC :     "1/Ta",
             _EUrc.ANGFREQ_SECS :    "1/s",

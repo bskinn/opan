@@ -156,7 +156,7 @@ class OrcaOutput(object):
 
             COSMO outlying charge correction
 
-            *#DOC: Need COSMO reference*
+            .. todo:: Need COSMO reference
 
         .. attribute:: SCFFINAL
 
@@ -304,11 +304,11 @@ class OrcaOutput(object):
         |bool| --
         |True| if SCF converged ANYWHERE in run.
 
-        *#DOC Update oo.converged with any robustifications*
+        .. todo:: Update oo.converged with any robustifications
 
     .. attribute:: OrcaOutput.en
 
-        |dict| of |list| of |npfloat|_--
+        |dict| of |list| of |npfloat_|--
         Lists of the various energy values from the parsed output. Dict
         keys are those of :attr:`EN`, above.  Any energy type not found in the
         output is assigned as an empty list.
@@ -319,11 +319,11 @@ class OrcaOutput(object):
         |True| if any OPT converged ANYWHERE in run. Fine for OPT,
         but ambiguous for scans.
 
-        *#DOC Update oo.optimized with any robustifications*
+        .. todo:: Update oo.optimized with any robustifications
 
     .. attribute:: OrcaOutput.spincont
 
-        |dict| of |list| of |npfloat|_--
+        |dict| of |list| of |npfloat_|--
         Lists of the various values from the spin contamination calculations
         in the output, if present. Empty lists if absent. Dict keys are those
         of :attr:`SPINCONT`, above.
@@ -335,12 +335,9 @@ class OrcaOutput(object):
 
     .. attribute:: OrcaOutput.thermo
 
-        |dict| of |npfloat|_--
+        |dict| of |npfloat_|--
         Values from the thermochemistry block of the parsed output. Dict keys
         are those of :attr:`THERMO`, above.
-
-        *#TODO: OrcaOutput.thermo: Test on single-atom case, update
-        documentation to reflect outcome*
 
     .. attribute:: OrcaOutput.thermo_block
 
@@ -804,7 +801,7 @@ class OrcaOutput(object):
         Returns
         -------
         last_ens
-            |dict| of |npfloat|_--
+            |dict| of |npfloat_|--
             Energies from the last SCF present in the output.
 
         """

@@ -3,28 +3,77 @@
 Notational and Algebraic Conventions
 ====================================
 
-*Need to flesh out notes about conventions*:
+In order to aid comprehension, this documentation strives to obey the following
+formatting/notation conventions.
 
- * Upright sans-serif in equations when referring to code variable names
+**In text:**
 
- * Roman (serif) text in equations when referring to code functions/methods
+ * Function/method parameters are set in *italics*.
 
- * Italics in text when referring to mathematical symbols
+ * When not used for emphasis, **bold** text is used to set apart
+   words/phrases with specific contextual meaning.
 
- * Italics in text when referring to code functions or names
+ * Code snippets are set in fixed font, colored red, and
+   boxed: ``[v for v in range(6)]``.
 
- * N always refers to the number of atoms in the system of interest
+ * References to Python objects are set in fixed font, colored black
+   (in most cases), and boxed: :class:`~opan.xyz.OpanXYZ`. Where practical,
+   they will be linked to the relevant documentation (via
+   :mod:`~sphinx.ext.intersphinx`).
 
- * Where relevant, G refers to the number of geometries in an OpenBabel XYZ file
+ * Code examples are set in fixed font and boxed the full width of the
+   page::
 
- * Arbitrary integers represented as R, S, ...
+       from opan.utils.vector import proj
+       pvec = proj(vec1, vec2)
 
- * Where included, capitalized instructions [add list] are to be interpreted in
-   accordance with `RFC 2119 <http://tools.ietf.org/html/rfc2119>`__
+   Interactive usage examples are formatted like a Python console
+   session, as per :mod:`~sphinx.ext.doctest`:
 
- * [Others?]
+   >>> 1 + 2 + 3
+   6
+
+ * Where included, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+   "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+   "OPTIONAL" in this documentation are to be interpreted as described in
+   :rfc:`2119`.
+
+ * Mathematical symbols and engineering units are set as in equations, below.
+
+
+
+**In equations:**
+
+ * Roman variables are set in serif italics:
+   :math:`x + C`
+
+ * Lowercase Greek variables are set in italics:
+   :math:`\theta + \pi \over \gamma`
+
+ * Uppercase Greek variables are set in upright serif:
+   :math:`\Phi + \Theta`
+
+ * Vectors are set in bold, upright, serif Roman symbols:
+   :math:`\mathbf{r}_2 - \mathbf{r}_1`
+
+ * Matrices are set as bold, uppercase, serif Roman or Greek symbols:
+   :math:`\mathbf{M}\!^{^{^{-1}\!/_2}} \mathbf{F}
+   \mathbf{M}\!^{^{^{-1}\!/_2}}`
+
+ * Engineering units are set in upright Roman (serif) equation type:
+   :math:`\left(\mathrm{E_h\over B^2}\right)`
+
+
+**Common symbols:**
+
+ * :math:`N` -- the number of atoms in the system of interest
+
+ * :math:`G` -- the number of geometries in an OpenBabel XYZ file
+
+ * :math:`R, S, ...` -- Arbitrary integers 
+
 
 
 .. toctree:
-   :maxdepth: 2
+    :maxdepth: 2
 

@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -36,13 +36,12 @@ sys.path.insert(0, os.path.abspath('../..'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-#    'numpydoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
+    #'sphinx.ext.ifconfig',
 ]
 
 # napoleon configuration
@@ -161,9 +160,9 @@ rst_epilog = """
 
 .. |re.compile| replace:: :func:`re.compile`
 
-.. |npfloat| replace:: ``np.float_``
+.. |npfloat_| replace:: :mod:`np.float_ <numpy.doc.basics>`
 
-.. _npfloat: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
+.. |npfloat| replace:: ``np.float``
 
 .. |nparray| replace:: :obj:`np.array <numpy.ndarray>`
 
@@ -172,11 +171,6 @@ rst_epilog = """
     <br />
 
 """
-#.. |str| replace:: `str`
-#.. _str: https://docs.python.org/2.7/library/functions.html#str
-#.. _bool: https://docs.python.org/2.7/library/functions.html#bool
-#.. _float: https://docs.python.org/2.7/library/functions.html#float
-#.. _int: https://docs.python.org/2.7/library/functions.html#int
 
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
@@ -371,5 +365,6 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3.5', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'scipy': ('http://docs.scipy.org/doc/scipy/reference', None),
-    'h5py': ('http://docs.h5py.org/en/latest/', None)
+    'h5py': ('http://docs.h5py.org/en/latest/', None),
+    'sphinx': ('http://www.sphinx-doc.org/en/stable/', None)
     }

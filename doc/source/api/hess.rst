@@ -5,7 +5,7 @@ opan.hess
 
 
 .. automodule:: opan.hess
-   :show-inheritance:
+    :show-inheritance:
 
 
 

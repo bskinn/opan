@@ -9,13 +9,13 @@ opan.utils
 
 
 .. toctree::
-   :hidden:
+    :hidden:
 
-   utils/decorate
-   utils/execute
-   utils/inertia
-   utils/symm
-   utils/vector
+    utils/decorate
+    utils/execute
+    utils/inertia
+    utils/symm
+    utils/vector
 
 
 
