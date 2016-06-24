@@ -28,12 +28,17 @@ Open Anharmonic is available on PyPI as ``opan``::
     pip install opan
 
 See the :doc:`dependencies page <dependencies>` for package dependencies
-and compatible versions.
+and compatible versions. Note that due to common complications on Windows
+systems, dependencies are **NOT** set to automatically install.
 
 The source repository for Open Anharmonic can be found at:
 
     https://www.github.com/bskinn/opan
 
+Bug reports and feature requests can be submitted as GitHub Issues. Other
+feedback is welcomed at::
+
+    bskinn at alum dot mit dot edu
 
 **Contents**
 
@@ -47,7 +52,7 @@ The source repository for Open Anharmonic can be found at:
     Dependencies <dependencies>
     units
     references
-    doc_todo
+.. doc_todo
 
 
 **Indices and Tables**

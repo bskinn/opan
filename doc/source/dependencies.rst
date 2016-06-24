@@ -16,7 +16,7 @@ Unix/Linux and MacOS users should likely be able to obtain suitable
 versions of these packages either through ``pip`` or the respective
 OS package managers.  Windows users should obtain these packages either
 via `anaconda <https://www.continuum.io/downloads>`__
-or from Christoph Gohlke's
+(or a similar prepackaged environment) or from Christoph Gohlke's
 `'aftermarket' repository <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`__.
 
 
