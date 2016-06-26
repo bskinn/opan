@@ -9,7 +9,10 @@ Welcome to Open Anharmonic!
 
 Open Anharmonic is a Python wrapper for computational chemistry
 software packages intended to enable VPT2 computation of anharmonic
-vibrational constants. Other types of calculations are under consideration.
+vibrational constants. The code is still in the preliminary stages of
+development; no VPT2 functionality is yet available.
+
+Other types of calculations are under consideration.
 
 An adjunct goal of the project is to expose an API providing
 convenient access to various results of standalone calculations.
