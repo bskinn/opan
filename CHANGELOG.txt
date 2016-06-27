@@ -1,0 +1,10 @@
+Changelog for Open Anharmonic
+
+
+v0.4rc1
+====================
+
+[release is complete except for some User's Guide content; 
+code should not change]
+
+* [list stuff here]
