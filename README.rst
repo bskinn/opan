@@ -11,7 +11,8 @@ vibrational constants. No VPT2 functionality is implemented as yet.
 Other types of calculations are under consideration.
 
 An adjunct goal of the project is to expose an API providing
-convenient access to various results of standalone calculations.
+convenient access to various results of standalone calculations, as well
+as tools to manipulate those results.
 
 The project source can be found at GitHub:
 `bskinn/opan <https://www.github.com/bskinn/opan>`__

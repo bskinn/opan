@@ -9,7 +9,8 @@ Open Anharmonic is a Python wrapper for computational chemistry
 Other types of calculations are under consideration.
 
 An adjunct goal of the project is to expose an API providing
-  convenient access to various results of standalone calculations.
+  convenient access to various results of standalone calculations, as well
+  as tools to manipulate those results.
 
 Any branches with a prefixed `v.` are volatile (under active
   development). The history there may be rewritten dramatically, 

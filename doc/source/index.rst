@@ -15,7 +15,8 @@ development; no VPT2 functionality is yet available.
 Other types of calculations are under consideration.
 
 An adjunct goal of the project is to expose an API providing
-convenient access to various results of standalone calculations.
+convenient access to various results of standalone calculations, as well
+as tools to manipulate those results.
 In particular, :class:`~opan.xyz.OpanXYZ` and the subclasses of
 :class:`~opan.grad.SuperOpanGrad` and
 :class:`~opan.hess.SuperOpanHess` are anticipated to be particularly

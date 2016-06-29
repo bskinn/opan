@@ -15,7 +15,7 @@ setup(
     license='The MIT License',
     author='Brian Skinn',
     author_email='bskinn@alum.mit.edu',
-    description='Open Anharmonic',
+    description='Open Anharmonic -- A computational chemistry toolkit',
     classifiers=['License :: OSI Approved :: MIT License',
                  'Natural Language :: English',
                  'Intended Audience :: Science/Research',
