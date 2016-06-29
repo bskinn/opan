@@ -1,5 +1,9 @@
 from setuptools import setup
 
+def readme():
+    with open('README.rst') as f:
+        return f.read()
+
 setup(
     name='opan',
     version='0.4rc1',
@@ -16,6 +20,7 @@ setup(
     author='Brian Skinn',
     author_email='bskinn@alum.mit.edu',
     description='Open Anharmonic -- A computational chemistry toolkit',
+    long_description=readme(),
     classifiers=['License :: OSI Approved :: MIT License',
                  'Natural Language :: English',
                  'Intended Audience :: Science/Research',

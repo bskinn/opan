@@ -16,13 +16,16 @@ as tools to manipulate those results.
 
 The project source can be found at GitHub:
 `bskinn/opan <https://www.github.com/bskinn/opan>`__
+(`v0.4rc1 CHANGELOG
+<https://github.com/bskinn/opan/blob/v0.4rc1/CHANGELOG.txt>`__)
 
-Documentation can be found at
-`Read the Docs <https://www.readthedocs.org>`__:
+Documentation can be found at `readthedocs.org
+<http://www.readthedocs.org>`__:
 
 .. image:: https://readthedocs.org/projects/opan/badge/?version=latest
-:target: http://opan.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+    :target: http://opan.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
-.. `QuantifiedCode <https://www.quantifiedcode.com>`__ project analysis of
-.. `dev` branch: [![Code Issues](https://www.quantifiedcode.com/api/v1/project/db4810dd64384181b085fdd03d951f9b/badge.svg)](https://www.quantifiedcode.com/app/project/db4810dd64384181b085fdd03d951f9b)
+|
+
+
