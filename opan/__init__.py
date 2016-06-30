@@ -25,5 +25,6 @@ __all__ = ['const', 'error', 'xyz', 'grad', 'hess', 'output',
 
 from . import *
 
+__version__ = '0.4rc1'
 
 

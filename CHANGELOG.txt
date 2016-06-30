@@ -1,0 +1,36 @@
+Changelog for Open Anharmonic
+
+
+v0.4rc1
+===============================================================================
+
+The v0.4 release is functionally complete, and is only missing some
+User's Guide content.  Barring reporting of major bugs, v0.4rc1 will
+become v0.4 once this content is drafted.
+
+Classes/modules with no currently planned additional functionality:
+
+* OpanXYZ
+* OrcaEngrad
+* OrcaHess
+* utils.inertia
+
+Classes/modules with some functionality, but planned augmentation/alteration:
+
+* OrcaOutput
+* utils.execute
+
+Modules with stable functionality, but which will likely have future additions:
+
+* const
+* error
+* utils
+* utils.decorate
+* utils.vector
+
+Non-functional modules, with future implementation planned:
+
+* utils.symm
+* vpt2
+
+
