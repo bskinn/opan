@@ -37,7 +37,7 @@ gradient data from external computational packages.
  *  The import for each external software package SHOULD have
     its own subclass.
 
- *  Each subclass MUST implement a ``load(**kwargs)`` instance method
+ *  Each subclass MUST implement a ``_load(self, **kwargs)`` instance method
     as the entry point for import of gradient data.
 
  *  The gradient data MUST be stored:
@@ -46,7 +46,7 @@ gradient data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from ``np.float``
+    *   With `dtype` descended from |npfloat|
 
     *   In |units| of Hartrees per Bohr
         :math:`\\left(\\frac{\\mathrm{E_h}}{\\mathrm B}\\right)`
@@ -74,7 +74,7 @@ gradient data from external computational packages.
 
     *   As a one-dimensional |nparray|
 
-    *   With `dtype` descended from ``np.float``
+    *   With `dtype` descended from |npfloat|
 
     *   In |units| of Bohrs :math:`\\left(\\mathrm B\\right)`
 
@@ -130,7 +130,7 @@ class SuperOpanGrad(object):
 
     1.  Ensures that the abstract superclass is not being instantiated,
         but instead a subclass.
-    2.  Calls the ``load()`` method on the subclass, passing all `kwargs`
+    2.  Calls the ``_load()`` method on the subclass, passing all `kwargs`
         through unmodified.
     3.  Typechecks the ``self.gradient``, ``self.geom``, and
         ``self.atom_syms`` required members for existence, proper data type,
@@ -169,9 +169,9 @@ class SuperOpanGrad(object):
             raise NotImplementedError("SuperOpanGrad base class is abstract")
         ## end if
 
-        # Call the subclass load method, passing in the keyword arguments
+        # Call the subclass _load method, passing in the keyword arguments
         #  wholesale
-        self.load(**kwargs)
+        self._load(**kwargs)
 
         # Define common error source string
         srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
@@ -225,7 +225,7 @@ class SuperOpanGrad(object):
         Parameters
         ----------
         coords
-            length-3N |npfloat|_ --
+            length-3N |npfloat_| --
             Vector of stacked 'lab-frame' Cartesian coordinates
 
         atoms
@@ -276,7 +276,7 @@ class OrcaEngrad(SuperOpanGrad):
 
     **Methods**
 
-    .. automethod:: load
+    .. automethod:: _load
 
     |
 
@@ -323,12 +323,12 @@ class OrcaEngrad(SuperOpanGrad):
 
     .. attribute:: OrcaEngrad.geom
 
-        length-3N |npfloat|_ -- Vector of the atom coordinates
+        length-3N |npfloat_| -- Vector of the atom coordinates
         in :math:`\\mathrm B`.
 
     .. attribute:: OrcaEngrad.gradient
 
-        length-3N |npfloat|_ -- Vector of the Cartesian gradient in
+        length-3N |npfloat_| -- Vector of the Cartesian gradient in
         :math:`\\frac{\\mathrm{E_h}}{\\mathrm B}`.
 
     .. attribute:: OrcaEngrad.in_str
@@ -437,7 +437,7 @@ class OrcaEngrad(SuperOpanGrad):
 
     ## end class Pat
 
-    def load(self, **kwargs):
+    def _load(self, **kwargs):
         """ Initialize :class:`OrcaEngrad` object from .engrad file
 
         Searches indicated file for energy, geometry, gradient, and number

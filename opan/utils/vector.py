@@ -64,24 +64,24 @@ def ortho_basis(normal, ref_vec=None):
     Parameters
     ----------
     normal
-        length-3 |npfloat|_ --
+        length-3 |npfloat_| --
         The orthonormal basis output will span the plane perpendicular
         to `normal`.
 
     ref_vec
-        length-3 |npfloat|_, optional --
+        length-3 |npfloat_|, optional --
         If specified, `on1` will be the normalized projection of `ref_vec`
         onto the plane perpendicular to `normal`. Default is |None|.
 
     Returns
     -------
     on1
-        length-3 |npfloat|_ --
+        length-3 |npfloat_| --
         First vector defining the orthonormal basis in the plane
         normal to `normal`
 
     on2
-        length-3 |npfloat|_ --
+        length-3 |npfloat_| --
         Second vector defining the orthonormal basis in the plane
         normal to `normal`
 
@@ -190,11 +190,11 @@ def orthonorm_check(a, tol=_DEF.ORTHONORM_TOL, report=False):
     Parameters
     ----------
     a
-        R x S |npfloat|_ --
+        R x S |npfloat_| --
         2-D array of column vectors to be checked for orthonormality.
 
     tol
-        |npfloat|_, optional --
+        |npfloat_|, optional --
         Tolerance for deviation of dot products from one or zero. Default
         value is :data:`opan.const.DEF.ORTHONORM_TOL`.
 
@@ -293,11 +293,11 @@ def parallel_check(vec1, vec2):
     Parameters
     ----------
     vec1
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         First vector to compare
 
     vec2
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Second vector to compare
 
     Returns
@@ -351,17 +351,17 @@ def proj(vec, vec_onto):
     Parameters
     ----------
     vec
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Vector to project
 
     vec_onto
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Vector onto which `vec` is to be projected
 
     Returns
     -------
     proj_vec
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Projection of `vec` onto `vec_onto`
 
     """
@@ -403,17 +403,17 @@ def rej(vec, vec_onto):
     Parameters
     ----------
     vec
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Vector to reject
 
     vec_onto
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Vector onto which `vec` is to be rejected
 
     Returns
     -------
     rej_vec
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Rejection of `vec` onto `vec_onto`
 
     """
@@ -445,17 +445,17 @@ def vec_angle(vec1, vec2):
     Parameters
     ----------
     vec1
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         First vector
 
     vec2
-        length-R |npfloat|_ --
+        length-R |npfloat_| --
         Second vector
 
     Returns
     -------
     angle
-        |npfloat|_ --
+        |npfloat_| --
         Angle between the two vectors in degrees
 
     """

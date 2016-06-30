@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# Hacky local script for testing a variety of combinations
+# of Python and numpy/scipy/h5py versions. First attempted to use
+# tox, but numpy, scipy and h5py were behaving very badly
+# with it for some reason (appears that tox is caching
+# some of the built packages, causing cross-compilation
+# problems?). Ended up that moving the h5py import to the
+# test runner section fixed the glitches, per here:
+#
+#  https://bitbucket.org/hpk42/tox/issues/42/dependencies-
+#          should-be-installed-one-at-a#comment-1787511
+#
+# But, for posterity, this is what I did until I came across
+# the above solution.
+#
+# If anyone reading this wants to use it:
+#
+# 1) Create one or more virtualenvs in the *PARENT*
+#    directory above this one, with directory
+#    name(s) starting with "env"
+#
+# 2) Populate each virtualenv with (at least) the
+#    versions of numpy, scipy and h5py to be
+#    tested.
+#
+# 3) Run this script (./testall)
+#
+# The results should be collected neatly into ./testresults
+#
+
+# Initialize the summary string
+summary="  SUMMARY\n=========================\n"
+
+# Exit any current virtualenv; ignore output
+deactivate > /dev/null 2>&1
+
+# Switch to package folder
+cd opan
+
+# Store the filename
+fname="../testresults"
+
+# Clobber the test result file with the date/time
+date > "$fname"
+echo -e "\n" >> "$fname"
+
+# Halt if no folders found
+ls -1 ../../env* > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+   echo -e "No virtualenvs found.\n" >> "$fname"
+   cd - > /dev/null
+   exit 0
+fi
+
+# Pull all the env folders in the loop
+for fld in ../../env*
+do
+   # Activate the virtualenv
+   source "$fld/bin/activate"
+
+   # Inform of current virtualenv
+   echo "Now testing with $fld..."
+
+   # Store virtualenv name to summary
+   summary="$summary$fld: "
+   # Informative header
+   echo "***********************************************************" >> $fname
+   echo "$fld" >> "$fname"
+   python --version >> "$fname" 2>&1
+   if [ $? -eq 0 ]
+   then
+      pip freeze | grep -E '^(h5py|numpy|scipy)' >> "$fname"
+
+      if [ $? -eq 0 ]
+      then
+         # Run the tests, dumped to file
+         python tests.py --all 2>> "$fname"
+         if [ $? -eq 0 ]
+         then
+            summary="$summary OK\n"
+         else
+            summary="$summary FAILED\n"
+         fi
+         echo -e "\n" >> "$fname"
+      fi
+   fi
+
+   # Leave the virtualenv
+   deactivate
+
+done
+
+# Dump the summary
+echo -e "$summary" >> "$fname"
+
+# Return to main dir
+cd - > /dev/null
+

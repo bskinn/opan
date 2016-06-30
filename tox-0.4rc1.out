@@ -1,0 +1,535 @@
+GLOB sdist-make: /home/pydev/py/opan/setup.py
+py34-h24-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.12
+py34-h24-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py34-h24-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h24-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py34-h24-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h24-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.12/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.12/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py34-h24-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.835s
+
+OK
+py34-h24-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.17
+py34-h24-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py34-h24-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h24-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py34-h24-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h24-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.17/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h24-n1.10-s0.17/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py34-h24-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.686s
+
+OK
+py34-h24-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.12
+py34-h24-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py34-h24-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h24-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py34-h24-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h24-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.12/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.12/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py34-h24-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.661s
+
+OK
+py34-h24-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.17
+py34-h24-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py34-h24-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h24-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py34-h24-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h24-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.17/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h24-n1.11-s0.17/lib/python3.4/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py34-h24-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.506s
+
+OK
+py34-h25-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.12
+py34-h25-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py34-h25-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h25-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py34-h25-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h25-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.12/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.12/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py34-h25-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.658s
+
+OK
+py34-h25-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.17
+py34-h25-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py34-h25-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h25-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py34-h25-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h25-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.17/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h25-n1.10-s0.17/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py34-h25-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.666s
+
+OK
+py34-h25-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.12
+py34-h25-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py34-h25-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h25-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py34-h25-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h25-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.12/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.12/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py34-h25-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.721s
+
+OK
+py34-h25-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.17
+py34-h25-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py34-h25-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h25-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py34-h25-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h25-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.17/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h25-n1.11-s0.17/lib/python3.4/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py34-h25-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.927s
+
+OK
+py34-h26-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h26-n1.10-s0.12
+py34-h26-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py34-h26-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h26-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py34-h26-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h26-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h26-n1.10-s0.12/lib/python3.4/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py34-h26-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.821s
+
+OK
+py34-h26-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h26-n1.10-s0.17
+py34-h26-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py34-h26-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h26-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py34-h26-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h26-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h26-n1.10-s0.17/lib/python3.4/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py34-h26-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.884s
+
+OK
+py34-h26-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py34-h26-n1.11-s0.12
+py34-h26-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py34-h26-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h26-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py34-h26-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py34-h26-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h26-n1.11-s0.12/lib/python3.4/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py34-h26-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.088s
+
+OK
+py34-h26-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py34-h26-n1.11-s0.17
+py34-h26-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py34-h26-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py34-h26-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py34-h26-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py34-h26-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py34-h26-n1.11-s0.17/lib/python3.4/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py34-h26-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.752s
+
+OK
+py35-h24-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.12
+py35-h24-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py35-h24-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h24-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py35-h24-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h24-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.12/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.12/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py35-h24-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.096s
+
+OK
+py35-h24-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.17
+py35-h24-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py35-h24-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h24-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py35-h24-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h24-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.17/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h24-n1.10-s0.17/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py35-h24-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.884s
+
+OK
+py35-h24-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.12
+py35-h24-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py35-h24-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h24-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py35-h24-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h24-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.12/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.12/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py35-h24-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.555s
+
+OK
+py35-h24-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.17
+py35-h24-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py35-h24-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h24-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py35-h24-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h24-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.4,<2.5
+Collecting h5py<2.5,>=2.4
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.17/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h24-n1.11-s0.17/lib/python3.5/site-packages (from h5py<2.5,>=2.4)
+Installing collected packages: h5py
+Successfully installed h5py-2.4.0
+py35-h24-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.411s
+
+OK
+py35-h25-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.12
+py35-h25-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py35-h25-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h25-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py35-h25-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h25-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.12/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.12/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py35-h25-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.652s
+
+OK
+py35-h25-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.17
+py35-h25-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py35-h25-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h25-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py35-h25-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h25-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.17/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h25-n1.10-s0.17/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py35-h25-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.342s
+
+OK
+py35-h25-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.12
+py35-h25-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py35-h25-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h25-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py35-h25-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h25-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.12/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.12/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py35-h25-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.771s
+
+OK
+py35-h25-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.17
+py35-h25-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py35-h25-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h25-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py35-h25-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h25-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.5,<2.6
+Collecting h5py<2.6,>=2.5
+Requirement already satisfied (use --upgrade to upgrade): Cython>=0.17 in /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.17/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Collecting six (from h5py<2.6,>=2.5)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h25-n1.11-s0.17/lib/python3.5/site-packages (from h5py<2.6,>=2.5)
+Installing collected packages: six, h5py
+Successfully installed h5py-2.5.0 six-1.10.0
+py35-h25-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.044s
+
+OK
+py35-h26-n1.10-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.10-s0.12
+py35-h26-n1.10-s0.12 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.12,<0.13
+py35-h26-n1.10-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.10-s0.12 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.12.1
+py35-h26-n1.10-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.10-s0.12 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.10-s0.12/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.10-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.531s
+
+OK
+py35-h26-n1.10-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.10-s0.17
+py35-h26-n1.10-s0.17 installdeps: Cython, numpy>=1.10,<1.11, scipy>=0.17,<0.18
+py35-h26-n1.10-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.10-s0.17 installed: Cython==0.24,numpy==1.10.4,opan==0.4.0,scipy==0.17.1
+py35-h26-n1.10-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.10-s0.17 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.10-s0.17/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.10-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.278s
+
+OK
+py35-h26-n1.11-s0.12 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.12
+py35-h26-n1.11-s0.12 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.12,<0.13
+py35-h26-n1.11-s0.12 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.12 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.12.1
+py35-h26-n1.11-s0.12 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.12 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.12/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.12 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.982s
+
+OK
+py35-h26-n1.11-s0.17 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.17
+py35-h26-n1.11-s0.17 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.17,<0.18
+py35-h26-n1.11-s0.17 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.17 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.17.1
+py35-h26-n1.11-s0.17 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.17 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.17/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.17 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.829s
+
+OK
+py35-h26-n1.11-s0.13 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.13
+py35-h26-n1.11-s0.13 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.13,<0.14
+py35-h26-n1.11-s0.13 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.13 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.13.3
+py35-h26-n1.11-s0.13 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.13 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.13/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.13 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.581s
+
+OK
+py35-h26-n1.11-s0.14 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.14
+py35-h26-n1.11-s0.14 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.14,<0.15
+py35-h26-n1.11-s0.14 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.14 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.14.1
+py35-h26-n1.11-s0.14 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.14 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.14/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.14 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.062s
+
+OK
+py35-h26-n1.11-s0.15 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.15
+py35-h26-n1.11-s0.15 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.15,<0.16
+py35-h26-n1.11-s0.15 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.15 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.15.1
+py35-h26-n1.11-s0.15 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.15 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.15/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.15 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 2.743s
+
+OK
+py35-h26-n1.11-s0.16 recreate: /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.16
+py35-h26-n1.11-s0.16 installdeps: Cython, numpy>=1.11,<1.12, scipy>=0.16,<0.17
+py35-h26-n1.11-s0.16 inst: /home/pydev/py/opan/.tox/dist/opan-0.4.0.zip
+py35-h26-n1.11-s0.16 installed: Cython==0.24,numpy==1.11.0,opan==0.4.0,scipy==0.16.1
+py35-h26-n1.11-s0.16 runtests: PYTHONHASHSEED='2069089020'
+py35-h26-n1.11-s0.16 runtests: commands[0] | pip install h5py>=2.6,<2.7
+Collecting h5py<2.7,>=2.6
+Requirement already satisfied (use --upgrade to upgrade): numpy>=1.6.1 in /home/pydev/py/opan/.tox/py35-h26-n1.11-s0.16/lib/python3.5/site-packages (from h5py<2.7,>=2.6)
+Collecting six (from h5py<2.7,>=2.6)
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Installing collected packages: six, h5py
+Successfully installed h5py-2.6.0 six-1.10.0
+py35-h26-n1.11-s0.16 runtests: commands[1] | python tests.py --all
+..............................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 318 tests in 3.019s
+
+OK
+___________________________________ summary ____________________________________
+  py34-h24-n1.10-s0.12: commands succeeded
+  py34-h24-n1.10-s0.17: commands succeeded
+  py34-h24-n1.11-s0.12: commands succeeded
+  py34-h24-n1.11-s0.17: commands succeeded
+  py34-h25-n1.10-s0.12: commands succeeded
+  py34-h25-n1.10-s0.17: commands succeeded
+  py34-h25-n1.11-s0.12: commands succeeded
+  py34-h25-n1.11-s0.17: commands succeeded
+  py34-h26-n1.10-s0.12: commands succeeded
+  py34-h26-n1.10-s0.17: commands succeeded
+  py34-h26-n1.11-s0.12: commands succeeded
+  py34-h26-n1.11-s0.17: commands succeeded
+  py35-h24-n1.10-s0.12: commands succeeded
+  py35-h24-n1.10-s0.17: commands succeeded
+  py35-h24-n1.11-s0.12: commands succeeded
+  py35-h24-n1.11-s0.17: commands succeeded
+  py35-h25-n1.10-s0.12: commands succeeded
+  py35-h25-n1.10-s0.17: commands succeeded
+  py35-h25-n1.11-s0.12: commands succeeded
+  py35-h25-n1.11-s0.17: commands succeeded
+  py35-h26-n1.10-s0.12: commands succeeded
+  py35-h26-n1.10-s0.17: commands succeeded
+  py35-h26-n1.11-s0.12: commands succeeded
+  py35-h26-n1.11-s0.17: commands succeeded
+  py35-h26-n1.11-s0.13: commands succeeded
+  py35-h26-n1.11-s0.14: commands succeeded
+  py35-h26-n1.11-s0.15: commands succeeded
+  py35-h26-n1.11-s0.16: commands succeeded
+  congratulations :)

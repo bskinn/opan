@@ -8,9 +8,9 @@ opan.vpt2
 
 
 .. toctree::
-   :hidden:
+    :hidden:
 
-   vpt2/repo
+    vpt2/repo
 
 
 

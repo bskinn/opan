@@ -1,8 +1,15 @@
-from distutils.core import setup
+from setuptools import setup
+
+def readme():
+    with open('README.rst') as f:
+        return f.read()
 
 setup(
     name='opan',
-    version='0.4.0',
+    version='0.4rc1',
+    provides=['opan'],
+    requires=['numpy (>=1.10)', 'scipy (>=0.12)', 'h5py (>=2.4)'],
+    zip_safe=False,
     packages=['opan', 'opan.test', 'opan.utils', 'opan.vpt2'],
     package_data={'opan': ['test/resource/test.trj',
                            'test/resource/inertia/*.hess',
@@ -12,12 +19,15 @@ setup(
     license='The MIT License',
     author='Brian Skinn',
     author_email='bskinn@alum.mit.edu',
-    description='Open Anharmonic',
+    description='Open Anharmonic -- A computational chemistry toolkit',
+    long_description=readme(),
     classifiers=['License :: OSI Approved :: MIT License',
                  'Natural Language :: English',
-                 'Environment :: Console',
                  'Intended Audience :: Science/Research',
                  'Operating System :: OS Independent',
                  'Programming Language :: Python :: 3 :: Only',
+                 'Programming Language :: Python :: 3.4',
+                 'Programming Language :: Python :: 3.5',
+                 'Development Status :: 3 - Alpha',
                  'Topic :: Scientific/Engineering :: Chemistry']
 )

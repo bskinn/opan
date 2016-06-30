@@ -5,7 +5,7 @@ opan.xyz
 
 
 .. automodule:: opan.xyz
-   :show-inheritance:
+    :show-inheritance:
 
 
 

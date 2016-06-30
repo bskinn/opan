@@ -26,10 +26,7 @@ Other Units
    convert angular frequencies into cyclic frequencies.
 
  * :math:`\mathrm{u}` -- unified atomic mass unit; equal to :math:`1822.8885\ \mathrm{m_e}`
-   (`source <http://physics.nist.gov/cgi-bin/cuu/Value?meu|search_for=u+in+electron+mass>`__
-   |extlink|) or :math:`1.660539040\times 10^{-27}\ \mathrm{kg}`
-   (`source <http://physics.nist.gov/cgi-bin/cuu/Value?ukg|search_for=atomic+mass>`__
-   |extlink|)
+   [NISTCUU_me_u]_ or :math:`1.660539040\times 10^{-27}\ \mathrm{kg}` [NISTCUU_u_kg]_.
 
 
 

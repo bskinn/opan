@@ -33,11 +33,11 @@ from ..const import DEF as _DEF, EnumSoftware as _E_SW, EnumFileType as _E_FT
 
 # Functions
 
-def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
-            sim_name="orcarun", \
-            inp_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.INPUTFILE], \
-            out_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.OUTPUT], \
-            wait_to_complete=True, \
+def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"),
+            sim_name="orcarun",
+            inp_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.INPUTFILE],
+            out_ext=_DEF.FILE_EXTS[_E_SW.ORCA][_E_FT.OUTPUT],
+            wait_to_complete=True,
             bohrs=False):
     """Executes |orca| on a dynamically constructed input file.
 
@@ -62,8 +62,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
     wrapper script completes.
     If |False|, *[indicate what will be returned if not waiting]*.
 
-    *#!DOC: execute_orca: The different output modes, depending on waiting
-    or not.*
+    .. todo:: execute_orca: The different output modes, depending on waiting
+              or not.
 
     The command to call |orca| must be specified in the parameter list syntax of
     the `args` argument to the :class:`subprocess.Popen` constructor.
@@ -175,7 +175,8 @@ def execute_orca(inp_tp, work_dir, exec_cmd, subs=None, subs_delims=("<",">"), \
 
     Returns
     -------
-    |tuple| of objects or |int| PID
+    [varies]
+        |tuple| of objects or |int| PID.
         Varies depending on `wait_to_complete`; see *Return Values* above
 
 

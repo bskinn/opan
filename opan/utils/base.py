@@ -59,7 +59,7 @@ def pack_tups(*args):
 
     No structural conversion is attempted on the arguments.
 
-    If all inputs are non-iterable, a list containing a single `tuple` will be
+    If all inputs are non-iterable, a list containing a single |tuple| will be
     returned.
 
     Parameters
@@ -73,7 +73,7 @@ def pack_tups(*args):
     tups
         |list| of |tuple| --
         Number of tuples returned is equal to the length of the iterables
-        passed in ``*args``
+        passed in `*args`
 
     Raises
     ------
@@ -156,7 +156,7 @@ def delta_fxn(a, b):
     delta
         |int| --
         Value of Kronecker delta for provided indices, as tested by
-        Python "`==`"
+        Python ``==``
 
     """
 
@@ -261,7 +261,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
     Parameters
     ----------
     c1
-        length-3N |npfloat|_ --
+        length-3N |npfloat_| --
         Vector of first set of stacked 'lab-frame' Cartesian coordinates
 
     a1
@@ -269,7 +269,7 @@ def check_geom(c1, a1, c2, a2, tol=_DEF.XYZ_COORD_MATCH_TOL):
         Vector of first set of atom symbols or atomic numbers
 
     c2
-        length-3N |npfloat|_ --
+        length-3N |npfloat_| --
         Vector of second set of stacked 'lab-frame' Cartesian coordinates
 
     a2
