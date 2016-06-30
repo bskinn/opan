@@ -177,7 +177,7 @@ rst_epilog = """
 #keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False #True
+todo_include_todos = True
 
 
 # -- Options for HTML output ----------------------------------------------

@@ -56,7 +56,7 @@ feedback is welcomed at::
     Dependencies <dependencies>
     units
     references
-.. doc_todo
+    doc_todo
 
 
 **Indices and Tables**
