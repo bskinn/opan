@@ -21,12 +21,15 @@
 """Utility functions for Open Anharmonic, including execution automation.
 
 
-**Sub-Modules**
+**Submodules**
 
 :mod:`~opan.utils.decorate` -- Custom Open Anharmonic decorators
 
 :mod:`~opan.utils.execute` -- Functions for execution of external computational
 software packages
+
+:mod:`~opan.utils.freq` -- Tools for calculating harmonic-oscillator
+frequencies and related quantities
 
 :mod:`~opan.utils.inertia` -- Inertia-related tools (center of mass,
 rotational constants, principal moments/axes, etc.)
@@ -60,7 +63,7 @@ rotational constants, principal moments/axes, etc.)
 
 from __future__ import absolute_import
 
-__all__ = ['decorate', 'execute', 'inertia', 'symm', 'vector']
+__all__ = ['decorate', 'execute', 'freq', 'inertia', 'symm', 'vector']
 
 from . import *
 from .base import check_geom, delta_fxn, make_timestamp, pack_tups

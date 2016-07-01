@@ -29,6 +29,8 @@ displayed with the ``np`` package abbreviation.
 
     * :mod:`~opan.utils.execute`
 
+    * :mod:`~opan.utils.freq`
+
     * :mod:`~opan.utils.inertia`
 
     * :mod:`~opan.utils.symm`

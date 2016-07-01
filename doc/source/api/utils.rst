@@ -13,6 +13,7 @@ opan.utils
 
     utils/decorate
     utils/execute
+    utils/freq
     utils/inertia
     utils/symm
     utils/vector

@@ -43,6 +43,12 @@ class TestOpanBaseImports(unittest.TestCase):
         except Exception:
             self.fail(msg="H5Py import failed.")
 
+    def test_OpanBaseImportOpan(self):
+        try:
+            import opan
+        except Exception:
+            self.fail(msg="opan import failed.")
+
 
 def suite():
     s = unittest.TestSuite()

@@ -49,11 +49,15 @@ class arraysqueeze(object):
     beyond the range of the actual `\*args` of the decorated
     function are ignored.
 
-    .. warning:: Likely fragile with optional arguments; needs to be tested.
+    .. warning::
+
+        Do not use for optional arguments!
 
     Arguments
     ---------
-    \*args : |int| or |str|
+    \*args
+
+        |int| or |str| --
         Arguments to convert to squeezed |nparray|.
 
 
@@ -71,13 +75,11 @@ class arraysqueeze(object):
         for arg in args:
             if not (isinstance(arg, int) or isinstance(arg, str)):
                 raise ValueError("Invalid decorator argument: {0}".format(arg))
-            ## end if
-        ## next arg
 
         # If all ok, store
         self.arglist = args
 
-    ## end def __init__
+    # end def __init__
 
     def __call__(self, f):
         """ Call the wrapped function after arraysqueezing selected arguments.
@@ -102,27 +104,27 @@ class arraysqueeze(object):
                     w_args[mod_arg] = np.array(w_args[mod_arg]).squeeze()
                     if not w_args[mod_arg].shape:
                         w_args[mod_arg] = w_args[mod_arg][np.newaxis]
-                    ## end if
+
                 elif isinstance(mod_arg, str) and mod_arg in kwargs:
                     kwargs[mod_arg] = np.array(kwargs[mod_arg]).squeeze()
                     if not kwargs[mod_arg].shape:
                         kwargs[mod_arg] = kwargs[mod_arg][np.newaxis]
-                    ## end if
+
                 # no 'else:' since type checked in __init__
-                ## end if
-            ## next mod_arg
+
+            # next mod_arg
 
             # Execute the function and return its result
             return f(*w_args, **kwargs)
 
-        ## end def wrapped_f
+        # end def wrapped_f
 
         # Return the decorated function
         return wrapped_f
 
-    ## end def __call__
+    # end def __call__
 
-## end class arraysqueeze
+# end class arraysqueeze
 
 
 
