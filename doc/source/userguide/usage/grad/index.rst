@@ -3,19 +3,19 @@
 grad
 ====
 
-*Draft scratch content...*
+While not as important as Hessians for VPT2 calculations,
+nuclear gradients can be used to estimate the significance of certain
+terms in the VPT2 expansion prior to calculating the associated Hessians,
+potentially reducing the associated computational demand [Bar11]_. Other
+calculations envisioned for eventual Open Anharmonic
+implementation would also make more direct use of gradient data.
 
-Gradient objects are a thing that have to be properly done in order for
-various of the automation functiony applications of the ``opan`` to work right,
-since different softwares make their things in different ways, but
-the core automating thingy has to not care what software made the data but
-the data has to be presented uniformly.  Most console interactions with
-``opan`` won't care about this much, but it's worth noting here the things
-that can be expected from ALL thingies, even though many other thingies
-will likely be available for any given other various software.
-
-Firstly, the instance members specified as having to be there by
-:class:`~opan.grad.SuperOpanGrad`:
+In order to enable automated parsing of gradient data from multiple
+computational software packages, a common interface must be defined
+by which the automated components of ``opan`` can access needed data in
+a uniform manner.  This interface is defined by the abstract
+:class:`~opan.grad.SuperOpanGrad` superclass, which requires that the
+following members be defined for all of its subclasses:
 
  * :attr:`gradient` -- 1-D |nparray| of |npfloat| -- Gradient data in
    :math:`\left(\mathrm{E_h\over B}\right)` |units|
@@ -25,11 +25,8 @@ Firstly, the instance members specified as having to be there by
 
  * :attr:`atom_syms` -- |list| of |str| -- Atomic symbols in **ALL CAPS**
 
-There will need to be a private ``_load`` method, but that shouldn't ever be
-useful or usable, interactively.
-
-Other than that, the below subpages describe the software-specific data
-available in the specific subclass objects of
+Beyond these required members, the below subpages describe
+the various imported data that are available in the subclasses of
 :class:`~opan.grad.SuperOpanGrad`.
 
 **Implemented Subclasses**
