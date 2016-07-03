@@ -6,6 +6,8 @@ References
 
 .. [Bar11] V. Barone, M. Biczysko, J. Bloino, M. Borkowska-Panek, I. Carnimeo, P. Panek. *Int J Quantum Chem* **112**\ : 2185, 2011. `doi:10.1002/qua.23224 <http://dx.doi.org/10.1002/qua.23224>`__
 
+.. [Blo12] J. Bloino, M. Biczysko, V. Barone. *J Chem Theor Comput* **8**\ (3): 1015, 2012. `doi:10.1021/ct200814m <http://dx.doi.org/10.1021/ct200814m>`__
+
 .. [Gri10] S. Grimme, J. Antony, S. Erlich, H. Krieg. *J Chem Phys* **132**\ (15): 154104, 2010. `doi:10.1063/1.3382344 <http://dx.doi.org/10.1063/1.3382344>`__
 
 .. [Kro92] H.W. Kroto. "Molecular Rotation Spectra." 1st Dover ed. Mineola, NY: Dover Publications, 1992. `Google Books <https://books.google.com/books?id=z1uoQgAACAAJ>`__

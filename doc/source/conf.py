@@ -152,8 +152,6 @@ rst_epilog = """
 
 .. |str| replace:: :obj:`str`
 
-.. |unicode| replace:: :obj:`unicode`
-
 .. |bool| replace:: :obj:`bool`
 
 .. |dict| replace:: :obj:`dict`

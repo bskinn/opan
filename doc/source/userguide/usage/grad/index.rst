@@ -10,7 +10,7 @@ potentially reducing the associated computational demand [Bar11]_. Other
 calculations envisioned for eventual Open Anharmonic
 implementation would also make more direct use of gradient data.
 
-In order to enable automated parsing of gradient data from multiple
+In order to enable automated parsing of gradient data from various
 computational software packages, a common interface must be defined
 by which the automated components of ``opan`` can access needed data in
 a uniform manner.  This interface is defined by the abstract

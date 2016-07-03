@@ -68,4 +68,5 @@ target/
 
 # gedit backup files
 *.rst~
+*.py~
 

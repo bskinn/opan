@@ -219,7 +219,7 @@ class SuperOpanHess(object):
         srcstr = "{0} with args {1}".format(self.__class__, str(kwargs))
 
         # All proofreading here is excluded from coverage because
-        #  all of these should be handled at the subclass level for ORCA.
+        #  all of these should be handled at the subclass level.
 
         # Proofread types for Hessian and geometry
         a_npfa(self, 'hess', 'Hessian', HErr, HErr.BADHESS, srcstr)
@@ -314,8 +314,9 @@ class OrcaHess(SuperOpanHess):
     Information contained includes the Hessian matrix, the number of atoms,
     the atomic symbols, the atomic weights, and the geometry, as reported in
     the .hess file.  See 'Instance Variables' below for a full list.
-    For variables marked "required", a :exc:`~opan.error.HessError` is raised
-    if the block is not found, whereas for variables marked "optional"
+    For variables marked "required" (those that should be found in all
+    HESS files), "a :exc:`~opan.error.HessError` is raised
+    if the block is not found, whereas for all other variables
     a |None| value is stored.  For either type, if the data is malformed
     or invalid in some fashion, a :exc:`~opan.error.HessError` is raised with
     an appropriate typecode.
@@ -496,7 +497,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.atom_syms
 
-        length-N |list| of |str| --
+        length-N |list| of |str| *(required)* --
         List of uppercase atomic symbols
 
     .. attribute:: OrcaHess.dipders
@@ -506,23 +507,24 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.energy
 
-        |float| -- Electronic energy reported in the Hessian file
+        |float| *(required)* --
+        Electronic energy reported in the Hessian file
 
     .. attribute:: OrcaHess.freqs
 
-        length-3N |npfloat_| --
+        length-3N |npfloat_| *(required)* --
         Vibrational frequencies in
         :math:`\\mathrm{cyc\\over cm}`,
         as reported in the Hessian file
 
     .. attribute:: OrcaHess.geom
 
-        length-3N |npfloat_| --
+        length-3N |npfloat_| *(required)* --
         Geometry vector
 
     .. attribute:: OrcaHess.hess
 
-        3N x 3N |npfloat_| --
+        3N x 3N |npfloat_| *(required)* --
         Cartesian Hessian matrix
 
     .. attribute:: OrcaHess.hess_path
@@ -553,7 +555,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.modes
 
-        3N x 3N |npfloat_| --
+        3N x 3N |npfloat_| *(required)* --
         Rotation- and translation-purified, mass-weighted
         vibrational normal modes,
         with each mode (column vector) separately normalized by |orca|.
@@ -592,7 +594,7 @@ class OrcaHess(SuperOpanHess):
 
     .. attribute:: OrcaHess.temp
 
-        |float| --
+        |float| *(required)* --
         "Actual temperature" reported in the .hess file. Occasionally
         stored by |orca| as a meaningless zero value instead
         of the temperature used.
@@ -608,10 +610,7 @@ class OrcaHess(SuperOpanHess):
         # Imports
         import re as _re
 
-        # Various class-level Regex patterns.  Currently only retrieves the
-        #  atom list and the Hessian itself. No other information in the .hess file
-        #  is actually explicitly needed at present (will be recomputed internally)
-        #  and so there's little point to spending time coding imports for it.
+        # Various class-level Regex patterns.
 
         # Atoms list, including atomic weights. Assumes no scientific notation
         #  will be used in the coordinates.
