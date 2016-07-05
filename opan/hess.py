@@ -314,8 +314,8 @@ class OrcaHess(SuperOpanHess):
     Information contained includes the Hessian matrix, the number of atoms,
     the atomic symbols, the atomic weights, and the geometry, as reported in
     the .hess file.  See 'Instance Variables' below for a full list.
-    For variables marked "required" (those that should be found in all
-    HESS files), "a :exc:`~opan.error.HessError` is raised
+    For variables marked *"required"* (those that should be found in all
+    HESS files), a :exc:`~opan.error.HessError` is raised
     if the block is not found, whereas for all other variables
     a |None| value is stored.  For either type, if the data is malformed
     or invalid in some fashion, a :exc:`~opan.error.HessError` is raised with

@@ -27,7 +27,48 @@ as required by the :class:`~opan.hess.SuperOpanHess`
 :doc:`specification <index>`, |orca| HESS files expose the following
 attributes:
 
- * ... 
+ * :attr:`~opan.hess.OrcaHess.atom_masses` --
+   Atom masses as reported in the geometry block, in :math:`\mathrm u`
+
+ * :attr:`~opan.hess.OrcaHess.dipders` --
+   Dipole derivatives
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
+ * :attr:`~opan.hess.OrcaHess.` --
+
+
 
 The public class :class:`OrcaHess.Pat <opan.hess.OrcaHess.Pat>` contains
 |re.compile| patterns used during file import. Their usefulness thus may be
