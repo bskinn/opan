@@ -470,26 +470,24 @@ class PHYS(object):
     import numpy as _np
 
     #: |float| --
-    #: Angstroms per Bohr radius (source: `NIST <http://physics.nist.gov/
-    #: cgi-bin/cuu/Value?bohrrada0|search_for=bohr+radius>`__ |extlink|)
+    #: Angstroms per Bohr radius [NISTCUU_B]_
     ANG_PER_BOHR = 0.52917721067
 
     #: |float| --
-    #: Electron mass per unified atomic mass unit (source: `NIST
-    #: <http://physics.nist.gov/cgi-bin/cuu/Value?meu|
-    #: search_for=electron+mass>`__ |extlink|)
+    #: Electron mass per unified atomic mass unit [NISTCUU_me_u]_
     ME_PER_AMU = 1822.8885
 
     #: |float| --
-    #: Seconds per atomic time unit (source: `NIST <http://physics.nist.gov/
-    #: cgi-bin/cuu/Value?aut|search_for=atomic+time+unit>`__ |extlink|)
+    #: Seconds per atomic time unit [NISTCUU_Ta]_
     SEC_PER_TA = 2.4188843265e-17
 
     #: |float| --
+    #: Coulomb-meters per atomic unit of electric dipole [NISTCUU_Da]_
+    C_M_PER_DA = 8.478353552e-30
+
+    #: |float| --
     #: Speed of light in atomic |units|, :math:`\frac{B}{T_a}`. Calculated from
-    #: the `NIST <http://physics.nist.gov/cgi-bin/cuu/Value
-    #: ?c|search_for=speed+of+light>`__ |extlink| value for the speed of
-    #: light in vacuum, :math:`2.99792458e8\ \frac{m}{s}`, using
+    #: the speed of light in vacuum in SI units [NISTCUU_c]_ using
     #: :attr:`ANG_PER_BOHR` and :attr:`SEC_PER_TA` as conversion factors
     LIGHT_SPEED = 137.036
 

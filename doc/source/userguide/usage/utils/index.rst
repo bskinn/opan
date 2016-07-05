@@ -1,7 +1,7 @@
 .. Usage for utils
 
-utils
-=====
+utils -- Utility Functions
+==========================
 
 *Stuff*
 

@@ -1,7 +1,7 @@
 .. Usage for utils.base
 
-utils (base)
-============
+utils (base) -- Miscellaneous Utilities
+=======================================
 
 *Stuff*
 

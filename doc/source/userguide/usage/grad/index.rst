@@ -1,7 +1,7 @@
 .. Usage for grad core/base/superclass
 
-grad
-====
+grad -- Gradient Data
+=====================
 
 While not as important as Hessians for VPT2 calculations,
 nuclear gradients can be used to estimate the significance of certain

@@ -1,7 +1,7 @@
 .. Usage for xyz
 
-xyz
-===
+xyz -- OpenBabel Geometry / Trajectory Data
+===========================================
 
 *Stuff*
 

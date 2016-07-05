@@ -342,12 +342,15 @@ class OrcaHess(SuperOpanHess):
          *  Raman activities :
             :math:`\\frac{\\mathring{\\mathrm{A}}^4}{\\mathrm u}`
 
-         *  Dipole derivatives : (???)
+         *  Dipole derivatives :
+            :math:`\\mathrm{D_a\\over B} =
+            \\mathrm{q\\, B\\over B} =
+            \\mathrm{q}`
 
          *  Polarizability derivatives : (???)
 
          *  Eigenvalues of the mass-weighted Hessian :
-            :math:`\\frac{\\mathrm{E_h}}{\\mathrm{u\,B^2}}`
+            :math:`\\frac{\\mathrm{E_h}}{\\mathrm{u\\,B^2}}`
 
          *  Eigenvectors of the mass-weighted Hessian : (dimensionless)
 

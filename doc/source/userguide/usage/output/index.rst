@@ -1,7 +1,7 @@
 .. Usage for output
 
-output
-======
+output -- Computation Outputs
+=============================
 
 *Stuff*
 

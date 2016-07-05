@@ -1,7 +1,7 @@
 .. Usage for hess core/base/superclass
 
-hess
-====
+hess -- Hessian Data
+====================
 
 Nuclear Hessians are key for VPT2 calculations, as they provide the third-
 and fourth-order force constants for a system via finite difference

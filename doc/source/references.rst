@@ -14,10 +14,16 @@ References
 
 .. [Kru12] H. Kruse, S. Grimme. *J Chem Phys* **136**\ (15): 154101, 2012. `doi:10.1063/1.3700154 <http://dx.doi.org/10.1063/1.3700154>`__
 
+.. [Row08] R. Rowlett. "How Many? A Dictionary of Units of Measurement: D: Debye." 
+   University of North Carolina at Chapel Hill, 2008. http://www.unc.edu/~rowlett/units/dictD.html#debye. Accessed 4 Jul 2016.
 
 *From the* |NISTRef|_ |extlink|
 
 .. [NISTCUU_B] "Atomic Unit of Length." `http://physics.nist.gov/cgi-bin/cuu/Value?tbohrrada0|search_for=atomic+length <http://physics.nist.gov/cgi-bin/cuu/Value?tbohrrada0|search_for=atomic+length>`__. Accessed 20 Feb 2016.
+
+.. [NISTCUU_c] "Speed of Light in Vacuum." `http://physics.nist.gov/cgi-bin/cuu/Value?c|search_for=speed+of+light <http://physics.nist.gov/cgi-bin/cuu/Value?c|search_for=speed+of+light>`__. Accessed 4 Jul 2016.
+
+.. [NISTCUU_Da] "Atomic Unit of Electric Dipole Moment." `http://physics.nist.gov/cgi-bin/cuu/Value?auedm|search_for=dipole+atomic+units <http://physics.nist.gov/cgi-bin/cuu/Value?auedm|search_for=dipole+atomic+units>`__. Accessed 4 Jul 2016.
 
 .. [NISTCUU_Eh] "Hartree-Joule Relationship." `http://physics.nist.gov/cgi-bin/cuu/Value?hrj|search_for=hartree <http://physics.nist.gov/cgi-bin/cuu/Value?hrj|search_for=hartree>`__. Accessed 20 Feb 2016.
 
@@ -25,10 +31,15 @@ References
 
 .. [NISTCUU_me_u] "Electron Mass in u." `http://physics.nist.gov/cgi-bin/cuu/Value?meu|search_for=u+in+electron+mass <http://physics.nist.gov/cgi-bin/cuu/Value?meu|search_for=u+in+electron+mass>`__. Accessed 25 Jun 2016.
 
+.. [NISTCUU_q] "Elementary Charge." `http://physics.nist.gov/cgi-bin/cuu/Value?e|search_for=elementary+charge+ <http://physics.nist.gov/cgi-bin/cuu/Value?e|search_for=elementary+charge+>`__. Accessed 4 Jul 2016.
+
 .. [NISTCUU_Ta] "Atomic Unit of Time." `http://physics.nist.gov/cgi-bin/cuu/Value?aut|search_for=atomic+time <http://physics.nist.gov/cgi-bin/cuu/Value?aut|search_for=atomic+time>`__. Accessed 20 Feb 2016.
 
 .. [NISTCUU_u_kg] "Atomic Mass Unit-Kilogram Relationship." `http://physics.nist.gov/cgi-bin/cuu/Value?ukg|search_for=atomic+mass <http://physics.nist.gov/cgi-bin/cuu/Value?ukg|search_for=atomic+mass>`__. Accessed 25 Jun 2016.
 
+
+
+.. ==== FOOTER ====
 
 .. |NISTRef| replace:: *NIST Reference on Constants, Units and Uncertainty*
 

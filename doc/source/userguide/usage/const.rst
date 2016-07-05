@@ -1,7 +1,7 @@
 .. Usage for const
 
-const
-=====
+const -- Constants and Enumerations
+===================================
 
 The members of this module fall into three general categories:
 

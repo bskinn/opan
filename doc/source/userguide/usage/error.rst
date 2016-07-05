@@ -1,7 +1,7 @@
 .. Usage for error
 
-error
-=====
+error -- Custom Errors
+======================
 
 .. note:: Most interactive use of ``opan`` will not require detailed
           knowledge of the custom errors in this module.

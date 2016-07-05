@@ -31,7 +31,10 @@ attributes:
    Atom masses as reported in the geometry block, in :math:`\mathrm u`
 
  * :attr:`~opan.hess.OrcaHess.dipders` --
-   Dipole derivatives
+   Dipole derivatives in :math:`\mathrm{D_a\over B}`, where the element
+   in the :math:`i^\mathrm{\,th}` row and :math:`j^\mathrm{\,th}` column is
+   the derivative of the :math:`j`-component of the dipole moment with
+   respect to the :math:`i^\mathrm{\,th}` coordinate of the geometry
 
  * :attr:`~opan.hess.OrcaHess.` --
 
@@ -68,7 +71,8 @@ attributes:
 
  * :attr:`~opan.hess.OrcaHess.` --
 
-
+Note that not all HESS files contain all of the above data; where data
+is absent, the respective attribute(s) will be stored as |None|.
 
 The public class :class:`OrcaHess.Pat <opan.hess.OrcaHess.Pat>` contains
 |re.compile| patterns used during file import. Their usefulness thus may be
@@ -109,5 +113,11 @@ The contents of the file are accessible as simple attributes:
     array([    0.      ,     0.      ,     0.      ,     0.      ,
                0.      ,     0.      ,  1610.279974,  3761.722714,  3848.311829])
 
+Again, if data is not available it will be stored as |None|:
+
+.. doctest:: usage
+
+    >>> h.polders is None
+    True
 
 
