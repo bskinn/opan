@@ -71,13 +71,10 @@ class arraysqueeze(object):
         for arg in args:
             if not (isinstance(arg, int) or isinstance(arg, str)):
                 raise ValueError("Invalid decorator argument: {0}".format(arg))
-            ## end if
-        ## next arg
 
         # If all ok, store
         self.arglist = args
 
-    ## end def __init__
 
     def __call__(self, f):
         """ Call the wrapped function after arraysqueezing selected arguments.
@@ -99,12 +96,12 @@ class arraysqueeze(object):
             #  singleton array, rewrap as a dimension-one array.
             for mod_arg in self.arglist:
                 if isinstance(mod_arg, int) and mod_arg < len(w_args):
-                    w_args[mod_arg] = np.array(w_args[mod_arg]).squeeze()
+                    w_args[mod_arg] = np.asarray(w_args[mod_arg]).squeeze()
                     if not w_args[mod_arg].shape:
                         w_args[mod_arg] = w_args[mod_arg][np.newaxis]
                     ## end if
                 elif isinstance(mod_arg, str) and mod_arg in kwargs:
-                    kwargs[mod_arg] = np.array(kwargs[mod_arg]).squeeze()
+                    kwargs[mod_arg] = np.asarray(kwargs[mod_arg]).squeeze()
                     if not kwargs[mod_arg].shape:
                         kwargs[mod_arg] = kwargs[mod_arg][np.newaxis]
                     ## end if
