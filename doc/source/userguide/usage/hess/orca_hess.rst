@@ -31,8 +31,9 @@ attributes:
    Atom masses as reported in the geometry block, in :math:`\mathrm u`
 
  * :attr:`~opan.hess.OrcaHess.dipders` --
-   Dipole derivatives in :math:`\mathrm{D_a\over B}`, where the element
-   in the :math:`i^\mathrm{\,th}` row and :math:`j^\mathrm{\,th}` column is
+   Dipole derivatives in :math:`\mathrm{D_a\over B}` atomic |units|,
+   where the element in the :math:`i^\mathrm{\,th}` row and
+   :math:`j^\mathrm{\,th}` column is
    the derivative of the :math:`j`-component of the dipole moment with
    respect to the :math:`i^\mathrm{\,th}` coordinate of the geometry
 
@@ -72,7 +73,12 @@ attributes:
  * :attr:`~opan.hess.OrcaHess.` --
 
 Note that not all HESS files contain all of the above data; where data
-is absent, the respective attribute(s) will be stored as |None|.
+is absent, in general the respective attribute(s) will be stored as |None|.
+For certain data which are expected to reside in *all* HESS files
+(those annotated as *(required)* in the
+:ref:`instance variables list <hess-orcahess-instancevars>` for
+:class:`~opan.hess.OrcaHess`), a :class:`~opan.error.HessError` will be
+raised if any are absent.
 
 The public class :class:`OrcaHess.Pat <opan.hess.OrcaHess.Pat>` contains
 |re.compile| patterns used during file import. Their usefulness thus may be

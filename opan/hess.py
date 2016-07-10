@@ -313,7 +313,9 @@ class OrcaHess(SuperOpanHess):
 
     Information contained includes the Hessian matrix, the number of atoms,
     the atomic symbols, the atomic weights, and the geometry, as reported in
-    the .hess file.  See 'Instance Variables' below for a full list.
+    the .hess file.  See
+    :ref:`Instance Variables <hess-orcahess-instancevars>`
+    below for a full list.
     For variables marked *"required"* (those that should be found in all
     HESS files), a :exc:`~opan.error.HessError` is raised
     if the block is not found, whereas for all other variables
@@ -347,7 +349,8 @@ class OrcaHess(SuperOpanHess):
             \\mathrm{q\\, B\\over B} =
             \\mathrm{q}`
 
-         *  Polarizability derivatives : (???)
+         *  Polarizability derivatives :
+            :math:`\\mathrm{B^3\\over B} = \mathrm{B^2}`
 
          *  Eigenvalues of the mass-weighted Hessian :
             :math:`\\frac{\\mathrm{E_h}}{\\mathrm{u\\,B^2}}`
@@ -490,6 +493,8 @@ class OrcaHess(SuperOpanHess):
             is spuriously zero)
 
     |
+
+    .. _hess-orcahess-instancevars:
 
     **Instance Variables**
 

@@ -12,13 +12,17 @@ Atomic Units
    or :math:`0.52917721067\times 10^{-10}\ \mathrm m~~` [NISTCUU_B]_
 
  * :math:`\mathrm{D_a}` -- Atomic unit of electric dipole moment, equal to 
-   :math:`8.478353552\times 10^{-30}~\mathrm{C\!\cdot\! m}~~` [NISTCUU_Da]_ and approximately
-   :math:`2.542~\mathrm D~~` [Row08]_
+   :math:`\mathrm{q\, B} = 8.478353552\times 10^{-30}~\mathrm{C\!\cdot\! m}~~`
+   [NISTCUU_Da]_ and approximately :math:`2.542~\mathrm D~~` [Row08]_
 
- * :math:`\mathrm{E_h}` -- Hartree, atomic unit of energy, equal to :math:`4.35974465~\mathrm J~~` [NISTCUU_Eh]_
+ * :math:`\mathrm{E_h}` -- Hartree, atomic unit of energy, equal to
+   :math:`4.35974465\times 10^{-18}~\mathrm J~~` [NISTCUU_Eh]_
 
  * :math:`\mathrm{m_e}` -- Electron mass, atomic unit of mass, equal to :math:`9.10938356\times 10^{-31}
-   \ \mathrm{kg}~~` [NISTCUU_me]_
+   ~\mathrm{kg}~~` [NISTCUU_me]_
+
+ * :math:`\mathrm{q}` -- Electron charge, atomic unit of charge, equal to
+   :math:`1.6021766208\times 10^{-19}~\mathrm{C}~~` [NISTCUU_q]_
 
  * :math:`\mathrm{T_a}` -- Atomic time unit, equal to :math:`2.4188843265\times 10^{-17}\ \mathrm s~~` [NISTCUU_Ta]_
 

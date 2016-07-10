@@ -3,10 +3,11 @@
 hess -- Hessian Data
 ====================
 
-Nuclear Hessians are key for VPT2 calculations, as they provide the third-
+Nuclear Hessians are key for VPT2 calculations, as the second-order
+force constants calculated from them by standard
+harmonic-oscillator methods provide the third-
 and fourth-order force constants for a system via finite difference
-differentiation of the second-order constants calculated by standard
-harmonic-oscillator methods [Bar11]_ [Blo12]_.
+differentiation [Bar11]_ [Blo12]_.
 
 .. todo::
 

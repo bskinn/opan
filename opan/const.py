@@ -486,6 +486,10 @@ class PHYS(object):
     C_M_PER_DA = 8.478353552e-30
 
     #: |float| --
+    #: Coulombs per atomic unit of charge [NISTCUU_q]_
+    C_PER_Q = 1.6021766208e-19
+
+    #: |float| --
     #: Speed of light in atomic |units|, :math:`\frac{B}{T_a}`. Calculated from
     #: the speed of light in vacuum in SI units [NISTCUU_c]_ using
     #: :attr:`ANG_PER_BOHR` and :attr:`SEC_PER_TA` as conversion factors
