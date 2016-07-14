@@ -37,19 +37,23 @@ attributes:
    the derivative of the :math:`j`-component of the dipole moment with
    respect to the :math:`i^\mathrm{\,th}` coordinate of the geometry
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.energy` --
+   Electronic energy in :math:`\mathrm{E_h}` (sometimes stored
+   spuriously as zero by ORCA)
 
+ * :attr:`~opan.hess.OrcaHess.freqs` --
+   Vibrational frequencies in wavenumbers
+   :math:`\left(\mathrm{cyc\over cm}\right)`; the six (or five,
+   for linear systems) identically-zero frequencies are always at
+   the start of the list
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.hess_path` --
+   Full path and filename to the imported HESS file
 
+ * :attr:`~opan.hess.OrcaHess.in_str` --
+   Complete contents of the imported HESS file
 
- * :attr:`~opan.hess.OrcaHess.` --
-
-
- * :attr:`~opan.hess.OrcaHess.` --
-
-
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.ir_comps` --
 
 
  * :attr:`~opan.hess.OrcaHess.` --
