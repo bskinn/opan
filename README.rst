@@ -4,7 +4,7 @@ opan (Open Anharmonic)
 ======================
 
 
-Open Anharmonic is a Python wrapper for computational chemistry
+Open Anharmonic is a Python 3 wrapper for computational chemistry
 software packages intended to enable VPT2 computation of anharmonic
 vibrational constants. No VPT2 functionality is implemented as yet.
 
