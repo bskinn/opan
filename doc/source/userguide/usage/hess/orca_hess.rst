@@ -48,36 +48,92 @@ attributes:
    the start of the list
 
  * :attr:`~opan.hess.OrcaHess.hess_path` --
-   Full path and filename to the imported HESS file
+   Full path and filename of the imported HESS file
 
  * :attr:`~opan.hess.OrcaHess.in_str` --
    Complete contents of the imported HESS file
 
  * :attr:`~opan.hess.OrcaHess.ir_comps` --
+   :math:`x`-, :math:`y`-, and :math:`z`-components in
+   :math:`\left(\mathrm{km\over mol}\right)^{1\over 2}` of the transition
+   dipole for each normal mode, where row :math:`i` of this matrix matches
+   column :math:`i` of :attr:`~opan.hess.OrcaHess.modes`
 
+ * :attr:`~opan.hess.OrcaHess.ir_mags` --
+   Squared magnitudes of the transition dipoles
+   :math:`\left(\mathrm{T}^2\right)` in
+   :math:`\mathrm{km\over mol}`, where element :math:`i` of this array
+   matches column :math:`i` of :attr:`~opan.hess.OrcaHess.modes`
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.joblist` --
+   Completion status for the various displacements of a numerical Hessian
+   computation, where the entry in the :math:`i^\mathrm{\,th}` row and
+   :math:`j^\mathrm{\,th}` column indicates whether the displacement
+   of the :math:`i^\mathrm{\,th}` atom along the
+   :math:`j`-coordinate has been completed (\ :math:`1`\ ) or not
+   (\ :math:`0`\ )
 
+ * :attr:`~opan.hess.OrcaHess.modes` --
+   Matrix of normal modes as column vectors, where the full modes matrix
+   has been rotation- and translation-purified and mass-weighted, and
+   each mode has been separately normalized
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.mwh_eigvals` --
+   1-D array of the eigenvalues of the mass-weighted Hessian, where
+   element :math:`i` corresponds to column :math:`i` of both
+   :attr:`~opan.hess.OrcaHess.modes` and
+   :attr:`~opan.hess.OrcaHess.mwh_eigvecs`
 
+ * :attr:`~opan.hess.OrcaHess.mwh_eigvecs` --
+   2-D array of the eigenvectors of the mass-weighted Hessian, where
+   column :math:`i` corresponds to element :math:`i` of
+   :attr:`~opan.hess.OrcaHess.mwh_eigvals` and column :math:`i` of
+   :attr:`~opan.hess.OrcaHess.modes`
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.num_ats` --
+   Number of atoms in the geometry
 
+ * :attr:`~opan.hess.OrcaHess.polders` --
+   Derivatives of the elements of the polarizability matrix in units of
+   :math:`\mathrm{B}^2~\left(=\mathrm{B^3\over B}\right)`, where
+   the :math:`i^\mathrm{\,th}` row contains the derivatives taken with
+   respect to the :math:`i^\mathrm{\,th}` coordinate of the geometry, and
+   where in each row the matrix element derivatives are presented in the
+   in the order of :math:`xx`, :math:`yy`, :math:`zz`,
+   :math:`xy`, :math:`xz`, :math:`yz`
 
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.raman_acts` --
+   Vector of Raman activities in units of
+   :math:`\mathrm{\mathring{A}^4 \over u}`
 
+ * :attr:`~opan.hess.OrcaHess.raman_depols` --
+   Vector of Raman depolarization ratios
 
- * :attr:`~opan.hess.OrcaHess.` --
-
-
- * :attr:`~opan.hess.OrcaHess.` --
-
-
- * :attr:`~opan.hess.OrcaHess.` --
+ * :attr:`~opan.hess.OrcaHess.temp` --
+   "Actual temperature" reported in the HESS file (sometimes stored
+   as a spurious zero value instead of as the actual value used)
 
 Note that not all HESS files contain all of the above data; where data
 is absent, in general the respective attribute(s) will be stored as |None|.
+In particular:
+
+ * :attr:`~opan.hess.OrcaHess.mwh_eigvals` and
+   :attr:`~opan.hess.OrcaHess.mwh_eigvecs` are generally absent unless a
+   HESS file is used as input for a mode trajectory run (MTR)
+
+ * :attr:`~opan.hess.OrcaHess.polders`,
+   :attr:`~opan.hess.OrcaHess.raman_acts`, and
+   :attr:`~opan.hess.OrcaHess.raman_depols` will generally only be present
+   if a Raman calculation is requested
+
+ * An exception to this general rule occurs in the case that a numerical
+   Hessian is requested but the dipole moment calculation
+   is disabled (:code:`%elprop Dipole False end`), where the values of
+   :attr:`~opan.hess.OrcaHess.dipders`,
+   :attr:`~opan.hess.OrcaHess.ir_comps`, and
+   :attr:`~opan.hess.OrcaHess.ir_mags` will be set to zero arrays of the
+   appropriate size, instead of |None|
+
 For certain data which are expected to reside in *all* HESS files
 (those annotated as *(required)* in the
 :ref:`instance variables list <hess-orcahess-instancevars>` for
