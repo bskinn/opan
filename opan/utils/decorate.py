@@ -25,10 +25,13 @@ Decorators
 
 .. autoclass:: arraysqueeze
 
+.. autoclass:: kwarg_fetch
+
 """
 
 # Imports
 from functools import wraps as _wraps
+
 
 # Decorators
 class arraysqueeze(object):
@@ -75,7 +78,6 @@ class arraysqueeze(object):
         # If all ok, store
         self.arglist = args
 
-
     def __call__(self, f):
         """ Call the wrapped function after arraysqueezing selected arguments.
 
@@ -99,29 +101,134 @@ class arraysqueeze(object):
                     w_args[mod_arg] = np.asarray(w_args[mod_arg]).squeeze()
                     if not w_args[mod_arg].shape:
                         w_args[mod_arg] = w_args[mod_arg][np.newaxis]
-                    ## end if
+
                 elif isinstance(mod_arg, str) and mod_arg in kwargs:
                     kwargs[mod_arg] = np.asarray(kwargs[mod_arg]).squeeze()
                     if not kwargs[mod_arg].shape:
                         kwargs[mod_arg] = kwargs[mod_arg][np.newaxis]
-                    ## end if
+
                 # no 'else:' since type checked in __init__
-                ## end if
-            ## next mod_arg
 
             # Execute the function and return its result
             return f(*w_args, **kwargs)
 
-        ## end def wrapped_f
+        # end def wrapped_f
 
         # Return the decorated function
         return wrapped_f
 
-    ## end def __call__
+    # end def __call__
 
-## end class arraysqueeze
+# end class arraysqueeze
 
 
+class kwarg_fetch(object):
+    """ Fetch a function call to a missing or |None| keyword argument
+
+    Arguments
+    ---------
+    (fill in here)
+
+
+
+    .. warning::
+
+        Fragile to needing to pass optional arguments to the callable?
+
+    .. Decorator built using the class form per the exposition
+        `here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
+        |extlink|.
+
+    """
+
+    import keyword as _kw
+
+    @classmethod
+    def ok_kwarg(cls, val):
+        """ DOCSTRING """
+        try:
+            return str.isidentifier(val) and not cls._kw.iskeyword(val)
+        except TypeError:
+            # Catch integer values in particular; fail if found
+            return False
+
+    @classmethod
+    def ok_argarg(cls, val):
+        """ DOCSTRING """
+        try:
+            ok_kw = str.isidentifier(val) and not cls._kw.iskeyword(val)
+        except TypeError:
+            # Again, catch integer values in particular and fail if found
+            ok_kw = False
+
+        ok_pos = isinstance(val, int)
+        return ok_kw or ok_pos
+
+    def __init__(self, kw, c, *args):
+        """Initialize with the keyword, callable, and relevant arguments
+
+        """
+
+        if not self.ok_kwarg(kw):
+            raise ValueError("'kw' argument must be a valid non-keyword "
+                             "identifier")
+        self.kw = kw
+
+        if not callable(c):
+            raise ValueError("'c' argument must be callable")
+        self.c = c
+
+        if not all(map(self.ok_argarg, args)):
+            raise ValueError("All 'args' must be valid non-keyword "
+                             "identifiers or integers")
+        self.arglist = args
+
+    def __call__(self, f):
+        """Call the wrapped function after any needed fetch."""
+
+        @_wraps(f)
+        def wrapped_f(*args, **kwargs):
+            # Working list of args, since args will be a tuple
+
+            # Check for if the target kwarg is missing
+            if self.kw not in kwargs or kwargs[self.kw] is None:
+                # Missing. Must fetch.
+                # Initialize as empty the arguments list to pass to the
+                # callable
+                arglist = []
+                kwarglist = {}
+
+                # Populate sequentially
+                for arg in self.arglist:
+                    # Argument is already parsed as ok, but this makes
+                    # for a nice short way to check which type each argument
+                    # is.
+                    if self.ok_kwarg(arg):
+                        # Keyword argument
+                        kwarglist.update({arg: kwargs[arg]})
+                    else:
+                        # Positional argument
+                        arglist.append(args[arg])
+
+                # Call the callable and store the result into the target
+                # keyword
+                c_result = self.c(*arglist, **kwarglist)
+                new_kwarg = {self.kw: c_result}
+                kwargs.update(new_kwarg)
+
+            # Either way, just call the wrapped function with the
+            # originally-passed arguments, with the modified-or-not
+            # kwargs
+            return f(*args, **kwargs)
+
+        # end def wrapped_f
+
+        # Return the wrapped function
+        return wrapped_f
+
+    # end def __call__
+
+# end class kwarg_fetch
 
 
 if __name__ == '__main__':
