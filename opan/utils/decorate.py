@@ -153,6 +153,14 @@ class kwarg_fetch(object):
             return False
 
     @classmethod
+    def ok_tuplearg(cls, val):
+        """ DOCSTRING """
+
+        if not isinstance(val, tuple) and len(val) == 2 and \
+                isinstance(val[0], int) and cls.ok_kwarg(val[1]):
+            return False
+
+    @classmethod
     def ok_argarg(cls, val):
         """ DOCSTRING """
         try:
@@ -162,7 +170,10 @@ class kwarg_fetch(object):
             ok_kw = False
 
         ok_pos = isinstance(val, int)
-        return ok_kw or ok_pos
+
+        ok_tup = cls.ok_tuplearg(val)
+
+        return ok_kw or ok_pos or ok_tup
 
     def __init__(self, kw, c, *args):
         """Initialize with the keyword, callable, and relevant arguments
@@ -180,7 +191,8 @@ class kwarg_fetch(object):
 
         if not all(map(self.ok_argarg, args)):
             raise ValueError("All 'args' must be valid non-keyword "
-                             "identifiers or integers")
+                             "identifier strings, integers, or (int, str) "
+                             "tuples (valid-identifiers str's)")
         self.arglist = args
 
     def __call__(self, f):
