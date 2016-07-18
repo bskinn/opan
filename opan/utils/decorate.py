@@ -156,9 +156,10 @@ class kwarg_fetch(object):
     def ok_tuplearg(cls, val):
         """ DOCSTRING """
 
-        if not isinstance(val, tuple) and len(val) == 2 and \
-                isinstance(val[0], int) and cls.ok_kwarg(val[1]):
+        if not (isinstance(val, tuple) and len(val) == 2 and
+                isinstance(val[0], int) and cls.ok_kwarg(val[1])):
             return False
+        return True
 
     @classmethod
     def ok_argarg(cls, val):
@@ -192,7 +193,7 @@ class kwarg_fetch(object):
         if not all(map(self.ok_argarg, args)):
             raise ValueError("All 'args' must be valid non-keyword "
                              "identifier strings, integers, or (int, str) "
-                             "tuples (valid-identifiers str's)")
+                             "tuples (str as valid identifiers)")
         self.arglist = args
 
     def __call__(self, f):
@@ -200,37 +201,47 @@ class kwarg_fetch(object):
 
         @_wraps(f)
         def wrapped_f(*args, **kwargs):
-            # Working list of args, since args will be a tuple
 
             # Check for if the target kwarg is missing
             if self.kw not in kwargs or kwargs[self.kw] is None:
                 # Missing. Must fetch.
                 # Initialize as empty the arguments list to pass to the
                 # callable
-                arglist = []
-                kwarglist = {}
+                fetch_args = []
+                fetch_kwargs = {}
 
-                # Populate sequentially
-                for arg in self.arglist:
-                    # Argument is already parsed as ok, but this makes
-                    # for a nice short way to check which type each argument
-                    # is.
-                    if self.ok_kwarg(arg):
+                # Populate sequentially in the order specified by
+                # the particular decorator constructor
+                for a in self.arglist:
+                    # Simple type checks on the argument specifiers
+                    # should suffice since they were checked at
+                    # construction.
+                    if isinstance(a, str):
                         # Keyword argument
-                        kwarglist.update({arg: kwargs[arg]})
+                        fetch_kwargs.update({a: kwargs[a]})
+                    elif isinstance(a, tuple):
+                        # Tuple argument for optional-positional args.
+                        # Could be present as positional or as keyword,
+                        # or could be absent. If present, *always*
+                        # pass through as kwarg. If absent, ignore.
+                        if len(args) > a[0]:
+                            # Sufficient positional arguments; assume
+                            # present and passed as optional-positional
+                            fetch_kwargs.update({a[1]: args[a[0]]})
+                        elif a[1] in kwargs:
+                            # Present in the passed-in kwargs
+                            fetch_kwargs.update({a[1]: kwargs[a[1]]})
                     else:
-                        # Positional argument
-                        arglist.append(args[arg])
+                        # Positional argument; integer value
+                        fetch_args.append(args[a])
 
                 # Call the callable and store the result into the target
                 # keyword
-                c_result = self.c(*arglist, **kwarglist)
-                new_kwarg = {self.kw: c_result}
-                kwargs.update(new_kwarg)
+                c_result = self.c(*fetch_args, **fetch_kwargs)
+                kwargs.update({self.kw: c_result})
 
-            # Either way, just call the wrapped function with the
-            # originally-passed arguments, with the modified-or-not
-            # kwargs
+            # Whether the target kwarg was present or generated/injected,
+            # call the wrapped function
             return f(*args, **kwargs)
 
         # end def wrapped_f
@@ -245,5 +256,4 @@ class kwarg_fetch(object):
 
 if __name__ == '__main__':
     print("Module not executable.")
-
 
