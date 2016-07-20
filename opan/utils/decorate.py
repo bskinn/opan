@@ -20,6 +20,10 @@
 
 """ Custom decorators defined for Open Anharmonic.
 
+All of these decorators were built using the class form per the exposition
+`here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
+|extlink|.
+
 Decorators
 ----------
 
@@ -37,7 +41,7 @@ from functools import wraps as _wraps
 class arraysqueeze(object):
     """ Converts selected arguments to squeezed np.arrays
 
-    Pre-applies an ``np.array(...).squeeze()`` conversion to all positional
+    Pre-applies an ``np.asarray(...).squeeze()`` conversion to all positional
     arguments according to integer indices passed, and to any keyword arguments
     according to any strings passed.
 
@@ -58,11 +62,6 @@ class arraysqueeze(object):
     ---------
     \*args : |int| or |str|
         Arguments to convert to squeezed |nparray|.
-
-
-    .. Decorator built using the class form per the exposition
-        `here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
-        |extlink|.
 
     """
 
@@ -221,13 +220,15 @@ class kwarg_fetch(object):
                     # should suffice since they were checked at
                     # construction.
                     if isinstance(a, str):
-                        # Keyword argument
-                        fetch_args.append(kwargs[a])
+                        # Keyword argument; must handle possible absence
+                        if a in kwargs:
+                            fetch_args.append(kwargs[a])
+                        else:
+                            fetch_args.append(None)
                     elif isinstance(a, tuple):
                         # Tuple argument for optional-positional args.
                         # Could be present as positional or as keyword,
-                        # or could be absent. If present, *always*
-                        # pass through as kwarg. If absent, ignore.
+                        # or could be absent.
                         if len(args) > a[0]:
                             # Sufficient positional arguments; assume
                             # present and passed as optional-positional

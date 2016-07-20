@@ -22,7 +22,7 @@
 import unittest
 
 
-class TestOpanUtilsDecorate(unittest.TestCase):
+class TestOpanUtilsDecorateArraySqueeze(unittest.TestCase):
 
     from opan.utils.decorate import arraysqueeze as arsq
 
@@ -53,7 +53,7 @@ class TestOpanUtilsDecorate(unittest.TestCase):
         ret = self.fxn_2p_1d(1,2)
 
         # First one needs to be an ndarray
-        self.assertIsInstance(ret[0], np.ndarray, 
+        self.assertIsInstance(ret[0], np.ndarray,
                 msg="First argument not converted to ndarray")
         self.assertTupleEqual(ret[0].shape, (1,),
                 msg="Bad ndarray size for wrapped first argument")
@@ -129,11 +129,90 @@ class TestOpanUtilsDecorate(unittest.TestCase):
             def test_fxn(p1, p2):
                 pass
 
-## end class TestOpanUtilsDecorate
+# end class TestOpanUtilsDecorateArraySqueeze
 
+
+class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
+
+    from opan.utils.decorate import kwarg_fetch as kwf
+
+    @classmethod
+    def setUpClass(cls):
+        cls.longMessage = True
+
+    @staticmethod
+    def f_1p(a):
+        return a*a
+
+    @staticmethod
+    def f_2p(a,b):
+        return b-a
+
+    @staticmethod
+    def f_1p_k(a, **kwargs):
+        if 'kw' in kwargs:
+            return a+kwargs['kw']
+        else:
+            return a
+
+    @staticmethod
+    def f_2p_1o(a, b, c=5):
+        return a**b - a**c
+
+    def test_kwargfetch_pos_to_pos(self):
+
+        @self.kwf('c', self.f_1p, 0)
+        def testfxn(a, **kwargs):
+            return a * kwargs['c']
+
+        # 'c' stored as f_1p(3) = 9.
+        # Return value is then 3*9 = 27
+        self.assertEqual(testfxn(3), 3**3)
+
+    def test_kwargfetch_pos_to_opt(self):
+
+        @self.kwf('c', self.f_2p_1o, 0, 1, 3)
+        def testfxn(a, b, x, y, **kwargs):
+            return a-b - kwargs['c']*(x+y)
+
+        # 'c' stored as f_2p_1o(3, 2, 4) = 9 - 81 = -72
+        # Return value is then (3-2) - (-72)*(7) = 1 + 504 = 505
+        self.assertEqual(testfxn(3, 2, 3, 4), 505)
+
+    # pos_to_kw
+    # opt_to_pos
+    # opt_to_opt
+    # opt_to_k2
+    # kw_to_pos
+    # kw_to_opt
+    # kw_to_kw
+
+    # Multiple kwarg_fetch decorators on a single function (simple, non-
+    #  dependent case)
+    # Multiple kwarg_fetch decorators on a single function (complex case,
+    #  where one kwarg_fetch depends on the kwarg injected by the other)
+
+    # Invalid target kwarg
+    # Invalid callable
+    # Invalid arg list somewhere(s)
+    # Invalid kwarg list somewhere(s)
+
+    # Error if wrapped function doesn't allow kwargs
+    # Collision between injected kwarg and (optional-)positional name
+
+    # Optional arg not found
+    # Kwarg not found
+
+    # Ensure no fetch performed if target kwarg already present
+
+# end class TestOpanUtilsDecorateKwargFetch
 
 def suite():
-    s = unittest.TestLoader().loadTestsFromTestCase(TestOpanUtilsDecorate)
+    s = unittest.TestSuite()
+    tl = unittest.TestLoader()
+    s.addTests([tl.loadTestsFromTestCase(TestOpanUtilsDecorateArraySqueeze),
+                tl.loadTestsFromTestCase(TestOpanUtilsDecorateKwargFetch)
+                ])
     return s
 
 
