@@ -128,7 +128,7 @@ class kwarg_fetch(object):
     ---------
     (fill in here)
 
-
+    *A 'kwarg' argument
 
     .. warning::
 
@@ -175,11 +175,25 @@ class kwarg_fetch(object):
 
         return ok_kw or ok_pos or ok_tup
 
-    def __init__(self, kw, c, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize with the keyword, callable, and relevant arguments
 
         """
 
+        # Don't want named arguments anywhere in this initializer, since
+        #  that would constrain the keywords allowable for calls to the
+        #  fetching callable. 'kw' and 'c' probably aren't all that common,
+        #  but better to make it more robust/flexible, especially since
+        #  the fix is pretty simple.
+
+        # Convert args to a list
+        args = list(args)
+
+        # Retrieve the keyword id and the callable
+        kw = args.pop(0)
+        c = args.pop(0)
+
+        # Proof and store all of the things
         if not self.ok_kwarg(kw):
             raise ValueError("'kw' argument must be a valid non-keyword "
                              "identifier")
