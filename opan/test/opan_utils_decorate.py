@@ -169,9 +169,19 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # Return value is then 3*9 = 27
         self.assertEqual(testfxn(3), 3**3)
 
-    def test_kwargfetch_pos_to_opt(self):
+    def test_kwargfetch_pos_to_opt_arg(self):
 
         @self.kwf('c', self.f_2p_1o, 0, 1, 3)
+        def testfxn(a, b, x, y, **kwargs):
+            return a - b - kwargs['c'] * (x+y)
+
+        # 'newkw' stored as f_2p_1o(3, 2, 4) = 9 - 81 = -72
+        # Return value is then (3-2) - (-72)*(7) = 1 + 504 = 505
+        self.assertEqual(testfxn(3, 2, 3, 4), 505)
+
+    def test_kwargfetch_pos_to_opt_kwarg(self):
+
+        @self.kwf('c', self.f_2p_1o, 0, 1, c=3)
         def testfxn(a, b, x, y, **kwargs):
             return a - b - kwargs['c'] * (x+y)
 
@@ -189,11 +199,36 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # Return value is thus (5+2)**12 = 7**12 = 13841287201
         self.assertEqual(testfxn(5, 2), 13841287201)
 
-    # opt_to_pos
-    # opt_to_opt
-    # opt_to_k2
+    def test_kwargfetch_absent_opt_to_pos(self):
+
+        @self.kwf('c', self.f_1p, (1, 'b', 5))
+        def testfxn(a, b=5, **kwargs):
+            return (a + b) * (1 + kwargs['c'])
+
+        # 'c' stored as f_1p(5) = 25
+        # Return value is thus (2+5)*(1+25) = 7*26 = 182
+        self.assertEqual(testfxn(2), 182)
+
+    def test_kwargfetch_present_opt_to_pos(self):
+
+        @self.kwf('c', self.f_1p, (1, 'b', 5))
+        def testfxn(a, b=5, **kwargs):
+            return (a + b) * (1 + kwargs['c'])
+
+        # 'c' stored as f_1p(3) = 9
+        # Return value is thus (2+3)*(1+9) = 5*10 = 50
+        self.assertEqual(testfxn(2, 3), 50)
+
+
+    # absent_opt_to_opt_arg
+    # absent_opt_to_opt_kwarg
+    # present_opt_to_opt_arg
+    # present_opt_to_opt_kwarg
+    # absent_opt_to_kw
+    # present_opt_to_kw
     # kw_to_pos
-    # kw_to_opt
+    # kw_to_opt_arg
+    # kw_to_opt_kwarg
     # kw_to_kw
 
     # Multiple kwarg_fetch decorators on a single function (simple, non-
@@ -204,13 +239,14 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
     # Invalid target kwarg
     # Invalid callable
     # Invalid arg list (e.g., too many or too few arg positions passed)
-    # Invalid kwarg list somewhere(s)
+    # Invalid opt arg tuple (wrong length, wrong types, etc.)
+    # Invalid kwarg list (e.g., keyword key)
 
     # Error if wrapped function doesn't allow kwargs
     # Collision between injected kwarg and (optional-)positional name
+    #  (if both positional and keyword specified for the same opt name)
 
-    # Optional arg not found
-    # Kwarg not found
+    # Kwarg not found in function call
 
     # Ensure no fetch performed if target kwarg already present
 

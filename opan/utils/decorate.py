@@ -155,7 +155,7 @@ class kwarg_fetch(object):
     def ok_tuplearg(cls, val):
         """ DOCSTRING """
 
-        if not (isinstance(val, tuple) and len(val) == 2 and
+        if not (isinstance(val, tuple) and len(val) == 3 and
                 isinstance(val[0], int) and cls.ok_kwarg(val[1])):
             return False
         return True
@@ -205,11 +205,11 @@ class kwarg_fetch(object):
 
         if not all(map(self.ok_argarg, args)):
             raise ValueError("All 'args' must be valid non-keyword "
-                             "identifier strings, integers, or (int, str) "
+                             "identifier strings, integers, or (int, str, object) "
                              "tuples (str as valid identifiers)")
         if not all(map(self.ok_argarg, kwargs.values())):
             raise ValueError("All 'kwargs' values must be valid non-keyword "
-                             "identifier strings, integers, or (int, str) "
+                             "identifier strings, integers, or (int, str, object) "
                              "tuples (str as valid identifiers)")
         self.arglist = args
         self.kwarglist = kwargs
@@ -251,8 +251,8 @@ class kwarg_fetch(object):
                             # Present in the passed-in kwargs
                             fetch_args.append(kwargs[a[1]])
                         else:
-                            # Not found
-                            fetch_args.append(None)
+                            # Not found; pass the default
+                            fetch_args.append(a[2])
                     else:
                         # Positional argument; integer value
                         fetch_args.append(args[a])
@@ -278,8 +278,8 @@ class kwarg_fetch(object):
                             # if present
                             fetch_kwargs.update({item[0]: kwargs[item[1][1]]})
                         else:
-                            # Not found; store None
-                            fetch_kwargs.update({item[0]: None})
+                            # Not found; store the default
+                            fetch_kwargs.update({item[0]: item[1][2]})
                     else:
                         # Assume positional, integer value
                         fetch_kwargs.update({item[0]: args[item[1]]})
