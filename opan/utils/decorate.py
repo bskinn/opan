@@ -155,7 +155,7 @@ class kwarg_fetch(object):
     def ok_tuplearg(cls, val):
         """ DOCSTRING """
 
-        if not (isinstance(val, tuple) and len(val) == 3 and
+        if not (isinstance(val, tuple) and len(val) == 2 and
                 isinstance(val[0], int) and cls.ok_kwarg(val[1])):
             return False
         return True
@@ -217,6 +217,8 @@ class kwarg_fetch(object):
     def __call__(self, f):
         """Call the wrapped function after any needed fetch."""
 
+        from inspect import signature as sig
+
         @_wraps(f)
         def wrapped_f(*args, **kwargs):
 
@@ -251,8 +253,8 @@ class kwarg_fetch(object):
                             # Present in the passed-in kwargs
                             fetch_args.append(kwargs[a[1]])
                         else:
-                            # Not found; pass the default
-                            fetch_args.append(a[2])
+                            # Not found; pass the function default
+                            fetch_args.append(sig(f).parameters[a[1]].default)
                     else:
                         # Positional argument; integer value
                         fetch_args.append(args[a])
@@ -278,8 +280,10 @@ class kwarg_fetch(object):
                             # if present
                             fetch_kwargs.update({item[0]: kwargs[item[1][1]]})
                         else:
-                            # Not found; store the default
-                            fetch_kwargs.update({item[0]: item[1][2]})
+                            # Not found; store the function default
+                            fetch_kwargs.update({item[0]:
+                                                 sig(f).parameters[item[1][1]]
+                                                 .default})
                     else:
                         # Assume positional, integer value
                         fetch_kwargs.update({item[0]: args[item[1]]})
