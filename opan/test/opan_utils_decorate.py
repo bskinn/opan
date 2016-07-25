@@ -154,7 +154,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     @staticmethod
     def f_1p_k(a, **kwargs):
-        if 'kw' in kwargs:
+        if 'kw' in kwargs and kwargs['kw']:
             return a + 2*kwargs['kw']
         else:
             return a
@@ -244,6 +244,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # Return value is thus (8-3) - (255.875*2) = 5 - 511.75 = -506.75
 
     def test_kwargfetch_absent_opt_to_opt_kwarg(self):
+
         @self.kwf('c', self.f_2p_1o, 1, 0, x=(2, 'x'))
         def testfxn(a, b, x=4, **kwargs):
             return (b + x) - (kwargs['c'] * a)
@@ -252,17 +253,99 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # 'c' stored as f_2p_1o(3, 2, x=4) = 3**2 - 3**4 = -72
         # Return value is thus (3-4) - (-72*2) = 7 + 144 = 151
 
-    # present_opt_to_opt_arg
-    # present_kwopt_to_opt_arg
-    # present_opt_to_opt_kwarg
-    # present_kwopt_to_opt_kwarg
-    # absent_opt_to_kw
-    # present_opt_to_kw
-    # present_kwopt_to_kw
-    # kw_to_pos
-    # kw_to_opt_arg
+    def test_kwargfetch_present_opt_to_opt_arg(self):
+
+        @self.kwf('c', self.f_2p_1o, 1, 0, (2, 'x'))
+        def testfxn(a, b, x=13, **kwargs):
+            return (b + x) - (kwargs['c'] * a)
+
+        self.assertEqual(testfxn(1, 2, 3), 11)
+        # 'c' stored as f_2p_1o(2, 1, 3) = 2**1 - 2**3 = 2-8 = -6
+        # Return value is thus (2+3) - (1*-6) = 5+6 = 11
+
+    def test_kwargfetch_present_kwopt_to_opt_arg(self):
+
+        @self.kwf('c', self.f_2p_1o, 0, 1, (2, 'x'))
+        def testfxn(a, b, x=35, **kwargs):
+            return (b + x) - (kwargs['c'] * a)
+
+        self.assertEqual(testfxn(3, 5, x=4), -477)
+        # 'c' stored as f_2p_1o(3, 5, x=4) = 3**5 - 3**4 = 243 - 81 = 162
+        # Return value is thus (5+4) - (162*3) = 9 - 486 = -477
+
+    def test_kwargfetch_present_opt_to_opt_kwarg(self):
+
+        @self.kwf('c', self.f_2p_1o, 1, 0, x=(2, 'x'))
+        def testfxn(a, b, x=15, **kwargs):
+            return (b + x) - (kwargs['c'] * a)
+
+        self.assertEqual(testfxn(5, 2, 3), -115)
+        # 'c' stored as f_2p_1o(2, 5, x=3) = 2**5 - 2**3 = 32 - 8 = 24
+        # Return value is (2+3) - (24*5) = 5 - 120 = -115
+
+    def test_kwargfetch_present_kwopt_to_opt_kwarg(self):
+
+        @self.kwf('c', self.f_2p_1o, 0, 1, x=(2, 'x'))
+        def testfxn(a, b, x=-234234, **kwargs):
+            return (b + x) - (kwargs['c'] * a)
+
+        self.assertEqual(testfxn(3, 4, x=3), -155)
+        # 'c' stored as f_2p_1o(3, 4, x=3) = 3**4 - 3**3 = 81 - 27 = 54
+        # Return value is (4+3) - (54*3) = 7 - 162 = -155
+
+    def test_kwargfetch_absent_opt_to_kw(self):
+
+        @self.kwf('c', self.f_1p_k, 1, kw=(2, 'x'))
+        def testfxn(a, b, x=4, **kwargs):
+            return a * b * kwargs['c'] + x
+
+        self.assertEqual(testfxn(5, 3), 169)
+        # 'c' stored as f_1p_k(3, kw=4) = 3 + 2*4 = 11
+        # Return value is 5*3*11 + 4 = 15*11 + 4 = 165 + 4 = 169
+
+    def test_kwargfetch_present_opt_to_kw(self):
+
+        @self.kwf('c', self.f_1p_k, 1, kw=(2, 'x'))
+        def testfxn(a, b, x=5, **kwargs):
+            return a * b + kwargs['c'] * x
+
+        self.assertEqual(testfxn(2, 6, 3), 48)
+        # 'c' stored as f_1p_k(6, kw=3) = 6 + 2*3 = 12
+        # Return value is 2*6 + 12*3 = 12 + 36 = 48
+
+    def test_kwargfetch_present_kwopt_to_kw(self):
+
+        @self.kwf('c', self.f_1p_k, 0, kw=(2, 'x'))
+        def testfxn(a, b, x=2, **kwargs):
+            return a * b - kwargs['c'] * x
+
+        self.assertEqual(testfxn(4, 2, x=3), -22)
+        # 'c' stored as f_1p_k(4, kw=3) = 4 + 2*3 = 10
+        # Return value is 4*2 - 10*3 = 8 - 30 = -22
+
+    def test_kwargfetch_kw_to_pos(self):
+
+        @self.kwf('c', self.f_1p, 'inv')
+        def testfxn(**kwargs):
+            return kwargs['c'] * (1 + kwargs['inv'])
+
+        self.assertEqual(testfxn(inv=3), 36)
+        # 'c' stored as f_1p(3) = 9
+        # Return value is 9 * (1+3) = 36
+
+    def test_kwargfetch_kw_to_opt_arg(self):
+
+        @self.kwf('c', self.f_2p_1o, 0, 1, 'bip')
+        def testfxn(a, b, **kwargs):
+            return (a * kwargs['c']) + (b ** kwargs['bip'])
+
+        self.assertEqual(testfxn(2, 4, bip=6), 4000)
+        # 'c' stored as f_2p_1o(2, 4, 6) = 2**4 - 2**6 = 16 - 64 = -48
+        # Return value is (2 * -48) + (4 ** 6) = -96 + 4096 = 4000
+
     # kw_to_opt_kwarg
     # kw_to_kw
+    # absent_kw_to_kw ('None' stored)
 
     # Multiple kwarg_fetch decorators on a single function (simple, non-
     #  dependent case)
@@ -270,7 +353,34 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
     #  where one kwarg_fetch depends on the kwarg injected by the other)
 
     # Invalid target kwarg
-    # Invalid callable
+    def test_kwargfetch_target_as_int(self):
+
+        with self.assertRaises(ValueError, msg="Decorator init should "
+                               "fail when integer passed for target keyword"):
+
+            @self.kwf(1, self.f_1p, 0)
+            def testfxn(a, **kwargs):
+                pass
+
+    def test_kwargfetch_nonidentifier_target(self):
+
+        with self.assertRaises(ValueError, msg="Decorator init should "
+                               "fail when target is not an identifier"):
+
+            @self.kwf('abc@@#$', self.f_1p, 0)
+            def testfxn(a, **kwargs):
+                pass
+
+    def test_kwargfetch_keyword_target(self):
+
+        with self.assertRaises(ValueError, msg="Decorator init should "
+                               "fail when target is a keyword"):
+
+            @self.kwf('abc@@#$', self.f_1p, 0)
+            def testfxn(a, **kwargs):
+                pass
+
+    # Invalid callable (not callable)
     # Invalid arg list (e.g., too many or too few arg positions passed)
     # Invalid opt arg tuple (wrong length, wrong types, etc.)
     # Invalid kwarg list (e.g., keyword key)
