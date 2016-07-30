@@ -122,7 +122,7 @@ class arraysqueeze(object):
 
 
 class kwarg_fetch(object):
-    """ Fetch a function call to a missing or |None| keyword argument
+    """ Fetch a missing keyword argument with a custom callable & arguments
 
     Arguments
     ---------
@@ -140,40 +140,23 @@ class kwarg_fetch(object):
 
     """
 
-    import keyword as _kw
-
-    @classmethod
-    def ok_kwarg(cls, val):
+    @staticmethod
+    def ok_kwarg(val):
         """ DOCSTRING """
+
+        import keyword
+
         try:
-            return str.isidentifier(val) and not cls._kw.iskeyword(val)
+            return str.isidentifier(val) and not keyword.iskeyword(val)
         except TypeError:
-            # Catch integer values in particular; fail if found
+            # Non-string values are never a valid keyword arg
             return False
-
-    @classmethod
-    def ok_tuplearg(cls, val):
-        """ DOCSTRING """
-
-        if not (isinstance(val, tuple) and len(val) == 2 and
-                isinstance(val[0], int) and cls.ok_kwarg(val[1])):
-            return False
-        return True
 
     @classmethod
     def ok_argarg(cls, val):
         """ DOCSTRING """
-        try:
-            ok_kw = str.isidentifier(val) and not cls._kw.iskeyword(val)
-        except TypeError:
-            # Again, catch integer values in particular and fail if found
-            ok_kw = False
 
-        ok_pos = isinstance(val, int)
-
-        ok_tup = cls.ok_tuplearg(val)
-
-        return ok_kw or ok_pos
+        return cls.ok_kwarg(val) or isinstance(val, int)
 
     def __init__(self, *args, **kwargs):
         """Initialize with the keyword, callable, and relevant arguments
@@ -242,7 +225,7 @@ class kwarg_fetch(object):
                     if isinstance(a, str):
                         # Keyword argument; handle possible absence with get()
                         fetch_args.append(kwargs.get(a))
-                    elif isinstance(a, int):
+                    else: 
                         # Tuple argument for optional-positional args.
                         # Could be present as positional or as keyword,
                         # or could be absent.
@@ -268,7 +251,7 @@ class kwarg_fetch(object):
                     if isinstance(item[1], str):
                         # Keyword argument; handle possible absence with get()
                         fetch_kwargs.update({item[0]: kwargs.get(item[1])})
-                    elif isinstance(item[1], int):
+                    else:
                         # Optional-positional
                         if len(args) > item[1]:
                             # Sufficient positional args

@@ -391,8 +391,9 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
                 pass
 
     # Invalid callable (not callable)
-    # Invalid arg list (e.g., too many or too few arg positions passed)
-    # Invalid kwarg list (e.g., keyword key)
+    # Invalid arg list (e.g., too many or too few arg positions passed,
+    #  invalid types passed to arg)
+    # Invalid kwarg list (e.g., keyword key, invalid type passed to kw)
     # Invalid args list where keyword arg comes before posarg (SyntaxError)
 
     # Error if wrapped function doesn't allow kwargs
