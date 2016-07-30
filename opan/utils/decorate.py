@@ -173,7 +173,7 @@ class kwarg_fetch(object):
 
         ok_tup = cls.ok_tuplearg(val)
 
-        return ok_kw or ok_pos or ok_tup
+        return ok_kw or ok_pos
 
     def __init__(self, *args, **kwargs):
         """Initialize with the keyword, callable, and relevant arguments
@@ -205,12 +205,10 @@ class kwarg_fetch(object):
 
         if not all(map(self.ok_argarg, args)):
             raise ValueError("All 'args' must be valid non-keyword "
-                             "identifier strings, integers, or (int, str, object) "
-                             "tuples (str as valid identifiers)")
+                             "identifier strings or integers")
         if not all(map(self.ok_argarg, kwargs.values())):
             raise ValueError("All 'kwargs' values must be valid non-keyword "
-                             "identifier strings, integers, or (int, str, object) "
-                             "tuples (str as valid identifiers)")
+                             "identifier strings or integers")
         self.arglist = args
         self.kwarglist = kwargs
 
@@ -225,6 +223,12 @@ class kwarg_fetch(object):
             # Check for if the target kwarg is missing
             if self.kw not in kwargs:
                 # Missing. Must fetch.
+
+                # Retrieve and materialize the enumerated arguments list.
+                # Depends on the parameters being contained in an OrderedDict
+                # so that signature order is retained.
+                params = list(sig(f).parameters)
+
                 # Initialize as empty the arguments list to pass to the
                 # callable
                 fetch_args = []
@@ -236,28 +240,25 @@ class kwarg_fetch(object):
                     # should suffice since they were checked at
                     # construction.
                     if isinstance(a, str):
-                        # Keyword argument; must handle possible absence
-                        if a in kwargs:
-                            fetch_args.append(kwargs[a])
-                        else:
-                            fetch_args.append(None)
-                    elif isinstance(a, tuple):
+                        # Keyword argument; handle possible absence with get()
+                        fetch_args.append(kwargs.get(a))
+                    elif isinstance(a, int):
                         # Tuple argument for optional-positional args.
                         # Could be present as positional or as keyword,
                         # or could be absent.
-                        if len(args) > a[0]:
+                        if len(args) > a:
                             # Sufficient positional arguments; assume
                             # present and passed as optional-positional
-                            fetch_args.append(args[a[0]])
-                        elif a[1] in kwargs:
-                            # Present in the passed-in kwargs
-                            fetch_args.append(kwargs[a[1]])
+                            fetch_args.append(args[a])
                         else:
-                            # Not found; pass the function default
-                            fetch_args.append(sig(f).parameters[a[1]].default)
-                    else:
-                        # Positional argument; integer value
-                        fetch_args.append(args[a])
+                            pname = params[a]
+                            if pname in kwargs:
+                                # Present in the passed-in kwargs
+                                fetch_args.append(kwargs[pname])
+                            else:
+                                # Not found; pass the function default
+                                fetch_args.append(sig(f).parameters[pname]
+                                                  .default)
 
                 # Populate fetch_kwargs according to what was specified
                 # at decorator construction
@@ -265,28 +266,24 @@ class kwarg_fetch(object):
                 for item in self.kwarglist.items():
                     # Same as above -- simple type checks should suffice
                     if isinstance(item[1], str):
-                        # Keyword argument; must handle possible absence
-                        if item[1] in kwargs:
-                            fetch_kwargs.update({item[0]: kwargs[item[1]]})
-                        else:
-                            fetch_kwargs.update({item[0]: None})
-                    elif isinstance(item[1], tuple):
+                        # Keyword argument; handle possible absence with get()
+                        fetch_kwargs.update({item[0]: kwargs.get(item[1])})
+                    elif isinstance(item[1], int):
                         # Optional-positional
-                        if len(args) > item[1][0]:
+                        if len(args) > item[1]:
                             # Sufficient positional args
-                            fetch_kwargs.update({item[0]: args[item[1][0]]})
-                        elif item[1][1] in kwargs:
-                            # Insufficient positional; add from kwargs
-                            # if present
-                            fetch_kwargs.update({item[0]: kwargs[item[1][1]]})
+                            fetch_kwargs.update({item[0]: args[item[1]]})
                         else:
-                            # Not found; store the function default
-                            fetch_kwargs.update({item[0]:
-                                                 sig(f).parameters[item[1][1]]
-                                                 .default})
-                    else:
-                        # Assume positional, integer value
-                        fetch_kwargs.update({item[0]: args[item[1]]})
+                            pname = params[item[1]]
+                            if pname in kwargs:
+                                # Insufficient positional; add from kwargs
+                                # if present
+                                fetch_kwargs.update({item[0]: kwargs[pname]})
+                            else:
+                                # Not found; store the function default
+                                fetch_kwargs.update({item[0]:
+                                                    sig(f)
+                                                    .parameters[pname].default})
 
                 # Call the callable and store the result into the target
                 # keyword

@@ -157,7 +157,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         if 'kw' in kwargs and kwargs['kw']:
             return a + 2*kwargs['kw']
         else:
-            return a
+            return 2 * a
 
     @staticmethod
     def f_2p_1o(a, b, x=5):
@@ -205,7 +205,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_absent_opt_to_pos(self):
 
-        @self.kwf('c', self.f_1p, (1, 'x'))
+        @self.kwf('c', self.f_1p, 1)
         def testfxn(a, x=5, **kwargs):
             return (a + x) * (1 + kwargs['c'])
 
@@ -215,7 +215,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_opt_to_pos(self):
 
-        @self.kwf('c', self.f_1p, (1, 'x'))
+        @self.kwf('c', self.f_1p, 1)
         def testfxn(a, x=5, **kwargs):
             return (a + x) * (1 + kwargs['c'])
 
@@ -225,7 +225,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_kwopt_to_pos(self):
 
-        @self.kwf('c', self.f_1p, (1, 'x'))
+        @self.kwf('c', self.f_1p, 1)
         def testfxn(a, x=5, **kwargs):
             return (a + x) * (1 + kwargs['c'])
 
@@ -235,7 +235,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_absent_opt_to_opt_arg(self):
 
-        @self.kwf('c', self.f_2p_1o, 0, 1, (2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 0, 1, 2)
         def testfxn(a, b, x=-3, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -245,7 +245,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_absent_opt_to_opt_kwarg(self):
 
-        @self.kwf('c', self.f_2p_1o, 1, 0, x=(2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 1, 0, x=2)
         def testfxn(a, b, x=4, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -255,7 +255,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_opt_to_opt_arg(self):
 
-        @self.kwf('c', self.f_2p_1o, 1, 0, (2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 1, 0, 2)
         def testfxn(a, b, x=13, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -265,7 +265,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_kwopt_to_opt_arg(self):
 
-        @self.kwf('c', self.f_2p_1o, 0, 1, (2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 0, 1, 2)
         def testfxn(a, b, x=35, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -275,7 +275,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_opt_to_opt_kwarg(self):
 
-        @self.kwf('c', self.f_2p_1o, 1, 0, x=(2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 1, 0, x=2)
         def testfxn(a, b, x=15, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -285,7 +285,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_kwopt_to_opt_kwarg(self):
 
-        @self.kwf('c', self.f_2p_1o, 0, 1, x=(2, 'x'))
+        @self.kwf('c', self.f_2p_1o, 0, 1, x=2)
         def testfxn(a, b, x=-234234, **kwargs):
             return (b + x) - (kwargs['c'] * a)
 
@@ -295,7 +295,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_absent_opt_to_kw(self):
 
-        @self.kwf('c', self.f_1p_k, 1, kw=(2, 'x'))
+        @self.kwf('c', self.f_1p_k, 1, kw=2)
         def testfxn(a, b, x=4, **kwargs):
             return a * b * kwargs['c'] + x
 
@@ -305,7 +305,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_opt_to_kw(self):
 
-        @self.kwf('c', self.f_1p_k, 1, kw=(2, 'x'))
+        @self.kwf('c', self.f_1p_k, 1, kw=2)
         def testfxn(a, b, x=5, **kwargs):
             return a * b + kwargs['c'] * x
 
@@ -315,7 +315,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     def test_kwargfetch_present_kwopt_to_kw(self):
 
-        @self.kwf('c', self.f_1p_k, 0, kw=(2, 'x'))
+        @self.kwf('c', self.f_1p_k, 0, kw=2)
         def testfxn(a, b, x=2, **kwargs):
             return a * b - kwargs['c'] * x
 
@@ -343,9 +343,19 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # 'c' stored as f_2p_1o(2, 4, 6) = 2**4 - 2**6 = 16 - 64 = -48
         # Return value is (2 * -48) + (4 ** 6) = -96 + 4096 = 4000
 
-    # kw_to_opt_kwarg
+    def test_kwargfetch_kw_to_opt_kwarg(self):
+
+        @self.kwf('c', self.f_2p_1o, 1, 0, x='dug')
+        def testfxn(a, b, **kwargs):
+            return (a + kwargs['c']) * (b + kwargs['dug'])
+
+        self.assertEqual(testfxn(2, 5, dug=4), -5382)
+        # 'c' stored as f_2p_1o(5,2,x=4) = 5**2 - 5**4 = 25-625 = -600
+        # Return value is (2 + -600) * (5 + 4) = -598 * 9 = -5382
+
     # kw_to_kw
     # absent_kw_to_kw ('None' stored)
+    # pos_to_kwpos
 
     # Multiple kwarg_fetch decorators on a single function (simple, non-
     #  dependent case)
@@ -382,15 +392,12 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
 
     # Invalid callable (not callable)
     # Invalid arg list (e.g., too many or too few arg positions passed)
-    # Invalid opt arg tuple (wrong length, wrong types, etc.)
     # Invalid kwarg list (e.g., keyword key)
     # Invalid args list where keyword arg comes before posarg (SyntaxError)
 
     # Error if wrapped function doesn't allow kwargs
     # Collision between injected kwarg and (optional-)positional name
     #  (if both positional and keyword specified for the same opt name)
-
-    # Kwarg not found in function call
 
     # Ensure no fetch performed if target kwarg already present
 
