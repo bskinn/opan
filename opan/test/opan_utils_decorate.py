@@ -353,14 +353,83 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         # 'c' stored as f_2p_1o(5,2,x=4) = 5**2 - 5**4 = 25-625 = -600
         # Return value is (2 + -600) * (5 + 4) = -598 * 9 = -5382
 
-    # kw_to_kw
-    # absent_kw_to_kw ('None' stored)
-    # pos_to_kwpos
+    def test_kwargfetch_kw_to_kw(self):
+
+        @self.kwf('c', self.f_1p_k, 1, kw='bop')
+        def testfxn(a, b, **kwargs):
+            return (a + kwargs['c']) * (b + kwargs['bop'])
+
+        self.assertEqual(testfxn(3, 1, bop=7), 144)
+        # 'c' stored as f_1p_k(1, kw=7) = 1 + 14 = 15
+        # Return value is (3+15) * (1+7) = 18*8 = 144
+
+    def test_kwargfetch_absent_kw_to_kw(self):
+
+        @self.kwf('c', self.f_1p_k, 1, kw='flip')
+        def testfxn(a, b, **kwargs):
+            return (a + kwargs['c']) * (b + kwargs['blip'])
+
+        self.assertEqual(testfxn(2, 5, blip=7), 144)
+        # 'c' stored as f_1p_k(5, kw=None) = 10
+        # Return value is (2+10) * (5+7) = 12*12 = 144
+
+    def test_kwargfetch_pos_to_kwpos(self):
+        # Case where a positional arg is passed keyword-style
+        @self.kwf('c', self.f_1p, 1)
+        def testfxn(a, b, **kwargs):
+            return (a + b) * kwargs['c']
+
+        self.assertEqual(testfxn(3, b=5), 200)
+        # 'c' stored as f_1p(5) = 25
+        # Return value is (3+5) * 25 = 200
+
+    def test_kwargfetch_allkwpos_to_kwpos(self):
+        # Case where all positional args are passed keyword-style
+        @self.kwf('c', self.f_1p, 1)
+        def testfxn(a, b, **kwargs):
+            return (a + b) * kwargs['c']
+
+        self.assertEqual(testfxn(b=5, a=3), 200)
+        # 'c' stored as f_1p(5) = 25
+        # Return value is (3+5) * 25 = 200
+
+    def test_kwargfetch_callablepos_as_kw(self):
+        # Calling the callable with keyword arguments
+        @self.kwf('c', self.f_1p, a=0)
+        def testfxn(a, b, **kwargs):
+            return (a + b) * kwargs['c']
+
+        self.assertEqual(testfxn(3, 5), 72)
+        # 'c' stored as f_1p(a=3) = 9
+        # Return value is (3+5) * 9 = 72
 
     # Multiple kwarg_fetch decorators on a single function (simple, non-
     #  dependent case)
+    def test_kwargfetch_multiple_independent(self):
+
+        @self.kwf('c', self.f_1p, 0)
+        @self.kwf('d', self.f_1p, 1)
+        def testfxn(a, b, **kwargs):
+            return (a + kwargs['d']) * (b + kwargs['c'])
+
+        self.assertEqual(testfxn(3, 4), 247)
+        # 'c' stored as f_1p(3) = 9
+        # 'd' stored as f_1p(4) = 16
+        # Return value is (3+16) * (4+9) = 19*13 = 247
+
     # Multiple kwarg_fetch decorators on a single function (complex case,
     #  where one kwarg_fetch depends on the kwarg injected by the other)
+    def test_kwargfetch_multiple_dependent(self):
+
+        @self.kwf('c', self.f_1p, 1)
+        @self.kwf('d', self.f_1p, 'c')
+        def testfxn(a, b, **kwargs):
+            return (a + kwargs['d']) * (b + kwargs['c'])
+
+        self.assertEqual(testfxn(5, 2), 126)
+        # 'c' stored as f_1p(2) = 4
+        # 'd' stored as f_1p(4) = 16
+        # Return value is (5+16) * (2+4) = 21*6 = 126
 
     # Invalid target kwarg
     def test_kwargfetch_target_as_int(self):
