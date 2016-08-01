@@ -121,7 +121,7 @@ class arraysqueeze(object):
 # end class arraysqueeze
 
 
-class kwarg_fetch(object):
+class kwargfetch(object):
     """ Fetch a missing keyword argument with a custom callable & arguments
 
     Arguments
@@ -183,7 +183,7 @@ class kwarg_fetch(object):
         self.kw = kw
 
         if not callable(c):
-            raise ValueError("'c' argument must be callable")
+            raise TypeError("'c' argument must be callable")
         self.c = c
 
         if not all(map(self.ok_argarg, args)):
@@ -226,7 +226,7 @@ class kwarg_fetch(object):
                         # Keyword argument; handle possible absence with get()
                         fetch_args.append(kwargs.get(a))
                     else: 
-                        # Tuple argument for optional-positional args.
+                        # Integer argument for (optional-)positional args.
                         # Could be present as positional or as keyword,
                         # or could be absent.
                         if len(args) > a:
@@ -234,7 +234,8 @@ class kwarg_fetch(object):
                             # present and passed as optional-positional
                             fetch_args.append(args[a])
                         else:
-                            pname = params[a]
+                            # The **kwargs is not valid for this, so exclude
+                            pname = params[:-1][a]
                             if pname in kwargs:
                                 # Present in the passed-in kwargs
                                 fetch_args.append(kwargs[pname])
@@ -257,7 +258,8 @@ class kwarg_fetch(object):
                             # Sufficient positional args
                             fetch_kwargs.update({item[0]: args[item[1]]})
                         else:
-                            pname = params[item[1]]
+                            # The **kwargs is not valid for this, so exclude
+                            pname = params[:-1][item[1]]
                             if pname in kwargs:
                                 # Insufficient positional; add from kwargs
                                 # if present

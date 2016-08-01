@@ -138,7 +138,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
     #  fundamental behavior. Better intuitive sense can probably
     #  be made of kwarg_fetch by inspecting actual use cases in live code.
 
-    from opan.utils.decorate import kwarg_fetch as kwf
+    from opan.utils.decorate import kwargfetch as kwf
 
     @classmethod
     def setUpClass(cls):
@@ -460,8 +460,49 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
                 pass
 
     # Invalid callable (not callable)
+    def test_kwargfetch_noncallable_c(self):
+
+        with self.assertRaises(TypeError, msg="Fetching callable "
+                               "is not callable"):
+
+            @self.kwf('c', 'x', 0)
+            def testfxn(a, **kwargs):
+                pass
+
     # Invalid arg list (e.g., too many or too few arg positions passed,
-    #  invalid types passed to arg)
+    #  invalid types passed to arg, indicated arg not present in
+    #  wrapped function sig)
+    def test_kwargfetch_too_few_posargs(self):
+
+        @self.kwf('c', self.f_2p, 0)
+        def testfxn(a, b, **kwargs):
+            pass
+
+        self.assertRaises(TypeError, testfxn, 1, 2,
+                          msg="No TypeError raised when decorator called "
+                              "with too few arguments for callable")
+
+    def test_kwargfetch_too_many_posargs(self):
+
+        @self.kwf('c', self.f_2p, 0, 1, 2)
+        def testfxn(a, b, f, **kwargs):
+            pass
+
+        self.assertRaises(TypeError, testfxn, 1, 2, 3,
+                          msg="No TypeError raised when decorator called "
+                              "with too many arguments for callable")
+
+    def test_kwargfetch_bad_posarg_index(self):
+
+        @self.kwf('c', self.f_1p, 1)
+        def testfxn(a, **kwargs):
+            pass
+
+        self.assertRaises(IndexError, testfxn, 1,
+                          msg="No IndexError raised when decorator called "
+                              "with positional argument not present in "
+                              "wrapped function")
+
     # Invalid kwarg list (e.g., keyword key, invalid type passed to kw)
     # Invalid args list where keyword arg comes before posarg (SyntaxError)
 
