@@ -173,8 +173,15 @@ class kwargfetch(object):
         args = list(args)
 
         # Retrieve the keyword id and the callable
-        kw = args.pop(0)
-        c = args.pop(0)
+        try:
+            kw = args.pop(0)
+        except IndexError as e:
+            raise TypeError("'Target keyword' argument absent") from e
+
+        try:
+            c = args.pop(0)
+        except IndexError as e:
+            raise TypeError("'Callable' argument absent") from e
 
         # Proof and store all of the things
         if not self.ok_kwarg(kw):

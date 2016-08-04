@@ -455,7 +455,7 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
         with self.assertRaises(ValueError, msg="Decorator init should "
                                "fail when target is a keyword"):
 
-            @self.kwf('abc@@#$', self.f_1p, 0)
+            @self.kwf('pass', self.f_1p, 0)
             def testfxn(a, **kwargs):
                 pass
 
@@ -503,14 +503,98 @@ class TestOpanUtilsDecorateKwargFetch(unittest.TestCase):
                               "with positional argument not present in "
                               "wrapped function")
 
-    # Invalid kwarg list (e.g., keyword key, invalid type passed to kw)
-    # Invalid args list where keyword arg comes before posarg (SyntaxError)
+    # Invalid kwarg list
+    # Python keyword as arg
+    def test_kwargfetch_pykeyword_as_arg(self):
+
+        with self.assertRaises(ValueError, msg="Decorator should fail when "
+                                               "called with Python "
+                                               "keyword as arg"):
+
+            @self.kwf('c', self.f_1p_k, 'pass')
+            def testfxn(a, **kwargs):
+                pass
+
+    # Python keyword as kwarg
+    def test_kwargfetch_pykeyword_as_kwarg(self):
+
+        with self.assertRaises(ValueError, msg="Decorator should fail when "
+                                               "called with Python "
+                                               "keyword as kwarg"):
+
+            @self.kwf('c', self.f_1p_k, 0, bip='pass')
+            def testfxn(a, **kwargs):
+                pass
+
+    # Invalid type passed to kw
+    def test_kwargfetch_kwarg_invalid_type(self):
+
+        with self.assertRaises(ValueError, msg="Decorator should fail when "
+                                               "called with non-str/-int "
+                                               "as kwarg"):
+            @self.kwf('c', self.f_1p_k, 0, bip=IndexError())
+            def testfxn(a, **kwargs):
+                pass
 
     # Error if wrapped function doesn't allow kwargs
+    def test_kwargfetch_no_kwargs_in_wrapped_function(self):
+
+        @self.kwf('c', self.f_1p, 0)
+        def testfxn(a):
+            return 2*a
+
+        self.assertRaises(TypeError, testfxn, 3,
+                          msg="TypeError not raised when decorated function "
+                              "without '**kwargs' is called")
+
     # Collision between injected kwarg and (optional-)positional name
     #  (if both positional and keyword specified for the same opt name)
+    def test_kwargfetch_fetched_kwarg_collision_with_posarg(self):
+
+        @self.kwf('a', self.f_1p, 0)
+        def testfxn(a, **kwargs):
+            pass
+
+        @self.kwf('b', self.f_1p, 0)
+        def testfxn2(a, b=3, **kwargs):
+            pass
+
+        self.assertRaises(TypeError, testfxn, 2,
+                          msg="TypeError not raised when injected kwarg "
+                              "collides with provided posarg")
+        self.assertRaises(TypeError, testfxn2, 1, 2,
+                          msg="TypeError not raised when injected kwarg "
+                              "collides with provided posarg")
+
+    # Decorator applied with no args at all
+    def test_kwargfetch_no_args(self):
+
+        with self.assertRaises(TypeError, msg="No TypeError raised "
+                                              "when decorator applied "
+                                              "with no arguments"):
+            @self.kwf()
+            def testfxn(a, **kwargs):
+                pass
+
+    # Decorator applied with only the target-keyword parameter
+    def test_kwargfetch_only_kw_arg(self):
+
+        with self.assertRaises(TypeError, msg="No TypeError raised when "
+                                              "decorator applied with only "
+                                              "a single argument"):
+            @self.kwf('c')
+            def testfxn(a, **kwargs):
+                pass
 
     # Ensure no fetch performed if target kwarg already present
+    def test_kwargfetch_no_fetch_if_kwarg_present(self):
+
+        @self.kwf('c', self.f_1p, 0)
+        def testfxn(a, **kwargs):
+            return a + 2*kwargs['c']
+
+        self.assertEquals(testfxn(3), 21)       # 'c' becomes 9 from f_1p
+        self.assertEquals(testfxn(3, c=5), 13)  # 'c' not overridden
 
 # end class TestOpanUtilsDecorateKwargFetch
 
