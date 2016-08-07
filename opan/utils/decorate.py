@@ -29,7 +29,7 @@ Decorators
 
 .. autoclass:: arraysqueeze
 
-.. autoclass:: kwarg_fetch
+.. autoclass:: kwargfetch
 
 """
 
@@ -124,19 +124,48 @@ class arraysqueeze(object):
 class kwargfetch(object):
     """ Fetch a missing keyword argument with a custom callable & arguments
 
+    This decorator implements a form of non-persistent memoization for
+    use in networks of inter-related and/or nested functions, where:
+
+    * External users may have reason to call any of the functions directly
+    * Most or all of the functions call one or more of the same specific
+      "supporting" functions that potentially represent significant
+      computational overhead
+    * Calls with the same function arguments are not likely to be recur
+      in calls by external users, and thus fully persistent memoization
+      would in general be a waste of memory
+
+    The memoization is implemented via injection of a specific keyword
+    argument into a call to the wrapped function, where the inserted value
+    is obtained from a call in turn to a specified callable using
+    arguments drawn from the wrapped call.  If the target keyword argument
+    is already present in the wrapped call, no action is taken.
+
     Arguments
     ---------
-    (fill in here)
+    args[0]
+        |str| --
+        Name of the keyword argument to be injected into the call to the
+        wrapped function
 
-    *A 'kwarg' argument
+    args[1]
+        |callable| --
+        Object to call to generate value to be injected into the target
+        keyword argument (`args[0]`)
 
-    .. warning::
+    args[2..n]
+        |int| or |str| --
+        *TO ADD*
 
-        Fragile to needing to pass optional arguments to the callable?
+    kwargs
+        |int| or |str| --
+        *TO ADD*
+
+
 
     .. Decorator built using the class form per the exposition
-        `here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
-        |extlink|.
+       `here <http://www.artima.com/weblogs/viewpost.jsp?thread=240845>`__
+       |extlink|.
 
     """
 

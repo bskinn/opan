@@ -158,6 +158,8 @@ rst_epilog = """
 
 .. |dict| replace:: :obj:`dict`
 
+.. |callable| replace:: :func:`callable`
+
 .. |re.compile| replace:: :func:`re.compile`
 
 .. |npfloat_| replace:: :mod:`np.float_ <numpy.doc.basics>`
