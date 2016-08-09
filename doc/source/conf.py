@@ -362,11 +362,24 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# Configuration for intersphinx. Heavily customized.
+isphx_local = os.environ.get('ISPHX_LOCAL')
+isphx_objpath = os.path.join('isphx','{0}')
+isphx_objstr = 'objects_{0}.inv'
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.5', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference', None),
-    'h5py': ('http://docs.h5py.org/en/latest/', None),
-    'sphinx': ('http://www.sphinx-doc.org/en/stable/', None)
+    'python': ('https://docs.python.org/3.5',
+               isphx_objpath.format(isphx_objstr.format('python'))
+               if isphx_local else None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/',
+              isphx_objpath.format(isphx_objstr.format('numpy'))
+              if isphx_local else None),
+    'scipy': ('http://docs.scipy.org/doc/scipy/reference',
+              isphx_objpath.format(isphx_objstr.format('scipy'))
+              if isphx_local else None),
+    'h5py': ('http://docs.h5py.org/en/latest/',
+             isphx_objpath.format(isphx_objstr.format('h5py'))
+             if isphx_local else None),
+    'sphinx': ('http://www.sphinx-doc.org/en/stable/',
+               isphx_objpath.format(isphx_objstr.format('sphinx'))
+               if isphx_local else None)
     }
