@@ -36,21 +36,21 @@ class TestOpanUtilsDecorateArraySqueeze(unittest.TestCase):
         return (p1, p2)
 
     @staticmethod
-    @arsq(0,1)
+    @arsq(0, 1)
     def fxn_2p_2d(p1, p2):
         return (p1, p2)
 
     @staticmethod
     @arsq(1, 'test')
     def fxn_2p_1d_k(p1, p2, **kwargs):
-        return p1, p2, (kwargs['test'] if 'test' in kwargs else None)
+        return p1, p2, kwargs.get('test')
 
 
     def test_arraysqueeze_GoodPartialWrap(self):
         import numpy as np
 
         # Store the result for detailed checking
-        ret = self.fxn_2p_1d(1,2)
+        ret = self.fxn_2p_1d(1, 2)
 
         # First one needs to be an ndarray
         self.assertIsInstance(ret[0], np.ndarray,
@@ -115,6 +115,20 @@ class TestOpanUtilsDecorateArraySqueeze(unittest.TestCase):
         self.assertIsInstance(ret[2], np.ndarray,
                 msg="Keyword argument not converted to ndarray")
 
+    def test_arraysqueeze_PosArgsPassedAsKwargs(self):
+
+        import numpy as np
+
+        ret = self.fxn_2p_1d_k(test=3, p2=2, p1=1)
+
+        # Confirm that the parameters are wrapped properly
+        self.assertIsInstance(ret[1], np.ndarray,
+                              msg="Second argument not converted to ndarray")
+        self.assertIsNotNone(ret[2],
+                             msg="Keyword argument improperly returned as None")
+        self.assertIsInstance(ret[2], np.ndarray,
+                              msg="Keyword argument not converted to ndarray")
+
     def test_arraysqueeze_BadInitParam(self):
 
         with self.assertRaises(ValueError,
@@ -126,6 +140,18 @@ class TestOpanUtilsDecorateArraySqueeze(unittest.TestCase):
         with self.assertRaises(ValueError,
                     msg="Error not raised on object param index"):
             @self.arsq(ValueError)
+            def test_fxn(p1, p2):
+                pass
+
+        with self.assertRaises(ValueError,
+                    msg="Error not raised on bool param index"):
+            @self.arsq(True)
+            def test_fxn(p1, p2):
+                pass
+
+        with self.assertRaises(ValueError,
+                    msg="Error not raised on None param index"):
+            @self.arsq(None)
             def test_fxn(p1, p2):
                 pass
 

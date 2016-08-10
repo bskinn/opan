@@ -65,13 +65,27 @@ class arraysqueeze(object):
 
     """
 
+    @staticmethod
+    def do_arraysqueeze(val):
+        """Helper function for carrying out the actual .asarray().squeeze()"""
+
+        import numpy as np
+
+        asqval = np.asarray(val).squeeze()
+
+        if not asqval.shape:
+            asqval = asqval[np.newaxis]
+
+        return asqval
+
     def __init__(self, *args):
         """ Pass the positions of arguments to be arraysqueezed as integers
         """
 
         # Check for integers and strings
         for arg in args:
-            if not (isinstance(arg, int) or isinstance(arg, str)):
+            if not (isinstance(arg, int) or isinstance(arg, str)) or\
+                    isinstance(arg, bool):
                 raise ValueError("Invalid decorator argument: {0}".format(arg))
 
         # If all ok, store
@@ -84,27 +98,37 @@ class arraysqueeze(object):
         beyond the range of the actual `*args` of `f` are ignored.
 
         """
+
+        from inspect import signature as sig
+
         @_wraps(f)
         def wrapped_f(*args, **kwargs):
-
-            # Must import numpy
-            import numpy as np
 
             # Working list of args values, since args is a tuple
             w_args = list(args)
 
+            # Retrieve list of parameter names from the wrapped function
+            params = list(sig(f).parameters)
+
             # Parse the arguments and arraysqueeze them. If squeezed to a
             #  singleton array, rewrap as a dimension-one array.
             for mod_arg in self.arglist:
-                if isinstance(mod_arg, int) and mod_arg < len(w_args):
-                    w_args[mod_arg] = np.asarray(w_args[mod_arg]).squeeze()
-                    if not w_args[mod_arg].shape:
-                        w_args[mod_arg] = w_args[mod_arg][np.newaxis]
+                if isinstance(mod_arg, int):
+                    # Positional arg
+                    if mod_arg < len(w_args):
+                        # Sufficient positional arguments passed
+                        w_args[mod_arg] = self.do_arraysqueeze(w_args[mod_arg])
+                    else:
+                        # Not enough positional arguments passed; must check
+                        # kwargs
+                        if params[mod_arg] in kwargs:
+                            # Found, passed as kwarg; arraysqueeze it
+                            kwargs[params[mod_arg]] = self.do_arraysqueeze(
+                                                        kwargs[params[mod_arg]])
 
                 elif isinstance(mod_arg, str) and mod_arg in kwargs:
-                    kwargs[mod_arg] = np.asarray(kwargs[mod_arg]).squeeze()
-                    if not kwargs[mod_arg].shape:
-                        kwargs[mod_arg] = kwargs[mod_arg][np.newaxis]
+                    # Keyword arg
+                    kwargs[mod_arg] = self.do_arraysqueeze(kwargs[mod_arg])
 
                 # no 'else:' since type checked in __init__
 
@@ -256,7 +280,9 @@ class kwargfetch(object):
 
                 # Retrieve and materialize the enumerated arguments list.
                 # Depends on the parameters being contained in an OrderedDict
-                # so that signature order is retained.
+                # so that signature order is retained. This call form discards
+                # the Parameter objects and just provides the parameter
+                # names as strings.
                 params = list(sig(f).parameters)
 
                 # Initialize as empty the arguments list to pass to the
