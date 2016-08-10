@@ -122,7 +122,7 @@ class arraysqueeze(object):
 
 
 class kwargfetch(object):
-    """ Fetch a missing keyword argument with a custom callable & arguments
+    """Fetch a missing keyword argument with a custom callable & arguments
 
     This decorator implements a form of non-persistent memoization for
     use in networks of inter-related and/or nested functions, where:
@@ -131,8 +131,8 @@ class kwargfetch(object):
     * Most or all of the functions call one or more of the same specific
       "supporting" functions that potentially represent significant
       computational overhead
-    * Calls with the same function arguments are not likely to be recur
-      in calls by external users, and thus fully persistent memoization
+    * Calls with identical function arguments are not likely to recur
+      in typical use by external users, and thus fully persistent memoization
       would in general be a waste of memory
 
     The memoization is implemented via injection of a specific keyword
@@ -140,6 +140,13 @@ class kwargfetch(object):
     is obtained from a call in turn to a specified callable using
     arguments drawn from the wrapped call.  If the target keyword argument
     is already present in the wrapped call, no action is taken.
+
+    .. note::
+
+        The API description below is wholly non-intuitive and likely
+        impossible to follow. The examples provided in the
+        :doc:`User's Guide </userguide/usage/utils/decorate>` will probably
+        be much more illuminating.
 
     Arguments
     ---------
@@ -155,12 +162,18 @@ class kwargfetch(object):
 
     args[2..n]
         |int| or |str| --
-        *TO ADD*
+        Indicate which positional (|int|) and keyword (|str|) parameters
+        of the wrapped function call are to be passed to the
+        |callable| of `args[1]` as positional parameters, in the
+        order provided within `args[2..n]`
 
     kwargs
         |int| or |str| --
-        *TO ADD*
-
+        Indicate which positional (|int|) and keyword (|str|) parameters
+        of the wrapped function call are to be passed to the
+        |callable| of `args[1]` as keyword parameters, where the keys
+        indicated here in `kwargs` are those used in the call to
+        `args[1]`
 
 
     .. Decorator built using the class form per the exposition
@@ -171,7 +184,7 @@ class kwargfetch(object):
 
     @staticmethod
     def ok_kwarg(val):
-        """ DOCSTRING """
+        """Helper method for screening keyword arguments"""
 
         import keyword
 
@@ -183,14 +196,12 @@ class kwargfetch(object):
 
     @classmethod
     def ok_argarg(cls, val):
-        """ DOCSTRING """
+        """Helper method for screening valid arguments of any type"""
 
         return cls.ok_kwarg(val) or isinstance(val, int)
 
     def __init__(self, *args, **kwargs):
-        """Initialize with the keyword, callable, and relevant arguments
-
-        """
+        """Initialize with the keyword, callable, and relevant arguments"""
 
         # Don't want named arguments anywhere in this initializer, since
         #  that would constrain the keywords allowable for calls to the
@@ -232,7 +243,7 @@ class kwargfetch(object):
         self.kwarglist = kwargs
 
     def __call__(self, f):
-        """Call the wrapped function after any needed fetch."""
+        """Call the wrapped function after any needed fetch"""
 
         from inspect import signature as sig
 
