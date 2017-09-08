@@ -647,7 +647,8 @@ class OrcaHess(SuperOpanHess):
         (?P<dim>[0-9]+).*\\n        # Dimensionality of Hessian (3N x 3N)
         (?P<block>                  # Group for the subsequent block of lines
             (                       # Group for single line definition
-                ([ \\t]+[0-9.-]+)+  # Some number of whitespace-separated nums
+                ([ \\t]+[0-9.-]+    # Some number of whitespace-separated nums
+                 (e[-+0-9]+)?)+     # Could be scientific notation
                 .*\\n               # Plus whatever to end of line
             )+                      # Whatever number of single lines
         )                           # Enclose the whole batch of lines
@@ -661,6 +662,7 @@ class OrcaHess(SuperOpanHess):
             (                       # Open the group defining a single element
                 [ \\t]+[-]?         # Whitespace and optional hyphen
                 [0-9]+\\.[0-9]+     # One or more digits, decimal, more digits
+                (e[-+0-9]+)?        # Scinot possible
             )+                      # Some number of sub-columns
             [ \\t]*\\n              # Whitespace to EOL
         )+                          # Some number of suitable lines
@@ -671,12 +673,18 @@ class OrcaHess(SuperOpanHess):
         ^[ \\t]*                        # Optional whitespace to start each line
         (?P<row>[0-9]+)                         # Row header
         [ \\t]+(?P<e0>[0-9-]+\\.[0-9]+)         # 1st element
-        [ \\t]+(?P<e1>[0-9-]+\\.[0-9]+)         # 2nd element
-        [ \\t]+(?P<e2>[0-9-]+\\.[0-9]+)         # 3rd element
-        ([ \\t]+(?P<e3>[0-9-]+\\.[0-9]+))?      # 4th element (possibly absent)
-        ([ \\t]+(?P<e4>[0-9-]+\\.[0-9]+))?      # 5th element (possibly absent)
-        ([ \\t]+(?P<e5>[0-9-]+\\.[0-9]+))?      # 6th element (possibly absent)
-        .*$                             # Whatever to end of line
+               (e[-+0-9]+)?                     # Scinot possible
+        ([ \\t]+(?P<e1>[0-9-]+\\.[0-9]+)        # 2nd element (possibly absent)
+               (e[-+0-9]+)?)?                   # Scinot possible
+        ([ \\t]+(?P<e2>[0-9-]+\\.[0-9]+)        # 3rd element (possibly absent)
+               (e[-+0-9]+)?)?                   # Scinot possible
+        ([ \\t]+(?P<e3>[0-9-]+\\.[0-9]+)        # 4th element (possibly absent)
+               (e[-+0-9]+)?)?                   # Scinot possible
+        ([ \\t]+(?P<e4>[0-9-]+\\.[0-9]+)        # 5th element (possibly absent)
+               (e[-+0-9]+)?)?                   # Scinot possible
+        ([ \\t]+(?P<e5>[0-9-]+\\.[0-9]+)        # 6th element (possibly absent)
+               (e[-+0-9]+)?)?                   # Scinot possible
+        .*$                                     # Whatever to end of line
         """, _re.I | _re.M | _re.X)
 
         # Reported energy
@@ -1026,8 +1034,11 @@ class OrcaHess(SuperOpanHess):
                         val = scast(m_line.group('e{0}'.format(i)), np.float_)
 
                         # Only store to matrix if a value actually retrieved.
-                        #  This protects against the final three-column section
-                        #  in blocks for systems with an odd number of atoms.
+                        #  This protects against the final column section
+                        #  in blocks for systems with a number of atoms not
+                        #  a multiple of six.
+                        if np.isnan(val):
+                            print(val)
                         if not np.isnan(val):
                             workmtx[rowval, col_offset + i] = val
                         ## end if
