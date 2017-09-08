@@ -1037,8 +1037,6 @@ class OrcaHess(SuperOpanHess):
                         #  This protects against the final column section
                         #  in blocks for systems with a number of atoms not
                         #  a multiple of six.
-                        if np.isnan(val):
-                            print(val)
                         if not np.isnan(val):
                             workmtx[rowval, col_offset + i] = val
                         ## end if
@@ -1049,10 +1047,13 @@ class OrcaHess(SuperOpanHess):
 
                 ## next m_hess_line
 
-                # Last thing is to increment the offset by six. Don't have to
-                #  worry about offsetting for a section only three columns wide
-                #  because that SHOULD only ever occur at the last section
-                col_offset += 6
+                # Last thing is to increment the offset. Have to check
+                #  the width of each block section because v3 has six data
+                #  columns whereas v4 appears to only have five.
+                for i in range (5,-1, -1):
+                    if m_line.group('e{0}'.format(i)) is not None:
+                        break
+                col_offset += i + 1
 
             ## next m_hess_sec
 
