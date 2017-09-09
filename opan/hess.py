@@ -716,7 +716,8 @@ class OrcaHess(SuperOpanHess):
         (?P<dim2>[0-9]+).*\\n       #  (Second dimension value)
         (?P<block>                  # Group for the subsequent block of lines
             (                       # Group for single line definition
-                ([ ]+[0-9.-]+)+     # Some number of whitespace-separated nums
+                ([ ]+[0-9.-]+       # Some number of whitespace-separated nums
+                (e[-+0-9]+)?)+      # Could be scientific notation
                 .*\\n               # Plus whatever to end of line
             )+                      # Whatever number of single lines
         )                           # Enclose the whole batch of lines
@@ -730,6 +731,7 @@ class OrcaHess(SuperOpanHess):
             (                       # Open the group defining a single element
                 [ ]+[-]?            # Whitespace and optional hyphen
                 [0-9]+\\.[0-9]+     # One or more digits, decimal, more digits
+                (e[-+0-9]+)?        # Could be scinot
             )+                      # Some number of sub-columns
             [ ]*\\n                 # Whitespace to EOL
         )+                          # Some number of suitable lines
@@ -742,13 +744,13 @@ class OrcaHess(SuperOpanHess):
         #  parse just fine for a '[ ]+[0-9.-]' pattern.
         modes_line = _re.compile("""
         ^[ ]*                           # Optional whitespace to start each line
-        (?P<row>[0-9]+)                         # Row header
-        [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
-        [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
-        [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
-        ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
-        ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
-        ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
+        (?P<row>[0-9]+)                              # Row header
+        [ ]+(?P<e0>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)     # 1st element
+        ([ ]+(?P<e1>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 2nd element (possibly absent)
+        ([ ]+(?P<e2>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 3rd element (possibly absent)
+        ([ ]+(?P<e3>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 4th element (possibly absent)
+        ([ ]+(?P<e4>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 5th element (possibly absent)
+        ([ ]+(?P<e5>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 6th element (possibly absent)
         .*$                             # Whatever to end of line
         """, _re.I | _re.M | _re.X)
 
@@ -763,16 +765,16 @@ class OrcaHess(SuperOpanHess):
         \\$dipole_derivatives[ ]*\\n            # Marker for block
         (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
         (?P<block>                              #--> Catches entire block
-            (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+            (([ ]+[0-9.e+-]+)+[ ]*\\n)+            # Rows of data
         )                                       # End block capture
         """, _re.I | _re.X)
 
         # Dipole derivatives individual line
         dipder_line = _re.compile("""
-        ^                                       # Line start
-        [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
-        [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
-        [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
+        ^                                         # Line start
+        [ ]+(?P<e0>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 1st element (possibly scinot)
+        [ ]+(?P<e1>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 2nd element (possibly scinot)
+        [ ]+(?P<e2>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 3rd element (possibly scinot)
         [ ]*$
         """, _re.I | _re.M | _re.X)
 
@@ -799,18 +801,18 @@ class OrcaHess(SuperOpanHess):
         \\$polarizability_derivatives[ ]*\\n    # Block marker
         (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
         (?P<block>                              #--> Catch entire block
-            (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+            (([ ]+[0-9.e+-]+)+[ ]*\\n)+         # Rows of data (could be scinot)
         )                                       # End block catch
         """, _re.I | _re.X)
 
         polder_line = _re.compile("""
-        ^                                       # Start of line
-        [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
-        [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
-        [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
-        [ ]+(?P<e3>[0-9-]+\\.[0-9]+)            # 4th element
-        [ ]+(?P<e4>[0-9-]+\\.[0-9]+)            # 5th element
-        [ ]+(?P<e5>[0-9-]+\\.[0-9]+)            # 6th element
+        ^                                         # Start of line
+        [ ]+(?P<e0>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 1st element (possibly scinot)
+        [ ]+(?P<e1>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 2nd element (possibly scinot)
+        [ ]+(?P<e2>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 3rd element (possibly scinot)
+        [ ]+(?P<e3>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 4th element (possibly scinot)
+        [ ]+(?P<e4>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 5th element (possibly scinot)
+        [ ]+(?P<e5>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)  # 6th element (possibly scinot)
         """, _re.I | _re.M | _re.X)
 
 
@@ -853,14 +855,14 @@ class OrcaHess(SuperOpanHess):
         \\$eigenvalues_mass_weighted_hessian[ ]*\\n         # Block marker
         (?P<dim>[0-9]+)[ ]*\\n                  #--> Dimension of block (rows)
         (?P<block>                              #--> Catch entire block
-            (([ ]+[0-9.-]+)+[ ]*\\n)+           # Rows of data
+            (([ ]+[0-9.e+-]+)+[ ]*\\n)+         # Rows of data (possibly scinot)
         )                                       # End block catch
         """, _re.I | _re.X)
 
         eigvals_line = _re.compile("""
         ^                                       # Start of line
         [ ]+(?P<mode>[0-9]+)                    #--> Mode index
-        [ ]+(?P<eig>[0-9.-]+)                   #--> Eigenvalue
+        [ ]+(?P<eig>[0-9.-]+(e[-+0-9]+)?)       #--> Eigenvalue (possibly scinot)
         """, _re.I | _re.M | _re.X)
 
 
@@ -872,7 +874,8 @@ class OrcaHess(SuperOpanHess):
         (?P<dim2>[0-9]+)[ ]*\\n     #  (Second dimension value)
         (?P<block>                  # Group for the subsequent block of lines
             (                       # Group for single line definition
-                ([ ]+[0-9.-]+)+     # Some number of whitespace-separated nums
+                ([ ]+[0-9.-]+       # Some number of whitespace-separated nums
+                (e[-+0-9]+)?)+      #  Could be scinot
                 .*\\n               # Plus whatever to end of line
             )+                      # Whatever number of single lines
         )                           # Enclose the whole batch of lines
@@ -886,6 +889,7 @@ class OrcaHess(SuperOpanHess):
             (                           # Open the group defining a single element
                 [ ]+[-]?                # Whitespace and optional hyphen
                 [0-9]+\\.[0-9]+         # One or more digits, decimal, more digits
+                (e[-+0-9]+)?            # Could be scinot
             )+                          # Some number of sub-columns
             [ ]*\\n                     # Whitespace to EOL
         )+                              # Some number of suitable lines
@@ -895,16 +899,17 @@ class OrcaHess(SuperOpanHess):
         #  THE USE of the '[0-9-]+\\.[0-9]+' construction here, and in its variants
         #  above/below, guarantees a floating-point value is found. Otherwise, the
         #  Regex retrieves on into subsequent sections because the header rows
-        #  parse just fine for a '[ ]+[0-9.-]' pattern.
+        #  parse just fine for a '[ ]+[0-9.-]' pattern. Any element might be in
+        #  scientific notation, so regex configured appropriately.
         eigvecs_line = _re.compile("""
         ^[ ]*                           # Optional whitespace to start each line
-        (?P<row>[0-9]+)                         # Row header
-        [ ]+(?P<e0>[0-9-]+\\.[0-9]+)            # 1st element
-        [ ]+(?P<e1>[0-9-]+\\.[0-9]+)            # 2nd element
-        [ ]+(?P<e2>[0-9-]+\\.[0-9]+)            # 3rd element
-        ([ ]+(?P<e3>[0-9-]+\\.[0-9]+))?         # 4th element (possibly absent)
-        ([ ]+(?P<e4>[0-9-]+\\.[0-9]+))?         # 5th element (possibly absent)
-        ([ ]+(?P<e5>[0-9-]+\\.[0-9]+))?         # 6th element (possibly absent)
+        (?P<row>[0-9]+)                              # Row header
+        [ ]+(?P<e0>[0-9-]+\\.[0-9]+(e[-+0-9]+)?)     # 1st element
+        ([ ]+(?P<e1>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 2nd element (possibly absent)
+        ([ ]+(?P<e2>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 3rd element (possibly absent)
+        ([ ]+(?P<e3>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 4th element (possibly absent)
+        ([ ]+(?P<e4>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 5th element (possibly absent)
+        ([ ]+(?P<e5>[0-9-]+\\.[0-9]+(e[-+0-9]+)?))?  # 6th element (possibly absent)
         .*$                             # Whatever to end of line
         """, _re.I | _re.M | _re.X)
 
